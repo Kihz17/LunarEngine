@@ -1,0 +1,41 @@
+#pragma once
+
+#include <iostream>
+#include <memory>
+
+#ifdef _NDEBUG
+	#define ENABLE_ASSERTS
+#endif
+
+#define EXPAND_VARGS(x) x
+
+#ifdef ENABLE_ASSERTS
+#define ASSERT_NO_MESSAGE(condition) { if(!(condition)) { HZ_ERROR("Assertion Failed"); __debugbreak(); } }
+#define ASSERT_MESSAGE(condition, ...) { if(!(condition)) { HZ_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+
+#define ASSERT_RESOLVE(arg1, arg2, macro, ...) macro
+#define GET_ASSERT_MACRO(...) EXPAND_VARGS(ASSERT_RESOLVE(__VA_ARGS__, ASSERT_MESSAGE, ASSERT_NO_MESSAGE))
+
+#define ASSERT(...) EXPAND_VARGS( GET_ASSERT_MACRO(__VA_ARGS__)(__VA_ARGS__) )
+#else
+	#define ASSERT(...)
+#endif
+
+
+// Allows us to create a "Scoped" pointer that will automatically destroy when out of scope
+template<typename T>
+using Scope = std::unique_ptr<T>; // Allows us to create a unique_ptr by calling "Scope<T>"
+template<typename T, typename ... Args> // Allows us to create a unique_ptr of type "T" with arguments of type "Args"
+constexpr Scope<T> CreateScope(Args&& ... args) // Takes any number of arguments of type "Args". Arguments must be rvalues (&&). This allows is to properly "move" the arguments to the make_unique constructor 
+{
+	return std::make_unique<T>(std::forward<Args>(args)...); // Forwards our arguments to make_unique while retaining rvalueness (AKA: "moves" the arguments as opposed to copying)
+}
+
+// Allow us to create a "Reference" pointer that will effectivley be the same as above but it is not unique
+template<typename T>
+using Ref = std::shared_ptr<T>; // Allows us to create a shared_ptr by calling "Ref<T>"
+template<typename T, typename ... Args> // Allows us to create a shared_ptr of type "T" with arguments of type "Args"
+constexpr Ref<T> CreateRef(Args&& ... args) // Takes any number of arguments of type "Args". Arguments must be rvalues (&&). This allows is to properly "move" the arguments to the make_shared constructor 
+{
+	return std::make_shared<T>(std::forward<Args>(args)...); // Forwards our arguments to make_shared while retaining rvalueness (AKA: "moves" the arguments as opposed to copying)
+}
