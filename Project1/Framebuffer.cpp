@@ -1,5 +1,7 @@
 #include "Framebuffer.h"
 
+#include <iostream>
+
 Framebuffer::Framebuffer()
 	: attachments(nullptr),
 	renderBufferID(0)
@@ -107,7 +109,12 @@ void Framebuffer::UpdateAttachmentArray()
 
 void Framebuffer::BindColorBuffer(const std::string& name, uint32_t slot)
 {
-	if (colorBuffers.count(name) <= 0) return;
+	if (colorBuffers.count(name) <= 0)
+	{
+		std::cout << "Could not find color buffer with name '" << name << "'!" << std::endl;
+		return;
+	}
+		
 
 	const ColorBuffer& buffer = colorBuffers.at(name);
 	glActiveTexture(GL_TEXTURE0 + slot);

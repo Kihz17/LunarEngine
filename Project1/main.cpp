@@ -110,6 +110,7 @@ int main()
     testGeo.roughnessTexture = roughnessTexture;
     testGeo.metalTexture = metalnessTexture;
     testGeo.aoTexture = aoTexture;
+    testGeo.transform = glm::mat4(1.0f);
 
     float lastFrameTime = glfwGetTime();
     float deltaTime = 0.0f;

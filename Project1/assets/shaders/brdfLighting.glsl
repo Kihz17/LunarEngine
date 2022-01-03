@@ -4,19 +4,19 @@
 layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec2 vTextureCoordinates;
 
-out vec2 oTextureCoordinates;
-out vec3 oEnvMapCoordinates;
+out vec2 mTextureCoordinates;
+out vec3 mEnvMapCoordinates;
 
 uniform mat4 uInverseView;
 uniform mat4 uInverseProjection;
 
 void main()
 {	
-	oTextureCoordinates = vTextureCoordinates; // Pass out texture coords
+	mTextureCoordinates = vTextureCoordinates; // Pass out texture coords
 	
 	// Retreive the environment map coordinates for this vertex
 	vec4 unprojectedCoords = (uInverseProjection * vec4(vPosition, vec2(1.0f)));
-	oEnvMapCoordinates = (uInverseView * unprojectedCoords).xyz;
+	mEnvMapCoordinates = (uInverseView * unprojectedCoords).xyz;
 	
 	gl_Position = vec4(vPosition, 1.0f);
 };
@@ -26,8 +26,8 @@ void main()
 //type fragment
 #version 420 
 
-in vec2 iTextureCoordinates;
-in vec3 iEnvMapCoordinates;
+in vec2 mTextureCoordinates;
+in vec3 mEnvMapCoordinates;
 
 out vec4 oColor;
 
@@ -86,21 +86,21 @@ void CalculateDirectionalLight(vec3 lightPos, vec3 lightColor, float lightRadius
 void main()
 {
 	// Get geometry buffer data
-	vec3 viewPos = texture(gPosition, iTextureCoordinates).rgb;
-	vec3 albedo = LinearizeColor(texture(gAlbedo, iTextureCoordinates).rgb);
-	vec3 normal = texture(gNormal, iTextureCoordinates).rgb;
-	float roughness = texture(gAlbedo, iTextureCoordinates).a;
-	float metalness = texture(gNormal, iTextureCoordinates).a;
-	float ambientOcculsion = texture(gEffects, iTextureCoordinates).r;
-	vec2 velocity = texture(gEffects, iTextureCoordinates).gb;
-	float depth = texture(gPosition, iTextureCoordinates).a;
+	vec3 viewPos = texture(gPosition, mTextureCoordinates).rgb;
+	vec3 albedo = LinearizeColor(texture(gAlbedo, mTextureCoordinates).rgb);
+	vec3 normal = texture(gNormal, mTextureCoordinates).rgb;
+	float roughness = texture(gAlbedo, mTextureCoordinates).a;
+	float metalness = texture(gNormal, mTextureCoordinates).a;
+	float ambientOcculsion = texture(gEffects, mTextureCoordinates).r;
+	vec2 velocity = texture(gEffects, mTextureCoordinates).gb;
+	float depth = texture(gPosition, mTextureCoordinates).a;
 	
-	vec3 environmentColor = texture(uEnvMap, ConvertCoordsToSpherical(normalize(iEnvMapCoordinates))).rgb; // Convert and sample from spherical environment map coords
+	vec3 environmentColor = texture(uEnvMap, ConvertCoordsToSpherical(normalize(mEnvMapCoordinates))).rgb; // Convert and sample from spherical environment map coords
 	
 	vec3 color = vec3(0.0f);
     vec3 diffuse = vec3(0.0f);
     vec3 specular = vec3(0.0f);
-	
+		
 	if(depth == 1.0f) // Nothing obstructing us here, just show the env map color
 	{
 		color = environmentColor;

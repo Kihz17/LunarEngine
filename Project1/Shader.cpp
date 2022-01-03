@@ -170,7 +170,7 @@ Shader::Shader(const std::string& path)
 		return;
 	}
 
-	GLuint ID = glCreateProgram();
+	this->ID = glCreateProgram();
 	glAttachShader(ID, vertexShaderID);
 	glAttachShader(ID, fragmentShaderID);
 	glLinkProgram(ID);

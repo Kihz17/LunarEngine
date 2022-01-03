@@ -69,7 +69,7 @@ void Renderer::Initialize(WindowSpecs* window)
 	brdfShader->InitializeUniform("gEffects");
 	brdfShader->InitializeUniform("uLightAmount");
 
-	for (int i = 0; i < Light::MAX_LIGHTS; i++)
+	/*for (int i = 0; i < Light::MAX_LIGHTS; i++)
 	{
 		{
 			std::stringstream ss;
@@ -91,7 +91,7 @@ void Renderer::Initialize(WindowSpecs* window)
 			ss << "uLightArray[" << i << "].param1";
 			brdfShader->InitializeUniform(ss.str());
 		}
-	}
+	}*/
 	
 	brdfShader->InitializeUniform("uEnvMap");
 	brdfShader->InitializeUniform("uIrradianceMap");
@@ -112,7 +112,7 @@ void Renderer::Initialize(WindowSpecs* window)
 	brdfShader->SetInt("uEnvMapPreFilter", 6);
 	brdfShader->SetInt("uEnvMapLUT", 7);
 
-	gShader->Unbind();
+	brdfShader->Unbind();
 	ShaderLibrary::Add(LIGHTING_SHADER_KEY, brdfShader);
 
 	//------------------------
