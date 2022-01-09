@@ -4,11 +4,15 @@
 
 Camera::Camera(const glm::vec3& position, const glm::vec3& up, float yaw, float pitch)
 	: position(position),
-	speed(4.0f),
+	speed(8.0f),
 	sensitivity(0.1f),
 	yaw(yaw),
 	pitch(pitch),
-	up(up)
+	worldUp(up),
+	fov(glm::radians(45.0f)),
+	first(true),
+	lastX(0.0f),
+	lastY(0.0f)
 {
 	UpdateCamera();
 }
@@ -31,7 +35,7 @@ void Camera::UpdateCamera()
 	front.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
 
 	this->front = glm::normalize(front);
-	this->right = glm::normalize(glm::cross(this->front, this->up));
+	this->right = glm::normalize(glm::cross(this->front, this->worldUp));
 	this->up = glm::normalize(glm::cross(this->right, this->front));
 }
 
@@ -43,7 +47,12 @@ void Camera::Move(MoveDirection direction, float deltaTime)
 	{
 		position += front * scalar;
 	}
-	else if (direction == MoveDirection::Right)
+	else if (direction == MoveDirection::Back)
+	{
+		position -= front * scalar;
+	}
+
+	if (direction == MoveDirection::Right)
 	{
 		position += right * scalar;
 	}
@@ -51,25 +60,42 @@ void Camera::Move(MoveDirection direction, float deltaTime)
 	{
 		position -= right * scalar;
 	}
-	else if (direction == MoveDirection::Back)
+	
+	if (direction == MoveDirection::Up)
 	{
-		position -= front * scalar;
+		position.y += scalar;
+	}
+	else if (direction == MoveDirection::Down)
+	{
+		position.y -= scalar;
 	}
 }
 
-void Camera::Look(float x, float y)
+void Camera::Look(float xPos, float yPos)
 {
-	x *= sensitivity;
-	y *= sensitivity;
+	if (first)
+	{
+		first = false;
+		lastX = xPos;
+		lastY = yPos;
+	}
 
-	yaw += x;
-	pitch += y;
+	float xOffset = xPos - lastX;
+	float yOffset = lastY - yPos;
+	lastX = xPos;
+	lastY = yPos;
+
+	xOffset *= sensitivity;
+	yOffset *= sensitivity;
+
+	yaw += xOffset;
+	pitch += yOffset;
 
 	if (pitch > 89.0f)
 		pitch = 89.0f;
 
 	if (pitch < -89.0f)
-		pitch = 89.0f;
+		pitch = -89.0f;
 
 	UpdateCamera();
 }

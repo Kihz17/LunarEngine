@@ -8,16 +8,23 @@
 
 enum class LightType
 {
-	Point,
 	Directional,
+	Point,
 	IBL
+};
+
+enum class AttenuationMode
+{
+	Linear,
+	Quadratic,
+	UE4
 };
 
 class Light
 {
 public:
 	Light(const glm::vec3& postion = glm::vec3(0.0f), const glm::vec3& direction = glm::vec3(0.01f, -0.99f, 0.0f), 
-		const glm::vec4& color = glm::vec4(1.0f), LightType lightType = LightType::Point, float radius = 100.0f, int attenMode = 0);
+		const glm::vec4& color = glm::vec4(1.0f), LightType lightType = LightType::Point, float radius = 100.0f, AttenuationMode attenMode = AttenuationMode::Linear, bool on = true);
 	virtual ~Light();
 
 	void UpdatePosition(const glm::vec3& position);
@@ -25,7 +32,7 @@ public:
 	void UpdateColor(const glm::vec4& color);
 	void UpdateRadius(float radius);
 	void UpdateOn(bool on);
-	void UpdateAttenuationMode(int attenMode);
+	void UpdateAttenuationMode(AttenuationMode attenMode);
 	void UpdateLightType(LightType lightType);
 	void SendToShader() const;
 
@@ -51,7 +58,7 @@ private:
 	glm::vec4 color;
 	float radius;
 	bool on;
-	int attenuationMode;
+	AttenuationMode attenuationMode;
 	LightType lightType;
 
 	static int currentLightIndex;

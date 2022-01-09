@@ -53,6 +53,7 @@ uniform sampler2D gPosition;
 uniform sampler2D gAlbedo;
 uniform sampler2D gNormal;
 uniform sampler2D gEffects;
+uniform sampler2D gViewPosition;
 
 // Lighitng
 uniform int uLightAmount;
@@ -65,6 +66,7 @@ uniform samplerCube uEnvMapPreFilter;
 uniform sampler2D uEnvMapLUT;
 
 // Extra uniforms
+uniform vec3 uCameraPosition;
 uniform mat4 uView;
 uniform int uViewType; // 1 = color, 2 = position, 3 = normal, 4 = albedo, 5 = roughness, 6 = metalness, 7 = depth, 8 = velocity
 uniform vec3 uReflectivity; // F0 https://gyazo.com/14a06a2f540467848b3e2f94cff506ad
@@ -79,14 +81,11 @@ vec3 ComputeFresnelSchlickRoughness(float cosTheta, vec3 surfaceReflection, floa
 float ComputeDistibutionGGX(vec3 normal, vec3 halfwayDir, float roughness); // Computes normal distribution using GGX/Trowbridge-Reitz. Used for approximating surface area of microfacets (a piece of surface being rendered) aligned to the halfway vector
 float ComputeGeometrySmith(float lightDot, float cosTheta, float roughness); // Computes surface area where micro-surface details obstruct another part of the surface causing the light ray to be occluded https://gyazo.com/ef9b603e6f1ccfc2f092563d9ca469df
 
-// Lighting functions
-void CalculatePointLight(vec3 lightPos, vec3 lightColor, float lightAttenuation, float lightRadius, vec3 viewPos, vec3 N, vec3 I, vec3 F, vec3 refractionRatio, vec3 albedo, float roughness, float cosTheta, inout vec3 color, inout vec3 diffuse, inout vec3 specular);
-void CalculateDirectionalLight(vec3 lightPos, vec3 lightColor, float lightRadius, vec3 viewPos, vec3 N, vec3 I, vec3 F, vec3 refractionRatio, vec3 albedo, float roughness, float cosTheta, inout vec3 color, inout vec3 diffuse, inout vec3 specular);
-
 void main()
 {
 	// Get geometry buffer data
-	vec3 viewPos = texture(gPosition, mTextureCoordinates).rgb;
+	vec3 worldPos = texture(gPosition, mTextureCoordinates).rgb;
+	vec3 viewPos = texture(gViewPosition, mTextureCoordinates).rgb;
 	vec3 albedo = LinearizeColor(texture(gAlbedo, mTextureCoordinates).rgb);
 	vec3 normal = texture(gNormal, mTextureCoordinates).rgb;
 	float roughness = texture(gAlbedo, mTextureCoordinates).a;
@@ -95,18 +94,18 @@ void main()
 	vec2 velocity = texture(gEffects, mTextureCoordinates).gb;
 	float depth = texture(gPosition, mTextureCoordinates).a;
 	
-	vec3 environmentColor = texture(uEnvMap, ConvertCoordsToSpherical(normalize(mEnvMapCoordinates))).rgb; // Convert and sample from spherical environment map coords
-	
 	vec3 color = vec3(0.0f);
     vec3 diffuse = vec3(0.0f);
     vec3 specular = vec3(0.0f);
 		
 	if(depth == 1.0f) // Nothing obstructing us here, just show the env map color
 	{
-		color = environmentColor;
+		color = texture(uEnvMap, mTextureCoordinates).rgb; // Convert and sample from spherical environment map coords
 	}
 	else // We have something that we should render here, perform calculations
 	{
+		//color = (albedo * 0.1f) / PI; // Show some dark color at the very least
+		
 		vec3 I = normalize(-viewPos); // Represents our view from eye - surface
 		vec3 N = normalize(normal); // Represents the normal
 		vec3 R = reflect(-I, N); // Reflects in respect to our view position and normal https://asawicki.info/files/Reflect_Refract.png
@@ -128,17 +127,62 @@ void main()
 				continue;
 			}
 			
-			if(light.param1.x == 1.0f) // Directional light
-			{
-				CalculateDirectionalLight(light.position, light.color.rgb, light.param1.y, viewPos, N, I, F, refractionRatio, albedo, roughness, cosTheta, color, diffuse, specular);
+			if(light.param1.x == 0.0f) // Directional light
+			{	
+				vec3 lightDir = normalize(-light.direction);
+				vec3 halfwayDir = normalize(lightDir + I);
+				
+				vec3 gammaCorrectedColor = LinearizeColor(light.color.rgb);
+				
+				float lightDot = Saturate(dot(N, lightDir)); // Get how much force is applied in the direction of normal in relation to the light direction clamped in range 0 - 1
+				
+				diffuse = albedo / PI;
+				
+				float distribution = ComputeDistibutionGGX(N, halfwayDir, roughness);
+				float geometry = ComputeGeometrySmith(lightDot, cosTheta, roughness);
+				
+				specular = (F * distribution * geometry) / (4.0f * lightDot * cosTheta + 0.0001f); // Compute specular component
+				color += (refractionRatio * diffuse + specular) * gammaCorrectedColor * lightDot; // Compute diffuse color
 			}
 			
-			else if(light.param1.x == 2.0f) // Point light
-			{
-				CalculatePointLight(light.position, light.color.rgb, light.param1.w, light.param1.y, viewPos, N, I, F, refractionRatio, albedo, roughness, cosTheta, color, diffuse, specular);
+			else if(light.param1.x == 1.0f) // Point light
+			{	
+				vec3 lightDir = normalize(light.position - viewPos);
+				vec3 halfwayDir = normalize(lightDir + I);
+
+				vec3 gammaCorrectedColor = LinearizeColor(light.color.rgb);
+				float distance = length(light.position - worldPos);
+				//float distance = length(light.position - viewPos);
+
+				float attenuation;
+				if(light.param1.w == 0.0f) // Linear atten
+				{
+					attenuation = 1.0f / distance;
+				}
+				if(light.param1.w == 1.0f) // Quadratic atten
+				{
+					attenuation = 1.0f / (distance * distance);
+				}
+				else if(light.param1.w == 2.0f) // UE4 atten
+				{
+					attenuation = pow(Saturate(1 - pow(distance / light.param1.y, 4)), 2) / (distance * distance + 1);
+				}
+
+				float lightDot = Saturate(dot(N, lightDir)); // Get how much force is applied in the direction of normal in relation to the light direction clamped in range 0 - 1
+
+				// Compute radiance
+				vec3 radiance = gammaCorrectedColor * attenuation;
+				
+				diffuse = albedo / PI;
+				
+				float distribution = ComputeDistibutionGGX(N, halfwayDir, roughness);
+				float geometry = ComputeGeometrySmith(lightDot, cosTheta, roughness);
+
+				specular = (F * distribution * geometry) / (4.0f * lightDot * cosTheta + 0.0001f); // Compute specular component
+				color += (refractionRatio * diffuse + specular) * radiance * lightDot; // Compute diffuse color
 			}
 			
-			else if(light.param1.x == 3.0f) // IBL light
+			else if(light.param1.x == 2.0f) // IBL light
 			{
 				// Re-compute reflection and energy conservation while taking roughness into consideration
 				F = ComputeFresnelSchlickRoughness(cosTheta, surfaceReflection, roughness);
@@ -170,7 +214,7 @@ void main()
 	}
 	else if(uViewType == 2)
 	{
-		oColor = vec4(viewPos, 1.0f);
+		oColor = vec4(worldPos, 1.0f);
 	}
 	else if(uViewType == 3)
 	{
@@ -195,6 +239,10 @@ void main()
 	else if(uViewType == 8)
 	{
 		oColor = vec4(velocity, 0.0f, 1.0f);
+	}
+	else if(uViewType == 9)
+	{
+		oColor = vec4(viewPos, 1.0f);
 	}
 }
 
@@ -246,56 +294,6 @@ float ComputeGeometrySmith(float lightDot, float cosTheta, float roughness)
 	float ggxCosTheta = (2.0f * cosTheta) / (cosTheta + sqrt(cosTheta2 + roughness2 * (1.0f - cosTheta2)));
 	
 	return ggxLight * ggxCosTheta;
-}
-
-void CalculatePointLight(vec3 lightPos, vec3 lightColor, float lightAttenuation, float lightRadius, vec3 viewPos, vec3 N, vec3 I, vec3 F, vec3 refractionRatio, vec3 albedo, float roughness, float cosTheta, inout vec3 color, inout vec3 diffuse, inout vec3 specular)
-{
-	vec3 lightDir = normalize(lightPos - viewPos);
-	vec3 halfwayDir = normalize(lightDir + I);
-	
-	vec3 gammaCorrectedColor = LinearizeColor(lightColor.rgb);
-	float distance = length(lightPos - viewPos);
-	
-	float attenuation;
-	if(lightAttenuation == 0.0f) // Quadratic atten
-	{
-		attenuation = 1.0f / (distance * distance);
-	}
-	else if(lightAttenuation == 1.0f) // UE4 atten
-	{
-		attenuation = pow(Saturate(1 - pow(distance / lightRadius, 4)), 2) / (distance * distance + 1);
-	}
-	
-	float lightDot = Saturate(dot(N, lightDir)); // Get how much force is applied in the direction of normal in relation to the light direction clamped in range 0 - 1
-	
-	// Compute radiance
-	vec3 radiance = gammaCorrectedColor * attenuation;
-	
-	diffuse = albedo / PI;
-	
-	float distribution = ComputeDistibutionGGX(N, halfwayDir, roughness);
-	float geometry = ComputeGeometrySmith(lightDot, cosTheta, roughness);
-	
-	specular = (F * distribution * geometry) / (4.0f * lightDot * cosTheta + 0.0001f); // Compute specular component
-	color += (diffuse * refractionRatio + specular) * radiance * lightDot; // Compute diffuse color
-}
-
-void CalculateDirectionalLight(vec3 lightPos, vec3 lightColor, float lightRadius, vec3 viewPos, vec3 N, vec3 I, vec3 F, vec3 refractionRatio, vec3 albedo, float roughness, float cosTheta, inout vec3 color, inout vec3 diffuse, inout vec3 specular)
-{
-	vec3 lightDir = normalize(lightPos - viewPos);
-	vec3 halfwayDir = normalize(lightDir + I);
-	
-	vec3 gammaCorrectedColor = LinearizeColor(lightColor.rgb);
-	
-	float lightDot = Saturate(dot(N, lightDir)); // Get how much force is applied in the direction of normal in relation to the light direction clamped in range 0 - 1
-	
-	diffuse = albedo / PI;
-	
-	float distribution = ComputeDistibutionGGX(N, halfwayDir, roughness);
-	float geometry = ComputeGeometrySmith(lightDot, cosTheta, roughness);
-	
-	specular = (F * distribution * geometry) / (4.0f * lightDot * cosTheta + 0.0001f); // Compute specular component
-	color += (diffuse * refractionRatio + specular) * gammaCorrectedColor * lightDot; // Compute diffuse color
 }
 
 // RESOURCES

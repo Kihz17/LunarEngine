@@ -14,7 +14,7 @@ struct SubmittedGeometry
 	Mesh* mesh;
 	glm::mat4 transform;
 
-	std::vector<Texture*> albedoTextures;
+	std::vector<std::pair<Texture*, float>> albedoTextures;
 	Texture* normalTexture;
 	Texture* roughnessTexture;
 	Texture* metalTexture;
@@ -34,8 +34,10 @@ public:
 
 	static void SetViewType(uint32_t type);
 
+	static void SetEnvironmentMapEquirectangular(const std::string& path);
+
 	static void SubmitMesh(const SubmittedGeometry& geometry);
-	static void SubmitMesh(const std::string& handle, Mesh* mesh, const glm::mat4& transform, std::vector<Texture*> albedoTextures = std::vector<Texture*>(), 
+	static void SubmitMesh(const std::string& handle, Mesh* mesh, const glm::mat4& transform, std::vector<std::pair<Texture*, float>> albedoTextures = std::vector<std::pair<Texture*, float>>(),
 		Texture* normalTexture = nullptr, Texture* roughnessTexture = nullptr, Texture* metalTexture = nullptr, Texture* aoTexture = nullptr);
 
 	static void DrawFrame(float deltaTime);
@@ -45,17 +47,27 @@ public:
 
 	static const std::string G_SHADER_KEY;
 	static const std::string LIGHTING_SHADER_KEY;
+	static const std::string CUBE_MAP_CONVERT_SHADER_KEY;
+	static const std::string IRRADIANCE_SHADER_KEY;
+	static const std::string PREFILTER_SHADER_KEY;
+	static const std::string ENV_LUT_SHADER_KEY;
+	static const std::string CUBE_MAP_DRAW_SHADER_KEY;
 
 private:
 	static WindowSpecs* windowDetails;
 
 	static Framebuffer* geometryBuffer;
-	
+	static Framebuffer* environmentBuffer;
+	static Framebuffer* cubeMapBuffer;
+	static Framebuffer* irradianceBuffer;
+	static Framebuffer* envPrefilterBuffer;
+	static Framebuffer* envLUTBuffer;
+
 	// Environment map stuff
 	static Texture* envMap;
-	static Texture* envMapIrradiance;
-	static Texture* envMapPreFilter;
-	static Texture* envMapLUT;
+	static CubeMap* envMapCube;
+	static CubeMap* envMapIrradiance;
+	static CubeMap* envMapPreFilter;
 
 	static std::vector<SubmittedGeometry> defferedGeometry;
 	static std::unordered_map<std::string, glm::mat4> prevProjViewModels;
@@ -64,6 +76,8 @@ private:
 
 	static glm::mat4 projection;
 	static glm::mat4 view;
+	static glm::vec3 cameraPos;
 
 	static PrimitiveShape* quad;
+	static PrimitiveShape* cube;
 };

@@ -4,6 +4,8 @@
 layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec3 vNormal;
 layout (location = 2) in vec2 vTextureCoordinates;
+layout (location = 3) in vec3 vBiNormal;
+layout (location = 4) in vec3 vTangent;
 
 uniform mat4 uMatModel;
 uniform mat4 uMatView;
@@ -11,6 +13,7 @@ uniform mat4 uMatProjection;
 uniform mat4 uMatProjViewModel;
 uniform mat4 uMatPrevProjViewModel;
 
+out vec3 mWorldPosition;
 out vec3 mViewPosition;
 out vec2 mTextureCoordinates;
 out vec3 mNormal;
@@ -22,6 +25,8 @@ void main()
 	// Translate to view space
 	vec4 viewFragmentPosition = uMatView * uMatModel * vec4(vPosition, 1.0f);
 	mViewPosition = viewFragmentPosition.xyz;
+	
+	mWorldPosition = vec3(uMatModel * vec4(vPosition, 1.0f));
 	
 	mTextureCoordinates = vTextureCoordinates;
 	
@@ -40,22 +45,24 @@ void main()
 //type fragment
 #version 420 
 
-layout (location = 0) out vec4 vPosition;
-layout (location = 1) out vec4 vAlbedo;
-layout (location = 2) out vec4 vNormal;
-layout (location = 3) out vec3 vEffects;
+layout (location = 0) out vec4 gPosition;
+layout (location = 1) out vec4 gAlbedo;
+layout (location = 2) out vec4 gNormal;
+layout (location = 3) out vec3 gEffects;
+layout (location = 4) out vec3 gViewPosition;
 
+in vec3 mWorldPosition;
 in vec3 mViewPosition;
 in vec2 mTextureCoordinates;
 in vec3 mNormal;
 in vec4 mFragPosition;
 in vec4 mPrevFragPosition;
 
-uniform vec3 uAlbedoColor;
 uniform sampler2D uAlbedoTexture1;
 uniform sampler2D uAlbedoTexture2;
 uniform sampler2D uAlbedoTexture3;
 uniform sampler2D uAlbedoTexture4;
+uniform vec4 uAlbedoRatios;
 
 uniform sampler2D uNormalTexture;
 uniform sampler2D uRoughnessTexture;
@@ -75,20 +82,32 @@ void main()
 	vec2 fragPos = (mFragPosition.xy / mFragPosition.w) * 0.5f + 0.5f;
 	vec2 prevFragPos = (mPrevFragPosition.xy / mPrevFragPosition.w) * 0.5f + 0.5f;
 	
-	vPosition = vec4(mViewPosition, LinearizeDepth(gl_FragCoord.z)); // Set position with adjusted depth
+	gPosition = vec4(mWorldPosition, LinearizeDepth(gl_FragCoord.z)); // Set position with adjusted depth
+	gViewPosition = mViewPosition;
 	
-	vAlbedo.rgb = vec3(texture(uAlbedoTexture1, mTextureCoordinates)); // Sample and assign albedo rgb colors
-	//vAlbedo.rgb += vec3(texture(uAlbedoTexture2, mTextureCoordinates));
-	//vAlbedo.rgb += vec3(texture(uAlbedoTexture3, mTextureCoordinates)); 
-	//vAlbedo.rgb += vec3(texture(uAlbedoTexture4, mTextureCoordinates)); 
+	gAlbedo.rgb = vec3(texture(uAlbedoTexture1, mTextureCoordinates)) * uAlbedoRatios.x; // Sample and assign albedo rgb colors
+	if(uAlbedoRatios.y > 0.0f)
+	{
+		gAlbedo.rgb += vec3(texture(uAlbedoTexture2, mTextureCoordinates)) * uAlbedoRatios.y;
+	}
 	
-	vAlbedo.a = vec3(texture(uRoughnessTexture, mTextureCoordinates)).r; // Sample and assign roughness value
+	if(uAlbedoRatios.z > 0.0f)
+	{
+		gAlbedo.rgb += vec3(texture(uAlbedoTexture3, mTextureCoordinates)) * uAlbedoRatios.z; 
+	}
 	
-	vNormal.rgb = ComputeTextureNormal(mNormal, normal); // Assign normal
-	vNormal.a = vec3(texture(uMetalnessTexture, mTextureCoordinates)).r; // Sample and assign metalness value
+	if(uAlbedoRatios.w > 0.0f)
+	{
+		gAlbedo.rgb += vec3(texture(uAlbedoTexture4, mTextureCoordinates)) * uAlbedoRatios.w; 
+	}
+
+	gAlbedo.a = vec3(texture(uRoughnessTexture, mTextureCoordinates)).r; // Sample and assign roughness value
 	
-	vEffects.r = vec3(texture(uAmbientOcculsionTexture, mTextureCoordinates)).r;
-	vEffects.gb = fragPos - prevFragPos;
+	gNormal.rgb = ComputeTextureNormal(mNormal, normal); // Assign normal
+	gNormal.a = vec3(texture(uMetalnessTexture, mTextureCoordinates)).r; // Sample and assign metalness value
+	
+	gEffects.r = vec3(texture(uAmbientOcculsionTexture, mTextureCoordinates)).r;
+	gEffects.gb = fragPos - prevFragPos;
 }
 
 float LinearizeDepth(float depth)
@@ -101,7 +120,7 @@ vec3 ComputeTextureNormal(vec3 viewNormal, vec3 textureNormal)
 {
 	// Get partial derivatives 
     vec3 dPosX = dFdx(mViewPosition);
-    vec3 dPosY  = dFdy(mViewPosition);
+    vec3 dPosY = dFdy(mViewPosition);
     vec2 dTexX = dFdx(mTextureCoordinates);
     vec2 dTexY = dFdy(mTextureCoordinates);
 

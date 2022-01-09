@@ -25,19 +25,37 @@ enum class TextureType
 	CUBE_MAP
 };
 
-class Texture
+class ITexture
+{
+public:
+	virtual ~ITexture() = default;
+
+	virtual GLuint GetID() const = 0;
+	virtual void Bind() const = 0;
+	virtual void BindToSlot(uint32_t slot = 0) const = 0;
+	virtual void Unbind() const = 0;
+
+	virtual int GetWidth() const = 0;
+	virtual int GetHeight() const = 0;
+
+	virtual TextureType GetType() const = 0;
+};
+class Texture : public ITexture
 {
 public:
 	Texture(const std::string& path, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps = true, bool flip = true, bool hdr = false); // 2D constructor
-	Texture(TextureFilterType filter, TextureWrapType wrap, bool genMipMaps = true); // Empty 2D constructor
+	Texture(GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps = true); // Empty 2D constructor
 	virtual ~Texture();
 
-	void Bind() const;
-	void BindToSlot(uint32_t slot = 0) const;
-	void Unbind() const; 
+	virtual GLuint GetID() const override { return ID; }
+	virtual void Bind() const override;
+	virtual void BindToSlot(uint32_t slot = 0) const override;
+	virtual void Unbind() const override;
 
-	inline int GetWidth() const { return width; }
-	inline int GetHeight() const { return height; }
+	virtual int GetWidth() const override { return width; }
+	virtual int GetHeight() const override { return height; }
+
+	virtual TextureType GetType() const { return TextureType::TEXTURE_2D; }
 
 private:
 	void SetupHDR(float* data, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps);
@@ -49,21 +67,24 @@ private:
 	GLenum internalFormat, format;
 };
 
-class CubeMap
+class CubeMap : public ITexture
 {
 public:
 	CubeMap(const std::vector<std::string>& paths, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps = true, bool flip = true);
 	CubeMap(int width, GLenum minFilter, GLenum format, GLenum internalFormat, GLenum type = GL_UNSIGNED_BYTE);
 	virtual ~CubeMap();
 
-	void Bind() const;
-	void BindToSlot(uint32_t slot = 0) const;
-	void Unbind() const;
+	virtual GLuint GetID() const override { return ID; }
+	virtual void Bind() const override;
+	virtual void BindToSlot(uint32_t slot = 0) const override;
+	virtual void Unbind() const override;
 
 	void ComputeMipmap() const;
 
-	inline int GetWidth() const { return width; }
-	inline int GetHeight() const { return height; }
+	virtual int GetWidth() const override { return width; }
+	virtual int GetHeight() const override { return height; }
+
+	virtual TextureType GetType() const { return TextureType::CUBE_MAP; }
 
 private:
 	void SetupCubeMap(unsigned char* data, int index, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps, GLenum type = GL_UNSIGNED_BYTE);

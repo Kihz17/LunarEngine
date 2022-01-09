@@ -7,7 +7,9 @@ enum class MoveDirection
 	Forward,
 	Right,
 	Left,
-	Back
+	Back,
+	Up,
+	Down
 };
 
 class Camera
@@ -24,9 +26,12 @@ public:
 	glm::vec3 position;
 	glm::vec3 front;
 	glm::vec3 up;
+	glm::vec3 worldUp;
 	glm::vec3 right;
 	float yaw, pitch, speed, sensitivity, fov;
 
+	bool first;
+	float lastX, lastY;
 private:
 	void UpdateCamera();
 };

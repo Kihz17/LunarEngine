@@ -44,7 +44,7 @@ int main()
         return -1;
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
@@ -58,17 +58,17 @@ int main()
     glfwWindowHint(GLFW_BLUE_BITS, glfwMode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, glfwMode->refreshRate);
 
-    //WIDTH = glfwMode->width;
-    //HEIGHT = glfwMode->height;
+    WIDTH = glfwMode->width;
+    HEIGHT = glfwMode->height;
 
     // Create window
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Engine", /*glfwMonitor*/ nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Engine", glfwMonitor, nullptr);
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glfwSwapInterval(1);
 
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    glDepthFunc(GL_LEQUAL);  // Set depth function to less than AND equal for skybox depth trick.
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
     // Assign callbacks
@@ -90,27 +90,28 @@ int main()
     Texture* metalnessTexture = new Texture("assets/textures/pbr/rustediron/rustediron_metalness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture* aoTexture = new Texture("assets/textures/pbr/rustediron/rustediron_ao.png", TextureFilterType::Linear, TextureWrapType::Repeat);
 
-    Texture* envMapHDR = new Texture("assets/textures/hdr/appart.hdr", TextureFilterType::Linear, TextureWrapType::Repeat, true, true, true);
-    CubeMap* envMapCube = new CubeMap(512, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT);
-    CubeMap* envMapIrradiance = new CubeMap(32, GL_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT);
-    CubeMap* envMapPreFilter = new CubeMap(128, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT);
-    envMapPreFilter->ComputeMipmap();
-    CubeMap* envMapLUT = new CubeMap(512, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT);
-
     // Load models
     Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
 
-    // TODO: Some default lights, models & textures
+    Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
+
+    // Setup some lights
+    Light* l1 = new Light();
+    l1->UpdatePosition(glm::vec3(0.0f, 5.0f, 0.0f));
+    l1->UpdateDirection(glm::vec3(0.2f, -0.8f, 0.0f));
+    l1->UpdateAttenuationMode(AttenuationMode::UE4);
 
     SubmittedGeometry testGeo;
     testGeo.handle = "test";
     testGeo.mesh = shaderBall;
-    testGeo.albedoTextures.push_back(albedoTexture);
+    testGeo.albedoTextures.push_back({ albedoTexture, 1.0f });
     testGeo.normalTexture = normalTexture;
     testGeo.roughnessTexture = roughnessTexture;
     testGeo.metalTexture = metalnessTexture;
     testGeo.aoTexture = aoTexture;
     testGeo.transform = glm::mat4(1.0f);
+
+    //Renderer::SetViewType(1);
 
     float lastFrameTime = glfwGetTime();
     float deltaTime = 0.0f;
@@ -127,17 +128,25 @@ int main()
         {
             camera.Move(MoveDirection::Forward, deltaTime);
         }
-        else if (Input::IsKeyPressed(Key::KeyCode::A))
+        if (Input::IsKeyPressed(Key::KeyCode::A))
         {
             camera.Move(MoveDirection::Left, deltaTime);
         }
-        else if (Input::IsKeyPressed(Key::KeyCode::S))
+        if (Input::IsKeyPressed(Key::KeyCode::S))
         {
             camera.Move(MoveDirection::Back, deltaTime);
         }
-        else if (Input::IsKeyPressed(Key::KeyCode::D))
+        if (Input::IsKeyPressed(Key::KeyCode::D))
         {
             camera.Move(MoveDirection::Right, deltaTime);
+        }
+        if (Input::IsKeyPressed(Key::KeyCode::Space))
+        {
+            camera.Move(MoveDirection::Up, deltaTime);
+        }
+        if (Input::IsKeyPressed(Key::KeyCode::LeftShift))
+        {
+            camera.Move(MoveDirection::Down, deltaTime);
         }
 
         Renderer::SubmitMesh(testGeo);
@@ -155,24 +164,10 @@ int main()
 }
 
 // TODO List
-// 1. Create G-Buffer Shader
-// 2. Image based lighting (FBOs & shaders)
-// 3. glQueryCounter for performance monitoring
-// 4. Allow for forward rendering with our new deffered rendering https://learnopengl.com/Advanced-Lighting/Deferred-Shading
+// 1. Fix IBL
+// 2. Allow for forward rendering with our new deffered rendering https://learnopengl.com/Advanced-Lighting/Deferred-Shading
 
 // LATER
 // SSAO? Raytracing? Raymarching?
 // Post processing
 // Instanced rendering w/ deffered & forward?
-
-// Renderer TODO:
-// Add vector of geometry that we can "Submit" to
-// When calling "RenderFrame()" do the following in this order:
-// 1. Bind G-Buffer
-// 2. Bind G-Buffer Shader
-// 3. Iterate through all submitted meshes and "Draw" them (bind VAO and glDrawTriangles)
-// 4. Unbind framebuffer
-// 5. Bind lighting shader
-// 6. Bind the textures generated from the G-Buffer
-// 7. Update lighting uniforms
-// 8. Render Quad across screen

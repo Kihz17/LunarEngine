@@ -65,9 +65,36 @@ Texture::Texture(const std::string& path, TextureFilterType filter, TextureWrapT
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-Texture::Texture(TextureFilterType filter, TextureWrapType wrap, bool genMipMaps)
+Texture::Texture(GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps)
 {
+	glGenTextures(1, &ID);
+	glBindTexture(GL_TEXTURE_2D, ID);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, dataFormat, nullptr);
 
+	if (filter == TextureFilterType::Linear)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else if (filter == TextureFilterType::Nearest)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+
+	if (wrap == TextureWrapType::ClampToEdge)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	}
+	else if (wrap == TextureWrapType::Repeat)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+
+	if (genMipMaps)
+		glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 Texture::~Texture()
@@ -82,8 +109,8 @@ void Texture::Bind() const
 
 void Texture::BindToSlot(uint32_t slot) const
 {
-	Bind();
 	glActiveTexture(GL_TEXTURE0 + slot);
+	Bind();
 }
 
 void Texture::Unbind() const
@@ -283,8 +310,8 @@ void CubeMap::Bind() const
 
 void CubeMap::BindToSlot(uint32_t slot) const
 {
-	Bind();
 	glActiveTexture(GL_TEXTURE0 + slot);
+	Bind();
 }
 
 void CubeMap::Unbind() const

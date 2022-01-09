@@ -12,6 +12,21 @@ Framebuffer::Framebuffer()
 Framebuffer::~Framebuffer()
 {
 	glDeleteFramebuffers(1, &ID);
+
+	std::unordered_map<std::string, ColorBuffer>::iterator it = colorBuffers.begin();
+	while (it != colorBuffers.end()) // Destroy create textures
+	{
+		if (it->second.texture) delete it->second.texture;
+		it++;
+	}
+
+	colorBuffers.clear();
+
+	if (renderBufferID)
+	{
+		glDeleteRenderbuffers(1, &renderBufferID);
+	}
+
 	delete[] attachments;
 }
 
@@ -24,37 +39,38 @@ void Framebuffer::Unbind()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+//void Framebuffer::AddCubeBuffer(const std::string& name, int width, GLenum minFilter, GLenum format, GLenum internalFormat, GLenum type)
+//{
+//	ColorBuffer buffer;
+//	buffer.texture = new CubeMap(width, minFilter, format, internalFormat, type);
+//
+//	Bind();
+//	buffer.attachment = colorBuffers.size();
+//	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + buffer.attachment, , buffer.texture->GetID(), 0);
+//
+//	colorBuffers.insert({ name, buffer });
+//
+//	// We've added a new color buffer, we have to refresh our attachments array
+//	UpdateAttachmentArray();
+//
+//	glDrawBuffers(colorBuffers.size(), attachments); // Tell OpenGL about our new color attachments 
+//
+//	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+//	{
+//		std::cout << "Framebuffer not complete!" << std::endl;
+//	}
+//
+//	Unbind();
+//}
+
 void Framebuffer::AddColorBuffer(const std::string& name, GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, TextureFilterType filter, TextureWrapType wrap)
 {
 	ColorBuffer buffer;
-	glGenTextures(1, &buffer.ID);
-	glBindTexture(GL_TEXTURE_2D, buffer.ID);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, dataFormat, nullptr);
+	buffer.texture = new Texture(internalFormat, format, dataFormat, width, height, filter, wrap, false);
 
-	if (filter == TextureFilterType::Linear)
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else if (filter == TextureFilterType::Nearest)
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
-
-	if (wrap == TextureWrapType::ClampToEdge)
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	}
-	else if (wrap == TextureWrapType::Repeat)
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	}
-
+	Bind();
 	buffer.attachment = colorBuffers.size();
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + buffer.attachment, GL_TEXTURE_2D, buffer.ID, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + buffer.attachment, GL_TEXTURE_2D, buffer.texture->GetID(), 0);
 
 	colorBuffers.insert({ name, buffer });
 
@@ -62,14 +78,24 @@ void Framebuffer::AddColorBuffer(const std::string& name, GLenum internalFormat,
 	UpdateAttachmentArray();
 
 	glDrawBuffers(colorBuffers.size(), attachments); // Tell OpenGL about our new color attachments 
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "Framebuffer not complete!" << std::endl;
+	}	
+
+	Unbind();
 }
 
-void Framebuffer::SetRenderBuffer(int width, int height, GLenum internalFormat, GLenum attachmentType)
+void Framebuffer::SetRenderBuffer(int width, int height, GLenum internalFormat, GLenum attachmentType, bool attach)
 {
+	Bind();
 	glGenRenderbuffers(1, &renderBufferID);
 	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
 	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentType, GL_RENDERBUFFER, renderBufferID);
+	if(attach)
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentType, GL_RENDERBUFFER, renderBufferID);
+	Unbind();
 }
 
 void Framebuffer::UpdateAttachmentArray()
@@ -107,6 +133,17 @@ void Framebuffer::UpdateAttachmentArray()
 	}
 }
 
+void Framebuffer::UpdateRenderBufferStorage(int width, int height, GLenum internalFormat) const
+{
+	BindRenderBuffer();
+	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
+}
+
+void Framebuffer::BindRenderBuffer() const
+{
+	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
+}
+
 void Framebuffer::BindColorBuffer(const std::string& name, uint32_t slot)
 {
 	if (colorBuffers.count(name) <= 0)
@@ -115,8 +152,17 @@ void Framebuffer::BindColorBuffer(const std::string& name, uint32_t slot)
 		return;
 	}
 		
-
 	const ColorBuffer& buffer = colorBuffers.at(name);
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(GL_TEXTURE_2D, buffer.ID);
+	buffer.texture->BindToSlot(slot);
+}
+
+const ITexture* Framebuffer::GetColorBufferTexture(const std::string& name) const
+{
+	if (colorBuffers.count(name) <= 0)
+	{
+		std::cout << "Could not find color buffer with name '" << name << "'!" << std::endl;
+		return nullptr;
+	}
+
+	return colorBuffers.at(name).texture;
 }

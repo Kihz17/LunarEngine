@@ -8,15 +8,16 @@
 int Light::currentLightIndex = 0;
 std::vector<int> Light::removedLights;
 
-Light::Light(const glm::vec3& postion, const glm::vec3& direction, const glm::vec4& color, LightType lightType, float radius, int attenMode)
+Light::Light(const glm::vec3& postion, const glm::vec3& direction, const glm::vec4& color, LightType lightType, float radius, AttenuationMode attenMode, bool on)
 	: position(position),
 	direction(direction),
 	color(color),
 	lightType(lightType),
 	radius(radius),
-	attenuationMode(attenMode)
+	attenuationMode(attenMode),
+	on(on)
 {
-	if (lightIndex >= 1000 && removedLights.empty())
+	if (Light::currentLightIndex >= 1000 && removedLights.empty())
 	{
 		std::cout << "Cannot create more than 1000 lights!" << std::endl;
 		return;
@@ -29,7 +30,7 @@ Light::Light(const glm::vec3& postion, const glm::vec3& direction, const glm::ve
 	}
 	else
 	{
-		this->lightIndex = Light::lightIndex++;
+		this->lightIndex = Light::currentLightIndex++;
 	}
 
 	// Initialize uniforms
@@ -46,7 +47,7 @@ Light::Light(const glm::vec3& postion, const glm::vec3& direction, const glm::ve
 	SendToShader();
 
 	shader->Bind();
-	shader->SetInt("uLightAmount", Light::currentLightIndex);
+	shader->SetInt("uLightAmount", Light::currentLightIndex + 1);
 }
 
 Light::~Light()
@@ -100,12 +101,12 @@ void Light::UpdateOn(bool on)
 	shader->Unbind();
 }
 
-void Light::UpdateAttenuationMode(int attenMode)
+void Light::UpdateAttenuationMode(AttenuationMode attenMode)
 {
 	const Shader* shader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
 	shader->Bind();
 	this->attenuationMode = attenMode;
-	shader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius, (GLfloat)on, (GLfloat)attenuationMode));
+	shader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius, (GLfloat)on, (GLfloat) attenuationMode));
 	shader->Unbind();
 }
 
