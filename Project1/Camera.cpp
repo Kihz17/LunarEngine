@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Input.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -41,7 +42,7 @@ void Camera::UpdateCamera()
 
 void Camera::Move(MoveDirection direction, float deltaTime)
 {
-	float scalar = speed * deltaTime;
+	float scalar = speed * (Input::IsKeyPressed(Key::LeftControl) ? 2.0f : 1.0f) * deltaTime;
 
 	if (direction == MoveDirection::Forward)
 	{

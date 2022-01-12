@@ -56,9 +56,9 @@ public:
 	inline std::vector<Submesh>& GetSubmeshes() { return this->submeshes; }
 	inline const std::vector<Submesh>& GetSubmeshes() const { return this->submeshes; }
 
-	inline Ref<VertexArrayObject> GetVertexArray() { return this->vertexArray; }
-	inline Ref<VertexBuffer> GetVertexBuffer() { return this->vertexBuffer; }
-	inline Ref<IndexBuffer> GetIndexBuffer() { return this->indexBuffer; }
+	inline VertexArrayObject* GetVertexArray() { return this->vertexArray; }
+	inline VertexBuffer* GetVertexBuffer() { return this->vertexBuffer; }
+	inline IndexBuffer* GetIndexBuffer() { return this->indexBuffer; }
 
 	const BufferLayout& GetVertexBufferLayout() const { return this->vertexBuffer->GetLayout(); }
 
@@ -78,9 +78,9 @@ private:
 	std::vector<Submesh> submeshes;
 	glm::mat4 inverseTransform;
 
-	Ref<VertexArrayObject> vertexArray;
-	Ref<VertexBuffer> vertexBuffer;
-	Ref<IndexBuffer> indexBuffer;
+	VertexArrayObject* vertexArray;
+	VertexBuffer* vertexBuffer;
+	IndexBuffer* indexBuffer;
 
 	std::vector<Vertex> vertices;
 	std::vector<Face> faces;

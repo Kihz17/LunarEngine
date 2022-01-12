@@ -23,9 +23,13 @@ public:
 	void Draw();
 
 	ShapeType GetShapeType() const { return type; }
+
+	VertexArrayObject* GetVertexArray() const { return vertexArray; }
+	int GetIndexCount() const { return type == ShapeType::Cube ? 36 : type == ShapeType::Plane ? 6 : type == ShapeType::Quad ? 4 : 0; }
+
 private:
 	ShapeType type;
 
-	Ref<VertexArrayObject> vertexArray;
-	Ref<VertexBuffer> vertexBuffer;
+	VertexArrayObject* vertexArray;
+	VertexBuffer* vertexBuffer;
 };

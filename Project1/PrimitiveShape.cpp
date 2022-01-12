@@ -67,11 +67,11 @@ float quadVertices[] = {
 
 PrimitiveShape::PrimitiveShape(ShapeType shapeType)
 	: type(shapeType),
-	vertexArray(CreateRef<VertexArrayObject>())
+	vertexArray(new VertexArrayObject())
 {
 	if (type == ShapeType::Cube)
 	{
-        this->vertexBuffer = CreateRef<VertexBuffer>(cubeVertices, sizeof(cubeVertices));
+        this->vertexBuffer = new VertexBuffer(cubeVertices, sizeof(cubeVertices));  CreateRef<VertexBuffer>(cubeVertices, sizeof(cubeVertices));
 
         BufferLayout bufferLayout = {
           { ShaderDataType::Float3, "vPosition" },
@@ -83,7 +83,7 @@ PrimitiveShape::PrimitiveShape(ShapeType shapeType)
 	}
 	else if (type == ShapeType::Plane)
 	{
-        this->vertexBuffer = CreateRef<VertexBuffer>(planeVertices, sizeof(planeVertices));
+        this->vertexBuffer = new VertexBuffer(planeVertices, sizeof(planeVertices));
 
         BufferLayout bufferLayout = {
           { ShaderDataType::Float3, "vPosition" },
@@ -95,7 +95,7 @@ PrimitiveShape::PrimitiveShape(ShapeType shapeType)
 	}
 	else if (type == ShapeType::Quad)
 	{
-        this->vertexBuffer = CreateRef<VertexBuffer>(quadVertices, sizeof(quadVertices));
+        this->vertexBuffer = new VertexBuffer(quadVertices, sizeof(quadVertices));
 
         BufferLayout bufferLayout = {
          { ShaderDataType::Float3, "vPosition" },
@@ -115,7 +115,8 @@ PrimitiveShape::PrimitiveShape(ShapeType shapeType)
 
 PrimitiveShape::~PrimitiveShape()
 {
-
+    delete vertexArray;
+    delete vertexBuffer;
 }
 
 void PrimitiveShape::Draw()

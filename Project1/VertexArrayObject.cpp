@@ -22,7 +22,7 @@ void VertexArrayObject::Unbind() const
 	glBindVertexArray(0);
 }
 
-void VertexArrayObject::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
+void VertexArrayObject::AddVertexBuffer(VertexBuffer* vertexBuffer)
 {
 	if (vertexBuffer->GetLayout().GetElements().empty())
 	{
@@ -85,7 +85,7 @@ void VertexArrayObject::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	this->vertexBuffers.push_back(vertexBuffer);
 }
 
-void VertexArrayObject::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
+void VertexArrayObject::SetIndexBuffer(IndexBuffer* indexBuffer)
 {
 	Bind();
 	indexBuffer->Bind();

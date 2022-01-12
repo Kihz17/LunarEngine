@@ -162,7 +162,6 @@
     <ClCompile Include="ShaderLibrary.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="vendor\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="vendor\imgui\imgui.cpp" />
     <ClCompile Include="vendor\imgui\imgui_demo.cpp" />
@@ -191,7 +190,6 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderLibrary.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="vendor\imgui\imgui_stdlib.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="vendor\imgui\imconfig.h" />
     <ClInclude Include="vendor\imgui\imgui.h" />

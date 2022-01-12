@@ -11,7 +11,8 @@
 struct SubmittedGeometry
 {
 	std::string handle;
-	Mesh* mesh;
+	VertexArrayObject* vao;
+	uint32_t indexCount = 0;
 	glm::mat4 transform;
 
 	std::vector<std::pair<Texture*, float>> albedoTextures;
@@ -19,6 +20,20 @@ struct SubmittedGeometry
 	Texture* roughnessTexture;
 	Texture* metalTexture;
 	Texture* aoTexture;
+};
+
+struct ForwardGeometry
+{
+	std::string handle;
+	VertexArrayObject* vao;
+	uint32_t indexCount = 0;
+	glm::mat4 transform;
+
+	std::vector<std::pair<Texture*, float>> diffuseTextures;
+	float alphaTransparency = 1.0f;
+
+	bool isColorOverride = false;
+	glm::vec3 colorOverride;
 };
 
 struct WindowSpecs
@@ -37,8 +52,7 @@ public:
 	static void SetEnvironmentMapEquirectangular(const std::string& path);
 
 	static void SubmitMesh(const SubmittedGeometry& geometry);
-	static void SubmitMesh(const std::string& handle, Mesh* mesh, const glm::mat4& transform, std::vector<std::pair<Texture*, float>> albedoTextures = std::vector<std::pair<Texture*, float>>(),
-		Texture* normalTexture = nullptr, Texture* roughnessTexture = nullptr, Texture* metalTexture = nullptr, Texture* aoTexture = nullptr);
+	static void SubmitForwardMesh(const ForwardGeometry& geometry);
 
 	static void DrawFrame(float deltaTime);
 
@@ -52,6 +66,7 @@ public:
 	static const std::string PREFILTER_SHADER_KEY;
 	static const std::string ENV_LUT_SHADER_KEY;
 	static const std::string CUBE_MAP_DRAW_SHADER_KEY;
+	static const std::string FORWARD_SHADER_KEY;
 
 private:
 	static WindowSpecs* windowDetails;
@@ -72,7 +87,7 @@ private:
 	static std::vector<SubmittedGeometry> defferedGeometry;
 	static std::unordered_map<std::string, glm::mat4> prevProjViewModels;
 
-	static std::vector<SubmittedGeometry> forwardGeometry;
+	static std::vector<ForwardGeometry> forwardGeometry;
 
 	static glm::mat4 projection;
 	static glm::mat4 view;

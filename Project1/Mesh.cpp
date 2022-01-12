@@ -233,19 +233,19 @@ Mesh::Mesh(const std::string& filePath)
 		{ ShaderDataType::Float3, "vTangent" }
 	};
 
-	this->vertexArray = CreateRef<VertexArrayObject>();
+	this->vertexArray = new VertexArrayObject(); 
 
 	uint32_t vertexBufferSize = (uint32_t)(this->vertices.size() * sizeof(Vertex));
 	float* vertexBuffer = ConvertVerticesToArray(this->vertices);
 
-	this->vertexBuffer = CreateRef<VertexBuffer>(vertexBuffer, vertexBufferSize);
+	this->vertexBuffer = new VertexBuffer(vertexBuffer, vertexBufferSize);
 	this->vertexBuffer->SetLayout(bufferLayout);
 
 	uint32_t indexBufferSize = (uint32_t)(this->faces.size() * sizeof(Face));
 	uint32_t* indexBuffer = ConvertIndicesToArray(this->faces);
 
 	this->vertexArray->Bind();
-	this->indexBuffer = CreateRef<IndexBuffer>(indexBuffer, indexBufferSize);
+	this->indexBuffer = new IndexBuffer(indexBuffer, indexBufferSize);
 
 	this->vertexArray->AddVertexBuffer(this->vertexBuffer);
 	this->vertexArray->SetIndexBuffer(this->indexBuffer);
@@ -272,7 +272,9 @@ Mesh::Mesh(const Ref<Mesh> mesh)
 
 Mesh::~Mesh()
 {
-
+	delete vertexArray;
+	delete vertexBuffer;
+	delete indexBuffer;
 }
 
 void Mesh::LoadNodes(aiNode* node, const glm::mat4& parentTransform)

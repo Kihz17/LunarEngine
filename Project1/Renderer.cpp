@@ -22,7 +22,7 @@ CubeMap* Renderer::envMapPreFilter = nullptr;
 std::vector<SubmittedGeometry> Renderer::defferedGeometry;
 std::unordered_map<std::string, glm::mat4> Renderer::prevProjViewModels;
 
-std::vector<SubmittedGeometry> Renderer::forwardGeometry;
+std::vector<ForwardGeometry> Renderer::forwardGeometry;
 
 glm::mat4 Renderer::projection(1.0f);
 glm::mat4 Renderer::view(1.0f);
@@ -35,6 +35,7 @@ const std::string Renderer::IRRADIANCE_SHADER_KEY = "cubeToIrradianceShader";
 const std::string Renderer::PREFILTER_SHADER_KEY = "cubeToPrefilterShader";
 const std::string Renderer::ENV_LUT_SHADER_KEY = "envLUTShader";
 const std::string Renderer::CUBE_MAP_DRAW_SHADER_KEY = "cubeMapDrawShader";
+const std::string Renderer::FORWARD_SHADER_KEY = "forwardShader";
 
 PrimitiveShape* Renderer::quad = nullptr;
 PrimitiveShape* Renderer::cube = nullptr;
@@ -179,6 +180,20 @@ void Renderer::Initialize(WindowSpecs* window)
 	cubeMapDrawShader->Unbind();
 	ShaderLibrary::Add(CUBE_MAP_DRAW_SHADER_KEY, cubeMapDrawShader);
 
+	// Forward rendering shader
+	Shader* forwardShader = new Shader("assets/shaders/forward.glsl");
+	forwardShader->InitializeUniform("uMatModel");
+	forwardShader->InitializeUniform("uMatView");
+	forwardShader->InitializeUniform("uMatProjection");
+	forwardShader->InitializeUniform("uMatModelInverseTranspose");
+	forwardShader->InitializeUniform("uColorOverride");
+	forwardShader->InitializeUniform("uDiffuse1");
+	forwardShader->InitializeUniform("uDiffuse2");
+	forwardShader->InitializeUniform("uDiffuse3");
+	forwardShader->InitializeUniform("uDiffuse4");
+	forwardShader->InitializeUniform("uDiffuseRatios");
+	forwardShader->InitializeUniform("uAlphaTransparency");
+	ShaderLibrary::Add(FORWARD_SHADER_KEY, forwardShader);
 	//------------------------
 	// SETUP FBOS
 	//------------------------
@@ -231,19 +246,9 @@ void Renderer::SubmitMesh(const SubmittedGeometry& geometry)
 	defferedGeometry.push_back(geometry);
 }
 
-void Renderer::SubmitMesh(const std::string& handle, Mesh* mesh, const glm::mat4& transform, std::vector<std::pair<Texture*, float>> albedoTextures, Texture* normalTexture, Texture* roughnessTexture, Texture* metalTexture, Texture* aoTexture)
+void Renderer::SubmitForwardMesh(const ForwardGeometry& geometry)
 {
-	SubmittedGeometry geometry;
-	geometry.handle = handle;
-	geometry.mesh = mesh;
-	geometry.transform = transform;
-	geometry.albedoTextures = albedoTextures;
-	geometry.normalTexture = normalTexture;
-	geometry.roughnessTexture = roughnessTexture;
-	geometry.metalTexture = metalTexture;
-	geometry.aoTexture = aoTexture;
-
-	defferedGeometry.push_back(geometry);
+	forwardGeometry.push_back(geometry);
 }
 
 void Renderer::BeginFrame(const Camera& camera)
@@ -251,15 +256,9 @@ void Renderer::BeginFrame(const Camera& camera)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	const Shader* gShader = ShaderLibrary::Get(G_SHADER_KEY);
-	gShader->Bind();
-
 	projection = glm::perspective(camera.fov, (float)windowDetails->width / (float)windowDetails->height, 0.1f, 1000.0f);
 	view = camera.GetViewMatrix();
 	cameraPos = camera.position;
-
-	gShader->SetMat4("uMatProjection", projection);
-	gShader->SetMat4("uMatView", view);
 }
 
 void Renderer::EndFrame()
@@ -283,6 +282,9 @@ void Renderer::DrawFrame(float deltaTime)
 
 	const Shader* gShader = ShaderLibrary::Get(G_SHADER_KEY);
 	gShader->Bind();
+
+	gShader->SetMat4("uMatProjection", projection);
+	gShader->SetMat4("uMatView", view);
 
 	for (SubmittedGeometry& geometry : defferedGeometry)
 	{
@@ -323,9 +325,9 @@ void Renderer::DrawFrame(float deltaTime)
 		geometry.aoTexture->BindToSlot(7);
 		gShader->SetInt("uAmbientOcculsionTexture", 7);
 
-		geometry.mesh->GetVertexArray()->Bind();
-		glDrawElements(GL_TRIANGLES, geometry.mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-		geometry.mesh->GetVertexArray()->Unbind();
+		geometry.vao->Bind();
+		glDrawElements(GL_TRIANGLES, geometry.indexCount, GL_UNSIGNED_INT, 0);
+		geometry.vao->Unbind();
 	}
 
 	gShader->Unbind();
@@ -347,8 +349,7 @@ void Renderer::DrawFrame(float deltaTime)
 	//------------------------
 	// LIGHTING RENDER PASS
 	//------------------------
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glDisable(GL_DEPTH_TEST); // Disable depth testing so that the quad doesnt get discarded
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Disable depth buffer so that the quad doesnt get discarded
 	const Shader* lShader = ShaderLibrary::Get(LIGHTING_SHADER_KEY);
 	lShader->Bind();
 
@@ -381,6 +382,59 @@ void Renderer::DrawFrame(float deltaTime)
 
 	quad->Draw();
 	lShader->Unbind();
+
+	//------------------------
+	// FORWARD RENDER PASS
+	//------------------------
+	geometryBuffer->BindRead(); // Bind for read only
+	geometryBuffer->UnbindWrite();
+
+	// Copy depth information from the geometry buffer -> default framebuffer
+	glBlitFramebuffer(0, 0, windowDetails->width, windowDetails->height, 0, 0, windowDetails->width, windowDetails->height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	geometryBuffer->Unbind();
+
+	const Shader* forwardShader = ShaderLibrary::Get(FORWARD_SHADER_KEY);
+	forwardShader->Bind();
+
+	// Pass camera related data
+	forwardShader->SetMat4("uMatView", view);
+	forwardShader->SetMat4("uMatProjection", projection);
+
+	// Draw geometry
+	for (ForwardGeometry& geometry : forwardGeometry)
+	{
+		forwardShader->SetMat4("uMatModel", geometry.transform);
+		forwardShader->SetMat4("uMatModelInverseTranspose", glm::inverse(geometry.transform));
+
+		if (geometry.isColorOverride)
+		{
+			forwardShader->SetFloat4("uColorOverride", glm::vec4(geometry.colorOverride.x, geometry.colorOverride.y, geometry.colorOverride.z, 1.0f));
+		}
+		else // Bind diffuse textures
+		{
+			float ratios[4];
+			for (int i = 0; i < 4; i++)
+			{
+				if (i < geometry.diffuseTextures.size())
+				{
+					geometry.diffuseTextures[i].first->BindToSlot(i);
+					forwardShader->SetInt(std::string("uDiffuseTexture" + std::to_string(i + 1)), i);
+					ratios[i] = geometry.diffuseTextures[i].second;
+				}
+				else
+				{
+					ratios[i] = 0.0f;
+				}
+			}
+			forwardShader->SetFloat4("uDiffuseRatios", glm::vec4(ratios[0], ratios[1], ratios[2], ratios[3]));
+		}
+		
+		forwardShader->SetFloat("uAlphaTransparency", geometry.alphaTransparency);
+
+		geometry.vao->Bind();
+		glDrawElements(GL_TRIANGLES, geometry.indexCount, GL_UNSIGNED_INT, 0);
+		geometry.vao->Unbind();
+	}
 }
 
 void Renderer::SetEnvironmentMapEquirectangular(const std::string& path)

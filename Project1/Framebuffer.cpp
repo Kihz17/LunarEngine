@@ -30,13 +30,34 @@ Framebuffer::~Framebuffer()
 	delete[] attachments;
 }
 
-void Framebuffer::Bind()
+void Framebuffer::Bind() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, ID);
 }
-void Framebuffer::Unbind()
+
+void Framebuffer::BindRead() const
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, ID);
+}
+
+void Framebuffer::BindWrite() const
+{
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ID);
+}
+
+void Framebuffer::Unbind() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Framebuffer::UnbindRead() const
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+}
+
+void Framebuffer::UnbindWrite() const
+{
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 //void Framebuffer::AddCubeBuffer(const std::string& name, int width, GLenum minFilter, GLenum format, GLenum internalFormat, GLenum type)
