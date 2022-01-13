@@ -54,6 +54,7 @@ uniform sampler2D gAlbedo;
 uniform sampler2D gNormal;
 uniform sampler2D gEffects;
 uniform sampler2D gViewPosition;
+uniform vec4 gMaterialOverrides;
 
 // Lighitng
 uniform int uLightAmount;
@@ -80,6 +81,7 @@ vec3 ComputeFresnelSchlick(float cosTheta, vec3 surfaceReflection); // Computes 
 vec3 ComputeFresnelSchlickRoughness(float cosTheta, vec3 surfaceReflection, float roughness); // Computes reflection and refraction ratio using a simplified Fresnel equation taking roughness into consideration (Schlick's equation)
 float ComputeDistibutionGGX(vec3 normal, vec3 halfwayDir, float roughness); // Computes normal distribution using GGX/Trowbridge-Reitz. Used for approximating surface area of microfacets (a piece of surface being rendered) aligned to the halfway vector
 float ComputeGeometrySmith(float lightDot, float cosTheta, float roughness); // Computes surface area where micro-surface details obstruct another part of the surface causing the light ray to be occluded https://gyazo.com/ef9b603e6f1ccfc2f092563d9ca469df
+float ComputeGeometrySchlickGGX(float NdotV, float roughness);
 
 void main()
 {
@@ -112,13 +114,7 @@ void main()
 		float cosTheta = max(dot(N, I), 0.0001f); // Get how much force is applied in the direction of normal in relation to the view direction
 		
 		vec3 surfaceReflection = mix(uReflectivity, albedo, metalness); // Get the surface reflection at zero incidence (how much the surface reflects when looking directly at the surface)
-		vec3 F = ComputeFresnelSchlick(cosTheta, surfaceReflection); // Approximate ratio between specular and diffuse reflection
-		
-		// Energy conservation https://learnopengl.com/PBR/Theory
-		vec3 kS = F; // Represents energy of light that gets reflected
-		vec3 refractionRatio = vec3(1.0f) - kS; // Calculate ratio of refraction
-		refractionRatio *= 1.0f - metalness;
-		
+
 		for(int i = 0; i < min(uLightAmount, MAX_LIGHTS); i++)
 		{
 			LightInfo light = uLightArray[i];
@@ -141,23 +137,30 @@ void main()
 				float distribution = ComputeDistibutionGGX(N, halfwayDir, roughness);
 				float geometry = ComputeGeometrySmith(lightDot, cosTheta, roughness);
 				
-				specular = (F * distribution * geometry) / (4.0f * lightDot * cosTheta + 0.0001f); // Compute specular component
-				color += (refractionRatio * diffuse + specular) * gammaCorrectedColor * lightDot; // Compute diffuse color
+				float HdotI = Saturate(dot(halfwayDir, I));
+				vec3 lightFresnel = ComputeFresnelSchlick(HdotI, surfaceReflection); // Approximate ratio between specular and diffuse reflection
+				specular = (lightFresnel * distribution * geometry) / (4.0f * lightDot * cosTheta + 0.0001f); // Compute specular component
+				
+				// Energy conservation
+				vec3 kS = lightFresnel; // Represents energy of light that gets reflected
+				vec3 kD = vec3(1.0f) - kS;
+				kD *= 1.0f - metalness;
+				
+				color += (kD * diffuse + specular) * gammaCorrectedColor * lightDot; // Compute diffuse color
 			}
 			
 			else if(light.param1.x == 1.0f) // Point light
 			{	
-				vec3 lightDir = normalize(light.position - viewPos);
+				vec3 lightDir = normalize(light.position - worldPos);
 				vec3 halfwayDir = normalize(lightDir + I);
 
 				vec3 gammaCorrectedColor = LinearizeColor(light.color.rgb);
 				float distance = length(light.position - worldPos);
-				//float distance = length(light.position - viewPos);
 
 				float attenuation;
 				if(light.param1.w == 0.0f) // Linear atten
 				{
-					attenuation = 1.0f / distance;
+					attenuation = 1.0f / distance * 4.0f;
 				}
 				if(light.param1.w == 1.0f) // Quadratic atten
 				{
@@ -168,28 +171,36 @@ void main()
 					attenuation = pow(Saturate(1 - pow(distance / light.param1.y, 4)), 2) / (distance * distance + 1);
 				}
 
-				float lightDot = Saturate(dot(N, lightDir)); // Get how much force is applied in the direction of normal in relation to the light direction clamped in range 0 - 1
-
 				// Compute radiance
 				vec3 radiance = gammaCorrectedColor * attenuation;
 				
-				diffuse = albedo / PI;
-				
+				float lightDot = Saturate(dot(N, lightDir)); // Get how much force is applied in the direction of normal in relation to the light direction clamped in range 0 - 1
+						
 				float distribution = ComputeDistibutionGGX(N, halfwayDir, roughness);
 				float geometry = ComputeGeometrySmith(lightDot, cosTheta, roughness);
-
-				specular = (F * distribution * geometry) / (4.0f * lightDot * cosTheta + 0.0001f); // Compute specular component
-				color += (refractionRatio * diffuse + specular) * radiance * lightDot; // Compute diffuse color
+				
+				float HdotI = Saturate(dot(halfwayDir, I));
+				vec3 lightFresnel = ComputeFresnelSchlick(HdotI, surfaceReflection); // Approximate ratio between specular and diffuse reflection
+				specular = (lightFresnel * distribution * geometry) / (4.0f * lightDot * cosTheta + 0.0001f); // Compute specular component
+				
+				// Energy conservation
+				vec3 kS = lightFresnel; // Represents energy of light that gets reflected
+				vec3 kD = vec3(1.0f) - kS;
+				kD *= 1.0f - metalness;
+				
+				diffuse = albedo / PI;
+				color += (kD * diffuse + specular) * radiance * lightDot; // Compute diffuse color
 			}
 			
 			else if(light.param1.x == 2.0f) // IBL light
 			{
 				// Re-compute reflection and energy conservation while taking roughness into consideration
-				F = ComputeFresnelSchlickRoughness(cosTheta, surfaceReflection, roughness);
+				vec3 F = ComputeFresnelSchlickRoughness(cosTheta, surfaceReflection, roughness);  // Approximate ratio between specular and diffuse reflection
 				
-				kS = F;
-				refractionRatio = vec3(1.0f) - kS;
-				refractionRatio *= 1.0f - metalness;
+				// Energy conservation
+				vec3 kS = F;
+				vec3 kD = vec3(1.0f) - kS;
+				kD *= 1.0f - metalness;
 				
 				// Compute diffuse irradiance
 				vec3 diffuseIrradiance = texture(uIrradianceMap, N * mat3(uView)).rgb; // Sample from irradiance cube map
@@ -201,7 +212,7 @@ void main()
 				specularRadiance *= F * brdfSampling.x + brdfSampling.y;
 				
 				// Compute the actual ambient lighting
-				vec3 ambientIBL = (diffuseIrradiance * refractionRatio) + specularRadiance;
+				vec3 ambientIBL = (diffuseIrradiance * kD) + specularRadiance;
 				color += ambientIBL;
 			}
 		}
@@ -286,14 +297,20 @@ float ComputeDistibutionGGX(vec3 normal, vec3 halfwayDir, float roughness)
 
 float ComputeGeometrySmith(float lightDot, float cosTheta, float roughness)
 {
-	float lightDot2 = lightDot * lightDot;
-	float cosTheta2 = cosTheta * cosTheta;
-	float roughness2 = roughness * roughness + 0.0001f;
-	
-	float ggxLight = (2.0f * lightDot) / (lightDot + sqrt(lightDot2 + roughness2 * (1.0f - lightDot2)));
-	float ggxCosTheta = (2.0f * cosTheta) / (cosTheta + sqrt(cosTheta2 + roughness2 * (1.0f - cosTheta2)));
-	
-	return ggxLight * ggxCosTheta;
+	float ggx2 = ComputeGeometrySchlickGGX(cosTheta, roughness);
+	float ggx1 = ComputeGeometrySchlickGGX(lightDot, roughness);
+	return ggx1 * ggx2;
+}
+
+float ComputeGeometrySchlickGGX(float NdotV, float roughness)
+{
+	float r = (roughness + 1.0);
+    float k = (r*r) / 8.0;
+
+    float nom   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+
+    return nom / denom;
 }
 
 // RESOURCES

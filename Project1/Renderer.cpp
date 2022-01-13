@@ -19,8 +19,8 @@ CubeMap* Renderer::envMapCube = nullptr;
 CubeMap* Renderer::envMapIrradiance = nullptr;
 CubeMap* Renderer::envMapPreFilter = nullptr;
 
-std::vector<SubmittedGeometry> Renderer::defferedGeometry;
-std::unordered_map<std::string, glm::mat4> Renderer::prevProjViewModels;
+std::unordered_map<std::string, SubmittedGeometry> Renderer::defferedGeometry;
+//std::unordered_map<std::string, glm::mat4> Renderer::prevProjViewModels;
 
 std::vector<ForwardGeometry> Renderer::forwardGeometry;
 
@@ -39,6 +39,8 @@ const std::string Renderer::FORWARD_SHADER_KEY = "forwardShader";
 
 PrimitiveShape* Renderer::quad = nullptr;
 PrimitiveShape* Renderer::cube = nullptr;
+
+std::unordered_map<std::string, Light*> Renderer::lights;
 
 void Renderer::Initialize(WindowSpecs* window)
 {
@@ -68,6 +70,7 @@ void Renderer::Initialize(WindowSpecs* window)
 	gShader->InitializeUniform("uRoughnessTexture");
 	gShader->InitializeUniform("uMetalnessTexture");
 	gShader->InitializeUniform("uAmbientOcculsionTexture");
+	gShader->InitializeUniform("uMaterialOverrides");
 
 	gShader->Unbind();
 	ShaderLibrary::Add(G_SHADER_KEY, gShader);
@@ -162,7 +165,7 @@ void Renderer::Initialize(WindowSpecs* window)
 	preFilterShader->Unbind();
 	ShaderLibrary::Add(PREFILTER_SHADER_KEY, preFilterShader);
 
-	// Envireonment Lookup Table Shader
+	// Environment Lookup Table Shader
 	Shader* envLutShader = new Shader("assets/shaders/envLUT.glsl");
 	envLutShader->Bind();
 	envLutShader->Unbind();
@@ -241,16 +244,6 @@ void Renderer::SetViewType(uint32_t type)
 	shader->Unbind();
 }
 
-void Renderer::SubmitMesh(const SubmittedGeometry& geometry)
-{
-	defferedGeometry.push_back(geometry);
-}
-
-void Renderer::SubmitForwardMesh(const ForwardGeometry& geometry)
-{
-	forwardGeometry.push_back(geometry);
-}
-
 void Renderer::BeginFrame(const Camera& camera)
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -263,9 +256,8 @@ void Renderer::BeginFrame(const Camera& camera)
 
 void Renderer::EndFrame()
 {
-	defferedGeometry.clear();
 	forwardGeometry.clear();
-
+	 
 	glfwSwapBuffers(windowDetails->window);
 }
 
@@ -286,13 +278,23 @@ void Renderer::DrawFrame(float deltaTime)
 	gShader->SetMat4("uMatProjection", projection);
 	gShader->SetMat4("uMatView", view);
 
-	for (SubmittedGeometry& geometry : defferedGeometry)
+	std::unordered_map<std::string, SubmittedGeometry>::iterator defferedIt = defferedGeometry.begin();
+	while (defferedIt != defferedGeometry.end())
 	{
-		glm::mat4 projViewModel = projection * view * geometry.transform;
-		glm::mat4& prevProjViewModel = prevProjViewModels.count(geometry.handle) <= 0 ? projViewModel : prevProjViewModels.at(geometry.handle);
-		prevProjViewModels.insert({ geometry.handle, projViewModel });
+		SubmittedGeometry& geometry = defferedIt->second;
 
-		gShader->SetMat4("uMatModel", geometry.transform);
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		transform *= glm::scale(glm::mat4(1.0f), geometry.scale);
+		transform *= glm::translate(glm::mat4(1.0f), geometry.position);
+
+		glm::mat4 projViewModel = projection * view * transform;
+		glm::mat4& prevProjViewModel = geometry.hasPrevProjViewModel ? geometry.projViewModel : projViewModel;
+		geometry.projViewModel = projViewModel;
+
+		gShader->SetMat4("uMatModel", transform);
 		gShader->SetMat4("uMatProjViewModel", projViewModel);
 		gShader->SetMat4("uMatPrevProjViewModel", prevProjViewModel);
 
@@ -316,18 +318,38 @@ void Renderer::DrawFrame(float deltaTime)
 		geometry.normalTexture->BindToSlot(4);
 		gShader->SetInt("uNormalTexture", 4);
 
-		geometry.roughnessTexture->BindToSlot(5);
-		gShader->SetInt("uRoughnessTexture", 5);
+		if (geometry.hasMaterialTextures)
+		{
+			gShader->SetFloat4("uMaterialOverrides", glm::vec4(0.0f));
 
-		geometry.metalTexture->BindToSlot(6);
-		gShader->SetInt("uMetalnessTexture", 6);
+			geometry.roughnessTexture->BindToSlot(5);
+			gShader->SetInt("uRoughnessTexture", 5);
 
-		geometry.aoTexture->BindToSlot(7);
-		gShader->SetInt("uAmbientOcculsionTexture", 7);
+			geometry.metalTexture->BindToSlot(6);
+			gShader->SetInt("uMetalnessTexture", 6);
+
+			geometry.aoTexture->BindToSlot(7);
+			gShader->SetInt("uAmbientOcculsionTexture", 7);
+		}
+		else // We have no material textures
+		{
+			gShader->SetFloat4("uMaterialOverrides", glm::vec4(geometry.roughness, geometry.metalness, geometry.ao, 1.0f));
+		}
+
+		if (geometry.isWireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 
 		geometry.vao->Bind();
 		glDrawElements(GL_TRIANGLES, geometry.indexCount, GL_UNSIGNED_INT, 0);
 		geometry.vao->Unbind();
+
+		defferedIt++;
 	}
 
 	gShader->Unbind();
@@ -430,6 +452,15 @@ void Renderer::DrawFrame(float deltaTime)
 		}
 		
 		forwardShader->SetFloat("uAlphaTransparency", geometry.alphaTransparency);
+
+		if (geometry.isWireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 
 		geometry.vao->Bind();
 		glDrawElements(GL_TRIANGLES, geometry.indexCount, GL_UNSIGNED_INT, 0);
@@ -573,4 +604,17 @@ void Renderer::SetEnvironmentMapEquirectangular(const std::string& path)
 	envLUTBuffer->Unbind();
 
 	glViewport(0, 0, windowDetails->width, windowDetails->height); // Set viewport back to native width/height
+}
+
+Light* Renderer::AddLight(const std::string& name, const LightInfo& lightInfo)
+{
+	if (lights.find(name) != Renderer::lights.end())
+	{
+		std::cout << "Light with name '" << name << "' already exists!" << std::endl;
+		return nullptr;
+	}
+
+	Light* light = new Light(lightInfo.postion, lightInfo.direction, lightInfo.color, lightInfo.lightType, lightInfo.radius, lightInfo.attenMode, lightInfo.on);
+	Renderer::lights.insert({ name, light });
+	return light;
 }

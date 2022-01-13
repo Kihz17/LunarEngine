@@ -68,6 +68,7 @@ uniform sampler2D uNormalTexture;
 uniform sampler2D uRoughnessTexture;
 uniform sampler2D uMetalnessTexture;
 uniform sampler2D uAmbientOcculsionTexture;
+uniform vec4 uMaterialOverrides; // r = roughness, g = metalness, b = ao, a = isMaterialOverride
 
 const float nearPlane = 1.0f;
 const float farPlane = 1000.0f;
@@ -101,13 +102,22 @@ void main()
 		gAlbedo.rgb += vec3(texture(uAlbedoTexture4, mTextureCoordinates)) * uAlbedoRatios.w; 
 	}
 
-	gAlbedo.a = vec3(texture(uRoughnessTexture, mTextureCoordinates)).r; // Sample and assign roughness value
-	
 	gNormal.rgb = ComputeTextureNormal(mNormal, normal); // Assign normal
-	gNormal.a = vec3(texture(uMetalnessTexture, mTextureCoordinates)).r; // Sample and assign metalness value
-	
-	gEffects.r = vec3(texture(uAmbientOcculsionTexture, mTextureCoordinates)).r;
+
 	gEffects.gb = fragPos - prevFragPos;
+	
+	if(uMaterialOverrides.w == 1.0f) // No texture to sample from, use flat value
+	{
+		gAlbedo.a = uMaterialOverrides.r; // Roughness
+		gNormal.a = uMaterialOverrides.g; // Metalness
+		gEffects.r = uMaterialOverrides.b; // AO
+	}
+	else
+	{
+		gAlbedo.a = vec3(texture(uRoughnessTexture, mTextureCoordinates)).r; // Sample and assign roughness value
+		gNormal.a = vec3(texture(uMetalnessTexture, mTextureCoordinates)).r; // Sample and assign metalness value
+		gEffects.r = vec3(texture(uAmbientOcculsionTexture, mTextureCoordinates)).r;
+	}
 }
 
 float LinearizeDepth(float depth)

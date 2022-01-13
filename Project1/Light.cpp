@@ -8,8 +8,8 @@
 int Light::currentLightIndex = 0;
 std::vector<int> Light::removedLights;
 
-Light::Light(const glm::vec3& postion, const glm::vec3& direction, const glm::vec4& color, LightType lightType, float radius, AttenuationMode attenMode, bool on)
-	: position(position),
+Light::Light(const glm::vec3& pos, const glm::vec3& direction, const glm::vec4& color, LightType lightType, float radius, AttenuationMode attenMode, bool on)
+	: position(pos),
 	direction(direction),
 	color(color),
 	lightType(lightType),

@@ -2,6 +2,8 @@
 #include "Renderer.h"
 #include "Input.h"
 
+#include "ScenePanel.h"
+
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
 #include "vendor/imgui/imgui_impl_glfw.h"
@@ -36,6 +38,43 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
             glfwSetCursorPos(window, lastCursorPos.x, lastCursorPos.y);
             Input::SetCursorMode(CursorMode::Locked);
         }
+    }
+
+    if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+    {
+        Renderer::SetViewType(1);
+    }
+    else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+    {
+        Renderer::SetViewType(2);
+    }
+    else if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+    {
+        Renderer::SetViewType(3);
+    }
+    else if (key == GLFW_KEY_4 && action == GLFW_PRESS)
+    {
+        Renderer::SetViewType(4);
+    }
+    else if (key == GLFW_KEY_5 && action == GLFW_PRESS)
+    {
+        Renderer::SetViewType(5);
+    }
+    else if (key == GLFW_KEY_6 && action == GLFW_PRESS)
+    {
+        Renderer::SetViewType(6);
+    }
+    else if (key == GLFW_KEY_7 && action == GLFW_PRESS)
+    {
+        Renderer::SetViewType(7);
+    }
+    else if (key == GLFW_KEY_8 && action == GLFW_PRESS)
+    {
+        Renderer::SetViewType(8);
+    }
+    else if (key == GLFW_KEY_9 && action == GLFW_PRESS)
+    {
+        Renderer::SetViewType(9);
     }
 }
 
@@ -122,43 +161,41 @@ int main()
     Texture* roughnessTexture = new Texture("assets/textures/pbr/rustediron/rustediron_roughness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture* metalnessTexture = new Texture("assets/textures/pbr/rustediron/rustediron_metalness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture* aoTexture = new Texture("assets/textures/pbr/rustediron/rustediron_ao.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture* blue = new Texture("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
 
     // Load models
     Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
-
+    Mesh* isoSphere = new Mesh("assets/models/ISO_Sphere.ply");
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
     // Setup some lights
-    Light* l1 = new Light();
-    l1->UpdatePosition(glm::vec3(0.0f, 5.0f, 0.0f));
-    l1->UpdateDirection(glm::vec3(0.2f, -0.8f, 0.0f));
-    l1->UpdateAttenuationMode(AttenuationMode::UE4);
+    LightInfo lightInfo;
+    lightInfo.postion = glm::vec3(0.0f, 5.0f, 0.0f);
+    lightInfo.direction = glm::vec3(0.2f, -0.8f, 0.0f);
+    lightInfo.attenMode = AttenuationMode::UE4;
+  //  Renderer::AddLight("testLight", lightInfo);
+
+    LightInfo lightInfo2;
+    lightInfo.postion = glm::vec3(0.0f, -5.0f, 0.0f);
+    Renderer::AddLight("testLight2", lightInfo2);
 
     SubmittedGeometry testGeo;
     testGeo.handle = "test";
     testGeo.vao = shaderBall->GetVertexArray();
     testGeo.indexCount = shaderBall->GetIndexBuffer()->GetCount();
-    testGeo.albedoTextures.push_back({ albedoTexture, 1.0f });
+    testGeo.albedoTextures.push_back({ blue, 1.0f });
     testGeo.normalTexture = normalTexture;
     testGeo.roughnessTexture = roughnessTexture;
     testGeo.metalTexture = metalnessTexture;
     testGeo.aoTexture = aoTexture;
-    testGeo.transform = glm::mat4(1.0f);
+    testGeo.hasMaterialTextures = false;
 
-    PrimitiveShape* cube = new PrimitiveShape(ShapeType::Cube);
-    ForwardGeometry testForward;
-    testForward.handle = "forwardTest";
-    testForward.vao = shaderBall->GetVertexArray();
-    testForward.indexCount = shaderBall->GetIndexBuffer()->GetCount();
-    testForward.colorOverride = glm::vec3(0.5f, 0.0f, 0.0f);
-    testForward.isColorOverride = true;
-    testForward.alphaTransparency = 1.0f;
-    testForward.transform = glm::mat4(1.0f);
-    testForward.transform *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 20.0f, 0.0f));
+    Renderer::SubmitDefferedGeometry(testGeo);
 
-    //Renderer::SetViewType(1);
+    // Setup Panels
+    std::vector<IPanel*> panels;
+    panels.push_back(new ScenePanel());
 
-    bool show_demo_window = true;
     float lastFrameTime = glfwGetTime();
     float deltaTime = 0.0f;
     while (!glfwWindowShouldClose(window))
@@ -197,10 +234,44 @@ int main()
                 camera.Move(MoveDirection::Down, deltaTime);
             }
         }
-        
-        Renderer::SubmitMesh(testGeo);
-        Renderer::SubmitForwardMesh(testForward);
 
+        // Show lights
+        if (true)
+        {
+            std::unordered_map<std::string, Light*> lightMap = Renderer::GetLights();
+            std::unordered_map<std::string, Light*>::iterator it = lightMap.begin();
+            while (it != lightMap.end())
+            {
+                Light* light = it->second;
+
+                // Solid center
+                ForwardGeometry lightGeo;
+                lightGeo.handle = std::string("light" + std::to_string(light->GetIndex()));
+                lightGeo.vao = isoSphere->GetVertexArray();
+                lightGeo.indexCount = isoSphere->GetIndexBuffer()->GetCount();
+                lightGeo.isColorOverride = true;
+                lightGeo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
+                lightGeo.transform = glm::mat4(1.0f);
+                lightGeo.transform *= glm::translate(glm::mat4(1.0f), light->GetPosition());
+                Renderer::SubmitForwardGeometry(lightGeo);
+
+                // Wireframe radius
+                ForwardGeometry radiusGeo;
+                radiusGeo.handle = std::string("lightRadius" + std::to_string(light->GetIndex()));
+                radiusGeo.vao = isoSphere->GetVertexArray();
+                radiusGeo.indexCount = isoSphere->GetIndexBuffer()->GetCount();
+                radiusGeo.isColorOverride = true;
+                radiusGeo.colorOverride = glm::vec3(0.8f, 0.0f, 0.0f);
+                radiusGeo.isWireframe = true;
+                radiusGeo.transform = glm::mat4(1.0f);
+                radiusGeo.transform *= glm::translate(glm::mat4(1.0f), light->GetPosition());
+                float radius = light->GetRadius();
+                radiusGeo.transform *= glm::scale(glm::mat4(1.0f), glm::vec3(radius, radius, radius));
+                Renderer::SubmitForwardGeometry(radiusGeo);
+
+                it++;
+            }
+        }
 
         // Start ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -209,15 +280,10 @@ int main()
 
         Renderer::BeginFrame(camera);
 
-
-        //ImGui::ShowDemoWindow(&show_demo_window);
-        ImGui::Begin("Test Frame");
-        ImGui::Text("Yerrr");
-        ImGui::End();
-
-        ImGui::Begin("Other Frame");
-        ImGui::Text("Yerrr Ski");
-        ImGui::End();
+        for (IPanel* panel : panels)
+        {
+            panel->OnUpdate();
+        }
 
         Renderer::DrawFrame(deltaTime);
 

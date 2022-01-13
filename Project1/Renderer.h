@@ -13,13 +13,26 @@ struct SubmittedGeometry
 	std::string handle;
 	VertexArrayObject* vao;
 	uint32_t indexCount = 0;
-	glm::mat4 transform;
+
+	glm::vec3 orientation = glm::vec3(0.0f);
+	glm::vec3 scale = glm::vec3(1.0f);
+	glm::vec3 position = glm::vec3(0.0f);
+
+	bool hasPrevProjViewModel = false;
+	glm::mat4 projViewModel;
 
 	std::vector<std::pair<Texture*, float>> albedoTextures;
 	Texture* normalTexture;
 	Texture* roughnessTexture;
 	Texture* metalTexture;
 	Texture* aoTexture;
+
+	bool hasMaterialTextures = true;
+	float roughness = 0.01f;
+	float metalness = 0.02f;
+	float ao = 1.0f;
+
+	bool isWireframe = false;
 };
 
 struct ForwardGeometry
@@ -34,6 +47,8 @@ struct ForwardGeometry
 
 	bool isColorOverride = false;
 	glm::vec3 colorOverride;
+
+	bool isWireframe = false;
 };
 
 struct WindowSpecs
@@ -51,13 +66,30 @@ public:
 
 	static void SetEnvironmentMapEquirectangular(const std::string& path);
 
-	static void SubmitMesh(const SubmittedGeometry& geometry);
-	static void SubmitForwardMesh(const ForwardGeometry& geometry);
-
 	static void DrawFrame(float deltaTime);
 
 	static void BeginFrame(const Camera& camera);
 	static void EndFrame();
+
+	static Light* AddLight(const std::string& name, const LightInfo& lightInfo);
+	static std::unordered_map<std::string, Light*> GetLights() { return lights; }
+
+	static void SubmitForwardGeometry(const ForwardGeometry& geometry) { forwardGeometry.push_back(geometry); }
+
+	static void SubmitDefferedGeometry(const SubmittedGeometry& geometry) { defferedGeometry.insert({ geometry.handle, geometry }); }
+	static bool ContainsDefferedGeometry(const std::string& handle) { return defferedGeometry.count(handle) > 0; }
+	static void RemoveDefferedGeometry(const std::string& handle) { defferedGeometry.erase(handle); }
+	static std::unordered_map<std::string, SubmittedGeometry>& GetDefferedGeometry() { return defferedGeometry; }
+	static SubmittedGeometry& GetDefferedGeometry(const std::string& handle)
+	{
+		std::unordered_map<std::string, SubmittedGeometry>::iterator it = defferedGeometry.find(handle);
+		if (it == defferedGeometry.end())
+		{
+			std::cout << "Could not find Deffered Geometry with handle '" << handle << "'!" << std::endl;
+		}
+
+		return it->second;
+	}
 
 	static const std::string G_SHADER_KEY;
 	static const std::string LIGHTING_SHADER_KEY;
@@ -84,8 +116,7 @@ private:
 	static CubeMap* envMapIrradiance;
 	static CubeMap* envMapPreFilter;
 
-	static std::vector<SubmittedGeometry> defferedGeometry;
-	static std::unordered_map<std::string, glm::mat4> prevProjViewModels;
+	static std::unordered_map<std::string, SubmittedGeometry> defferedGeometry;
 
 	static std::vector<ForwardGeometry> forwardGeometry;
 
@@ -95,4 +126,6 @@ private:
 
 	static PrimitiveShape* quad;
 	static PrimitiveShape* cube;
+
+	static std::unordered_map<std::string, Light*> lights;
 };

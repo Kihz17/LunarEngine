@@ -20,11 +20,30 @@ enum class AttenuationMode
 	UE4
 };
 
+struct LightInfo
+{
+	LightInfo()
+		: postion(glm::vec3(0.0f)),
+		direction(glm::vec3(0.01f, -0.99f, 0.0f)),
+		color(glm::vec4(1.0f)),
+		lightType(LightType::Point),
+		radius(100.0f),
+		attenMode(AttenuationMode::Linear),
+		on(true)
+	{}
+
+	glm::vec3 postion;
+	glm::vec3 direction;
+	glm::vec4 color;
+	LightType lightType;
+	float radius;
+	AttenuationMode attenMode;
+	bool on;
+};
+
 class Light
 {
 public:
-	Light(const glm::vec3& postion = glm::vec3(0.0f), const glm::vec3& direction = glm::vec3(0.01f, -0.99f, 0.0f), 
-		const glm::vec4& color = glm::vec4(1.0f), LightType lightType = LightType::Point, float radius = 100.0f, AttenuationMode attenMode = AttenuationMode::Linear, bool on = true);
 	virtual ~Light();
 
 	void UpdatePosition(const glm::vec3& position);
@@ -43,10 +62,16 @@ public:
 	bool IsOn() const { return on; }
 	const glm::vec3& GetAttenutationMode() const { return position; }
 	LightType GetLightType() const { return lightType; }
+	int GetIndex() const { return lightIndex; }
 
 	static const int MAX_LIGHTS = 100;
 
 private:
+	friend class Renderer; // The renderer should be the only object allowed to create lights because we need to track them
+	friend class ScenePanel; // Needs direct access to member variables 
+
+	Light(const glm::vec3& postion, const glm::vec3& direction, const glm::vec4& color, LightType lightType, float radius, AttenuationMode attenMode, bool on);
+
 	int lightIndex;
 	std::string positionLoc;
 	std::string directionLoc;

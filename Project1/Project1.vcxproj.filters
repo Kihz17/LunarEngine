@@ -17,6 +17,9 @@
     <Filter Include="Graphics\Input">
       <UniqueIdentifier>{f6659c61-4573-4b64-97e9-a775c40d1e0e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Panels">
+      <UniqueIdentifier>{404aecaf-a80a-42ea-8d01-cc436dea2ba5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -38,9 +41,6 @@
       <Filter>Vendor\imgui</Filter>
     </ClCompile>
     <ClCompile Include="vendor\imgui\imgui_impl_opengl3.cpp">
-      <Filter>Vendor\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\imgui\imgui_stdlib.cpp">
       <Filter>Vendor\imgui</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
@@ -91,6 +91,9 @@
     <ClCompile Include="PrimitiveShape.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="ScenePanel.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -118,9 +121,6 @@
       <Filter>Vendor\imgui</Filter>
     </ClInclude>
     <ClInclude Include="vendor\imgui\imgui_impl_opengl3_loader.h">
-      <Filter>Vendor\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\imgui\imgui_stdlib.h">
       <Filter>Vendor\imgui</Filter>
     </ClInclude>
     <ClInclude Include="pch.h" />
@@ -180,6 +180,12 @@
     </ClInclude>
     <ClInclude Include="PrimitiveShape.h">
       <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="IPanel.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="ScenePanel.h">
+      <Filter>Panels</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
