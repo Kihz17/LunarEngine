@@ -57,6 +57,7 @@ void Renderer::Initialize(WindowSpecs* window)
 	Shader* gShader = new Shader("assets/shaders/geometryBuffer.glsl");
 	gShader->Bind();
 	gShader->InitializeUniform("uMatModel");
+	gShader->InitializeUniform("uMatModelInverseTranspose");
 	gShader->InitializeUniform("uMatView");
 	gShader->InitializeUniform("uMatProjection");
 	gShader->InitializeUniform("uMatProjViewModel");
@@ -66,6 +67,7 @@ void Renderer::Initialize(WindowSpecs* window)
 	gShader->InitializeUniform("uAlbedoTexture3");
 	gShader->InitializeUniform("uAlbedoTexture4");
 	gShader->InitializeUniform("uAlbedoRatios");
+	gShader->InitializeUniform("uHasNormalTexture");
 	gShader->InitializeUniform("uNormalTexture");
 	gShader->InitializeUniform("uRoughnessTexture");
 	gShader->InitializeUniform("uMetalnessTexture");
@@ -295,6 +297,7 @@ void Renderer::DrawFrame(float deltaTime)
 		geometry.projViewModel = projViewModel;
 
 		gShader->SetMat4("uMatModel", transform);
+		gShader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
 		gShader->SetMat4("uMatProjViewModel", projViewModel);
 		gShader->SetMat4("uMatPrevProjViewModel", prevProjViewModel);
 
@@ -315,8 +318,16 @@ void Renderer::DrawFrame(float deltaTime)
 		}
 		gShader->SetFloat4("uAlbedoRatios", glm::vec4(ratios[0], ratios[1], ratios[2], ratios[3]));
 
-		geometry.normalTexture->BindToSlot(4);
-		gShader->SetInt("uNormalTexture", 4);
+		if (geometry.normalTexture)
+		{
+			gShader->SetInt("uHasNormalTexture", GL_TRUE);
+			geometry.normalTexture->BindToSlot(4);
+			gShader->SetInt("uNormalTexture", 4);
+		}
+		else
+		{
+			gShader->SetInt("uHasNormalTexture", GL_FALSE);
+		}	
 
 		if (geometry.hasMaterialTextures)
 		{
@@ -425,8 +436,15 @@ void Renderer::DrawFrame(float deltaTime)
 	// Draw geometry
 	for (ForwardGeometry& geometry : forwardGeometry)
 	{
-		forwardShader->SetMat4("uMatModel", geometry.transform);
-		forwardShader->SetMat4("uMatModelInverseTranspose", glm::inverse(geometry.transform));
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		transform *= glm::scale(glm::mat4(1.0f), geometry.scale);
+		transform *= glm::translate(glm::mat4(1.0f), geometry.position);
+
+		forwardShader->SetMat4("uMatModel", transform);
+		forwardShader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
 
 		if (geometry.isColorOverride)
 		{

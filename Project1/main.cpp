@@ -166,6 +166,8 @@ int main()
     // Load models
     Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
     Mesh* isoSphere = new Mesh("assets/models/ISO_Sphere.ply");
+    Mesh* grass = new Mesh("assets/models/grass.ply");
+
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
     // Setup some lights
@@ -251,8 +253,7 @@ int main()
                 lightGeo.indexCount = isoSphere->GetIndexBuffer()->GetCount();
                 lightGeo.isColorOverride = true;
                 lightGeo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
-                lightGeo.transform = glm::mat4(1.0f);
-                lightGeo.transform *= glm::translate(glm::mat4(1.0f), light->GetPosition());
+                lightGeo.position = light->GetPosition();
                 Renderer::SubmitForwardGeometry(lightGeo);
 
                 // Wireframe radius
@@ -263,14 +264,24 @@ int main()
                 radiusGeo.isColorOverride = true;
                 radiusGeo.colorOverride = glm::vec3(0.8f, 0.0f, 0.0f);
                 radiusGeo.isWireframe = true;
-                radiusGeo.transform = glm::mat4(1.0f);
-                radiusGeo.transform *= glm::translate(glm::mat4(1.0f), light->GetPosition());
+                radiusGeo.position = light->GetPosition();
                 float radius = light->GetRadius();
-                radiusGeo.transform *= glm::scale(glm::mat4(1.0f), glm::vec3(radius, radius, radius));
+                radiusGeo.scale = glm::vec3(radius, radius, radius);
                 Renderer::SubmitForwardGeometry(radiusGeo);
 
                 it++;
             }
+        }
+
+        {
+            ForwardGeometry geo;
+            geo.handle = "grass";
+            geo.vao = grass->GetVertexArray();
+            geo.indexCount = grass->GetIndexBuffer()->GetCount();
+            geo.isColorOverride = true;
+            geo.colorOverride = glm::vec3(0.0f, 0.8f, 0.1f);
+            geo.position = glm::vec3(0.0f, 20.0f, 0.0f);
+            Renderer::SubmitForwardGeometry(geo);
         }
 
         // Start ImGui frame

@@ -33,6 +33,7 @@ struct SubmittedGeometry
 	float ao = 1.0f;
 
 	bool isWireframe = false;
+	bool isIgnoreLighting = false;
 };
 
 struct ForwardGeometry
@@ -40,7 +41,10 @@ struct ForwardGeometry
 	std::string handle;
 	VertexArrayObject* vao;
 	uint32_t indexCount = 0;
-	glm::mat4 transform;
+
+	glm::vec3 orientation = glm::vec3(0.0f);
+	glm::vec3 scale = glm::vec3(1.0f);
+	glm::vec3 position = glm::vec3(0.0f);
 
 	std::vector<std::pair<Texture*, float>> diffuseTextures;
 	float alphaTransparency = 1.0f;

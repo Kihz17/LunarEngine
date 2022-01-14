@@ -8,6 +8,7 @@ layout (location = 3) in vec3 vBiNormal;
 layout (location = 4) in vec3 vTangent;
 
 uniform mat4 uMatModel;
+uniform mat4 uMatModelInverseTranspose;
 uniform mat4 uMatView;
 uniform mat4 uMatProjection;
 uniform mat4 uMatProjViewModel;
@@ -17,6 +18,7 @@ out vec3 mWorldPosition;
 out vec3 mViewPosition;
 out vec2 mTextureCoordinates;
 out vec3 mNormal;
+out vec3 mVertexNormal;
 out vec4 mFragPosition;
 out vec4 mPrevFragPosition;
 
@@ -33,6 +35,9 @@ void main()
 	// Apply transformation to normal
 	mat3 matNormal = transpose(inverse(mat3(uMatView * uMatModel)));
 	mNormal = matNormal * vNormal;
+	
+	mVertexNormal = vec3(uMatModelInverseTranspose * normalize(vec4(vNormal, 1.0f)));
+	mVertexNormal = normalize(mVertexNormal);
 	
 	mFragPosition = uMatProjViewModel * vec4(vPosition, 1.0f);
 	mPrevFragPosition = uMatPrevProjViewModel * vec4(vPosition, 1.0f);
@@ -55,6 +60,7 @@ in vec3 mWorldPosition;
 in vec3 mViewPosition;
 in vec2 mTextureCoordinates;
 in vec3 mNormal;
+out vec3 mVertexNormal;
 in vec4 mFragPosition;
 in vec4 mPrevFragPosition;
 
@@ -64,11 +70,13 @@ uniform sampler2D uAlbedoTexture3;
 uniform sampler2D uAlbedoTexture4;
 uniform vec4 uAlbedoRatios;
 
+uniform bopol uHasNormalTexture;
 uniform sampler2D uNormalTexture;
+
 uniform sampler2D uRoughnessTexture;
 uniform sampler2D uMetalnessTexture;
 uniform sampler2D uAmbientOcculsionTexture;
-uniform vec4 uMaterialOverrides; // r = roughness, g = metalness, b = ao, a = isMaterialOverride
+uniform vec4 uMaterialOverrides; // r = roughness, g = metalness, b = ao, w = isMaterialOverride
 
 const float nearPlane = 1.0f;
 const float farPlane = 1000.0f;
@@ -78,7 +86,15 @@ vec3 ComputeTextureNormal(vec3 viewNormal, vec3 textureNormal);
 
 void main()
 {
-	vec3 normal = normalize(texture(uNormalTexture, mTextureCoordinates).rgb * 2.0f - 1.0f); // Sample normal texture and convert values in range from -1.0 to 1.0
+	if(uHasNormalTexture)
+	{
+		vec3 normal = normalize(texture(uNormalTexture, mTextureCoordinates).rgb * 2.0f - 1.0f); // Sample normal texture and convert values in range from -1.0 to 1.0
+		gNormal.rgb = ComputeTextureNormal(mNormal, normal); // Assign normal
+	}
+	else
+	{
+		gNormal.rgb = mVertexNormal;
+	}
 	
 	vec2 fragPos = (mFragPosition.xy / mFragPosition.w) * 0.5f + 0.5f;
 	vec2 prevFragPos = (mPrevFragPosition.xy / mPrevFragPosition.w) * 0.5f + 0.5f;
@@ -101,8 +117,6 @@ void main()
 	{
 		gAlbedo.rgb += vec3(texture(uAlbedoTexture4, mTextureCoordinates)) * uAlbedoRatios.w; 
 	}
-
-	gNormal.rgb = ComputeTextureNormal(mNormal, normal); // Assign normal
 
 	gEffects.gb = fragPos - prevFragPos;
 	
