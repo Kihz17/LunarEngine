@@ -4,8 +4,6 @@
 layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec3 vNormal;
 layout (location = 2) in vec2 vTextureCoordinates;
-layout (location = 3) in vec3 vBiNormal;
-layout (location = 4) in vec3 vTangent;
 
 uniform mat4 uMatModel;
 uniform mat4 uMatModelInverseTranspose;
@@ -42,7 +40,7 @@ void main()
 	mFragPosition = uMatProjViewModel * vec4(vPosition, 1.0f);
 	mPrevFragPosition = uMatPrevProjViewModel * vec4(vPosition, 1.0f);
 	
-	gl_Position = uMatProjection * viewFragmentPosition;
+	gl_Position = uMatProjection * uMatView * uMatModel * vec4(vPosition, 1.0f);
 };
 
 
@@ -54,7 +52,6 @@ layout (location = 0) out vec4 gPosition;
 layout (location = 1) out vec4 gAlbedo;
 layout (location = 2) out vec4 gNormal;
 layout (location = 3) out vec3 gEffects;
-layout (location = 4) out vec3 gViewPosition;
 
 in vec3 mWorldPosition;
 in vec3 mViewPosition;
@@ -70,7 +67,7 @@ uniform sampler2D uAlbedoTexture3;
 uniform sampler2D uAlbedoTexture4;
 uniform vec4 uAlbedoRatios;
 
-uniform bopol uHasNormalTexture;
+uniform bool uHasNormalTexture;
 uniform sampler2D uNormalTexture;
 
 uniform sampler2D uRoughnessTexture;
@@ -100,7 +97,6 @@ void main()
 	vec2 prevFragPos = (mPrevFragPosition.xy / mPrevFragPosition.w) * 0.5f + 0.5f;
 	
 	gPosition = vec4(mWorldPosition, LinearizeDepth(gl_FragCoord.z)); // Set position with adjusted depth
-	gViewPosition = mViewPosition;
 	
 	gAlbedo.rgb = vec3(texture(uAlbedoTexture1, mTextureCoordinates)) * uAlbedoRatios.x; // Sample and assign albedo rgb colors
 	if(uAlbedoRatios.y > 0.0f)

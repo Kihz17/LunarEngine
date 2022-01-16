@@ -162,6 +162,7 @@ int main()
     Texture* metalnessTexture = new Texture("assets/textures/pbr/rustediron/rustediron_metalness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture* aoTexture = new Texture("assets/textures/pbr/rustediron/rustediron_ao.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture* blue = new Texture("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture* grassTexture = new Texture("assets/textures/grass.png", TextureFilterType::Linear, TextureWrapType::Repeat);
 
     // Load models
     Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
@@ -181,18 +182,39 @@ int main()
     lightInfo.postion = glm::vec3(0.0f, -5.0f, 0.0f);
     Renderer::AddLight("testLight2", lightInfo2);
 
+    glm::vec3 modelPos = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 orientationPos = glm::vec3(0.0f);
+    glm::vec3 scalePos = glm::vec3(1.0f, 1.0f, 1.0f);
+
     SubmittedGeometry testGeo;
     testGeo.handle = "test";
     testGeo.vao = shaderBall->GetVertexArray();
     testGeo.indexCount = shaderBall->GetIndexBuffer()->GetCount();
     testGeo.albedoTextures.push_back({ blue, 1.0f });
     testGeo.normalTexture = normalTexture;
-    testGeo.roughnessTexture = roughnessTexture;
-    testGeo.metalTexture = metalnessTexture;
-    testGeo.aoTexture = aoTexture;
-    testGeo.hasMaterialTextures = false;
+   // testGeo.roughnessTexture = roughnessTexture;
+   // testGeo.metalTexture = metalnessTexture;
+    //testGeo.aoTexture = aoTexture;
+    testGeo.position = &modelPos;
+    testGeo.orientation = &orientationPos;
+    testGeo.scale = &scalePos;
 
     Renderer::SubmitDefferedGeometry(testGeo);
+
+    glm::vec3 grassPos = glm::vec3(0.0f, 20.0f, 0.0f);
+    glm::vec3 grassO = glm::vec3(0.0f);
+    glm::vec3 grassS = glm::vec3(1.0f, 1.0f, 1.0f);
+
+    SubmittedGeometry grassTest;
+    grassTest.handle = "grassTest";
+    grassTest.vao = grass->GetVertexArray();
+    grassTest.indexCount = grass->GetIndexBuffer()->GetCount();
+    grassTest.albedoTextures.push_back({ grassTexture, 1.0f });
+    grassTest.position = &grassPos;
+    grassTest.orientation = &grassO;
+    grassTest.scale = &grassS;
+
+    Renderer::SubmitDefferedGeometry(grassTest);
 
     // Setup Panels
     std::vector<IPanel*> panels;
@@ -246,42 +268,46 @@ int main()
             {
                 Light* light = it->second;
 
-                // Solid center
-                ForwardGeometry lightGeo;
-                lightGeo.handle = std::string("light" + std::to_string(light->GetIndex()));
-                lightGeo.vao = isoSphere->GetVertexArray();
-                lightGeo.indexCount = isoSphere->GetIndexBuffer()->GetCount();
-                lightGeo.isColorOverride = true;
-                lightGeo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
-                lightGeo.position = light->GetPosition();
-                Renderer::SubmitForwardGeometry(lightGeo);
+                std::string lightHandle = std::string("light" + std::to_string(light->GetIndex()));
+                std::string radiusHandle = std::string("lightRadius" + std::to_string(light->GetIndex()));
 
-                // Wireframe radius
-                ForwardGeometry radiusGeo;
-                radiusGeo.handle = std::string("lightRadius" + std::to_string(light->GetIndex()));
-                radiusGeo.vao = isoSphere->GetVertexArray();
-                radiusGeo.indexCount = isoSphere->GetIndexBuffer()->GetCount();
-                radiusGeo.isColorOverride = true;
-                radiusGeo.colorOverride = glm::vec3(0.8f, 0.0f, 0.0f);
-                radiusGeo.isWireframe = true;
-                radiusGeo.position = light->GetPosition();
-                float radius = light->GetRadius();
-                radiusGeo.scale = glm::vec3(radius, radius, radius);
-                Renderer::SubmitForwardGeometry(radiusGeo);
+                if(!Renderer::ContainsForwardGeometry(lightHandle))
+                {
+                    // Solid center
+                    ForwardGeometry lightGeo;
+                    lightGeo.handle = lightHandle;
+                    lightGeo.vao = isoSphere->GetVertexArray();
+                    lightGeo.indexCount = isoSphere->GetIndexBuffer()->GetCount();
+                    lightGeo.isColorOverride = true;
+                    lightGeo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
+                    lightGeo.isIgnoreLighting = true;
+                    lightGeo.position = light->GetRenderPosition();
+                    lightGeo.scale = light->GetRenderScale();
+                    lightGeo.orientation = light->GetRenderOrientation();
+                    Renderer::SubmitForwardGeometry(lightGeo);
+                }
+
+                if (!Renderer::ContainsForwardGeometry(radiusHandle))
+                {
+                    LightRadius& radiusObject = light->GetRadiusObject();
+
+                    // Wireframe radius
+                    ForwardGeometry radiusGeo;
+                    radiusGeo.handle = radiusHandle;
+                    radiusGeo.vao = isoSphere->GetVertexArray();
+                    radiusGeo.indexCount = isoSphere->GetIndexBuffer()->GetCount();
+                    radiusGeo.isColorOverride = true;
+                    radiusGeo.colorOverride = glm::vec3(0.8f, 0.0f, 0.0f);
+                    radiusGeo.isIgnoreLighting = true;
+                    radiusGeo.isWireframe = true;
+                    radiusGeo.position = radiusObject.GetRenderPosition();
+                    radiusGeo.scale = radiusObject.GetRenderScale();
+                    radiusGeo.orientation = radiusObject.GetRenderOrientation();
+                    Renderer::SubmitForwardGeometry(radiusGeo);
+                }
 
                 it++;
             }
-        }
-
-        {
-            ForwardGeometry geo;
-            geo.handle = "grass";
-            geo.vao = grass->GetVertexArray();
-            geo.indexCount = grass->GetIndexBuffer()->GetCount();
-            geo.isColorOverride = true;
-            geo.colorOverride = glm::vec3(0.0f, 0.8f, 0.1f);
-            geo.position = glm::vec3(0.0f, 20.0f, 0.0f);
-            Renderer::SubmitForwardGeometry(geo);
         }
 
         // Start ImGui frame

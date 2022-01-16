@@ -56,16 +56,8 @@ static float* ConvertVerticesToArray(const std::vector<Vertex>& vertices)
 
 		vertexBuffer[bufferIndex + 6] = vertex.textureCoord.x;
 		vertexBuffer[bufferIndex + 7] = vertex.textureCoord.y;
-
-		vertexBuffer[bufferIndex + 8] = vertex.binormal.x;
-		vertexBuffer[bufferIndex + 9] = vertex.binormal.y;
-		vertexBuffer[bufferIndex + 10] = vertex.binormal.z;
-
-		vertexBuffer[bufferIndex + 11] = vertex.tangent.x;
-		vertexBuffer[bufferIndex + 12] = vertex.tangent.y;
-		vertexBuffer[bufferIndex + 13] = vertex.tangent.z;
 		 
-		bufferIndex += 14;
+		bufferIndex += 8;
 	}
 
 	return vertexBuffer;
@@ -175,13 +167,6 @@ Mesh::Mesh(const std::string& filePath)
 				vertex.textureCoord = glm::vec2(assimpMesh->mTextureCoords[0][j].x, assimpMesh->mTextureCoords[0][j].y);
 			}
 
-
-			if (assimpMesh->HasTangentsAndBitangents())
-			{
-				vertex.tangent = glm::vec3(assimpMesh->mTangents[j].x, assimpMesh->mTangents[j].y, assimpMesh->mTangents[j].z);
-				vertex.binormal = glm::vec3(assimpMesh->mBitangents[j].x, assimpMesh->mBitangents[j].y, assimpMesh->mBitangents[j].z);
-			}
-
 			this->vertices.push_back(vertex);
 		}
 
@@ -228,9 +213,7 @@ Mesh::Mesh(const std::string& filePath)
 	BufferLayout bufferLayout = {
 		{ ShaderDataType::Float3, "vPosition" },
 		{ ShaderDataType::Float3, "vNormal" },
-		{ ShaderDataType::Float2, "vTextureCoordinates" },
-		{ ShaderDataType::Float3, "vBiNormal" },
-		{ ShaderDataType::Float3, "vTangent" }
+		{ ShaderDataType::Float2, "vTextureCoordinates" }
 	};
 
 	this->vertexArray = new VertexArrayObject(); 

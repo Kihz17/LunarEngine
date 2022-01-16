@@ -6,16 +6,22 @@
 #include <sstream>
 
 int Light::currentLightIndex = 0;
+glm::vec3 Light::orientation = glm::vec3(0.0f);
+glm::vec3 Light::scale = glm::vec3(1.0f, 1.0f, 1.0f);
+
+glm::vec3 LightRadius::orientation = glm::vec3(0.0f);
+
 std::vector<int> Light::removedLights;
 
-Light::Light(const glm::vec3& pos, const glm::vec3& direction, const glm::vec4& color, LightType lightType, float radius, AttenuationMode attenMode, bool on)
+Light::Light(glm::vec3 pos, const glm::vec3& direction, const glm::vec3& color, LightType lightType, float radius, AttenuationMode attenMode, bool on, float intensity)
 	: position(pos),
 	direction(direction),
 	color(color),
 	lightType(lightType),
-	radius(radius),
+	radius(LightRadius(&pos, radius)),
 	attenuationMode(attenMode),
-	on(on)
+	on(on),
+	intensity(intensity)
 {
 	if (Light::currentLightIndex >= 1000 && removedLights.empty())
 	{
@@ -38,7 +44,9 @@ Light::Light(const glm::vec3& pos, const glm::vec3& direction, const glm::vec4& 
 	ss << "uLightArray[" << this->lightIndex << "].";
 	std::string lightHandle = ss.str();
 
-	const Shader* shader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
+	const Shader* brdfShader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
+	const Shader* forwardShader = ShaderLibrary::Get(Renderer::FORWARD_SHADER_KEY);
+
 	positionLoc = std::string(lightHandle + "position");
 	directionLoc = std::string(lightHandle + "direction");
 	colorLoc = std::string(lightHandle + "color");
@@ -46,8 +54,11 @@ Light::Light(const glm::vec3& pos, const glm::vec3& direction, const glm::vec4& 
 
 	SendToShader();
 
-	shader->Bind();
-	shader->SetInt("uLightAmount", Light::currentLightIndex + 1);
+	brdfShader->Bind();
+	brdfShader->SetInt("uLightAmount", Light::currentLightIndex + 1);
+
+	forwardShader->Bind();
+	forwardShader->SetInt("uLightAmount", Light::currentLightIndex + 1);
 }
 
 Light::~Light()
@@ -58,74 +69,130 @@ Light::~Light()
 
 void Light::UpdatePosition(const glm::vec3& position)
 {
-	const Shader* shader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
-	shader->Bind();
+	const Shader* brdfShader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
+	const Shader* forwardShader = ShaderLibrary::Get(Renderer::FORWARD_SHADER_KEY);
+
 	this->position = position;
-	shader->SetFloat3(positionLoc, position);
-	shader->Unbind();
+
+	brdfShader->Bind();
+	brdfShader->SetFloat3(positionLoc, position);
+
+	forwardShader->Bind();
+	forwardShader->SetFloat3(positionLoc, position);
 }
 
 void Light::UpdateDirection(const glm::vec3& direction)
 {
-	const Shader* shader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
-	shader->Bind();
+	const Shader* brdfShader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
+	const Shader* forwardShader = ShaderLibrary::Get(Renderer::FORWARD_SHADER_KEY);
+
 	this->direction = direction;
-	shader->SetFloat3(directionLoc, direction);
-	shader->Unbind();
+
+	brdfShader->Bind();
+	brdfShader->SetFloat3(directionLoc, direction);
+
+	forwardShader->Bind();
+	forwardShader->SetFloat3(directionLoc, direction);
 }
 
-void Light::UpdateColor(const glm::vec4& color)
+void Light::UpdateColor(const glm::vec3& color)
 {
-	const Shader* shader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
-	shader->Bind();
+	const Shader* brdfShader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
+	const Shader* forwardShader = ShaderLibrary::Get(Renderer::FORWARD_SHADER_KEY);
+
 	this->color = color;
-	shader->SetFloat4(colorLoc, color);
-	shader->Unbind();
+
+	brdfShader->Bind();
+	brdfShader->SetFloat4(colorLoc, glm::vec4(color, intensity));
+
+	forwardShader->Bind();
+	forwardShader->SetFloat4(colorLoc, glm::vec4(color, intensity));
+}
+
+void Light::UpdateIntenisty(float intensity)
+{
+	const Shader* brdfShader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
+	const Shader* forwardShader = ShaderLibrary::Get(Renderer::FORWARD_SHADER_KEY);
+
+	this->intensity = intensity;
+
+	brdfShader->Bind();
+	brdfShader->SetFloat4(colorLoc, glm::vec4(color, intensity));
+
+	forwardShader->Bind();
+	forwardShader->SetFloat4(colorLoc, glm::vec4(color, intensity));
 }
 
 void Light::UpdateRadius(float radius)
 {
-	const Shader* shader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
-	shader->Bind();
-	this->radius = radius;
-	shader->SetFloat4(param1Loc, glm::vec4((GLfloat) lightType, radius, (GLfloat) on, (GLfloat) attenuationMode));
-	shader->Unbind();
+	const Shader* brdfShader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
+	const Shader* forwardShader = ShaderLibrary::Get(Renderer::FORWARD_SHADER_KEY);
+
+	this->radius.UpdateRadius(radius);
+
+	brdfShader->Bind();
+	brdfShader->SetFloat4(param1Loc, glm::vec4((GLfloat) lightType, radius, (GLfloat) on, (GLfloat) attenuationMode));
+
+	forwardShader->Bind();
+	forwardShader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius, (GLfloat)on, (GLfloat)attenuationMode));
 }
 
 void Light::UpdateOn(bool on)
 {
-	const Shader* shader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
-	shader->Bind();
+	const Shader* brdfShader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
+	const Shader* forwardShader = ShaderLibrary::Get(Renderer::FORWARD_SHADER_KEY);
+
 	this->on = on;
-	shader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius, (GLfloat)on, (GLfloat)attenuationMode));
-	shader->Unbind();
+
+	brdfShader->Bind();
+	brdfShader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius.radius, (GLfloat)on, (GLfloat)attenuationMode));
+
+	forwardShader->Bind();
+	forwardShader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius.radius, (GLfloat)on, (GLfloat)attenuationMode));
 }
 
 void Light::UpdateAttenuationMode(AttenuationMode attenMode)
 {
-	const Shader* shader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
-	shader->Bind();
+	const Shader* brdfShader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
+	const Shader* forwardShader = ShaderLibrary::Get(Renderer::FORWARD_SHADER_KEY);
+
 	this->attenuationMode = attenMode;
-	shader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius, (GLfloat)on, (GLfloat) attenuationMode));
-	shader->Unbind();
+
+	brdfShader->Bind();
+	brdfShader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius.radius, (GLfloat)on, (GLfloat) attenuationMode));
+
+	forwardShader->Bind();
+	forwardShader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius.radius, (GLfloat)on, (GLfloat)attenuationMode));
 }
 
 void Light::UpdateLightType(LightType lightType)
 {
-	const Shader* shader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
-	shader->Bind();
+	const Shader* brdfShader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
+	const Shader* forwardShader = ShaderLibrary::Get(Renderer::FORWARD_SHADER_KEY);
+
 	this->lightType = lightType;
-	shader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius, (GLfloat)on, (GLfloat)attenuationMode));
-	shader->Unbind();
+
+	brdfShader->Bind();
+	brdfShader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius.radius, (GLfloat)on, (GLfloat)attenuationMode));
+
+	forwardShader->Bind();
+	forwardShader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius.radius, (GLfloat)on, (GLfloat)attenuationMode));
 }
 
 void Light::SendToShader() const
 {
-	const Shader* shader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
-	shader->Bind();
-	shader->SetFloat3(positionLoc, position);
-	shader->SetFloat3(directionLoc, direction);
-	shader->SetFloat4(colorLoc, color);
-	shader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius, (GLfloat)on, (GLfloat)attenuationMode));
-	shader->Unbind();
+	const Shader* brdfShader = ShaderLibrary::Get(Renderer::LIGHTING_SHADER_KEY);
+	const Shader* forwardShader = ShaderLibrary::Get(Renderer::FORWARD_SHADER_KEY);
+
+	brdfShader->Bind();
+	brdfShader->SetFloat3(positionLoc, position);
+	brdfShader->SetFloat3(directionLoc, direction);
+	brdfShader->SetFloat4(colorLoc, glm::vec4(color, intensity));
+	brdfShader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius.radius, (GLfloat)on, (GLfloat)attenuationMode));
+
+	forwardShader->Bind();
+	forwardShader->SetFloat3(positionLoc, position);
+	forwardShader->SetFloat3(directionLoc, direction);
+	forwardShader->SetFloat4(colorLoc, glm::vec4(color, intensity));
+	forwardShader->SetFloat4(param1Loc, glm::vec4((GLfloat)lightType, radius.radius, (GLfloat)on, (GLfloat)attenuationMode));
 }

@@ -182,6 +182,7 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="IPanel.h" />
+    <ClInclude Include="IRenderable.h" />
     <ClInclude Include="KeyCodes.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />

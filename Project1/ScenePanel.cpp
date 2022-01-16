@@ -30,9 +30,16 @@ void ScenePanel::OnUpdate()
             if (ImGui::TreeNode(it->first.c_str()))
             {
                 ImGui::DragFloat3("Position", (float*) &light->position, 0.01f);
-                ImGui::DragFloat3("Direction", (float*) &light->direction, 0.01f);
+                if (light->GetLightType() == LightType::Directional)
+                {
+                    ImGui::DragFloat3("Direction", (float*)&light->direction, 0.01f);
+                }
                 ImGui::ColorEdit3("Diffuse", (float*) &light->color);
-                ImGui::DragFloat("Radius", &light->radius, 0.01f);
+                ImGui::DragFloat("Radius", &light->radius.radius, 0.01f);
+                if (light->GetLightType() == LightType::Point)
+                {
+                    ImGui::DragFloat("Intensity", &light->intensity, 0.01f);
+                }
 
                 ImGui::NewLine();
 
@@ -91,9 +98,9 @@ void ScenePanel::OnUpdate()
             SubmittedGeometry& geometry = it->second;
             if (ImGui::TreeNode(it->first.c_str()))
             {
-                ImGui::DragFloat3("Position", (float*)&geometry.position, 0.01f);
-                ImGui::DragFloat3("Scale", (float*)&geometry.scale, 0.01f);
-                ImGui::DragFloat3("Orientation", (float*)&geometry.orientation, 0.01f);
+                ImGui::DragFloat3("Position", (float*)geometry.position, 0.01f);
+                ImGui::DragFloat3("Scale", (float*)geometry.scale, 0.01f);
+                ImGui::DragFloat3("Orientation", (float*)geometry.orientation, 0.01f);
 
                 ImGui::NewLine();
 
@@ -102,7 +109,7 @@ void ScenePanel::OnUpdate()
                 ImGui::NewLine();
 
                 // Material sliders
-                if (!geometry.hasMaterialTextures) // Material sliders
+                if (!geometry.HasMaterialTextures()) // Material sliders
                 {
                     ImGui::DragFloat("Roughness", &geometry.roughness, 0.001f, 0.0f, 1.0f);
                     ImGui::DragFloat("Metalness", &geometry.metalness, 0.001f, 0.0f, 10.0f);

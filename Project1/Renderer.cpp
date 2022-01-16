@@ -22,7 +22,7 @@ CubeMap* Renderer::envMapPreFilter = nullptr;
 std::unordered_map<std::string, SubmittedGeometry> Renderer::defferedGeometry;
 //std::unordered_map<std::string, glm::mat4> Renderer::prevProjViewModels;
 
-std::vector<ForwardGeometry> Renderer::forwardGeometry;
+std::unordered_map<std::string, ForwardGeometry> Renderer::forwardGeometry;
 
 glm::mat4 Renderer::projection(1.0f);
 glm::mat4 Renderer::view(1.0f);
@@ -87,7 +87,6 @@ void Renderer::Initialize(WindowSpecs* window)
 	brdfShader->InitializeUniform("gAlbedo");
 	brdfShader->InitializeUniform("gNormal");
 	brdfShader->InitializeUniform("gEffects");
-	brdfShader->InitializeUniform("gViewPosition");
 	brdfShader->InitializeUniform("uLightAmount");
 
 	for (int i = 0; i < Light::MAX_LIGHTS; i++)
@@ -129,11 +128,10 @@ void Renderer::Initialize(WindowSpecs* window)
 	brdfShader->SetInt("gAlbedo", 1);
 	brdfShader->SetInt("gNormal", 2);
 	brdfShader->SetInt("gEffects", 3);
-	brdfShader->SetInt("gViewPosition", 4);
-	brdfShader->SetInt("uEnvMap", 5);
-	brdfShader->SetInt("uIrradianceMap", 6);
-	brdfShader->SetInt("uEnvMapPreFilter", 7);
-	brdfShader->SetInt("uEnvMapLUT", 8);
+	brdfShader->SetInt("uEnvMap", 4);
+	brdfShader->SetInt("uIrradianceMap", 5);
+	brdfShader->SetInt("uEnvMapPreFilter", 6);
+	brdfShader->SetInt("uEnvMapLUT", 7);
 
 	brdfShader->Unbind();
 	ShaderLibrary::Add(LIGHTING_SHADER_KEY, brdfShader);
@@ -192,12 +190,53 @@ void Renderer::Initialize(WindowSpecs* window)
 	forwardShader->InitializeUniform("uMatProjection");
 	forwardShader->InitializeUniform("uMatModelInverseTranspose");
 	forwardShader->InitializeUniform("uColorOverride");
-	forwardShader->InitializeUniform("uDiffuse1");
-	forwardShader->InitializeUniform("uDiffuse2");
-	forwardShader->InitializeUniform("uDiffuse3");
-	forwardShader->InitializeUniform("uDiffuse4");
-	forwardShader->InitializeUniform("uDiffuseRatios");
+	forwardShader->InitializeUniform("uAlbedoTexture1");
+	forwardShader->InitializeUniform("uAlbedoTexture2");
+	forwardShader->InitializeUniform("uAlbedoTexture3");
+	forwardShader->InitializeUniform("uAlbedoTexture4");
+	forwardShader->InitializeUniform("uAlbedoRatios");
+	forwardShader->InitializeUniform("uHasNormalTexture");
+	forwardShader->InitializeUniform("uNormalTexture");
+	forwardShader->InitializeUniform("uRoughnessTexture");
+	forwardShader->InitializeUniform("uMetalnessTexture");
+	forwardShader->InitializeUniform("uAmbientOcculsionTexture");
+	forwardShader->InitializeUniform("uMaterialOverrides");
 	forwardShader->InitializeUniform("uAlphaTransparency");
+	forwardShader->InitializeUniform("uIgnoreLighting");
+
+	forwardShader->SetInt("uAlbedoTexture1", 0);
+	forwardShader->SetInt("uAlbedoTexture2", 1);
+	forwardShader->SetInt("uAlbedoTexture3", 2);
+	forwardShader->SetInt("uAlbedoTexture4", 3);
+	forwardShader->SetInt("uNormalTexture", 4);
+	forwardShader->SetInt("uRoughnessTexture", 5);
+	forwardShader->SetInt("uMetalnessTexture", 6);
+	forwardShader->SetInt("uAmbientOcculsionTexture", 7);
+	forwardShader->InitializeUniform("uLightAmount");
+
+	for (int i = 0; i < Light::MAX_LIGHTS; i++)
+	{
+		{
+			std::stringstream ss;
+			ss << "uLightArray[" << i << "].position";
+			forwardShader->InitializeUniform(ss.str());
+		}
+		{
+			std::stringstream ss;
+			ss << "uLightArray[" << i << "].direction";
+			forwardShader->InitializeUniform(ss.str());
+		}
+		{
+			std::stringstream ss;
+			ss << "uLightArray[" << i << "].color";
+			forwardShader->InitializeUniform(ss.str());
+		}
+		{
+			std::stringstream ss;
+			ss << "uLightArray[" << i << "].param1";
+			forwardShader->InitializeUniform(ss.str());
+		}
+	}
 	ShaderLibrary::Add(FORWARD_SHADER_KEY, forwardShader);
 	//------------------------
 	// SETUP FBOS
@@ -209,7 +248,6 @@ void Renderer::Initialize(WindowSpecs* window)
 	geometryBuffer->AddColorBuffer("albedo", GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, windowDetails->width, windowDetails->height, TextureFilterType::Nearest, TextureWrapType::None); // Albedo & Roughness
 	geometryBuffer->AddColorBuffer("normal", GL_RGBA16F, GL_RGBA, GL_FLOAT, windowDetails->width, windowDetails->height, TextureFilterType::Nearest, TextureWrapType::None); // Normal & Metalness
 	geometryBuffer->AddColorBuffer("effects", GL_RGBA16F, GL_RGBA, GL_FLOAT, windowDetails->width, windowDetails->height, TextureFilterType::Nearest, TextureWrapType::None); // Ambient Occulsion & Velocity
-	geometryBuffer->AddColorBuffer("viewPosition", GL_RGB16F, GL_RGB, GL_FLOAT, windowDetails->width, windowDetails->height, TextureFilterType::Nearest, TextureWrapType::ClampToEdge); // View Position Buffer
 	geometryBuffer->SetRenderBuffer(windowDetails->width, windowDetails->height, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
 
 	environmentBuffer = new Framebuffer();
@@ -238,7 +276,7 @@ void Renderer::CleanUp()
 
 void Renderer::SetViewType(uint32_t type)
 {
-	if (type <= 0 || type >= 10) return; // Out of range
+	if (type <= 0 || type >= 9) return; // Out of range
 
 	const Shader* shader = ShaderLibrary::Get(LIGHTING_SHADER_KEY);
 	shader->Bind();
@@ -258,8 +296,6 @@ void Renderer::BeginFrame(const Camera& camera)
 
 void Renderer::EndFrame()
 {
-	forwardGeometry.clear();
-	 
 	glfwSwapBuffers(windowDetails->window);
 }
 
@@ -285,12 +321,18 @@ void Renderer::DrawFrame(float deltaTime)
 	{
 		SubmittedGeometry& geometry = defferedIt->second;
 
+		if (!geometry.Validate())
+		{
+			std::cout << "Deferred Geometry '" << geometry.handle << "' is not valid!" << std::endl;
+			continue;
+		}
+
 		glm::mat4 transform = glm::mat4(1.0f);
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-		transform *= glm::scale(glm::mat4(1.0f), geometry.scale);
-		transform *= glm::translate(glm::mat4(1.0f), geometry.position);
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->x, glm::vec3(1.0f, 0.0f, 0.0f));
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->y, glm::vec3(0.0f, 1.0f, 0.0f));
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->z, glm::vec3(0.0f, 0.0f, 1.0f));
+		transform *= glm::scale(glm::mat4(1.0f), *geometry.scale);
+		transform *= glm::translate(glm::mat4(1.0f), *geometry.position);
 
 		glm::mat4 projViewModel = projection * view * transform;
 		glm::mat4& prevProjViewModel = geometry.hasPrevProjViewModel ? geometry.projViewModel : projViewModel;
@@ -329,7 +371,7 @@ void Renderer::DrawFrame(float deltaTime)
 			gShader->SetInt("uHasNormalTexture", GL_FALSE);
 		}	
 
-		if (geometry.hasMaterialTextures)
+		if (geometry.HasMaterialTextures())
 		{
 			gShader->SetFloat4("uMaterialOverrides", glm::vec4(0.0f));
 
@@ -391,19 +433,18 @@ void Renderer::DrawFrame(float deltaTime)
 	geometryBuffer->BindColorBuffer("albedo", 1);
 	geometryBuffer->BindColorBuffer("normal", 2);
 	geometryBuffer->BindColorBuffer("effects", 3);
-	geometryBuffer->BindColorBuffer("viewPosition", 4);
 
 	// Bind environment map stuff
-	environmentBuffer->BindColorBuffer("environment", 5);
+	environmentBuffer->BindColorBuffer("environment", 4);
 
 	if (envMapIrradiance)
-		envMapIrradiance->BindToSlot(6);
+		envMapIrradiance->BindToSlot(5);
 
 	if (envMapPreFilter)
-		envMapPreFilter->BindToSlot(7);
+		envMapPreFilter->BindToSlot(6);
 
 	if (envLUTBuffer)
-		envLUTBuffer->BindColorBuffer("lut", 8);
+		envLUTBuffer->BindColorBuffer("lut", 7);
 
 	lShader->SetMat4("uInverseView", glm::transpose(view));
 	lShader->SetMat4("uInverseProjection", glm::inverse(view));
@@ -432,43 +473,88 @@ void Renderer::DrawFrame(float deltaTime)
 	// Pass camera related data
 	forwardShader->SetMat4("uMatView", view);
 	forwardShader->SetMat4("uMatProjection", projection);
-
+	
 	// Draw geometry
-	for (ForwardGeometry& geometry : forwardGeometry)
+	std::unordered_map<std::string, ForwardGeometry>::iterator forwardIt = forwardGeometry.begin();
+	while (forwardIt != forwardGeometry.end())
 	{
+		ForwardGeometry& geometry = forwardIt->second;
+
+		if (!geometry.Validate())
+		{
+			std::cout << "Forward Geometry '" << geometry.handle << "' is not valid!" << std::endl;
+			continue;
+		}
+
 		glm::mat4 transform = glm::mat4(1.0f);
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-		transform *= glm::scale(glm::mat4(1.0f), geometry.scale);
-		transform *= glm::translate(glm::mat4(1.0f), geometry.position);
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->x, glm::vec3(1.0f, 0.0f, 0.0f));
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->y, glm::vec3(0.0f, 1.0f, 0.0f));
+		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->z, glm::vec3(0.0f, 0.0f, 1.0f));
+		transform *= glm::scale(glm::mat4(1.0f), *geometry.scale);
+		transform *= glm::translate(glm::mat4(1.0f), *geometry.position);
 
 		forwardShader->SetMat4("uMatModel", transform);
 		forwardShader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
 
+		// Color
 		if (geometry.isColorOverride)
 		{
 			forwardShader->SetFloat4("uColorOverride", glm::vec4(geometry.colorOverride.x, geometry.colorOverride.y, geometry.colorOverride.z, 1.0f));
 		}
 		else // Bind diffuse textures
 		{
+			forwardShader->SetFloat4("uColorOverride", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
 			float ratios[4];
 			for (int i = 0; i < 4; i++)
 			{
-				if (i < geometry.diffuseTextures.size())
+				if (i < geometry.albedoTextures.size())
 				{
-					geometry.diffuseTextures[i].first->BindToSlot(i);
-					forwardShader->SetInt(std::string("uDiffuseTexture" + std::to_string(i + 1)), i);
-					ratios[i] = geometry.diffuseTextures[i].second;
+					geometry.albedoTextures[i].first->BindToSlot(i);
+					forwardShader->SetInt(std::string("uAlbedoTexture" + std::to_string(i + 1)), i);
+					ratios[i] = geometry.albedoTextures[i].second;
 				}
 				else
 				{
 					ratios[i] = 0.0f;
 				}
 			}
-			forwardShader->SetFloat4("uDiffuseRatios", glm::vec4(ratios[0], ratios[1], ratios[2], ratios[3]));
+			forwardShader->SetFloat4("uAlbedoRatios", glm::vec4(ratios[0], ratios[1], ratios[2], ratios[3]));
 		}
-		
+
+		// Normal
+		if (geometry.normalTexture)
+		{
+			forwardShader->SetInt("uHasNormalTexture", GL_TRUE);
+			geometry.normalTexture->BindToSlot(4);
+			forwardShader->SetInt("uNormalTexture", 4);
+		}
+		else
+		{
+			forwardShader->SetInt("uHasNormalTexture", GL_FALSE);
+		}
+
+		// Materials
+		if (geometry.HasMaterialTextures())
+		{
+			forwardShader->SetFloat4("uMaterialOverrides", glm::vec4(0.0f));
+
+			geometry.roughnessTexture->BindToSlot(5);
+			forwardShader->SetInt("uRoughnessTexture", 5);
+
+			geometry.metalTexture->BindToSlot(6);
+			forwardShader->SetInt("uMetalnessTexture", 6);
+
+			geometry.aoTexture->BindToSlot(7);
+			forwardShader->SetInt("uAmbientOcculsionTexture", 7);
+		}
+		else // We have no material textures
+		{
+			forwardShader->SetFloat4("uMaterialOverrides", glm::vec4(geometry.roughness, geometry.metalness, geometry.ao, 1.0f));
+		}
+
+		forwardShader->SetInt("uIgnoreLighting", geometry.isIgnoreLighting ? GL_TRUE : GL_FALSE);
+
 		forwardShader->SetFloat("uAlphaTransparency", geometry.alphaTransparency);
 
 		if (geometry.isWireframe)
@@ -483,6 +569,8 @@ void Renderer::DrawFrame(float deltaTime)
 		geometry.vao->Bind();
 		glDrawElements(GL_TRIANGLES, geometry.indexCount, GL_UNSIGNED_INT, 0);
 		geometry.vao->Unbind();
+
+		forwardIt++;
 	}
 }
 
@@ -632,7 +720,7 @@ Light* Renderer::AddLight(const std::string& name, const LightInfo& lightInfo)
 		return nullptr;
 	}
 
-	Light* light = new Light(lightInfo.postion, lightInfo.direction, lightInfo.color, lightInfo.lightType, lightInfo.radius, lightInfo.attenMode, lightInfo.on);
+	Light* light = new Light(lightInfo.postion, lightInfo.direction, lightInfo.color, lightInfo.lightType, lightInfo.radius, lightInfo.attenMode, lightInfo.on, lightInfo.intensity);
 	Renderer::lights.insert({ name, light });
 	return light;
 }
