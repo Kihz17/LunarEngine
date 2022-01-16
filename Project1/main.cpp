@@ -164,10 +164,13 @@ int main()
     Texture* blue = new Texture("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture* grassTexture = new Texture("assets/textures/grass.png", TextureFilterType::Linear, TextureWrapType::Repeat);
 
+    Texture* grassA = new Texture("assets/textures/Green_Grass_AlbedoA.tga", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture* grassN = new Texture("assets/textures/Green_Grass_Normal.tga", TextureFilterType::Linear, TextureWrapType::Repeat);
+
     // Load models
     Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
     Mesh* isoSphere = new Mesh("assets/models/ISO_Sphere.ply");
-    Mesh* grass = new Mesh("assets/models/grass.ply");
+    Mesh* grass = new Mesh("assets/models/quad.ply");
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
@@ -209,7 +212,8 @@ int main()
     grassTest.handle = "grassTest";
     grassTest.vao = grass->GetVertexArray();
     grassTest.indexCount = grass->GetIndexBuffer()->GetCount();
-    grassTest.albedoTextures.push_back({ grassTexture, 1.0f });
+    grassTest.albedoTextures.push_back({ grassA, 1.0f });
+    grassTest.normalTexture = grassN;
     grassTest.position = &grassPos;
     grassTest.orientation = &grassO;
     grassTest.scale = &grassS;

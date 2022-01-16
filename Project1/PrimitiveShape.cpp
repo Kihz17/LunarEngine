@@ -64,6 +64,13 @@ float quadVertices[] = {
     1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
 };
 
+float quadNormalVertices[] = {
+    -1.0f,  1.0f, 0.0f, 0.0, 0.0, 1.0f, 0.0f, 1.0f,
+    -1.0f, -1.0f, 0.0f, 0.0, 0.0, 1.0f, 0.0f, 0.0f,
+    1.0f,  1.0f, 0.0f, 0.0, 0.0, 1.0f, 1.0f, 1.0f,
+    1.0f, -1.0f, 0.0f, 0.0, 0.0, 1.0f, 1.0f, 0.0f,
+};
+
 
 PrimitiveShape::PrimitiveShape(ShapeType shapeType)
 	: type(shapeType),

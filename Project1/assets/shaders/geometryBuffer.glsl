@@ -31,8 +31,7 @@ void main()
 	mTextureCoordinates = vTextureCoordinates;
 	
 	// Apply transformation to normal
-	mat3 matNormal = transpose(inverse(mat3(uMatView * uMatModel)));
-	mNormal = matNormal * vNormal;
+	mNormal = mat3(uMatModel) * vNormal;
 	
 	mVertexNormal = vec3(uMatModelInverseTranspose * normalize(vec4(vNormal, 1.0f)));
 	mVertexNormal = normalize(mVertexNormal);
@@ -70,6 +69,7 @@ uniform vec4 uAlbedoRatios;
 uniform bool uHasNormalTexture;
 uniform sampler2D uNormalTexture;
 
+// Material
 uniform sampler2D uRoughnessTexture;
 uniform sampler2D uMetalnessTexture;
 uniform sampler2D uAmbientOcculsionTexture;
@@ -79,14 +79,13 @@ const float nearPlane = 1.0f;
 const float farPlane = 1000.0f;
 
 float LinearizeDepth(float depth);
-vec3 ComputeTextureNormal(vec3 viewNormal, vec3 textureNormal);
+vec3 ComputeTextureNormal();
 
 void main()
 {
 	if(uHasNormalTexture)
 	{
-		vec3 normal = normalize(texture(uNormalTexture, mTextureCoordinates).rgb * 2.0f - 1.0f); // Sample normal texture and convert values in range from -1.0 to 1.0
-		gNormal.rgb = ComputeTextureNormal(mNormal, normal); // Assign normal
+		gNormal.rgb = ComputeTextureNormal(); // Assign normal
 	}
 	else
 	{
@@ -136,16 +135,18 @@ float LinearizeDepth(float depth)
     return (2.0f * nearPlane * farPlane) / (farPlane + nearPlane - z * (farPlane - nearPlane));
 }
 
-vec3 ComputeTextureNormal(vec3 viewNormal, vec3 textureNormal)
+vec3 ComputeTextureNormal()
 {
+	vec3 textureNormal = normalize(texture(uNormalTexture, mTextureCoordinates).rgb * 2.0f - 1.0f); // Sample normal texture and convert values in range from -1.0 to 1.0
+		
 	// Get partial derivatives 
-    vec3 dPosX = dFdx(mViewPosition);
-    vec3 dPosY = dFdy(mViewPosition);
+    vec3 dPosX = dFdx(mWorldPosition);
+    vec3 dPosY = dFdy(mWorldPosition);
     vec2 dTexX = dFdx(mTextureCoordinates);
     vec2 dTexY = dFdy(mTextureCoordinates);
 
 	// Convert normal to tangent space
-    vec3 normal = normalize(viewNormal);
+    vec3 normal = normalize(mNormal);
     vec3 tangent = normalize(dPosX * dTexY.t - dPosY * dTexX.t);
     vec3 binormal = -normalize(cross(normal, tangent));
     mat3 TBN = mat3(tangent, binormal, normal);

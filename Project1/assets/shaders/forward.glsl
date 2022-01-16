@@ -6,7 +6,6 @@ layout (location = 1) in vec3 vNormal;
 layout (location = 2) in vec2 vTextureCoordinates;
 
 out vec3 mNormal;
-out vec3 mVertexNormal;
 out vec2 mTextureCoordinates;
 out vec3 mWorldPosition;
 out vec3 mViewPosition;
@@ -25,14 +24,7 @@ void main()
 	mTextureCoordinates = vTextureCoordinates;
 	
 	// Apply transformation to normal
-	mat3 matNormal = transpose(inverse(mat3(uMatView * uMatModel)));
-	mNormal = matNormal * vNormal;
-	
-	// Calculate the normal based on any rotation we've applied.
-	// This inverse transpose removes scaling and translation (movement) 
-	// 	from the matrix.
-	mVertexNormal = vec3(uMatModelInverseTranspose * normalize(vec4(vNormal, 1.0f)));
-	mVertexNormal = normalize(mNormal);
+	mNormal = mat3(uMatModel) * vNormal;
 	
 	mWorldPosition = vec3(uMatModel * vec4(vPosition, 1.0f));
 	gl_Position = uMatProjection * uMatView * uMatModel * vec4(vPosition, 1.0f);
@@ -44,7 +36,6 @@ void main()
 #version 420 
 
 out vec3 mNormal;
-in vec3 mVertexNormal;
 in vec2 mTextureCoordinates;
 in vec3 mWorldPosition;
 in vec3 mViewPosition;
@@ -93,7 +84,7 @@ uniform LightInfo uLightArray[MAX_LIGHTS];
 
 uniform vec3 uReflectivity; 
 
-vec3 ComputeTextureNormal(vec3 viewNormal, vec3 textureNormal);
+vec3 ComputeTextureNormal();
 
 vec3 LinearizeColor(vec3 color); // Converts to linear color space (sRGB to RGB). In other words, gamma correction https://lettier.github.io/3d-game-shaders-for-beginners/gamma-correction.html
 vec2 ConvertCoordsToSpherical(vec3 normalizedCoords); // Converts a set of normalized coordinates 
@@ -128,12 +119,11 @@ void main()
 	vec3 normal;
 	if(uHasNormalTexture)
 	{
-		vec3 N = normalize(texture(uNormalTexture, mTextureCoordinates).rgb * 2.0f - 1.0f); // Sample normal texture and convert values in range from -1.0 to 1.0
-		normal = ComputeTextureNormal(mNormal, N); // Assign normal
+		normal = ComputeTextureNormal(); // Assign normal
 	}
 	else
 	{
-		normal = mVertexNormal;
+		normal = mNormal;
 	}
 	
 	float roughness;
@@ -258,16 +248,18 @@ void main()
 	oColor = vec4(color, uAlphaTransparency);
 }
 
-vec3 ComputeTextureNormal(vec3 viewNormal, vec3 textureNormal)
+vec3 ComputeTextureNormal()
 {
+	vec3 textureNormal = normalize(texture(uNormalTexture, mTextureCoordinates).rgb * 2.0f - 1.0f); // Sample normal texture and convert values in range from -1.0 to 1.0
+		
 	// Get partial derivatives 
-    vec3 dPosX = dFdx(mViewPosition);
-    vec3 dPosY = dFdy(mViewPosition);
+    vec3 dPosX = dFdx(mWorldPosition);
+    vec3 dPosY = dFdy(mWorldPosition);
     vec2 dTexX = dFdx(mTextureCoordinates);
     vec2 dTexY = dFdy(mTextureCoordinates);
 
 	// Convert normal to tangent space
-    vec3 normal = normalize(viewNormal);
+    vec3 normal = normalize(mNormal);
     vec3 tangent = normalize(dPosX * dTexY.t - dPosY * dTexX.t);
     vec3 binormal = -normalize(cross(normal, tangent));
     mat3 TBN = mat3(tangent, binormal, normal);
