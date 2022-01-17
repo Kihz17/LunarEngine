@@ -6,6 +6,14 @@
 #include <unordered_map>
 #include <glm/glm.hpp>
 
+enum class ShaderSourceType
+{
+	None,
+	Vertex,
+	Geometry,
+	Fragment
+};
+
 class Shader
 {
 public:

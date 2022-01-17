@@ -123,30 +123,40 @@ static bool WasThereALinkError(const GLuint& programID)
 Shader::Shader(const std::string& path)
 {
 	GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint geometryShaderID = 0;
 	GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	std::vector<std::string> vertexSource;
+	std::vector<std::string> geometrySource;
 	std::vector<std::string> fragmentSource;
 
-	bool writingVertex = false;
+	ShaderSourceType currentSourceType = ShaderSourceType::None;
 	for (std::string line : LoadSourceFromFile(path))
 	{
 		if (line == "//type vertex")
 		{
-			writingVertex = true;
+			currentSourceType = ShaderSourceType::Vertex;
 		}
 		else if (line == "//type fragment")
 		{
-			writingVertex = false;
+			currentSourceType = ShaderSourceType::Fragment;
+		}
+		else if (line == "//type geometry")
+		{
+			currentSourceType = ShaderSourceType::Geometry;
 		}
 
-		if (writingVertex)
+		if (currentSourceType == ShaderSourceType::Vertex)
 		{
 			vertexSource.push_back(line);
 		}
-		else
+		else if(currentSourceType == ShaderSourceType::Fragment)
 		{
 			fragmentSource.push_back(line);
+		}
+		else if (currentSourceType == ShaderSourceType::Geometry)
+		{
+			geometrySource.push_back(line);
 		}
 	}
 
@@ -163,6 +173,18 @@ Shader::Shader(const std::string& path)
 		return;
 	}
 
+	bool hasGeometryShader = !geometrySource.empty();
+	if (hasGeometryShader)
+	{
+		geometryShaderID = glCreateShader(GL_GEOMETRY_SHADER);
+		compiled = CompileShaderFromSource(geometryShaderID, path, geometrySource);
+		if (!compiled)
+		{
+			std::cout << "[ERROR] Failed to compile Geometry Shader! Check log for details." << std::endl;
+			return;
+		}
+	}
+
 	compiled = CompileShaderFromSource(fragmentShaderID, path, fragmentSource);
 	if (!compiled)
 	{
@@ -172,6 +194,12 @@ Shader::Shader(const std::string& path)
 
 	this->ID = glCreateProgram();
 	glAttachShader(ID, vertexShaderID);
+
+	if (hasGeometryShader)
+	{
+		glAttachShader(ID, geometryShaderID);
+	}
+
 	glAttachShader(ID, fragmentShaderID);
 	glLinkProgram(ID);
 

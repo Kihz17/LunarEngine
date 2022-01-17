@@ -447,7 +447,7 @@ void Renderer::DrawFrame(float deltaTime)
 		envLUTBuffer->BindColorBuffer("lut", 7);
 
 	lShader->SetMat4("uInverseView", glm::transpose(view));
-	lShader->SetMat4("uInverseProjection", glm::inverse(view));
+	lShader->SetMat4("uInverseProjection", glm::inverse(projection));
 	lShader->SetMat4("uView", view);
 	lShader->SetFloat3("uCameraPosition", cameraPos);
 

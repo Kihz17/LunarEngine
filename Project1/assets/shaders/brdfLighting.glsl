@@ -6,6 +6,8 @@ layout (location = 1) in vec2 vTextureCoordinates;
 
 out vec2 mTextureCoordinates;
 out vec3 mEnvMapCoordinates;
+out mat4 mInverseView;
+out mat4 mInverseProjection;
 
 uniform mat4 uInverseView;
 uniform mat4 uInverseProjection;
@@ -28,6 +30,8 @@ void main()
 
 in vec2 mTextureCoordinates;
 in vec3 mEnvMapCoordinates;
+in mat4 mInverseView;
+in mat4 mInverseProjection;
 
 out vec4 oColor;
 

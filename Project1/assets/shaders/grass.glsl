@@ -14,6 +14,7 @@ void main()
 layout (points) in; // We only take in a point (the world pos of the grass blade)
 layout (triangle_strip, max_vertices = 12) out;
 
+out vec3 mWorldPosition;
 out vec3 mNormal;
 out vec2 mTextureCoordinates;
 
@@ -42,16 +43,18 @@ void main()
 	float currentVertex = 0.0f;
 	
 	for(int i = 0; i < vertexCount; i++)
-	{
+	{	
+		// TODO: Randomly rotate grass (We will need to scale the normal & transformedPosition by the rotation)
 		mNormal = NORMAL;
+		vec4 transformedPosition;
 		if(fmod(i, 2) == 0)
 		{
-			gl_Position = vec4(worldPos.x - width, worldPos.y + currentHeight, worldPos.z, 1.0f);
+			transformedPosition = vec4(worldPos.x - width, worldPos.y + currentHeight, worldPos.z, 1.0f);
 			mTextureCoordinates = vec2(0.0f, currentVertex);
 		}
 		else
 		{
-			gl_Position = vec4(worldPos.x + width, worldPos.y + currentHeight, worldPos.z, 1.0f);
+			transformedPosition = vec4(worldPos.x + width, worldPos.y + currentHeight, worldPos.z, 1.0f);
 			mTextureCoordinates = vec2(1.0f, currentVertex);
 			
 			currentVertex += vertexOffset;
@@ -60,6 +63,8 @@ void main()
 		
 		// TODO: Wind
 		
+		mWorldPosition = transformedPosition.xyz;
+		gl_Position = transformedPosition;
 		EmitVertex();
 	}
 }
@@ -73,10 +78,14 @@ int fmod(int x, int y)
 //type fragment
 #version 420 
 
+layout (location = 0) out vec4 gPosition;
+layout (location = 1) out vec4 gAlbedo;
+layout (location = 2) out vec4 gNormal;
+layout (location = 3) out vec3 gEffects;
+
+in vec3 mWorldPosition;
 in vec3 mNormal;
 in vec2 mTextureCoordinates;
-
-out vec4 oColor;
 
 uniform sampler2D uAlbedoTexture;
 
@@ -89,31 +98,64 @@ uniform sampler2D uMetalnessTexture;
 uniform sampler2D uAmbientOcculsionTexture;
 uniform vec4 uMaterialOverrides; // r = roughness, g = metalness, b = ao, w = isMaterialOverride
 
-vec3 ComputeTextureNormal(vec3 viewNormal, vec3 textureNormal);
+uniform sampler2D uDiscardTexture;
+
+const float nearPlane = 1.0f;
+const float farPlane = 1000.0f;
+
+vec3 LinearizeColor(vec3 color); // Converts to linear color space (sRGB to RGB). In other words, gamma correction https://lettier.github.io/3d-game-shaders-for-beginners/gamma-correction.html
+vec3 ComputeTextureNormal();
 
 void main()
 {
-	vec3 normal;
-	if(uHasNormalTexture)
+	if(texture(uDiscardTexture, mTextureCoordinates).r <= 0.0f) // Shouldn't draw pixel here
 	{
-		normal = normalize(texture(uNormalTexture, mTextureCoordinates).rgb * 2.0f - 1.0f); // Sample normal texture and convert values in range from -1.0 to 1.0
-		
-		mat3 matNormal = transpose(inverse(mat3(uMatView * uMatModel)));
-		
-		
-		normal = ComputeTextureNormal(mNormal, normal); // Assign normal
+		discard;
+		return;
+	}
+	
+	if(uHasNormalTexture)
+	{		
+		gNormal.rgb = ComputeTextureNormal(); // Assign normal
 	}
 	else
 	{
-		normal = mNormal;
+		gNormal.rgb = mNormal;
 	}
 	
-	vec3 color = texture(testTexture, mTextureCoordinates).rgb;
-	oColor = vec4(color, 1.0f);
+	gPosition = vec4(mWorldPosition, LinearizeDepth(gl_FragCoord.z)); // Set position with adjusted depth
+	gAlbedo = texture(uAlbedoTexture, mTextureCoordinates).rgb;
+	gEffects.gb = vec2(0.0f, 0.0f);
+	
+	if(uMaterialOverrides.w == 1.0f) // No texture to sample from, use flat value
+	{
+		gAlbedo.a = uMaterialOverrides.r; // Roughness
+		gNormal.a = uMaterialOverrides.g; // Metalness
+		gEffects.r = uMaterialOverrides.b; // AO
+	}
+	else
+	{
+		gAlbedo.a = vec3(texture(uRoughnessTexture, mTextureCoordinates)).r; // Sample and assign roughness value
+		gNormal.a = vec3(texture(uMetalnessTexture, mTextureCoordinates)).r; // Sample and assign metalness value
+		gEffects.r = vec3(texture(uAmbientOcculsionTexture, mTextureCoordinates)).r;
+	}
 }
 
-vec3 ComputeTextureNormal(vec3 viewNormal, vec3 textureNormal)
+vec3 LinearizeColor(vec3 color)
 {
+	return pow(color.rgb, vec3(2.2f));
+}
+
+float LinearizeDepth(float depth)
+{
+    float z = depth * 2.0f - 1.0f;
+    return (2.0f * nearPlane * farPlane) / (farPlane + nearPlane - z * (farPlane - nearPlane));
+}
+
+vec3 ComputeTextureNormal()
+{
+	vec3 textureNormal = normalize(texture(uNormalTexture, mTextureCoordinates).rgb * 2.0f - 1.0f); // Sample normal texture and convert values in range from -1.0 to 1.0
+	
 	// Get partial derivatives 
     vec3 dPosX = dFdx(mViewPosition);
     vec3 dPosY = dFdy(mViewPosition);
@@ -121,7 +163,7 @@ vec3 ComputeTextureNormal(vec3 viewNormal, vec3 textureNormal)
     vec2 dTexY = dFdy(mTextureCoordinates);
 
 	// Convert normal to tangent space
-    vec3 normal = normalize(viewNormal);
+    vec3 normal = normalize(mNormal);
     vec3 tangent = normalize(dPosX * dTexY.t - dPosY * dTexX.t);
     vec3 binormal = -normalize(cross(normal, tangent));
     mat3 TBN = mat3(tangent, binormal, normal);

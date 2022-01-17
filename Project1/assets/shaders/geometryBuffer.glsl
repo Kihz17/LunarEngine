@@ -16,7 +16,6 @@ out vec3 mWorldPosition;
 out vec3 mViewPosition;
 out vec2 mTextureCoordinates;
 out vec3 mNormal;
-out vec3 mVertexNormal;
 out vec4 mFragPosition;
 out vec4 mPrevFragPosition;
 
@@ -32,10 +31,7 @@ void main()
 	
 	// Apply transformation to normal
 	mNormal = mat3(uMatModel) * vNormal;
-	
-	mVertexNormal = vec3(uMatModelInverseTranspose * normalize(vec4(vNormal, 1.0f)));
-	mVertexNormal = normalize(mVertexNormal);
-	
+
 	mFragPosition = uMatProjViewModel * vec4(vPosition, 1.0f);
 	mPrevFragPosition = uMatPrevProjViewModel * vec4(vPosition, 1.0f);
 	
@@ -56,7 +52,6 @@ in vec3 mWorldPosition;
 in vec3 mViewPosition;
 in vec2 mTextureCoordinates;
 in vec3 mNormal;
-out vec3 mVertexNormal;
 in vec4 mFragPosition;
 in vec4 mPrevFragPosition;
 
@@ -89,7 +84,7 @@ void main()
 	}
 	else
 	{
-		gNormal.rgb = mVertexNormal;
+		gNormal.rgb = mNormal;
 	}
 	
 	vec2 fragPos = (mFragPosition.xy / mFragPosition.w) * 0.5f + 0.5f;
