@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Shader.h"
-#include "Components.h"
 
 #include <glm/glm.hpp>
 
@@ -31,7 +30,7 @@ struct LightInfo
 		radius(100.0f),
 		attenMode(AttenuationMode::Linear),
 		on(true),
-		intensity(10.0f)
+		intensity(50.0f)
 	{}
 
 	glm::vec3 postion;
@@ -44,13 +43,11 @@ struct LightInfo
 	bool on;
 };
 
-class Light : public Component
+class Light
 {
 public:
 	Light(const LightInfo& lightInfo);
 	virtual ~Light();
-
-	virtual void ImGuiUpdate() override;
 
 	void UpdatePosition(const glm::vec3& position);
 	void UpdateDirection(const glm::vec3& direction);
@@ -75,10 +72,9 @@ public:
 	float GetIntensity() const { return intensity; }
 
 	static const int MAX_LIGHTS = 100;
-	static glm::vec3 orientation;
-	static glm::vec3 scale;
 
 private:
+	friend class LightComponent;
 	friend class Renderer; // The renderer should be the only object allowed to create lights because we need to track them
 	friend class ScenePanel; // Needs direct access to member variables 
 

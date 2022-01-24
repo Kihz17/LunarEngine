@@ -6,8 +6,6 @@
 #include <sstream>
 
 int Light::currentLightIndex = 0;
-glm::vec3 Light::orientation = glm::vec3(0.0f);
-glm::vec3 Light::scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
 std::vector<int> Light::removedLights;
 
@@ -63,67 +61,6 @@ Light::~Light()
 {
 	UpdateOn(false); // Turn the light off in the shader
 	removedLights.push_back(this->lightIndex); // Save the index so it can be used again later
-}
-
-void Light::ImGuiUpdate()
-{
-	if (ImGui::TreeNode("Light"))
-	{
-		ImGui::DragFloat3("Position", (float*)&position, 0.01f);
-		if (lightType == LightType::Directional)
-		{
-			ImGui::DragFloat3("Direction", (float*)&direction, 0.01f);
-		}
-		ImGui::ColorEdit3("Diffuse", (float*)&color);
-		ImGui::DragFloat("Radius", &radius, 0.01f);
-		if (lightType == LightType::Point)
-		{
-			ImGui::DragFloat("Intensity", &intensity, 0.01f);
-		}
-
-		ImGui::NewLine();
-
-		// Atten selection
-		if (lightType != LightType::Directional)
-		{
-			ImGui::Text("Attenuation Mode");
-			if (ImGui::RadioButton("Linear", (int*)&attenuationMode, 0))
-			{
-				attenuationMode = AttenuationMode::Linear;
-			}
-			ImGui::SameLine();
-			if (ImGui::RadioButton("Quadratic", (int*)&attenuationMode, 1))
-			{
-				attenuationMode = AttenuationMode::Quadratic;
-			}
-			ImGui::SameLine();
-			if (ImGui::RadioButton("UE4", (int*)&attenuationMode, 2))
-			{
-				attenuationMode = AttenuationMode::UE4;
-			}
-		}
-
-		ImGui::NewLine();
-
-		// Light Type selection
-		ImGui::Text("Light Type");
-		if (ImGui::RadioButton("Directional", (int*)&lightType, 0))
-		{
-			lightType = LightType::Directional;
-		}
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Point", (int*)&lightType, 1))
-		{
-			lightType = LightType::Point;
-		}
-
-		ImGui::NewLine();
-		ImGui::Checkbox("On", &on);
-
-		SendToShader();
-
-		ImGui::TreePop();
-	}
 }
 
 void Light::UpdatePosition(const glm::vec3& position)

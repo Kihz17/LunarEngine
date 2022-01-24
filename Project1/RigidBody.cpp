@@ -1,5 +1,6 @@
 #include "RigidBody.h"
 
+
 RigidBody::RigidBody(const Physics::RigidBodyInfo info, Physics::IShape* shape)
 	: IRigidBody(),
 	shape(shape),

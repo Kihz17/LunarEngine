@@ -9,6 +9,8 @@ class Entity
 public:
 	virtual ~Entity();
 
+	virtual void OnUpdate(float deltaTime);
+
 	template<class T> T* AddComponent()
 	{
 		T* newComponent = new T();
@@ -66,10 +68,14 @@ public:
 	std::vector<Component*> components;
 	std::vector<Entity*> children;
 
+protected:
+	Entity();
+
 private:
 	friend class EntityManager;
 
 	Entity(unsigned int id, const std::string& name);
+
 };
 
 typedef std::vector<Entity*>::iterator entity_iterator;

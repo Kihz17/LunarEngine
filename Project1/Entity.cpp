@@ -1,8 +1,17 @@
 #include "Entity.h"
+#include "Components.h"
+#include "Renderer.h"
 
 Entity::Entity(unsigned int id, const std::string& name)
 	: id(id),
 	name(name)
+{
+
+}
+
+Entity::Entity()
+	: id(0),
+	name("unnamed")
 {
 
 }
@@ -28,5 +37,31 @@ void Entity::RemoveComponent(Component* c)
 			this->components.pop_back();
 			return;
 		}
+	}
+}
+
+void Entity::OnUpdate(float deltaTime)
+{
+	if (HasComponent<RenderComponent>()) // We should be sending to the renderer
+	{
+		RenderSubmission submission;
+		submission.renderComponent = GetComponent<RenderComponent>();
+
+		if (HasComponent<PositionComponent>())
+		{
+			submission.position = GetComponent<PositionComponent>()->value;
+		}
+
+		if (HasComponent<ScaleComponent>())
+		{
+			submission.scale = GetComponent<ScaleComponent>()->value;
+		}
+
+		if (HasComponent<RotationComponent>())
+		{
+			submission.rotation = GetComponent<RotationComponent>()->value;
+		}
+
+		Renderer::Submit(submission);
 	}
 }

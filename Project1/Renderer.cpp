@@ -1,7 +1,6 @@
 #include "Renderer.h"
 #include "ShaderLibrary.h"
 #include "EntityManager.h"
-#include "Components.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -38,9 +37,8 @@ const std::string Renderer::GRASS_SHADER_KEY = "grassShader";
 PrimitiveShape* Renderer::quad = nullptr;
 PrimitiveShape* Renderer::cube = nullptr;
 
-static std::vector<Entity*> forwardEntites;
-static std::vector<Light*> lightSources;
-static Mesh* isoSphere = nullptr;
+static std::vector<RenderSubmission> submissions;
+static std::vector<RenderSubmission> forwardSubmissions;
 
 static const uint32_t MAX_GRASS_BLADES = 2048;
 static VertexArrayObject* grassVAO = nullptr;
@@ -51,8 +49,6 @@ static float* grassRoots = new float[MAX_GRASS_BLADES]; // Allows for 2048 grass
 void Renderer::Initialize(WindowSpecs* window)
 {
 	windowDetails = window;
-
-	isoSphere = new Mesh("assets/models/ISO_Sphere.ply");
 
 	Renderer::quad = new PrimitiveShape(ShapeType::Quad);
 	Renderer::cube = new PrimitiveShape(ShapeType::Cube);
@@ -302,10 +298,6 @@ void Renderer::Initialize(WindowSpecs* window)
 void Renderer::CleanUp()
 {
 	delete quad;
-
-	ShaderLibrary::CleanUp();
-
-	delete windowDetails;
 	delete geometryBuffer;
 
 	if (cubeMapBuffer) delete cubeMapBuffer;
@@ -341,8 +333,8 @@ void Renderer::BeginFrame(const Camera& camera)
 
 void Renderer::EndFrame()
 {
-	forwardEntites.clear();
-	lightSources.clear();
+	submissions.clear();
+	forwardSubmissions.clear();
 
 	glfwSwapBuffers(windowDetails->window);
 }
@@ -353,6 +345,11 @@ void Renderer::DrawFrame()
 	EnvironmentPass();
 	LightingPass();
 	ForwardPass();
+}
+
+void Renderer::Submit(const RenderSubmission& submission)
+{
+	submissions.push_back(submission);
 }
 
 void Renderer::SetEnvironmentMapEquirectangular(const std::string& path)
@@ -507,60 +504,19 @@ void Renderer::GeometryPass()
 	gShader->SetMat4("uMatProjection", projection);
 	gShader->SetMat4("uMatView", view);
 
-	const std::unordered_map<unsigned int, Entity*>& entities = EntityManager::GetEntities();
-	std::unordered_map<unsigned int, Entity*>::const_iterator entityIt = entities.begin();
-
-	while (entityIt != entities.end())
+	for (RenderSubmission& submission : submissions)
 	{
-		Entity* entity = entityIt->second;
-		if (entity->HasComponent<Light>())
-		{
-			lightSources.push_back(entity->GetComponent<Light>());
-		}
-
-		if (!entity->HasComponent<Render>())  // This entity shouldn't be rendered
-		{
-			entityIt++;
-			continue;
-		}
-			
-
-		Position* positionComponent = entity->GetComponent<Position>();
-		if (!positionComponent)
-		{
-			std::cout << "Renderable entity '" << entity->name << "' is missing position component!" << std::endl;
-			entityIt++;
-			continue;
-		}
-
-		Scale* scaleComponent = entity->GetComponent<Scale>();
-		if (!positionComponent)
-		{
-			std::cout << "Renderable entity '" << entity->name << "' is missing scale component!" << std::endl;
-			entityIt++;
-			continue;
-		}
-
-		Rotation* rotationComponent = entity->GetComponent<Rotation>();
-		if (!positionComponent)
-		{
-			std::cout << "Renderable entity '" << entity->name << "' is missing rotation component!" << std::endl;
-			entityIt++;
-			continue;
-		}
-
-		Render* renderComponent = entity->GetComponent<Render>();
+		RenderComponent* renderComponent = submission.renderComponent;
 		if (renderComponent->alphaTransparency < 1.0f || renderComponent->isIgnoreLighting) // Needs alpha blending, use this in the forward pass
 		{
-			forwardEntites.push_back(entity);
-			entityIt++;
+			forwardSubmissions.push_back(submission);
 			continue;
 		}
 
 		glm::mat4 transform = glm::mat4(1.0f);
-		transform *= glm::toMat4(rotationComponent->value);
-		transform *= glm::scale(glm::mat4(1.0f), scaleComponent->value);
-		transform *= glm::translate(glm::mat4(1.0f), positionComponent->value);
+		transform *= glm::toMat4(submission.rotation);
+		transform *= glm::scale(glm::mat4(1.0f), submission.scale);
+		transform *= glm::translate(glm::mat4(1.0f), submission.position);
 
 		glm::mat4 projViewModel = projection * view * transform;
 		glm::mat4& prevProjViewModel = renderComponent->hasPrevProjViewModel ? renderComponent->projViewModel : projViewModel;
@@ -638,8 +594,6 @@ void Renderer::GeometryPass()
 		renderComponent->vao->Bind();
 		glDrawElements(GL_TRIANGLES, renderComponent->indexCount, GL_UNSIGNED_INT, 0);
 		renderComponent->vao->Unbind();
-
-		entityIt++;
 	}
 
 	// Grass
@@ -717,17 +671,14 @@ void Renderer::ForwardPass()
 	forwardShader->SetMat4("uMatProjection", projection);
 
 	// Draw geometry
-	for (Entity* entity : forwardEntites)
+	for (RenderSubmission& submission: forwardSubmissions)
 	{
-		Position* positionComponent = entity->GetComponent<Position>();
-		Scale* scaleComponent = entity->GetComponent<Scale>();
-		Rotation* rotationComponent = entity->GetComponent<Rotation>();
-		Render* renderComponent = entity->GetComponent<Render>();
+		RenderComponent* renderComponent = submission.renderComponent;
 
 		glm::mat4 transform = glm::mat4(1.0f);
-		transform *= glm::toMat4(rotationComponent->value);
-		transform *= glm::scale(glm::mat4(1.0f), scaleComponent->value);
-		transform *= glm::translate(glm::mat4(1.0f), positionComponent->value);
+		transform *= glm::toMat4(submission.rotation);
+		transform *= glm::scale(glm::mat4(1.0f), submission.scale);
+		transform *= glm::translate(glm::mat4(1.0f), submission.position);
 
 		forwardShader->SetMat4("uMatModel", transform);
 		forwardShader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
@@ -805,24 +756,5 @@ void Renderer::ForwardPass()
 		renderComponent->vao->Bind();
 		glDrawElements(GL_TRIANGLES, renderComponent->indexCount, GL_UNSIGNED_INT, 0);
 		renderComponent->vao->Unbind();
-	}
-
-	// Draw lights
-	for (Light* light : lightSources)
-	{
-		glm::mat4 transform = glm::mat4(1.0f);
-		transform *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-		transform *= glm::translate(glm::mat4(1.0f), light->GetPosition());
-
-		forwardShader->SetMat4("uMatModel", transform);
-		forwardShader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
-
-		forwardShader->SetFloat4("uColorOverride", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-		forwardShader->SetInt("uIgnoreLighting", GL_TRUE);
-		forwardShader->SetFloat("uAlphaTransparency", 1.0f);
-
-		isoSphere->GetVertexArray()->Bind();
-		glDrawElements(GL_TRIANGLES, isoSphere->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-		isoSphere->GetVertexArray()->Unbind();
 	}
 }

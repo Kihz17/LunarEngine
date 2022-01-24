@@ -4,6 +4,7 @@
 #include "GameEngine.h"
 #include "EntityManager.h"
 #include "Components.h"
+#include "RigidBody.h"
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
@@ -16,6 +17,44 @@ GLuint WIDTH = 1280;
 GLuint HEIGHT = 720;
 
 glm::vec2 lastCursorPos = glm::vec2(0.0f);
+
+struct PhysicsSphere : public Entity
+{
+    PhysicsSphere(float radius)
+        : shape(radius),
+        rigidBody(nullptr)
+    {
+        AddComponent<PositionComponent>();
+        AddComponent<ScaleComponent>();
+        AddComponent<RotationComponent>();
+
+        Physics::RigidBodyInfo rigidInfo;
+        rigidInfo.damping = 0.001f;
+        rigidInfo.isStatic = false;
+        rigidInfo.mass = radius * 1.2;
+        rigidInfo.position = GetComponent<PositionComponent>()->value;
+        rigidInfo.velocity = glm::vec3(0.0f);
+        rigidInfo.restitution = 0.8f;
+        rigidBody = new RigidBody(rigidInfo, &shape);
+
+        AddComponent<RigidBodyComponent>(rigidBody);
+    }
+
+    ~PhysicsSphere()
+    {
+        delete rigidBody;
+    }
+
+    virtual void OnUpdate(float deltaTime) override
+    {
+        GetComponent<PositionComponent>()->value = GetComponent<RigidBodyComponent>()->ptr->GetPosition(); // Sync position with rigid body
+        Entity::OnUpdate(deltaTime);
+    }
+
+private:
+    Physics::SphereShape shape;
+    RigidBody* rigidBody;
+};
 
 static void ErrorCallback(int error, const char* description)
 {
@@ -40,39 +79,39 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
         }
     }
 
-    if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+    if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
     {
         Renderer::SetViewType(1);
     }
-    else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_F2 && action == GLFW_PRESS)
     {
         Renderer::SetViewType(2);
     }
-    else if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
     {
         Renderer::SetViewType(3);
     }
-    else if (key == GLFW_KEY_4 && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
     {
         Renderer::SetViewType(4);
     }
-    else if (key == GLFW_KEY_5 && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
     {
         Renderer::SetViewType(5);
     }
-    else if (key == GLFW_KEY_6 && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_F6 && action == GLFW_PRESS)
     {
         Renderer::SetViewType(6);
     }
-    else if (key == GLFW_KEY_7 && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_F7 && action == GLFW_PRESS)
     {
         Renderer::SetViewType(7);
     }
-    else if (key == GLFW_KEY_8 && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_F8 && action == GLFW_PRESS)
     {
         Renderer::SetViewType(8);
     }
-    else if (key == GLFW_KEY_9 && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_F9 && action == GLFW_PRESS)
     {
         Renderer::SetViewType(9);
     }
@@ -177,16 +216,18 @@ int main()
     // Setup some lights
     LightInfo lightInfo;
     lightInfo.postion = glm::vec3(0.0f, 10.0f, 0.0f);
+    Light* light = new Light(lightInfo);
 
-    Entity* light = EntityManager::CreateEntity("lightTest");
-    light->AddComponent<Light>(lightInfo);
+    Entity* lightEntity = EntityManager::CreateEntity("lightTest");
+    lightEntity->AddComponent<LightComponent>(light);
 
+    // SHADER BALL TEST
     Entity* testEntity = EntityManager::CreateEntity("shaderBall");
-    testEntity->AddComponent<Position>();
-    testEntity->AddComponent<Rotation>();
-    testEntity->AddComponent<Scale>();
+    testEntity->AddComponent<PositionComponent>();
+    testEntity->AddComponent<RotationComponent>();
+    testEntity->AddComponent<ScaleComponent>();
 
-    Render::RenderInfo testInfo;
+    RenderComponent::RenderInfo testInfo;
     testInfo.vao = shaderBall->GetVertexArray();
     testInfo.indexCount = shaderBall->GetIndexBuffer()->GetCount();
     testInfo.albedoTextures.push_back({ blue, 1.0f });
@@ -194,8 +235,20 @@ int main()
     //testInfo.roughnessTexture = roughnessTexture;
     //testInfo.metalTexture = metalnessTexture;
     //testInfo.aoTexture = aoTexture;
+    testEntity->AddComponent<RenderComponent>(testInfo);
 
-    testEntity->AddComponent<Render>(testInfo);
+    // GROUND PLANE TEST
+    Entity* ground = EntityManager::CreateEntity("ground");
+    PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(0.0f));
+
+    Physics::RigidBodyInfo rigidInfo;
+    rigidInfo.damping = 0.0f;
+    rigidInfo.isStatic = true;
+    rigidInfo.mass = 1.0f;
+    rigidInfo.position = glm::vec3(0.0f);
+    rigidInfo.velocity = glm::vec3(0.0f);
+    RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
+    gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
 
     float lastFrameTime = glfwGetTime();
     float deltaTime = 0.0f;

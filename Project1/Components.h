@@ -2,6 +2,7 @@
 
 #include "VertexArrayObject.h"
 #include "Texture.h"
+#include "Light.h"
 
 #include <IRigidBody.h>
 
@@ -22,10 +23,10 @@ protected:
 	Component() = default;
 };
 
-struct Position : public Component
+struct PositionComponent : public Component
 {
-	Position(glm::vec3 value) : value(value) {}
-	Position() : value(glm::vec3(0.0f)) {}
+	PositionComponent(glm::vec3 value) : value(value) {}
+	PositionComponent() : value(glm::vec3(0.0f)) {}
 
 	virtual void ImGuiUpdate() override
 	{
@@ -39,9 +40,9 @@ struct Position : public Component
 	glm::vec3 value;
 };
 
-struct Rotation : public Component
+struct RotationComponent : public Component
 {
-	Rotation() : value(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)) {}
+	RotationComponent() : value(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)) {}
 
 	virtual void ImGuiUpdate() override
 	{
@@ -55,10 +56,10 @@ struct Rotation : public Component
 	glm::quat value;
 };
 
-struct Scale : public Component
+struct ScaleComponent : public Component
 {
-	Scale(glm::vec3 value) : value(value) {}
-	Scale() : value(glm::vec3(1.0f)) {}
+	ScaleComponent(glm::vec3 value) : value(value) {}
+	ScaleComponent() : value(glm::vec3(1.0f)) {}
 	
 	virtual void ImGuiUpdate() override
 	{
@@ -72,9 +73,9 @@ struct Scale : public Component
 	glm::vec3 value;
 };
 
-struct Velocity : public Component
+struct VelocityComponent : public Component
 {
-	Velocity() : value(glm::vec3(0.0f)) {}
+	VelocityComponent() : value(glm::vec3(0.0f)) {}
 
 	virtual void ImGuiUpdate() override
 	{
@@ -84,8 +85,11 @@ struct Velocity : public Component
 	glm::vec3 value;
 };
 
-struct RigidBody: public Component
+struct RigidBodyComponent : public Component
 {
+	RigidBodyComponent() : ptr(nullptr) {}
+	RigidBodyComponent(Physics::IRigidBody* body) : ptr(body) {}
+
 	virtual void ImGuiUpdate() override
 	{
 
@@ -94,7 +98,7 @@ struct RigidBody: public Component
 	Physics::IRigidBody* ptr;
 };
 
-struct Render : public Component
+struct RenderComponent : public Component
 {
 	struct RenderInfo
 	{
@@ -120,7 +124,7 @@ struct Render : public Component
 		float alphaTransparency = 1.0f;
 	};
 
-	Render()
+	RenderComponent()
 		: vao(nullptr),
 		indexCount(0),
 		isColorOverride(false),
@@ -139,11 +143,12 @@ struct Render : public Component
 		projViewModel(glm::mat4(1.0f))
 	{}
 
-	Render (const RenderInfo& renderInfo)
+	RenderComponent(const RenderInfo& renderInfo)
 		: vao(renderInfo.vao),
 		indexCount(renderInfo.indexCount),
 		isColorOverride(renderInfo.isColorOverride),
 		colorOverride(renderInfo.colorOverride),
+		albedoTextures(renderInfo.albedoTextures),
 		normalTexture(renderInfo.normalTexture),
 		roughnessTexture(renderInfo.roughnessTexture),
 		metalTexture(renderInfo.metalTexture),
@@ -227,4 +232,73 @@ struct Render : public Component
 
 	bool hasPrevProjViewModel;
 	glm::mat4 projViewModel;
+};
+
+struct LightComponent : public Component
+{
+	LightComponent() : ptr(nullptr) {}
+	LightComponent(Light* ptr) : ptr(ptr) {}
+
+	virtual void ImGuiUpdate() override
+	{
+		if (ImGui::TreeNode("Light"))
+		{
+			ImGui::DragFloat3("Position", (float*)&ptr->position, 0.01f);
+			if (ptr->lightType == LightType::Directional)
+			{
+				ImGui::DragFloat3("Direction", (float*)&ptr->direction, 0.01f);
+			}
+			ImGui::ColorEdit3("Diffuse", (float*)&ptr->color);
+			ImGui::DragFloat("Radius", &ptr->radius, 0.01f);
+			if (ptr->lightType == LightType::Point)
+			{
+				ImGui::DragFloat("Intensity", &ptr->intensity, 0.01f);
+			}
+
+			ImGui::NewLine();
+
+			// Atten selection
+			if (ptr->lightType != LightType::Directional)
+			{
+				ImGui::Text("Attenuation Mode");
+				if (ImGui::RadioButton("Linear", (int*)&ptr->attenuationMode, 0))
+				{
+					ptr->attenuationMode = AttenuationMode::Linear;
+				}
+				ImGui::SameLine();
+				if (ImGui::RadioButton("Quadratic", (int*)&ptr->attenuationMode, 1))
+				{
+					ptr->attenuationMode = AttenuationMode::Quadratic;
+				}
+				ImGui::SameLine();
+				if (ImGui::RadioButton("UE4", (int*)&ptr->attenuationMode, 2))
+				{
+					ptr->attenuationMode = AttenuationMode::UE4;
+				}
+			}
+
+			ImGui::NewLine();
+
+			// Light Type selection
+			ImGui::Text("Light Type");
+			if (ImGui::RadioButton("Directional", (int*)&ptr->lightType, 0))
+			{
+				ptr->lightType = LightType::Directional;
+			}
+			ImGui::SameLine();
+			if (ImGui::RadioButton("Point", (int*)&ptr->lightType, 1))
+			{
+				ptr->lightType = LightType::Point;
+			}
+
+			ImGui::NewLine();
+			ImGui::Checkbox("On", &ptr->on);
+
+			ptr->SendToShader();
+
+			ImGui::TreePop();
+		}
+	}
+
+	Light* ptr;
 };

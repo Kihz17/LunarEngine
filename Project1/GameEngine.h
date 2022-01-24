@@ -17,12 +17,11 @@ public:
 	void AddPanel(IPanel* panel) { panels.push_back(panel); }
 
 	Camera camera;
+	Physics::IPhysicsFactory* physicsFactory;
+	Physics::IPhysicsWorld* physicsWorld;
 
 private:
 	WindowSpecs* windowSpecs;
-
-	Physics::IPhysicsFactory* physicsFactory;
-	Physics::IPhysicsWorld* physicsWorld;
 
 	std::vector<IPanel*> panels;
 

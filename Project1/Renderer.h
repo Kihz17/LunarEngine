@@ -3,8 +3,8 @@
 #include "Framebuffer.h"
 #include "Mesh.h"
 #include "Camera.h"
-#include "Light.h"
 #include "PrimitiveShape.h"
+#include "Components.h"
 
 #include <vector>
 
@@ -12,6 +12,14 @@ struct WindowSpecs
 {
 	GLFWwindow* window;
 	int width, height;
+};
+
+struct RenderSubmission
+{
+	RenderComponent* renderComponent = nullptr;
+	glm::vec3 position = glm::vec3(0.0f);
+	glm::vec3 scale = glm::vec3(1.0f);
+	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 };
 
 class Renderer
@@ -28,6 +36,8 @@ public:
 
 	static void BeginFrame(const Camera& camera);
 	static void EndFrame();
+
+	static void Submit(const RenderSubmission& submission);
 
 	static const std::string G_SHADER_KEY;
 	static const std::string LIGHTING_SHADER_KEY;

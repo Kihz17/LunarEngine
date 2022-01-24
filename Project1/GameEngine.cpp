@@ -3,6 +3,8 @@
 #include "PhysicsFactory.h"
 #include "EntityPanel.h"
 #include "EntityManager.h"
+#include "ShaderLibrary.h"
+#include "CollisionListener.h"
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
@@ -18,6 +20,9 @@ GameEngine::GameEngine(WindowSpecs* window, bool editorMode)
 	Renderer::Initialize(window);
     EntityManager::Initialize();
 
+    physicsWorld->RegisterCollisionListener(new CollisionListener());
+    physicsWorld->SetGravity(glm::vec3(0.0f, -9.81f, 0.0f));
+
     if (editorMode)
     {
         panels.push_back(new EntityPanel());
@@ -31,13 +36,15 @@ GameEngine::~GameEngine()
 	delete physicsFactory;
     for (IPanel* panel : panels) delete panel;
 
+    ShaderLibrary::CleanUp();
     Renderer::CleanUp();
     EntityManager::CleanUp();
 }
 
 void GameEngine::Update(float deltaTime)
 {
-
+    physicsWorld->Update(deltaTime);
+    EntityManager::UpdateEntites(deltaTime);
 }
 
 void GameEngine::Render()
