@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Shader.h"
-#include "IRenderable.h"
+#include "Components.h"
 
 #include <glm/glm.hpp>
 
@@ -44,37 +44,13 @@ struct LightInfo
 	bool on;
 };
 
-class LightRadius : public IRenderable
+class Light : public Component
 {
 public:
-	LightRadius(glm::vec3* position, float radius) 
-		: radius(radius),
-		position(position),
-		scale(glm::vec3(radius, radius, radius)) {}
-	virtual ~LightRadius() = default;
-
-	void UpdateRadius(float radius)
-	{
-		this->radius = radius;
-		this->scale = glm::vec3(radius, radius, radius);
-	}
-
-	// Inherited from IRenderable
-	virtual glm::vec3* GetRenderPosition() override { return position; }
-	virtual glm::vec3* GetRenderScale() override { return &scale; }
-	virtual glm::vec3* GetRenderOrientation() override { return &orientation; }
-
-	glm::vec3* position;
-	float radius;
-	glm::vec3 scale;
-
-	static glm::vec3 orientation;
-};
-
-class Light : public IRenderable
-{
-public:
+	Light(const LightInfo& lightInfo);
 	virtual ~Light();
+
+	virtual void ImGuiUpdate() override;
 
 	void UpdatePosition(const glm::vec3& position);
 	void UpdateDirection(const glm::vec3& direction);
@@ -90,19 +66,13 @@ public:
 	const glm::vec3& GetDirection() const { return direction; }
 	const glm::vec3& GetColor() const { return color; }
 
-	LightRadius& GetRadiusObject() { return radius; }
-	const float& GetRadius() const { return radius.radius; }
+	const float& GetRadius() const { return radius; }
 
 	bool IsOn() const { return on; }
 	AttenuationMode GetAttenutationMode() const { return attenuationMode; }
 	LightType GetLightType() const { return lightType; }
 	int GetIndex() const { return lightIndex; }
 	float GetIntensity() const { return intensity; }
-
-	// Inherited from IRenderable
-	virtual glm::vec3* GetRenderPosition() override { return &position; }
-	virtual glm::vec3* GetRenderScale() override { return &Light::scale; }
-	virtual glm::vec3* GetRenderOrientation() override { return &Light::orientation; }
 
 	static const int MAX_LIGHTS = 100;
 	static glm::vec3 orientation;
@@ -111,8 +81,6 @@ public:
 private:
 	friend class Renderer; // The renderer should be the only object allowed to create lights because we need to track them
 	friend class ScenePanel; // Needs direct access to member variables 
-
-	Light(glm::vec3 postion, const glm::vec3& direction, const glm::vec3& color, LightType lightType, float radius, AttenuationMode attenMode, bool on, float intensity);
 
 	int lightIndex;
 	std::string positionLoc;
@@ -123,7 +91,7 @@ private:
 	glm::vec3 position;
 	glm::vec3 direction;
 	glm::vec3 color;
-	LightRadius radius;
+	float radius;
 	float intensity;
 	bool on;
 	AttenuationMode attenuationMode;

@@ -2,11 +2,11 @@
 
 #include "IPanel.h"
 
-class ScenePanel : public IPanel
+class EntityPanel : public IPanel
 {
 public:
-	ScenePanel();
-	virtual ~ScenePanel();
+	EntityPanel();
+	virtual ~EntityPanel();
 
 	virtual void OnUpdate() override;
 };

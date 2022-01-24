@@ -1,8 +1,9 @@
 #include "GLCommon.h"
 #include "Renderer.h"
 #include "Input.h"
-
-#include "ScenePanel.h"
+#include "GameEngine.h"
+#include "EntityManager.h"
+#include "Components.h"
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
@@ -10,10 +11,9 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+static GameEngine* gameEngine;
 GLuint WIDTH = 1280;
 GLuint HEIGHT = 720;
-
-Camera camera;
 
 glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
@@ -82,7 +82,7 @@ static void MouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
     if (Input::GetCursorMode() == CursorMode::Locked)
     {
-        camera.Look(xpos, ypos);
+        gameEngine->camera.Look(xpos, ypos);
     }
 }
 
@@ -153,7 +153,8 @@ int main()
     specs->window = window;
     specs->width = WIDTH;
     specs->height = HEIGHT;
-    Renderer::Initialize(specs);
+
+    gameEngine = new GameEngine(specs, true);
 
     // Load textures
     Texture* albedoTexture = new Texture("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -169,60 +170,32 @@ int main()
 
     // Load models
     Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
-    Mesh* isoSphere = new Mesh("assets/models/ISO_Sphere.ply");
     Mesh* grass = new Mesh("assets/models/quad.ply");
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
     // Setup some lights
     LightInfo lightInfo;
-    lightInfo.postion = glm::vec3(0.0f, 5.0f, 0.0f);
-    lightInfo.direction = glm::vec3(0.2f, -0.8f, 0.0f);
-    lightInfo.attenMode = AttenuationMode::UE4;
-  //  Renderer::AddLight("testLight", lightInfo);
+    lightInfo.postion = glm::vec3(0.0f, 10.0f, 0.0f);
 
-    LightInfo lightInfo2;
-    lightInfo.postion = glm::vec3(0.0f, -5.0f, 0.0f);
-    Renderer::AddLight("testLight2", lightInfo2);
+    Entity* light = EntityManager::CreateEntity("lightTest");
+    light->AddComponent<Light>(lightInfo);
 
-    glm::vec3 modelPos = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 orientationPos = glm::vec3(0.0f);
-    glm::vec3 scalePos = glm::vec3(1.0f, 1.0f, 1.0f);
+    Entity* testEntity = EntityManager::CreateEntity("shaderBall");
+    testEntity->AddComponent<Position>();
+    testEntity->AddComponent<Rotation>();
+    testEntity->AddComponent<Scale>();
 
-    SubmittedGeometry testGeo;
-    testGeo.handle = "test";
-    testGeo.vao = shaderBall->GetVertexArray();
-    testGeo.indexCount = shaderBall->GetIndexBuffer()->GetCount();
-    testGeo.albedoTextures.push_back({ blue, 1.0f });
-    testGeo.normalTexture = normalTexture;
-   // testGeo.roughnessTexture = roughnessTexture;
-   // testGeo.metalTexture = metalnessTexture;
-    //testGeo.aoTexture = aoTexture;
-    testGeo.position = &modelPos;
-    testGeo.orientation = &orientationPos;
-    testGeo.scale = &scalePos;
+    Render::RenderInfo testInfo;
+    testInfo.vao = shaderBall->GetVertexArray();
+    testInfo.indexCount = shaderBall->GetIndexBuffer()->GetCount();
+    testInfo.albedoTextures.push_back({ blue, 1.0f });
+    testInfo.normalTexture = normalTexture;
+    //testInfo.roughnessTexture = roughnessTexture;
+    //testInfo.metalTexture = metalnessTexture;
+    //testInfo.aoTexture = aoTexture;
 
-    Renderer::SubmitDefferedGeometry(testGeo);
-
-    glm::vec3 grassPos = glm::vec3(0.0f, 20.0f, 0.0f);
-    glm::vec3 grassO = glm::vec3(0.0f);
-    glm::vec3 grassS = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    SubmittedGeometry grassTest;
-    grassTest.handle = "grassTest";
-    grassTest.vao = grass->GetVertexArray();
-    grassTest.indexCount = grass->GetIndexBuffer()->GetCount();
-    grassTest.albedoTextures.push_back({ grassA, 1.0f });
-    grassTest.normalTexture = grassN;
-    grassTest.position = &grassPos;
-    grassTest.orientation = &grassO;
-    grassTest.scale = &grassS;
-
-    Renderer::SubmitDefferedGeometry(grassTest);
-
-    // Setup Panels
-    std::vector<IPanel*> panels;
-    panels.push_back(new ScenePanel());
+    testEntity->AddComponent<Render>(testInfo);
 
     float lastFrameTime = glfwGetTime();
     float deltaTime = 0.0f;
@@ -239,116 +212,48 @@ int main()
         {
             if (Input::IsKeyPressed(Key::KeyCode::W))
             {
-                camera.Move(MoveDirection::Forward, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Forward, deltaTime);
             }
             if (Input::IsKeyPressed(Key::KeyCode::A))
             {
-                camera.Move(MoveDirection::Left, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Left, deltaTime);
             }
             if (Input::IsKeyPressed(Key::KeyCode::S))
             {
-                camera.Move(MoveDirection::Back, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Back, deltaTime);
             }
             if (Input::IsKeyPressed(Key::KeyCode::D))
             {
-                camera.Move(MoveDirection::Right, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Right, deltaTime);
             }
             if (Input::IsKeyPressed(Key::KeyCode::Space))
             {
-                camera.Move(MoveDirection::Up, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Up, deltaTime);
             }
             if (Input::IsKeyPressed(Key::KeyCode::LeftShift))
             {
-                camera.Move(MoveDirection::Down, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Down, deltaTime);
             }
         }
 
-        // Show lights
-        if (true)
-        {
-            std::unordered_map<std::string, Light*> lightMap = Renderer::GetLights();
-            std::unordered_map<std::string, Light*>::iterator it = lightMap.begin();
-            while (it != lightMap.end())
-            {
-                Light* light = it->second;
-
-                std::string lightHandle = std::string("light" + std::to_string(light->GetIndex()));
-                std::string radiusHandle = std::string("lightRadius" + std::to_string(light->GetIndex()));
-
-                if(!Renderer::ContainsForwardGeometry(lightHandle))
-                {
-                    // Solid center
-                    ForwardGeometry lightGeo;
-                    lightGeo.handle = lightHandle;
-                    lightGeo.vao = isoSphere->GetVertexArray();
-                    lightGeo.indexCount = isoSphere->GetIndexBuffer()->GetCount();
-                    lightGeo.isColorOverride = true;
-                    lightGeo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
-                    lightGeo.isIgnoreLighting = true;
-                    lightGeo.position = light->GetRenderPosition();
-                    lightGeo.scale = light->GetRenderScale();
-                    lightGeo.orientation = light->GetRenderOrientation();
-                    Renderer::SubmitForwardGeometry(lightGeo);
-                }
-
-                if (!Renderer::ContainsForwardGeometry(radiusHandle))
-                {
-                    LightRadius& radiusObject = light->GetRadiusObject();
-
-                    // Wireframe radius
-                    ForwardGeometry radiusGeo;
-                    radiusGeo.handle = radiusHandle;
-                    radiusGeo.vao = isoSphere->GetVertexArray();
-                    radiusGeo.indexCount = isoSphere->GetIndexBuffer()->GetCount();
-                    radiusGeo.isColorOverride = true;
-                    radiusGeo.colorOverride = glm::vec3(0.8f, 0.0f, 0.0f);
-                    radiusGeo.isIgnoreLighting = true;
-                    radiusGeo.isWireframe = true;
-                    radiusGeo.position = radiusObject.GetRenderPosition();
-                    radiusGeo.scale = radiusObject.GetRenderScale();
-                    radiusGeo.orientation = radiusObject.GetRenderOrientation();
-                    Renderer::SubmitForwardGeometry(radiusGeo);
-                }
-
-                it++;
-            }
-        }
-
-        // Start ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        Renderer::BeginFrame(camera);
-
-        for (IPanel* panel : panels)
-        {
-            panel->OnUpdate();
-        }
-
-        Renderer::DrawFrame(deltaTime);
-
-        // Render ImGui
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        Renderer::EndFrame();
+        gameEngine->Update(deltaTime);
+        gameEngine->Render();
     }
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    Renderer::CleanUp();
+    delete gameEngine;
 
 	return 0;
 }
 
 // TODO List
 // 1. Fix IBL
-// 2. Allow for forward rendering with our new deffered rendering https://learnopengl.com/Advanced-Lighting/Deferred-Shading
+// 2. Instanced rendering
+// 3. Prodecural grass
 
 // LATER
 // SSAO? Raytracing? Raymarching?
 // Post processing
-// Instanced rendering w/ deffered & forward?

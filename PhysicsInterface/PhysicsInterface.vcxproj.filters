@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Interfaces">
+      <UniqueIdentifier>{1bcc5145-7ad6-44bd-aad2-8d7bb27a8a1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Impl">
+      <UniqueIdentifier>{e83b7912-bedc-49b1-98a2-bc88c22f2d34}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="IPhysicsFactory.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IPhysicsWorld.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IRigidBody.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="ICollisionListener.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IShape.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Shapes.h">
+      <Filter>Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Shapes.cpp">
+      <Filter>Impl</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -101,7 +101,7 @@ struct AssimpLogger : public Assimp::LogStream
 Mesh::Mesh(const std::string& filePath)
 	: filePath(filePath), boundingBox(glm::vec3(0.0f), glm::vec3(0.0f))
 {
-	AssimpLogger::Initialize();
+	//AssimpLogger::Initialize();
 
 	std::cout << "Loading mesh " << filePath << "..." << std::endl;;
 	this->importer = CreateScope<Assimp::Importer>();

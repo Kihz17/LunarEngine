@@ -21,4 +21,5 @@ public:
 private:
 	GLuint ID;
 	BufferLayout layout;
+	uint32_t size;
 };

@@ -20,6 +20,12 @@
     <Filter Include="Panels">
       <UniqueIdentifier>{404aecaf-a80a-42ea-8d01-cc436dea2ba5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{58aec285-ab7c-4d14-99e5-04d20c5a7dd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ECS">
+      <UniqueIdentifier>{c632f52c-c701-43b6-8beb-e7a001fd5f24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -91,8 +97,30 @@
     <ClCompile Include="PrimitiveShape.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="ScenePanel.cpp">
+    <ClCompile Include="EntityPanel.cpp">
       <Filter>Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionHandler.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsFactory.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsWorld.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionListener.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngine.cpp" />
+    <ClCompile Include="Entity.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager.cpp">
+      <Filter>ECS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -184,11 +212,33 @@
     <ClInclude Include="IPanel.h">
       <Filter>Panels</Filter>
     </ClInclude>
-    <ClInclude Include="ScenePanel.h">
+    <ClInclude Include="EntityPanel.h">
       <Filter>Panels</Filter>
     </ClInclude>
-    <ClInclude Include="IRenderable.h">
-      <Filter>Graphics</Filter>
+    <ClInclude Include="RigidBody.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionHandler.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsFactory.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsWorld.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionListener.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngine.h" />
+    <ClInclude Include="Components.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager.h">
+      <Filter>ECS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

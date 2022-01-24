@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{132483dc-dac1-4580-864c-cea5c7d45a67}</ProjectGuid>
-    <RootNamespace>Project1</RootNamespace>
+    <ProjectGuid>{191bae33-0d95-4b98-9fc8-c5864471e9cd}</ProjectGuid>
+    <RootNamespace>PhysicsInterface</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,13 +40,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -78,13 +78,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <ExternalIncludePath>$(SolutionDir)Extern\include;$(SolutionDir)PhysicsInterface;$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>$(SolutionDir)Extern\lib\x64\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Extern\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <ExternalIncludePath>$(SolutionDir)Extern\include;$(SolutionDir)PhysicsInterface;$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>$(SolutionDir)Extern\lib\x64\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Extern\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -118,14 +116,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SOLUTION_DIR=R"($(SolutionDir))";NORMAL_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\vertShader_01.glsl)";NORMAL_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\fragShader_01.glsl)";OUTLINE_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineVert.glsl)";OUTLINE_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineFrag.glsl)";_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;yaml-cpp.lib;assimp-vc142-mtd.lib;opengl32.lib;glu32.lib;PhysicsInterface.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -134,95 +130,27 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SOLUTION_DIR=R"($(SolutionDir))";NORMAL_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\vertShader_01.glsl)";NORMAL_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\fragShader_01.glsl)";OUTLINE_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineVert.glsl)";OUTLINE_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineFrag.glsl)";NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;yaml-cpp.lib;assimp-vc142-mtd.lib;opengl32.lib;glu32.lib;PhysicsInterface.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AABB.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CollisionHandler.cpp" />
-    <ClCompile Include="CollisionListener.cpp" />
-    <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="EntityManager.cpp" />
-    <ClCompile Include="Framebuffer.cpp" />
-    <ClCompile Include="GameEngine.cpp" />
-    <ClCompile Include="glad.c" />
-    <ClCompile Include="IndexBuffer.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Light.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshManager.cpp" />
-    <ClCompile Include="PhysicsFactory.cpp" />
-    <ClCompile Include="PhysicsWorld.cpp" />
-    <ClCompile Include="PrimitiveShape.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="RigidBody.cpp" />
-    <ClCompile Include="EntityPanel.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="ShaderLibrary.cpp" />
-    <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="vendor\imgui\imgui.cpp" />
-    <ClCompile Include="vendor\imgui\imgui_demo.cpp" />
-    <ClCompile Include="vendor\imgui\imgui_draw.cpp" />
-    <ClCompile Include="vendor\imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="vendor\imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="vendor\imgui\imgui_tables.cpp" />
-    <ClCompile Include="vendor\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="VertexArrayObject.cpp" />
-    <ClCompile Include="VertexBuffer.cpp" />
+    <ClInclude Include="ICollisionListener.h" />
+    <ClInclude Include="IPhysicsFactory.h" />
+    <ClInclude Include="IPhysicsWorld.h" />
+    <ClInclude Include="IRigidBody.h" />
+    <ClInclude Include="IShape.h" />
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="Shapes.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AABB.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="CollisionHandler.h" />
-    <ClInclude Include="CollisionListener.h" />
-    <ClInclude Include="Components.h" />
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="EntityManager.h" />
-    <ClInclude Include="Framebuffer.h" />
-    <ClInclude Include="GameEngine.h" />
-    <ClInclude Include="GLCommon.h" />
-    <ClInclude Include="IndexBuffer.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="IPanel.h" />
-    <ClInclude Include="KeyCodes.h" />
-    <ClInclude Include="Light.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshManager.h" />
-    <ClInclude Include="MouseCodes.h" />
-    <ClInclude Include="PhysicsFactory.h" />
-    <ClInclude Include="PhysicsWorld.h" />
-    <ClInclude Include="PrimitiveShape.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="RigidBody.h" />
-    <ClInclude Include="EntityPanel.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="ShaderLibrary.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="vendor\imgui\imconfig.h" />
-    <ClInclude Include="vendor\imgui\imgui.h" />
-    <ClInclude Include="vendor\imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="vendor\imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="vendor\imgui\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="vendor\imgui\imgui_internal.h" />
-    <ClInclude Include="vendor\imgui\imstb_rectpack.h" />
-    <ClInclude Include="vendor\imgui\imstb_textedit.h" />
-    <ClInclude Include="vendor\imgui\imstb_truetype.h" />
-    <ClInclude Include="VertexArrayObject.h" />
-    <ClInclude Include="VertexBuffer.h" />
-    <ClInclude Include="VertexInformation.h" />
+    <ClCompile Include="Shapes.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

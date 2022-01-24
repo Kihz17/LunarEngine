@@ -1,5 +1,7 @@
 #include "Renderer.h"
 #include "ShaderLibrary.h"
+#include "EntityManager.h"
+#include "Components.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -19,11 +21,6 @@ CubeMap* Renderer::envMapCube = nullptr;
 CubeMap* Renderer::envMapIrradiance = nullptr;
 CubeMap* Renderer::envMapPreFilter = nullptr;
 
-std::unordered_map<std::string, SubmittedGeometry> Renderer::defferedGeometry;
-//std::unordered_map<std::string, glm::mat4> Renderer::prevProjViewModels;
-
-std::unordered_map<std::string, ForwardGeometry> Renderer::forwardGeometry;
-
 glm::mat4 Renderer::projection(1.0f);
 glm::mat4 Renderer::view(1.0f);
 glm::vec3 Renderer::cameraPos(0.0f);
@@ -36,18 +33,50 @@ const std::string Renderer::PREFILTER_SHADER_KEY = "cubeToPrefilterShader";
 const std::string Renderer::ENV_LUT_SHADER_KEY = "envLUTShader";
 const std::string Renderer::CUBE_MAP_DRAW_SHADER_KEY = "cubeMapDrawShader";
 const std::string Renderer::FORWARD_SHADER_KEY = "forwardShader";
+const std::string Renderer::GRASS_SHADER_KEY = "grassShader";
 
 PrimitiveShape* Renderer::quad = nullptr;
 PrimitiveShape* Renderer::cube = nullptr;
 
-std::unordered_map<std::string, Light*> Renderer::lights;
+static std::vector<Entity*> forwardEntites;
+static std::vector<Light*> lightSources;
+static Mesh* isoSphere = nullptr;
+
+static const uint32_t MAX_GRASS_BLADES = 2048;
+static VertexArrayObject* grassVAO = nullptr;
+static VertexBuffer* grassVBO = nullptr;
+static uint32_t grassCount = 0;
+static float* grassRoots = new float[MAX_GRASS_BLADES]; // Allows for 2048 grass blades (Since this array is so big, i'm allocating on heap instead of stack)
 
 void Renderer::Initialize(WindowSpecs* window)
 {
 	windowDetails = window;
 
+	isoSphere = new Mesh("assets/models/ISO_Sphere.ply");
+
 	Renderer::quad = new PrimitiveShape(ShapeType::Quad);
 	Renderer::cube = new PrimitiveShape(ShapeType::Cube);
+
+	grassVAO = new VertexArrayObject();
+	//grassVBO = new VertexBuffer(nullptr, MAX_GRASS_BLADES * sizeof(float) * 3);
+
+	float positions[100 * 3];
+	int currentIndex = 0;
+	for (int i = 0; i < 100; i++)
+	{
+		positions[currentIndex] = i;
+		positions[currentIndex + 1] = 10.0f;
+		positions[currentIndex + 2] = 0.0f;
+		currentIndex += 3;
+	}
+	grassVBO = new VertexBuffer(positions, 300 * sizeof(float));
+	//grassVBO->SetData(positions, 300 * sizeof(float));
+
+	BufferLayout bufferLayout = {
+		{ ShaderDataType::Float3, "vWorldPosition" }
+	};
+	grassVBO->SetLayout(bufferLayout);
+	grassVAO->AddVertexBuffer(grassVBO);
 
 	//------------------------
 	// LOAD SHADERS
@@ -67,6 +96,7 @@ void Renderer::Initialize(WindowSpecs* window)
 	gShader->InitializeUniform("uAlbedoTexture3");
 	gShader->InitializeUniform("uAlbedoTexture4");
 	gShader->InitializeUniform("uAlbedoRatios");
+	gShader->InitializeUniform("uColorOverride");
 	gShader->InitializeUniform("uHasNormalTexture");
 	gShader->InitializeUniform("uNormalTexture");
 	gShader->InitializeUniform("uRoughnessTexture");
@@ -238,6 +268,21 @@ void Renderer::Initialize(WindowSpecs* window)
 		}
 	}
 	ShaderLibrary::Add(FORWARD_SHADER_KEY, forwardShader);
+
+	// Grass shader
+	Shader* grassShader = new Shader("assets/shaders/grass.glsl");
+	grassShader->InitializeUniform("uWidthHeight");
+	grassShader->InitializeUniform("uLODLevel");
+	grassShader->InitializeUniform("uAlbedoTexture");
+	grassShader->InitializeUniform("uHasNormalTexture");
+	grassShader->InitializeUniform("uNormalTexture");
+	grassShader->InitializeUniform("uRoughnessTexture");
+	grassShader->InitializeUniform("uMetalnessTexture");
+	grassShader->InitializeUniform("uAmbientOcculsionTexture");
+	grassShader->InitializeUniform("uMaterialOverrides");
+	grassShader->InitializeUniform("uDiscardTexture");
+	ShaderLibrary::Add(GRASS_SHADER_KEY, grassShader);
+
 	//------------------------
 	// SETUP FBOS
 	//------------------------
@@ -296,282 +341,18 @@ void Renderer::BeginFrame(const Camera& camera)
 
 void Renderer::EndFrame()
 {
+	forwardEntites.clear();
+	lightSources.clear();
+
 	glfwSwapBuffers(windowDetails->window);
 }
 
-void Renderer::DrawFrame(float deltaTime)
+void Renderer::DrawFrame()
 {
-	//------------------------
-	// GEOMETRY RENDER PASS
-	//------------------------
-	glDisable(GL_BLEND); // No blend for deffered rendering
-	glEnable(GL_DEPTH_TEST); // Enable depth testing for scene render
-
-	geometryBuffer->Bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	const Shader* gShader = ShaderLibrary::Get(G_SHADER_KEY);
-	gShader->Bind();
-
-	gShader->SetMat4("uMatProjection", projection);
-	gShader->SetMat4("uMatView", view);
-
-	std::unordered_map<std::string, SubmittedGeometry>::iterator defferedIt = defferedGeometry.begin();
-	while (defferedIt != defferedGeometry.end())
-	{
-		SubmittedGeometry& geometry = defferedIt->second;
-
-		if (!geometry.Validate())
-		{
-			std::cout << "Deferred Geometry '" << geometry.handle << "' is not valid!" << std::endl;
-			continue;
-		}
-
-		glm::mat4 transform = glm::mat4(1.0f);
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->x, glm::vec3(1.0f, 0.0f, 0.0f));
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->y, glm::vec3(0.0f, 1.0f, 0.0f));
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->z, glm::vec3(0.0f, 0.0f, 1.0f));
-		transform *= glm::scale(glm::mat4(1.0f), *geometry.scale);
-		transform *= glm::translate(glm::mat4(1.0f), *geometry.position);
-
-		glm::mat4 projViewModel = projection * view * transform;
-		glm::mat4& prevProjViewModel = geometry.hasPrevProjViewModel ? geometry.projViewModel : projViewModel;
-		geometry.projViewModel = projViewModel;
-
-		gShader->SetMat4("uMatModel", transform);
-		gShader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
-		gShader->SetMat4("uMatProjViewModel", projViewModel);
-		gShader->SetMat4("uMatPrevProjViewModel", prevProjViewModel);
-
-		// Bind albedo textures
-		float ratios[4];
-		for (int i = 0; i < 4; i++)
-		{
-			if (i < geometry.albedoTextures.size())
-			{
-				geometry.albedoTextures[i].first->BindToSlot(i);
-				gShader->SetInt(std::string("uAlbedoTexture" + std::to_string(i + 1)), i);
-				ratios[i] = geometry.albedoTextures[i].second;
-			}
-			else
-			{
-				ratios[i] = 0.0f;
-			}
-		}
-		gShader->SetFloat4("uAlbedoRatios", glm::vec4(ratios[0], ratios[1], ratios[2], ratios[3]));
-
-		if (geometry.normalTexture)
-		{
-			gShader->SetInt("uHasNormalTexture", GL_TRUE);
-			geometry.normalTexture->BindToSlot(4);
-			gShader->SetInt("uNormalTexture", 4);
-		}
-		else
-		{
-			gShader->SetInt("uHasNormalTexture", GL_FALSE);
-		}	
-
-		if (geometry.HasMaterialTextures())
-		{
-			gShader->SetFloat4("uMaterialOverrides", glm::vec4(0.0f));
-
-			geometry.roughnessTexture->BindToSlot(5);
-			gShader->SetInt("uRoughnessTexture", 5);
-
-			geometry.metalTexture->BindToSlot(6);
-			gShader->SetInt("uMetalnessTexture", 6);
-
-			geometry.aoTexture->BindToSlot(7);
-			gShader->SetInt("uAmbientOcculsionTexture", 7);
-		}
-		else // We have no material textures
-		{
-			gShader->SetFloat4("uMaterialOverrides", glm::vec4(geometry.roughness, geometry.metalness, geometry.ao, 1.0f));
-		}
-
-		if (geometry.isWireframe)
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-		else
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-
-		geometry.vao->Bind();
-		glDrawElements(GL_TRIANGLES, geometry.indexCount, GL_UNSIGNED_INT, 0);
-		geometry.vao->Unbind();
-
-		defferedIt++;
-	}
-
-	gShader->Unbind();
-	geometryBuffer->Unbind();
-
-	//------------------------
-	// ENVIRONMENT PASS
-	//------------------------
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	const Shader* environmentShader = ShaderLibrary::Get(CUBE_MAP_DRAW_SHADER_KEY);
-	environmentBuffer->Bind();
-	environmentShader->Bind();
-	environmentShader->SetMat4("uProjection", projection);
-	environmentShader->SetMat4("uView", view);
-	envMapCube->BindToSlot(0);
-	cube->Draw();
-	environmentBuffer->Unbind();
-
-	//------------------------
-	// LIGHTING RENDER PASS
-	//------------------------
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Disable depth buffer so that the quad doesnt get discarded
-	const Shader* lShader = ShaderLibrary::Get(LIGHTING_SHADER_KEY);
-	lShader->Bind();
-
-	// Bind G-Buffer textures
-	geometryBuffer->BindColorBuffer("position", 0);
-	geometryBuffer->BindColorBuffer("albedo", 1);
-	geometryBuffer->BindColorBuffer("normal", 2);
-	geometryBuffer->BindColorBuffer("effects", 3);
-
-	// Bind environment map stuff
-	environmentBuffer->BindColorBuffer("environment", 4);
-
-	if (envMapIrradiance)
-		envMapIrradiance->BindToSlot(5);
-
-	if (envMapPreFilter)
-		envMapPreFilter->BindToSlot(6);
-
-	if (envLUTBuffer)
-		envLUTBuffer->BindColorBuffer("lut", 7);
-
-	lShader->SetMat4("uInverseView", glm::transpose(view));
-	lShader->SetMat4("uInverseProjection", glm::inverse(projection));
-	lShader->SetMat4("uView", view);
-	lShader->SetFloat3("uCameraPosition", cameraPos);
-
-	// TODO: Move these into gBuffer so it can be passed in with the geometry
-	lShader->SetFloat3("uReflectivity", glm::vec3(0.04f)); 
-
-	quad->Draw();
-	lShader->Unbind();
-
-	//------------------------
-	// FORWARD RENDER PASS
-	//------------------------
-	geometryBuffer->BindRead(); // Bind for read only
-	geometryBuffer->UnbindWrite();
-
-	// Copy depth information from the geometry buffer -> default framebuffer
-	glBlitFramebuffer(0, 0, windowDetails->width, windowDetails->height, 0, 0, windowDetails->width, windowDetails->height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-	geometryBuffer->Unbind();
-
-	const Shader* forwardShader = ShaderLibrary::Get(FORWARD_SHADER_KEY);
-	forwardShader->Bind();
-
-	// Pass camera related data
-	forwardShader->SetMat4("uMatView", view);
-	forwardShader->SetMat4("uMatProjection", projection);
-	
-	// Draw geometry
-	std::unordered_map<std::string, ForwardGeometry>::iterator forwardIt = forwardGeometry.begin();
-	while (forwardIt != forwardGeometry.end())
-	{
-		ForwardGeometry& geometry = forwardIt->second;
-
-		if (!geometry.Validate())
-		{
-			std::cout << "Forward Geometry '" << geometry.handle << "' is not valid!" << std::endl;
-			continue;
-		}
-
-		glm::mat4 transform = glm::mat4(1.0f);
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->x, glm::vec3(1.0f, 0.0f, 0.0f));
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->y, glm::vec3(0.0f, 1.0f, 0.0f));
-		transform *= glm::rotate(glm::mat4(1.0f), geometry.orientation->z, glm::vec3(0.0f, 0.0f, 1.0f));
-		transform *= glm::scale(glm::mat4(1.0f), *geometry.scale);
-		transform *= glm::translate(glm::mat4(1.0f), *geometry.position);
-
-		forwardShader->SetMat4("uMatModel", transform);
-		forwardShader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
-
-		// Color
-		if (geometry.isColorOverride)
-		{
-			forwardShader->SetFloat4("uColorOverride", glm::vec4(geometry.colorOverride.x, geometry.colorOverride.y, geometry.colorOverride.z, 1.0f));
-		}
-		else // Bind diffuse textures
-		{
-			forwardShader->SetFloat4("uColorOverride", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-			float ratios[4];
-			for (int i = 0; i < 4; i++)
-			{
-				if (i < geometry.albedoTextures.size())
-				{
-					geometry.albedoTextures[i].first->BindToSlot(i);
-					forwardShader->SetInt(std::string("uAlbedoTexture" + std::to_string(i + 1)), i);
-					ratios[i] = geometry.albedoTextures[i].second;
-				}
-				else
-				{
-					ratios[i] = 0.0f;
-				}
-			}
-			forwardShader->SetFloat4("uAlbedoRatios", glm::vec4(ratios[0], ratios[1], ratios[2], ratios[3]));
-		}
-
-		// Normal
-		if (geometry.normalTexture)
-		{
-			forwardShader->SetInt("uHasNormalTexture", GL_TRUE);
-			geometry.normalTexture->BindToSlot(4);
-			forwardShader->SetInt("uNormalTexture", 4);
-		}
-		else
-		{
-			forwardShader->SetInt("uHasNormalTexture", GL_FALSE);
-		}
-
-		// Materials
-		if (geometry.HasMaterialTextures())
-		{
-			forwardShader->SetFloat4("uMaterialOverrides", glm::vec4(0.0f));
-
-			geometry.roughnessTexture->BindToSlot(5);
-			forwardShader->SetInt("uRoughnessTexture", 5);
-
-			geometry.metalTexture->BindToSlot(6);
-			forwardShader->SetInt("uMetalnessTexture", 6);
-
-			geometry.aoTexture->BindToSlot(7);
-			forwardShader->SetInt("uAmbientOcculsionTexture", 7);
-		}
-		else // We have no material textures
-		{
-			forwardShader->SetFloat4("uMaterialOverrides", glm::vec4(geometry.roughness, geometry.metalness, geometry.ao, 1.0f));
-		}
-
-		forwardShader->SetInt("uIgnoreLighting", geometry.isIgnoreLighting ? GL_TRUE : GL_FALSE);
-
-		forwardShader->SetFloat("uAlphaTransparency", geometry.alphaTransparency);
-
-		if (geometry.isWireframe)
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-		else
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-
-		geometry.vao->Bind();
-		glDrawElements(GL_TRIANGLES, geometry.indexCount, GL_UNSIGNED_INT, 0);
-		geometry.vao->Unbind();
-
-		forwardIt++;
-	}
+	GeometryPass();
+	EnvironmentPass();
+	LightingPass();
+	ForwardPass();
 }
 
 void Renderer::SetEnvironmentMapEquirectangular(const std::string& path)
@@ -712,15 +493,336 @@ void Renderer::SetEnvironmentMapEquirectangular(const std::string& path)
 	glViewport(0, 0, windowDetails->width, windowDetails->height); // Set viewport back to native width/height
 }
 
-Light* Renderer::AddLight(const std::string& name, const LightInfo& lightInfo)
+void Renderer::GeometryPass()
 {
-	if (lights.find(name) != Renderer::lights.end())
+	glDisable(GL_BLEND); // No blend for deffered rendering
+	glEnable(GL_DEPTH_TEST); // Enable depth testing for scene render
+
+	geometryBuffer->Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	const Shader* gShader = ShaderLibrary::Get(G_SHADER_KEY);
+	gShader->Bind();
+
+	gShader->SetMat4("uMatProjection", projection);
+	gShader->SetMat4("uMatView", view);
+
+	const std::unordered_map<unsigned int, Entity*>& entities = EntityManager::GetEntities();
+	std::unordered_map<unsigned int, Entity*>::const_iterator entityIt = entities.begin();
+
+	while (entityIt != entities.end())
 	{
-		std::cout << "Light with name '" << name << "' already exists!" << std::endl;
-		return nullptr;
+		Entity* entity = entityIt->second;
+		if (entity->HasComponent<Light>())
+		{
+			lightSources.push_back(entity->GetComponent<Light>());
+		}
+
+		if (!entity->HasComponent<Render>())  // This entity shouldn't be rendered
+		{
+			entityIt++;
+			continue;
+		}
+			
+
+		Position* positionComponent = entity->GetComponent<Position>();
+		if (!positionComponent)
+		{
+			std::cout << "Renderable entity '" << entity->name << "' is missing position component!" << std::endl;
+			entityIt++;
+			continue;
+		}
+
+		Scale* scaleComponent = entity->GetComponent<Scale>();
+		if (!positionComponent)
+		{
+			std::cout << "Renderable entity '" << entity->name << "' is missing scale component!" << std::endl;
+			entityIt++;
+			continue;
+		}
+
+		Rotation* rotationComponent = entity->GetComponent<Rotation>();
+		if (!positionComponent)
+		{
+			std::cout << "Renderable entity '" << entity->name << "' is missing rotation component!" << std::endl;
+			entityIt++;
+			continue;
+		}
+
+		Render* renderComponent = entity->GetComponent<Render>();
+		if (renderComponent->alphaTransparency < 1.0f || renderComponent->isIgnoreLighting) // Needs alpha blending, use this in the forward pass
+		{
+			forwardEntites.push_back(entity);
+			entityIt++;
+			continue;
+		}
+
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform *= glm::toMat4(rotationComponent->value);
+		transform *= glm::scale(glm::mat4(1.0f), scaleComponent->value);
+		transform *= glm::translate(glm::mat4(1.0f), positionComponent->value);
+
+		glm::mat4 projViewModel = projection * view * transform;
+		glm::mat4& prevProjViewModel = renderComponent->hasPrevProjViewModel ? renderComponent->projViewModel : projViewModel;
+		renderComponent->projViewModel = projViewModel;
+
+		gShader->SetMat4("uMatModel", transform);
+		gShader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
+		gShader->SetMat4("uMatProjViewModel", projViewModel);
+		gShader->SetMat4("uMatPrevProjViewModel", prevProjViewModel);
+
+		// Color
+		if (renderComponent->isColorOverride)
+		{
+			gShader->SetFloat4("uColorOverride", glm::vec4(renderComponent->colorOverride.x, renderComponent->colorOverride.y, renderComponent->colorOverride.z, 1.0f));
+		}
+		else // Bind diffuse textures
+		{
+			gShader->SetFloat4("uColorOverride", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+			float ratios[4];
+			for (int i = 0; i < 4; i++)
+			{
+				if (i < renderComponent->albedoTextures.size())
+				{
+					renderComponent->albedoTextures[i].first->BindToSlot(i);
+					gShader->SetInt(std::string("uAlbedoTexture" + std::to_string(i + 1)), i);
+					ratios[i] = renderComponent->albedoTextures[i].second;
+				}
+				else
+				{
+					ratios[i] = 0.0f;
+				}
+			}
+			gShader->SetFloat4("uAlbedoRatios", glm::vec4(ratios[0], ratios[1], ratios[2], ratios[3]));
+		}
+
+		if (renderComponent->normalTexture)
+		{
+			gShader->SetInt("uHasNormalTexture", GL_TRUE);
+			renderComponent->normalTexture->BindToSlot(4);
+			gShader->SetInt("uNormalTexture", 4);
+		}
+		else
+		{
+			gShader->SetInt("uHasNormalTexture", GL_FALSE);
+		}
+
+		if (renderComponent->HasMaterialTextures())
+		{
+			gShader->SetFloat4("uMaterialOverrides", glm::vec4(0.0f));
+
+			renderComponent->roughnessTexture->BindToSlot(5);
+			gShader->SetInt("uRoughnessTexture", 5);
+
+			renderComponent->metalTexture->BindToSlot(6);
+			gShader->SetInt("uMetalnessTexture", 6);
+
+			renderComponent->aoTexture->BindToSlot(7);
+			gShader->SetInt("uAmbientOcculsionTexture", 7);
+		}
+		else // We have no material textures
+		{
+			gShader->SetFloat4("uMaterialOverrides", glm::vec4(renderComponent->roughness, renderComponent->metalness, renderComponent->ao, 1.0f));
+		}
+
+		if (renderComponent->isWireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+
+		renderComponent->vao->Bind();
+		glDrawElements(GL_TRIANGLES, renderComponent->indexCount, GL_UNSIGNED_INT, 0);
+		renderComponent->vao->Unbind();
+
+		entityIt++;
 	}
 
-	Light* light = new Light(lightInfo.postion, lightInfo.direction, lightInfo.color, lightInfo.lightType, lightInfo.radius, lightInfo.attenMode, lightInfo.on, lightInfo.intensity);
-	Renderer::lights.insert({ name, light });
-	return light;
+	// Grass
+	const Shader* grassShader = ShaderLibrary::Get(GRASS_SHADER_KEY);
+	grassShader->Bind();
+
+	grassVAO->Bind();
+	glDrawArrays(GL_POINTS, 0, 100);
+
+	geometryBuffer->Unbind();
+}
+
+void Renderer::EnvironmentPass()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	const Shader* environmentShader = ShaderLibrary::Get(CUBE_MAP_DRAW_SHADER_KEY);
+	environmentBuffer->Bind();
+	environmentShader->Bind();
+	environmentShader->SetMat4("uProjection", projection);
+	environmentShader->SetMat4("uView", view);
+	envMapCube->BindToSlot(0);
+	cube->Draw();
+	environmentBuffer->Unbind();
+}
+
+void Renderer::LightingPass()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Disable depth buffer so that the quad doesnt get discarded
+	const Shader* lShader = ShaderLibrary::Get(LIGHTING_SHADER_KEY);
+	lShader->Bind();
+
+	// Bind G-Buffer textures
+	geometryBuffer->BindColorBuffer("position", 0);
+	geometryBuffer->BindColorBuffer("albedo", 1);
+	geometryBuffer->BindColorBuffer("normal", 2);
+	geometryBuffer->BindColorBuffer("effects", 3);
+
+	// Bind environment map stuff
+	environmentBuffer->BindColorBuffer("environment", 4);
+
+	if (envMapIrradiance)
+		envMapIrradiance->BindToSlot(5);
+
+	if (envMapPreFilter)
+		envMapPreFilter->BindToSlot(6);
+
+	if (envLUTBuffer)
+		envLUTBuffer->BindColorBuffer("lut", 7);
+
+	lShader->SetMat4("uInverseView", glm::transpose(view));
+	lShader->SetMat4("uInverseProjection", glm::inverse(projection));
+	lShader->SetMat4("uView", view);
+	lShader->SetFloat3("uCameraPosition", cameraPos);
+
+	// TODO: Move these into gBuffer so it can be passed in with the geometry
+	lShader->SetFloat3("uReflectivity", glm::vec3(0.04f));
+
+	quad->Draw();
+}
+
+void Renderer::ForwardPass()
+{
+	geometryBuffer->BindRead(); // Bind for read only
+	geometryBuffer->UnbindWrite();
+
+	// Copy depth information from the geometry buffer -> default framebuffer
+	glBlitFramebuffer(0, 0, windowDetails->width, windowDetails->height, 0, 0, windowDetails->width, windowDetails->height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	geometryBuffer->Unbind();
+
+	const Shader* forwardShader = ShaderLibrary::Get(FORWARD_SHADER_KEY);
+	forwardShader->Bind();
+
+	// Pass camera related data
+	forwardShader->SetMat4("uMatView", view);
+	forwardShader->SetMat4("uMatProjection", projection);
+
+	// Draw geometry
+	for (Entity* entity : forwardEntites)
+	{
+		Position* positionComponent = entity->GetComponent<Position>();
+		Scale* scaleComponent = entity->GetComponent<Scale>();
+		Rotation* rotationComponent = entity->GetComponent<Rotation>();
+		Render* renderComponent = entity->GetComponent<Render>();
+
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform *= glm::toMat4(rotationComponent->value);
+		transform *= glm::scale(glm::mat4(1.0f), scaleComponent->value);
+		transform *= glm::translate(glm::mat4(1.0f), positionComponent->value);
+
+		forwardShader->SetMat4("uMatModel", transform);
+		forwardShader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
+
+		// Color
+		if (renderComponent->isColorOverride)
+		{
+			forwardShader->SetFloat4("uColorOverride", glm::vec4(renderComponent->colorOverride.x, renderComponent->colorOverride.y, renderComponent->colorOverride.z, 1.0f));
+		}
+		else // Bind diffuse textures
+		{
+			forwardShader->SetFloat4("uColorOverride", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+			float ratios[4];
+			for (int i = 0; i < 4; i++)
+			{
+				if (i < renderComponent->albedoTextures.size())
+				{
+					renderComponent->albedoTextures[i].first->BindToSlot(i);
+					forwardShader->SetInt(std::string("uAlbedoTexture" + std::to_string(i + 1)), i);
+					ratios[i] = renderComponent->albedoTextures[i].second;
+				}
+				else
+				{
+					ratios[i] = 0.0f;
+				}
+			}
+			forwardShader->SetFloat4("uAlbedoRatios", glm::vec4(ratios[0], ratios[1], ratios[2], ratios[3]));
+		}
+
+		// Normal
+		if (renderComponent->normalTexture)
+		{
+			forwardShader->SetInt("uHasNormalTexture", GL_TRUE);
+			renderComponent->normalTexture->BindToSlot(4);
+			forwardShader->SetInt("uNormalTexture", 4);
+		}
+		else
+		{
+			forwardShader->SetInt("uHasNormalTexture", GL_FALSE);
+		}
+
+		// Materials
+		if (renderComponent->HasMaterialTextures())
+		{
+			forwardShader->SetFloat4("uMaterialOverrides", glm::vec4(0.0f));
+
+			renderComponent->roughnessTexture->BindToSlot(5);
+			forwardShader->SetInt("uRoughnessTexture", 5);
+
+			renderComponent->metalTexture->BindToSlot(6);
+			forwardShader->SetInt("uMetalnessTexture", 6);
+
+			renderComponent->aoTexture->BindToSlot(7);
+			forwardShader->SetInt("uAmbientOcculsionTexture", 7);
+		}
+		else // We have no material textures
+		{
+			forwardShader->SetFloat4("uMaterialOverrides", glm::vec4(renderComponent->roughness, renderComponent->metalness, renderComponent->ao, 1.0f));
+		}
+
+		forwardShader->SetInt("uIgnoreLighting", renderComponent->isIgnoreLighting ? GL_TRUE : GL_FALSE);
+
+		forwardShader->SetFloat("uAlphaTransparency", renderComponent->alphaTransparency);
+
+		if (renderComponent->isWireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+
+		renderComponent->vao->Bind();
+		glDrawElements(GL_TRIANGLES, renderComponent->indexCount, GL_UNSIGNED_INT, 0);
+		renderComponent->vao->Unbind();
+	}
+
+	// Draw lights
+	for (Light* light : lightSources)
+	{
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		transform *= glm::translate(glm::mat4(1.0f), light->GetPosition());
+
+		forwardShader->SetMat4("uMatModel", transform);
+		forwardShader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
+
+		forwardShader->SetFloat4("uColorOverride", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		forwardShader->SetInt("uIgnoreLighting", GL_TRUE);
+		forwardShader->SetFloat("uAlphaTransparency", 1.0f);
+
+		isoSphere->GetVertexArray()->Bind();
+		glDrawElements(GL_TRIANGLES, isoSphere->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+		isoSphere->GetVertexArray()->Unbind();
+	}
 }

@@ -28,7 +28,7 @@ int fmod(int x, int y); // Returns the remainder of x divided by y with the same
 
 void main()
 {
-	vec3 worldPos = gl_in[0].gl_Position;
+	vec3 worldPos = gl_in[0].gl_Position.xyz;
 	int vertexCount = uLODLevel == 0 ? 12 : uLODLevel == 1 ? 8 : 4;
 	
 	// Generate a random number per-blade to vary width and height
@@ -67,12 +67,13 @@ void main()
 		gl_Position = transformedPosition;
 		EmitVertex();
 	}
+	EndPrimitive();
 }
 
 int fmod(int x, int y)
 {
 	float remainder = fract(abs(x / y)) * abs(y);
-	return (int) (x < 0.0f ? -remainder : remainder);
+	return int(x < 0.0f ? -remainder : remainder);
 }
 
 //type fragment
@@ -104,6 +105,7 @@ const float nearPlane = 1.0f;
 const float farPlane = 1000.0f;
 
 vec3 LinearizeColor(vec3 color); // Converts to linear color space (sRGB to RGB). In other words, gamma correction https://lettier.github.io/3d-game-shaders-for-beginners/gamma-correction.html
+float LinearizeDepth(float depth);
 vec3 ComputeTextureNormal();
 
 void main()
@@ -124,7 +126,7 @@ void main()
 	}
 	
 	gPosition = vec4(mWorldPosition, LinearizeDepth(gl_FragCoord.z)); // Set position with adjusted depth
-	gAlbedo = texture(uAlbedoTexture, mTextureCoordinates).rgb;
+	gAlbedo.rgb = texture(uAlbedoTexture, mTextureCoordinates).rgb;
 	gEffects.gb = vec2(0.0f, 0.0f);
 	
 	if(uMaterialOverrides.w == 1.0f) // No texture to sample from, use flat value
@@ -157,8 +159,8 @@ vec3 ComputeTextureNormal()
 	vec3 textureNormal = normalize(texture(uNormalTexture, mTextureCoordinates).rgb * 2.0f - 1.0f); // Sample normal texture and convert values in range from -1.0 to 1.0
 	
 	// Get partial derivatives 
-    vec3 dPosX = dFdx(mViewPosition);
-    vec3 dPosY = dFdy(mViewPosition);
+    vec3 dPosX = dFdx(mWorldPosition);
+    vec3 dPosY = dFdy(mWorldPosition);
     vec2 dTexX = dFdx(mTextureCoordinates);
     vec2 dTexY = dFdy(mTextureCoordinates);
 
