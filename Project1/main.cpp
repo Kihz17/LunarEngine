@@ -18,44 +18,6 @@ GLuint HEIGHT = 720;
 
 glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
-struct PhysicsSphere : public Entity
-{
-    PhysicsSphere(float radius)
-        : shape(radius),
-        rigidBody(nullptr)
-    {
-        AddComponent<PositionComponent>();
-        AddComponent<ScaleComponent>();
-        AddComponent<RotationComponent>();
-
-        Physics::RigidBodyInfo rigidInfo;
-        rigidInfo.damping = 0.001f;
-        rigidInfo.isStatic = false;
-        rigidInfo.mass = radius * 1.2;
-        rigidInfo.position = GetComponent<PositionComponent>()->value;
-        rigidInfo.velocity = glm::vec3(0.0f);
-        rigidInfo.restitution = 0.8f;
-        rigidBody = new RigidBody(rigidInfo, &shape);
-
-        AddComponent<RigidBodyComponent>(rigidBody);
-    }
-
-    ~PhysicsSphere()
-    {
-        delete rigidBody;
-    }
-
-    virtual void OnUpdate(float deltaTime) override
-    {
-        GetComponent<PositionComponent>()->value = GetComponent<RigidBodyComponent>()->ptr->GetPosition(); // Sync position with rigid body
-        Entity::OnUpdate(deltaTime);
-    }
-
-private:
-    Physics::SphereShape shape;
-    RigidBody* rigidBody;
-};
-
 static void ErrorCallback(int error, const char* description)
 {
     fprintf(stderr, "[ERROR] %d: %s\n", error, description);
@@ -210,6 +172,7 @@ int main()
     // Load models
     Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
     Mesh* grass = new Mesh("assets/models/quad.ply");
+    Mesh* sphere = new Mesh("assets/models/sphere.obj");
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
@@ -222,40 +185,73 @@ int main()
     lightEntity->AddComponent<LightComponent>(light);
 
     // SHADER BALL TEST
-    Entity* testEntity = EntityManager::CreateEntity("shaderBall");
-    testEntity->AddComponent<PositionComponent>();
-    testEntity->AddComponent<RotationComponent>();
-    testEntity->AddComponent<ScaleComponent>();
+    //Entity* testEntity = EntityManager::CreateEntity("shaderBall");
+    //testEntity->AddComponent<PositionComponent>();
+    //testEntity->AddComponent<RotationComponent>();
+    //testEntity->AddComponent<ScaleComponent>();
 
-    RenderComponent::RenderInfo testInfo;
-    testInfo.vao = shaderBall->GetVertexArray();
-    testInfo.indexCount = shaderBall->GetIndexBuffer()->GetCount();
-    testInfo.albedoTextures.push_back({ blue, 1.0f });
-    testInfo.normalTexture = normalTexture;
-    //testInfo.roughnessTexture = roughnessTexture;
-    //testInfo.metalTexture = metalnessTexture;
-    //testInfo.aoTexture = aoTexture;
-    testEntity->AddComponent<RenderComponent>(testInfo);
+    //RenderComponent::RenderInfo testInfo;
+    //testInfo.vao = shaderBall->GetVertexArray();
+    //testInfo.indexCount = shaderBall->GetIndexBuffer()->GetCount();
+    //testInfo.albedoTextures.push_back({ blue, 1.0f });
+    //testInfo.normalTexture = normalTexture;
+    ////testInfo.roughnessTexture = roughnessTexture;
+    ////testInfo.metalTexture = metalnessTexture;
+    ////testInfo.aoTexture = aoTexture;
+    //testEntity->AddComponent<RenderComponent>(testInfo);
 
     // GROUND PLANE TEST
     Entity* ground = EntityManager::CreateEntity("ground");
     PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(0.0f));
 
     Physics::RigidBodyInfo rigidInfo;
-    rigidInfo.damping = 0.0f;
+    rigidInfo.linearDamping = 0.0f;
     rigidInfo.isStatic = true;
     rigidInfo.mass = 1.0f;
     rigidInfo.position = glm::vec3(0.0f);
-    rigidInfo.velocity = glm::vec3(0.0f);
+    rigidInfo.linearVelocity = glm::vec3(0.0f);
     RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
     gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
+
+    // SPHERE TEST
+    {
+        Entity* physicsSphere = EntityManager::CreateEntity("physicsSphere");
+        physicsSphere->AddComponent<PositionComponent>();
+        physicsSphere->AddComponent<ScaleComponent>();
+        physicsSphere->AddComponent<RotationComponent>();
+
+        float radius = 1.0f;
+        Physics::SphereShape shape(radius);
+
+        // Rigid Body
+        Physics::RigidBodyInfo rigidInfo;
+        rigidInfo.linearDamping = 0.001f;
+        rigidInfo.angularDamping = 0.001f;
+        rigidInfo.isStatic = false;
+        rigidInfo.mass = 1.0f;
+        rigidInfo.position = glm::vec3(0.0f, 50.0f, 0.0f);
+        rigidInfo.linearVelocity = glm::vec3(0.0f);
+        rigidInfo.restitution = 0.8f;
+        RigidBody* rigidBody = new RigidBody(rigidInfo, &shape);
+        physicsSphere->AddComponent<RigidBodyComponent>(rigidBody);
+
+        // Render Info
+        RenderComponent::RenderInfo sphereInfo;
+        sphereInfo.vao = sphere->GetVertexArray();
+        sphereInfo.indexCount = sphere->GetIndexBuffer()->GetCount();
+        sphereInfo.albedoTextures.push_back({ blue, 1.0f });
+        physicsSphere->AddComponent<RenderComponent>(sphereInfo);
+      
+        gameEngine->physicsWorld->AddRigidBody(physicsSphere->GetComponent<RigidBodyComponent>()->ptr);
+    }
+
 
     float lastFrameTime = glfwGetTime();
     float deltaTime = 0.0f;
     while (!glfwWindowShouldClose(window))
     {
         float currentFrameTime = glfwGetTime();
-        deltaTime = currentFrameTime - lastFrameTime;
+        deltaTime = std::min(currentFrameTime - lastFrameTime, 1.0f);
         lastFrameTime = currentFrameTime;
 
         glfwPollEvents();

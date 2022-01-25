@@ -1,5 +1,6 @@
 #include "RigidBody.h"
 
+#include <iostream>
 
 RigidBody::RigidBody(const Physics::RigidBodyInfo info, Physics::IShape* shape)
 	: IRigidBody(),
@@ -7,9 +8,12 @@ RigidBody::RigidBody(const Physics::RigidBodyInfo info, Physics::IShape* shape)
 	mass(info.mass),
 	isStatic(info.isStatic),
 	position(info.position),
-	previousPosition(info.position),
-	velocity(info.velocity),
-	damping(info.damping),
+	linearVelocity(info.linearVelocity),
+	rotation(info.rotation),
+	angularVelocity(info.angularVelocity),
+	linearDamping(info.linearDamping),
+	angularDamping(info.angularDamping),
+	friction(info.friction),
 	restitution(info.restitution)
 {
 	if (isStatic || mass <= 0.0f) // Static object
@@ -28,20 +32,34 @@ RigidBody::~RigidBody()
 
 }
 
+void RigidBody::ApplyForceAtPoint(const glm::vec3& force, const glm::vec3& relativePoint)
+{
+	ApplyForce(force);
+	ApplyTorque(glm::cross(relativePoint, force));
+}
+
 void RigidBody::UpdateAcceleration()
 {
 	if (isStatic) return;
 
-	acceleration = force * inverseMass * localGravity;
+	linearAcceleration = force * inverseMass + gravity;
+	angularAcceleration = torque;
+}
+
+void RigidBody::ClearForces()
+{
+	force = glm::vec3(0.0f);
+	torque = glm::vec3(0.0f);
 }
 
 void RigidBody::ApplyDamping(float deltaTime)
 {
-	velocity *= pow(1.0f - damping, deltaTime);
+	linearVelocity *= pow(1.0f - linearDamping, deltaTime);
+	angularVelocity *= pow(1.0f - angularDamping, deltaTime);
 
-	if (glm::length(velocity) < 0.001f)
+	if (glm::length(linearVelocity) < 0.001f)
 	{
-		velocity = glm::vec3(0.0f);
+		linearVelocity = glm::vec3(0.0f);
 	}
 }
 
@@ -50,14 +68,24 @@ void RigidBody::VerletStep1(float deltaTime)
 	if (isStatic) return;
 
 	previousPosition = position;
-	position += (velocity + acceleration * (deltaTime * 0.5f)) * deltaTime;
+	position += (linearVelocity + linearAcceleration * (deltaTime * 0.5f)) * deltaTime;
+
+	glm::vec3 axis = (angularVelocity + angularAcceleration * (deltaTime * 0.5f)) * deltaTime;
+	float angle = glm::length(axis);
+	axis = glm::normalize(axis);
+	if (angle != 0.0f)
+	{
+		glm::quat rot = glm::angleAxis(angle, axis);
+		rotation *= rot;
+	}
 }
 
 void RigidBody::VerletStep2(float deltaTime)
 {
 	if (isStatic) return;
 
-	velocity += acceleration * (deltaTime * 0.5f);
+	linearVelocity += linearAcceleration * (deltaTime * 0.5f);
+	angularVelocity += angularAcceleration * (deltaTime * 0.5f);
 }
 
 void RigidBody::VerletStep3(float deltaTime)

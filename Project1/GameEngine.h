@@ -21,6 +21,8 @@ public:
 	Physics::IPhysicsWorld* physicsWorld;
 
 private:
+	void SubmitEntitiesToRender();
+
 	WindowSpecs* windowSpecs;
 
 	std::vector<IPanel*> panels;

@@ -9,13 +9,6 @@ Entity::Entity(unsigned int id, const std::string& name)
 
 }
 
-Entity::Entity()
-	: id(0),
-	name("unnamed")
-{
-
-}
-
 Entity::~Entity()
 {
 	for (unsigned int i = 0; i < this->components.size(); i++) RemoveComponent(this->components[i]);
@@ -37,31 +30,5 @@ void Entity::RemoveComponent(Component* c)
 			this->components.pop_back();
 			return;
 		}
-	}
-}
-
-void Entity::OnUpdate(float deltaTime)
-{
-	if (HasComponent<RenderComponent>()) // We should be sending to the renderer
-	{
-		RenderSubmission submission;
-		submission.renderComponent = GetComponent<RenderComponent>();
-
-		if (HasComponent<PositionComponent>())
-		{
-			submission.position = GetComponent<PositionComponent>()->value;
-		}
-
-		if (HasComponent<ScaleComponent>())
-		{
-			submission.scale = GetComponent<ScaleComponent>()->value;
-		}
-
-		if (HasComponent<RotationComponent>())
-		{
-			submission.rotation = GetComponent<RotationComponent>()->value;
-		}
-
-		Renderer::Submit(submission);
 	}
 }

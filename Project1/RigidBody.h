@@ -3,6 +3,8 @@
 #include <IShape.h>
 #include <IRigidBody.h>
 
+#include <glm/gtx/quaternion.hpp>
+
 class RigidBody : public Physics::IRigidBody
 {
 public:
@@ -13,14 +15,19 @@ public:
 	virtual void GetPosition(glm::vec3& pos) override { pos = position; }
 	virtual glm::vec3 GetPosition() override { return position; }
 	virtual void SetPosition(const glm::vec3& pos) override { position = pos; }
-	virtual void GetOrientation(glm::quat& orien) override {} // TODO:
-	virtual void SetOrientation(const glm::quat& orien) override {}  // TODO:
+	virtual void GetOrientation(glm::quat& orien) override { orien = rotation; }
+	virtual void SetOrientation(const glm::quat& orien) override { rotation = orien; }
 	virtual void ApplyForce(const glm::vec3& force) override { this->force += force; }
+	virtual void ApplyForceAtPoint(const glm::vec3& force, const glm::vec3& relativePoint) override;
+	virtual void ApplyImpulse(const glm::vec3& impulse) override { linearVelocity += impulse * inverseMass; }
+	virtual void ApplyImpulseAtPoint(const glm::vec3& impulse, const glm::vec3& relativePoint) override { ApplyTorqueImpulse(glm::cross(relativePoint, impulse)); }
+	virtual void ApplyTorque(const glm::vec3& torque) override { this->torque += torque; }
+	virtual void ApplyTorqueImpulse(const glm::vec3& torqueImpulse) override { angularVelocity += torqueImpulse; }
 
-	void SetGravityAcceleration(const glm::vec3& gravity) { localGravity = gravity; }
+	void SetGravityAcceleration(const glm::vec3& gravity) { this->gravity = gravity; }
 	void UpdateAcceleration();
 
-	void ClearForces() { force = glm::vec3(0.0f); }
+	void ClearForces();
 	void ApplyDamping(float deltaTime);
 
 	// Verlet Steps (integrates Newton's equations of motion)
@@ -42,16 +49,26 @@ private:
 	float mass;
 	float inverseMass;
 
+	glm::vec3 linearAcceleration;
+	glm::vec3 angularAcceleration;
+
 	glm::vec3 position;
 	glm::vec3 previousPosition;
-	glm::vec3 velocity;
-	glm::vec3 acceleration;
+
+	glm::vec3 linearVelocity;
 	glm::vec3 force;
-	glm::vec3 localGravity;
+
+	glm::quat rotation;
+	glm::vec3 angularVelocity;
+	glm::vec3 torque;
+
+	glm::vec3 gravity;
 
 	Physics::IShape* shape;
 
-	float damping;
 	float restitution;
 	float friction;
+
+	float linearDamping;
+	float angularDamping;
 };

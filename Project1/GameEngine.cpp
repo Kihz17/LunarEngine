@@ -44,7 +44,7 @@ GameEngine::~GameEngine()
 void GameEngine::Update(float deltaTime)
 {
     physicsWorld->Update(deltaTime);
-    EntityManager::UpdateEntites(deltaTime);
+    SubmitEntitiesToRender();
 }
 
 void GameEngine::Render()
@@ -68,4 +68,62 @@ void GameEngine::Render()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     Renderer::EndFrame();
+}
+
+void GameEngine::SubmitEntitiesToRender()
+{
+    const std::unordered_map<unsigned int, Entity*>& entities = EntityManager::GetEntities();
+    std::unordered_map<unsigned int, Entity*>::const_iterator it = entities.begin();
+    while (it != entities.end())
+    {
+        Entity* entity = it->second;
+        RenderComponent* renderComponent = entity->GetComponent<RenderComponent>();
+        if (!renderComponent) // Can't be rendered
+        {
+            it++;
+            continue;
+        }
+
+        PositionComponent* posComponent = entity->GetComponent<PositionComponent>();
+        if (!posComponent) // Can't be rendered
+        {
+            std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a position component!" << std::endl;
+            it++;
+            continue;
+        }
+
+        RotationComponent* rotComponent = entity->GetComponent<RotationComponent>();
+        if (!rotComponent) // Can't be rendered
+        {
+            std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a rotation component!" << std::endl;
+            it++;
+            continue;
+        }
+
+        ScaleComponent* scaleComponent = entity->GetComponent<ScaleComponent>();
+        if (!scaleComponent) // Can't be rendered
+        {
+            std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a scale component!" << std::endl;
+            it++;
+            continue;
+        }
+
+        // Sync position component with rigidbody
+        RigidBodyComponent* rigidBodyComponent = entity->GetComponent<RigidBodyComponent>();
+        if (rigidBodyComponent)
+        {
+            rigidBodyComponent->ptr->GetPosition(posComponent->value); // Update position component
+            rigidBodyComponent->ptr->GetOrientation(rotComponent->value); // Update rotation component
+        }
+
+        // Tell the renderer to render this entity
+        RenderSubmission submission;
+        submission.renderComponent = renderComponent;
+        submission.position = posComponent->value;
+        submission.rotation = rotComponent->value;
+        submission.scale = scaleComponent->value;
+        Renderer::Submit(submission);
+
+        it++;
+    }
 }

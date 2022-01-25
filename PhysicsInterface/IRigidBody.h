@@ -1,6 +1,7 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include <glm/glm.hpp>]
+#include <glm/gtx/quaternion.hpp>
 
 namespace Physics
 {
@@ -10,17 +11,26 @@ namespace Physics
 			: mass(1.0f),
 			isStatic(false),
 			position(glm::vec3(0.0f)),
-			velocity(glm::vec3(0.0f)),
+			linearVelocity(glm::vec3(0.0f)),
 			restitution(0.8f),
-			friction(0.95f) {}
+			friction(0.95f),
+			rotation(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)),
+			angularVelocity(glm::vec3(0.0f)),
+			linearDamping(0.001f),
+			angularDamping(0.001f)
+		{}
 
 		bool isStatic;
 
 		glm::vec3 position;
-		glm::vec3 velocity;
+		glm::vec3 linearVelocity;
+
+		glm::quat rotation;
+		glm::vec3 angularVelocity;
 
 		float mass;
-		float damping;
+		float linearDamping;
+		float angularDamping;
 		float restitution;
 		float friction;
 	};
@@ -38,6 +48,13 @@ namespace Physics
 		virtual void SetOrientation(const glm::quat& orien) = 0;
 
 		virtual void ApplyForce(const glm::vec3& force) = 0;
+		virtual void ApplyForceAtPoint(const glm::vec3& force, const glm::vec3& relativePoint) = 0;
+
+		virtual void ApplyImpulse(const glm::vec3& impulse) = 0;
+		virtual void ApplyImpulseAtPoint(const glm::vec3& impulse, const glm::vec3& relativePoint) = 0;
+
+		virtual void ApplyTorque(const glm::vec3& torque) = 0;
+		virtual void ApplyTorqueImpulse(const glm::vec3& torqueImpulse) = 0;
 
 	protected:
 		IRigidBody() = default;

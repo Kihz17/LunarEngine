@@ -10,16 +10,6 @@ void EntityManager::Initialize()
 
 }
 
-void EntityManager::UpdateEntites(float deltaTime)
-{
-	std::unordered_map<unsigned int, Entity*>::iterator it = entities.begin();
-	while (it != entities.end())
-	{
-		it->second->OnUpdate(deltaTime);
-		it++;
-	}
-}
-
 void EntityManager::CleanUp()
 {
 	std::unordered_map<unsigned int, Entity*>::iterator it = entities.begin();

@@ -99,8 +99,8 @@ bool CollisionHandler::CollideSphereSphere(RigidBody* bodyA, Physics::SphereShap
 
 	positionDiff /= positionDiffLength;
 
-	glm::vec3 momentumA = bodyA->velocity * bodyA->mass;
-	glm::vec3 momentumB = bodyB->velocity * bodyB->mass;
+	glm::vec3 momentumA = bodyA->linearVelocity * bodyA->mass;
+	glm::vec3 momentumB = bodyB->linearVelocity * bodyB->mass;
 	glm::vec3 momentumSum = momentumA + momentumB;
 
 	momentumA = momentumSum * factorA;
@@ -114,8 +114,8 @@ bool CollisionHandler::CollideSphereSphere(RigidBody* bodyA, Physics::SphereShap
 	glm::vec3 elasticMomentumA = positionDiff * (glm::length(momentumA) * elasticity) * -1.0f;
 	glm::vec3 inelasticMomentumA = positionDiff * glm::length(momentumA) * (1.0f - elasticity);
 
-	bodyA->velocity -= (elasticMomentumA + inelasticMomentumA) * (bodyA->inverseMass * bodyA->restitution);
-	bodyB->velocity += (elasticMomentumB + inelasticMomentumB) * (bodyB->inverseMass * bodyB->restitution);
+	bodyA->linearVelocity -= (elasticMomentumA + inelasticMomentumA) * (bodyA->inverseMass * bodyA->restitution);
+	bodyB->linearVelocity += (elasticMomentumB + inelasticMomentumB) * (bodyB->inverseMass * bodyB->restitution);
 
 	bodyA->VerletStep1(revDt);
 	bodyB->VerletStep1(revDt);
@@ -130,22 +130,22 @@ bool CollisionHandler::CollideSpherePlane(RigidBody* bodyA, Physics::SphereShape
 	glm::vec3 closestPoint = ClosestPointToPlane(bodyA->position, plane->GetNormal(), plane->GetDotProduct());
 	glm::vec3 overlapVec = closestPoint - bodyA->position;
 	float overlapLength = glm::length(overlapVec);
-	float velocityLength = glm::length(bodyA->velocity);
+	float velocityLength = glm::length(bodyA->linearVelocity);
 
 	if (velocityLength > 0.000001f)
 	{
 		float overlapLength = glm::length(overlapVec);
-		float velocity = glm::length(bodyA->velocity);
+		float velocity = glm::length(bodyA->linearVelocity);
 
 		float fractDt = sphere->GetRadius() * ((sphere->GetRadius() / overlapLength) - 1.0f) / velocity; // Overlap ratio of the current timestep
 		float partialDt = (1.0f - fractDt) * deltaTime; // The portion of delta time contributed to the overlap
 		bodyA->VerletStep1(-partialDt); // Resolve sphere contact so that the sphere and plane are just touching
 
-		glm::vec3 reflect = glm::reflect(bodyA->velocity, plane->GetNormal());
-		glm::vec3 cachedVelocity = bodyA->velocity;
-		bodyA->velocity = reflect;
+		glm::vec3 reflect = glm::reflect(bodyA->linearVelocity, plane->GetNormal());
+		glm::vec3 cachedVelocity = bodyA->linearVelocity;
+		bodyA->linearVelocity = reflect;
 
-		glm::vec3 impactComponent = ProjectOn(bodyA->velocity, plane->GetNormal());
+		glm::vec3 impactComponent = ProjectOn(bodyA->linearVelocity, plane->GetNormal());
 		glm::vec3 impactTangent = cachedVelocity - impactComponent;
 		bodyA->ApplyForce(impactTangent * -1.0f * bodyA->mass * bodyB->friction);
 		bodyA->VerletStep1(partialDt);
@@ -156,15 +156,15 @@ bool CollisionHandler::CollideSpherePlane(RigidBody* bodyA, Physics::SphereShape
 		if (overlapLength < sphere->GetRadius())
 		{
 			bodyA->position += plane->GetNormal() * (sphere->GetRadius() - overlapLength);
-			float velDotNorm = glm::dot(bodyA->velocity, plane->GetNormal());
+			float velDotNorm = glm::dot(bodyA->linearVelocity, plane->GetNormal());
 			if (velDotNorm < 0.0f)
 			{
-				bodyA->velocity -= plane->GetNormal() * velDotNorm;
+				bodyA->linearVelocity -= plane->GetNormal() * velDotNorm;
 			}
 		}
 		else
 		{
-			bodyA->velocity *= bodyA->restitution;
+			bodyA->linearVelocity *= bodyA->restitution;
 		}
 	}
 
