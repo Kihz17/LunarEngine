@@ -43,6 +43,7 @@ GameEngine::~GameEngine()
 
 void GameEngine::Update(float deltaTime)
 {
+    camera.Update(deltaTime);
     physicsWorld->Update(deltaTime);
     SubmitEntitiesToRender();
 }

@@ -30,7 +30,7 @@ struct LightInfo
 		radius(100.0f),
 		attenMode(AttenuationMode::Linear),
 		on(true),
-		intensity(50.0f)
+		intensity(20.0f)
 	{}
 
 	glm::vec3 postion;

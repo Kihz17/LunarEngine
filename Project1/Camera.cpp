@@ -3,7 +3,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(const glm::vec3& position, const glm::vec3& up, float yaw, float pitch)
+Camera::Camera(const glm::vec3& position, const glm::vec3& up, float yaw, float pitch, float zoomSpeed)
 	: position(position),
 	speed(8.0f),
 	sensitivity(0.1f),
@@ -13,7 +13,12 @@ Camera::Camera(const glm::vec3& position, const glm::vec3& up, float yaw, float 
 	fov(glm::radians(45.0f)),
 	first(true),
 	lastX(0.0f),
-	lastY(0.0f)
+	lastY(0.0f),
+	zoomSpeed(zoomSpeed),
+	currentZoomSpeed(0.0f),
+	distance(0.0f),
+	minDistance(-100.0f),
+	maxDistance(0.0f)
 {
 	UpdateCamera();
 }
@@ -25,7 +30,25 @@ Camera::~Camera()
 
 glm::mat4 Camera::GetViewMatrix() const
 {
-	return glm::lookAt(this->position, this->position + this->front, this->up);
+	glm::vec3 target = this->position + this->front;
+	glm::vec3 eye = position + (front * distance);
+	return glm::lookAt(eye, target, this->up);
+}
+
+void Camera::Update(float deltaTime)
+{
+	// Apply zoom damping
+	currentZoomSpeed *= glm::pow(0.01f, deltaTime);
+	if (glm::abs(currentZoomSpeed) < 0.005f)
+	{
+		currentZoomSpeed = 0.0f;
+	}
+
+	if (currentZoomSpeed != 0.0f)
+	{
+		distance += currentZoomSpeed * deltaTime;
+		distance = glm::clamp(distance, minDistance, maxDistance);
+	}
 }
 
 void Camera::UpdateCamera()
@@ -99,4 +122,9 @@ void Camera::Look(float xPos, float yPos)
 		pitch = -89.0f;
 
 	UpdateCamera();
+}
+
+void Camera::Zoom(float y)
+{
+	currentZoomSpeed = y < 0 ? -zoomSpeed : zoomSpeed;
 }

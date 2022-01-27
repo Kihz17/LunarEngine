@@ -2,7 +2,7 @@
 
 PhysicsWorld::PhysicsWorld()
 	: IPhysicsWorld(),
-	collisionListener(0),
+	collisionListener(nullptr),
 	collisionHandler(new CollisionHandler())
 {
 

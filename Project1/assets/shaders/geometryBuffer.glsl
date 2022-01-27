@@ -13,29 +13,25 @@ uniform mat4 uMatProjViewModel;
 uniform mat4 uMatPrevProjViewModel;
 
 out vec3 mWorldPosition;
-out vec3 mViewPosition;
 out vec2 mTextureCoordinates;
 out vec3 mNormal;
 out vec4 mFragPosition;
 out vec4 mPrevFragPosition;
 
 void main()
-{	
-	// Translate to view space
-	vec4 viewFragmentPosition = uMatView * uMatModel * vec4(vPosition, 1.0f);
-	mViewPosition = viewFragmentPosition.xyz;
-	
-	mWorldPosition = vec3(uMatModel * vec4(vPosition, 1.0f));
+{		
+	vec4 vertexPos = vec4(vPosition, 1.0f);
+	mWorldPosition = (uMatModel * vertexPos).xyz;
 	
 	mTextureCoordinates = vTextureCoordinates;
 	
 	// Apply transformation to normal
 	mNormal = mat3(uMatModel) * vNormal;
 
-	mFragPosition = uMatProjViewModel * vec4(vPosition, 1.0f);
-	mPrevFragPosition = uMatPrevProjViewModel * vec4(vPosition, 1.0f);
+	mFragPosition = uMatProjViewModel * vertexPos;
+	mPrevFragPosition = uMatPrevProjViewModel * vertexPos;
 	
-	gl_Position = uMatProjection * uMatView * uMatModel * vec4(vPosition, 1.0f);
+	gl_Position = uMatProjection * uMatView * uMatModel * vertexPos;
 };
 
 
@@ -49,7 +45,6 @@ layout (location = 2) out vec4 gNormal;
 layout (location = 3) out vec3 gEffects;
 
 in vec3 mWorldPosition;
-in vec3 mViewPosition;
 in vec2 mTextureCoordinates;
 in vec3 mNormal;
 in vec4 mFragPosition;

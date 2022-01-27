@@ -8,7 +8,6 @@
 class RigidBody : public Physics::IRigidBody
 {
 public:
-	RigidBody(const Physics::RigidBodyInfo info, Physics::IShape* shape);
 	virtual ~RigidBody();
 
 	// Inherited from IRigidBody
@@ -39,8 +38,10 @@ public:
 	Physics::IShape* GetShape() { return shape; }
 
 private:
+	friend class PhysicsFactory;
 	friend class CollisionHandler;
 
+	RigidBody(const Physics::RigidBodyInfo info, Physics::IShape* shape);
 	RigidBody(const RigidBody& other) {}
 	RigidBody& operator=(const RigidBody& other) { return *this; }
 

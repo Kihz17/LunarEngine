@@ -1,12 +1,14 @@
 #include "CollisionHandler.h"
 #include "RigidBody.h"
 
+#include <iostream>
+
 bool TestMovingSphere(
 	const glm::vec3& centerA, const float radiusA,
 	const glm::vec3& centerB, const float radiusB,
-	const glm::vec3& velocityA, const glm::vec3& velocityB, float& t)
+	const glm::vec3& velocityA, const glm::vec3& velocityB, float& t) // t represents how much time will pass before they collide
 {
-	glm::vec3 s = centerA - centerB; // Vector between center of the two spheres
+	glm::vec3 s = centerB - centerA; // Vector between center of the two spheres
 	glm::vec3 relativeMotion = velocityB - velocityA; // Relative motion sphereB with respect to stationary sphereA
 	float radiusSum = radiusA + radiusB;
 	float c = glm::dot(s, s) - radiusSum * radiusSum;
@@ -17,7 +19,7 @@ bool TestMovingSphere(
 		return true;
 	}
 
-	float a = glm::dot(relativeMotion, relativeMotion);
+	float a = glm::dot(relativeMotion, relativeMotion); // Checks if we are moving away from eachother
 	if (a < std::numeric_limits<float>::epsilon()) return false; // Spheres not moving relative to eachother
 
 	float b = glm::dot(relativeMotion, s);
@@ -88,10 +90,11 @@ bool CollisionHandler::CollideSphereSphere(RigidBody* bodyA, Physics::SphereShap
 	{
 		glm::vec3 overlapVec = positionDiff;
 		overlapVec = glm::normalize(overlapVec);
-		overlap *= -overlap;
+		overlapVec *= -overlap;
 
-		if (bodyA->isStatic) bodyB->position += overlapVec * factorB;
-		if (bodyB->isStatic) bodyA->position -= overlapVec * factorA;
+		// If objects aren't static, move them to a position where they are not overlapping
+		if (!bodyA->isStatic) bodyB->position += overlapVec * factorB;
+		if (!bodyB->isStatic) bodyA->position -= overlapVec * factorA;
 
 		positionDiff = bodyB->position - bodyA->position;
 		positionDiffLength = glm::length(positionDiff);
@@ -106,12 +109,12 @@ bool CollisionHandler::CollideSphereSphere(RigidBody* bodyA, Physics::SphereShap
 	momentumA = momentumSum * factorA;
 	momentumB = momentumSum * factorB;
 
-	float elasticity = 0.4f; // Ranges from 0.0 - 1.0
+	constexpr float elasticity = 0.4f; // Ranges from 0.0 - 1.0
 
 	glm::vec3 elasticMomentumB = positionDiff * (glm::length(momentumB) * elasticity) * -1.0f;
 	glm::vec3 inelasticMomentumB = positionDiff * glm::length(momentumB) * (1.0f - elasticity);
 
-	glm::vec3 elasticMomentumA = positionDiff * (glm::length(momentumA) * elasticity) * -1.0f;
+	glm::vec3 elasticMomentumA = positionDiff * (glm::length(momentumA) * elasticity);
 	glm::vec3 inelasticMomentumA = positionDiff * glm::length(momentumA) * (1.0f - elasticity);
 
 	bodyA->linearVelocity -= (elasticMomentumA + inelasticMomentumA) * (bodyA->inverseMass * bodyA->restitution);
@@ -174,7 +177,7 @@ bool CollisionHandler::CollideSpherePlane(RigidBody* bodyA, Physics::SphereShape
 void CollisionHandler::Collide(float deltaTime, std::vector<RigidBody*>& rigidBodies, std::vector<CollidingBodies>& collidingBodies)
 {
 	int bodyCount = rigidBodies.size();
-	for (int i = 0; i < bodyCount; i++)
+	for (int i = 0; i < bodyCount - 1; i++)
 	{
 		for (int j = i + 1; j < bodyCount; j++)
 		{

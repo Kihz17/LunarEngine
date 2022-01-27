@@ -18,6 +18,7 @@ RigidBody::RigidBody(const Physics::RigidBodyInfo info, Physics::IShape* shape)
 {
 	if (isStatic || mass <= 0.0f) // Static object
 	{
+		mass = 0.0f;
 		inverseMass = 0.0f;
 		isStatic = true;
 	}
