@@ -5,6 +5,7 @@
 #include "EntityManager.h"
 #include "ShaderLibrary.h"
 #include "CollisionListener.h"
+#include "SoundManager.h"
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
@@ -19,6 +20,7 @@ GameEngine::GameEngine(WindowSpecs* window, bool editorMode)
 	// Initialize systems
 	Renderer::Initialize(window);
     EntityManager::Initialize();
+    SoundManager::Initilaize();
 
     physicsWorld->RegisterCollisionListener(new CollisionListener());
     physicsWorld->SetGravity(glm::vec3(0.0f, -9.81f, 0.0f));
@@ -39,12 +41,22 @@ GameEngine::~GameEngine()
     ShaderLibrary::CleanUp();
     Renderer::CleanUp();
     EntityManager::CleanUp();
+    SoundManager::CleanUp();
 }
 
 void GameEngine::Update(float deltaTime)
 {
     camera.Update(deltaTime);
     physicsWorld->Update(deltaTime);
+
+    // Update 3D listener
+    ListenerInfo listenerInfo;
+    listenerInfo.position = camera.position;
+    listenerInfo.velocity = (camera.position - camera.prevPosition) / deltaTime;
+    listenerInfo.direction = camera.front;
+    listenerInfo.up = camera.up;
+    SoundManager::Update(deltaTime, listenerInfo);
+
     SubmitEntitiesToRender();
 }
 

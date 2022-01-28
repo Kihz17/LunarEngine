@@ -26,6 +26,9 @@
     <Filter Include="ECS">
       <UniqueIdentifier>{c632f52c-c701-43b6-8beb-e7a001fd5f24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sounds">
+      <UniqueIdentifier>{80ad583f-3657-441f-a828-2b8e29ed14fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -121,6 +124,12 @@
     </ClCompile>
     <ClCompile Include="EntityManager.cpp">
       <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="DSP.cpp">
+      <Filter>Sounds</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>Sounds</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +248,12 @@
     </ClInclude>
     <ClInclude Include="EntityManager.h">
       <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>Sounds</Filter>
+    </ClInclude>
+    <ClInclude Include="DSP.h">
+      <Filter>Sounds</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

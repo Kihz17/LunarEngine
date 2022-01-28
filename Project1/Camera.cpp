@@ -5,6 +5,7 @@
 
 Camera::Camera(const glm::vec3& position, const glm::vec3& up, float yaw, float pitch, float zoomSpeed)
 	: position(position),
+	prevPosition(position),
 	speed(8.0f),
 	sensitivity(0.1f),
 	yaw(yaw),
@@ -37,6 +38,8 @@ glm::mat4 Camera::GetViewMatrix() const
 
 void Camera::Update(float deltaTime)
 {
+	prevPosition = position;
+
 	// Apply zoom damping
 	currentZoomSpeed *= glm::pow(0.01f, deltaTime);
 	if (glm::abs(currentZoomSpeed) < 0.005f)

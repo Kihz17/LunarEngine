@@ -5,6 +5,7 @@
 #include "EntityManager.h"
 #include "Components.h"
 #include "PhysicsFactory.h"
+#include "SoundManager.h"
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
@@ -184,6 +185,7 @@ int main()
     {
         LightInfo lightInfo;
         lightInfo.postion = glm::vec3(0.0f, 10.0f, 0.0f);
+        lightInfo.intensity = 30.0f;
         Light* light = new Light(lightInfo);
         Entity* lightEntity = EntityManager::CreateEntity("lightTest");
         lightEntity->AddComponent<LightComponent>(light);
@@ -191,6 +193,7 @@ int main()
     {
         LightInfo lightInfo;
         lightInfo.postion = glm::vec3(20.0f, 10.0f, 0.0f);
+        lightInfo.intensity = 30.0f;
         Light* light = new Light(lightInfo);
         Entity* lightEntity = EntityManager::CreateEntity("lightTest1");
         lightEntity->AddComponent<LightComponent>(light);
@@ -198,6 +201,7 @@ int main()
     {
         LightInfo lightInfo;
         lightInfo.postion = glm::vec3(0.0f, 10.0f, 20.0f);
+        lightInfo.intensity = 30.0f;
         Light* light = new Light(lightInfo);
         Entity* lightEntity = EntityManager::CreateEntity("lightTest2");
         lightEntity->AddComponent<LightComponent>(light);
@@ -205,6 +209,7 @@ int main()
     {
         LightInfo lightInfo;
         lightInfo.postion = glm::vec3(-20.0f, 10.0f, 0.0f);
+        lightInfo.intensity = 30.0f;
         Light* light = new Light(lightInfo);
         Entity* lightEntity = EntityManager::CreateEntity("lightTest3");
         lightEntity->AddComponent<LightComponent>(light);
@@ -212,6 +217,7 @@ int main()
     {
         LightInfo lightInfo;
         lightInfo.postion = glm::vec3(0.0f, 10.0f, -20.0f);
+        lightInfo.intensity = 30.0f;
         Light* light = new Light(lightInfo);
         Entity* lightEntity = EntityManager::CreateEntity("lightTest4");
         lightEntity->AddComponent<LightComponent>(light);
@@ -237,14 +243,16 @@ int main()
 
     // Initialize physics spheres
     Entity* physicsSpheres[5];
-    physicsSpheres[0] = CreatePhysicsSphere(sphere, GetRandom(0.8f, 3.0f), glm::vec3(0.0f, 5.0f, -20.0f), std::string("physics1"));
-    physicsSpheres[1] = CreatePhysicsSphere(sphere, GetRandom(0.8f, 3.0f), glm::vec3(0.0f, 5.0f, 20.0f), std::string("physics2"));
-    physicsSpheres[2] = CreatePhysicsSphere(sphere, GetRandom(0.8f, 3.0f), glm::vec3(0.0f, 5.0f, 0.0f), std::string("physics3"));
-    physicsSpheres[3] = CreatePhysicsSphere(sphere, GetRandom(0.8f, 3.0f), glm::vec3(20.0f, 5.0f, 0.0f), std::string("physics4"));
-    physicsSpheres[4] = CreatePhysicsSphere(sphere, GetRandom(0.8f, 3.0f), glm::vec3(-20.0f, 5.0f, 0.0f), std::string("physics5"));
+    physicsSpheres[0] = CreatePhysicsSphere(sphere, 0.5f, glm::vec3(0.0f, 5.0f, -20.0f), std::string("physics1"));
+    physicsSpheres[1] = CreatePhysicsSphere(sphere, 3.0f, glm::vec3(0.0f, 5.0f, 20.0f), std::string("physics2"));
+    physicsSpheres[2] = CreatePhysicsSphere(sphere, 2.0f, glm::vec3(0.0f, 5.0f, 0.0f), std::string("physics3"));
+    physicsSpheres[3] = CreatePhysicsSphere(sphere, 1.5f, glm::vec3(20.0f, 5.0f, 0.0f), std::string("physics4"));
+    physicsSpheres[4] = CreatePhysicsSphere(sphere, 1.0f, glm::vec3(-20.0f, 5.0f, 0.0f), std::string("physics5"));
 
     Entity* controlledSphere = physicsSpheres[0];
     controlledSphere->GetComponent<RenderComponent>()->colorOverride = glm::vec3(0.0f, 0.2f, 0.8f);
+
+    SoundManager::CreateSound3D("ballCollide", "assets/sounds/hit.mp3", glm::vec3(0.0f, 5.0f, 0.0f));
 
     float lastFrameTime = glfwGetTime();
     float deltaTime = 0.0f;
@@ -405,7 +413,7 @@ void SetupWalls(Mesh* plane)
         rigidInfo.linearDamping = 0.0f;
         rigidInfo.isStatic = true;
         rigidInfo.mass = 1.0f;
-        rigidInfo.position = glm::vec3(0.0f);
+        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
         rigidInfo.linearVelocity = glm::vec3(0.0f);
         rigidInfo.friction = 0.95f;
         RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
@@ -427,22 +435,65 @@ void SetupWalls(Mesh* plane)
         RotationComponent* rotComponent = wall->AddComponent<RotationComponent>();
         ScaleComponent* scaleComponent = wall->AddComponent<ScaleComponent>();
 
-        //Physics::RigidBodyInfo rigidInfo;
-        //rigidInfo.linearDamping = 0.0f;
-        //rigidInfo.isStatic = true;
-        //rigidInfo.mass = 1.0f;
-        //rigidInfo.position = glm::vec3(20.0f, 0.0f, 0.0f);
-        //rigidInfo.linearVelocity = glm::vec3(0.0f);
-        //RigidBodyComponent* rigidComp = wall->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(1.0f, 0.0f, 0.0f))));
-        //gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
+        Physics::RigidBodyInfo rigidInfo;
+        rigidInfo.linearDamping = 0.0f;
+        rigidInfo.isStatic = true;
+        rigidInfo.mass = 1.0f;
+        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
+        rigidInfo.linearVelocity = glm::vec3(0.0f);
+        RigidBodyComponent* rigidComp = wall->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(30.0f, glm::vec3(-1.0f, 0.0f, 0.0f))));
+        gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
+    }
 
-        // Render Info
-        /*RenderComponent::RenderInfo groundInfo;
-        groundInfo.vao = plane->GetVertexArray();
-        groundInfo.indexCount = plane->GetIndexBuffer()->GetCount();
-        groundInfo.isColorOverride = true;
-        groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
-        wall->AddComponent<RenderComponent>(groundInfo);*/
+    // Wall 2
+    {
+        Entity* wall = EntityManager::CreateEntity("wall2");
+        PositionComponent* groundPos = wall->AddComponent<PositionComponent>();
+        RotationComponent* rotComponent = wall->AddComponent<RotationComponent>();
+        ScaleComponent* scaleComponent = wall->AddComponent<ScaleComponent>();
+
+        Physics::RigidBodyInfo rigidInfo;
+        rigidInfo.linearDamping = 0.0f;
+        rigidInfo.isStatic = true;
+        rigidInfo.mass = 1.0f;
+        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
+        rigidInfo.linearVelocity = glm::vec3(0.0f);
+        RigidBodyComponent* rigidComp = wall->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(30.0f, glm::vec3(1.0f, 0.0f, 0.0f))));
+        gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
+    }
+
+    // Wall 3
+    {
+        Entity* wall = EntityManager::CreateEntity("wall3");
+        PositionComponent* groundPos = wall->AddComponent<PositionComponent>();
+        RotationComponent* rotComponent = wall->AddComponent<RotationComponent>();
+        ScaleComponent* scaleComponent = wall->AddComponent<ScaleComponent>();
+
+        Physics::RigidBodyInfo rigidInfo;
+        rigidInfo.linearDamping = 0.0f;
+        rigidInfo.isStatic = true;
+        rigidInfo.mass = 1.0f;
+        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
+        rigidInfo.linearVelocity = glm::vec3(0.0f);
+        RigidBodyComponent* rigidComp = wall->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(30.0f, glm::vec3(0.0f, 0.0f, 1.0f))));
+        gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
+    }
+
+    // Wall 4
+    {
+        Entity* wall = EntityManager::CreateEntity("wall4");
+        PositionComponent* groundPos = wall->AddComponent<PositionComponent>();
+        RotationComponent* rotComponent = wall->AddComponent<RotationComponent>();
+        ScaleComponent* scaleComponent = wall->AddComponent<ScaleComponent>();
+
+        Physics::RigidBodyInfo rigidInfo;
+        rigidInfo.linearDamping = 0.0f;
+        rigidInfo.isStatic = true;
+        rigidInfo.mass = 1.0f;
+        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
+        rigidInfo.linearVelocity = glm::vec3(0.0f);
+        RigidBodyComponent* rigidComp = wall->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(30.0f, glm::vec3(0.0f, 0.0f, -1.0f))));
+        gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
     }
 }
 
@@ -457,10 +508,10 @@ Entity* CreatePhysicsSphere(Mesh* sphereMesh, float radius, const glm::vec3& pos
 
     // Rigid Body
     Physics::RigidBodyInfo rigidInfo;
-    rigidInfo.linearDamping = 0.001f;
+    rigidInfo.linearDamping = 0.3f;
     rigidInfo.angularDamping = 0.001f;
     rigidInfo.isStatic = false;
-    rigidInfo.mass = radius * 1.2f;
+    rigidInfo.mass = radius;
     rigidInfo.position = position;
     rigidInfo.linearVelocity = glm::vec3(0.0f);
     rigidInfo.restitution = 0.8f;
