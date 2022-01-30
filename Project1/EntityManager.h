@@ -7,17 +7,15 @@
 class EntityManager
 {
 public:
+	EntityManager();
+	virtual ~EntityManager();
 
-	static void Initialize();
-	static void CleanUp();
+	void RemoveEntity(unsigned int id);
 
-	static void RemoveEntity(unsigned int id);
-
-	static const std::unordered_map<unsigned int, Entity*>& GetEntities();
-	static Entity* CreateEntity(const std::string& name);
-
+	const std::unordered_map<unsigned int, Entity*>& GetEntities();
+	Entity* CreateEntity(const std::string& name);
 
 private:
-	static std::unordered_map<unsigned int, Entity*> entities;
-	static unsigned int currentEntityID;
+	std::unordered_map<unsigned int, Entity*> entities;
+	unsigned int currentEntityID;
 };

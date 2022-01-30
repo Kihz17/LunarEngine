@@ -2,15 +2,13 @@
 
 #include <iostream>
 
-std::unordered_map<unsigned int, Entity*> EntityManager::entities;
-unsigned int EntityManager::currentEntityID = 0;
-
-void EntityManager::Initialize()
+EntityManager::EntityManager()
+	: currentEntityID(0)
 {
 
 }
 
-void EntityManager::CleanUp()
+EntityManager::~EntityManager()
 {
 	std::unordered_map<unsigned int, Entity*>::iterator it = entities.begin();
 	while (it != entities.end())
@@ -21,6 +19,7 @@ void EntityManager::CleanUp()
 
 	entities.clear();
 }
+
 
 void EntityManager::RemoveEntity(unsigned int id)
 {

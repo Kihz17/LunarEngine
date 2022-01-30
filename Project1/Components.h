@@ -302,3 +302,89 @@ struct LightComponent : public Component
 
 	Light* ptr;
 };
+
+enum EasingType
+{
+	EaseIn,
+	EaseOut,
+	EaseInOut,
+	None
+};
+
+struct KeyFramePositionComponent : Component
+{
+	KeyFramePositionComponent() = default;
+	KeyFramePositionComponent(float time, const glm::vec3& position, EasingType easingType = EasingType::None)
+		: time(time), 
+		position(position), 
+		easingType(easingType) 
+	{}
+
+	virtual void ImGuiUpdate() override
+	{
+
+	}
+
+	float time;
+	glm::vec3 position;
+	EasingType easingType;
+};
+
+struct KeyFrameScaleComponent : Component
+{
+	KeyFrameScaleComponent() = default;
+	KeyFrameScaleComponent(float time, const glm::vec3& scale, EasingType easingType = EasingType::None)
+		: time(time), 
+		scale(scale), 
+		easingType(easingType) 
+	{}
+
+	virtual void ImGuiUpdate() override
+	{
+
+	}
+
+	float time;
+	glm::vec3 scale;
+	EasingType easingType;
+};
+
+struct KeyFrameRotationComponent : Component
+{
+	KeyFrameRotationComponent() = default;
+	KeyFrameRotationComponent(float time, const glm::quat& rotation, int interpolationType = 0, EasingType easingType = EasingType::None)
+		: time(time), 
+		rotation(rotation), 
+		interpolationType(interpolationType), 
+		easingType(easingType) 
+	{}
+
+	virtual void ImGuiUpdate() override
+	{
+
+	}
+
+	float time;
+	glm::quat rotation;
+	EasingType easingType;
+	int interpolationType;
+};
+
+struct AnimationComponent : Component
+{
+	AnimationComponent() = default;
+
+	virtual void ImGuiUpdate() override
+	{
+
+	}
+
+	bool playing;
+	float duration;
+	float currentTime;
+	float speed;
+	bool repeat;
+	std::vector<KeyFramePositionComponent> keyFramePositions;
+	std::vector<KeyFrameScaleComponent> keyFrameScales;
+	std::vector<KeyFrameRotationComponent> keyFrameRotations;
+};

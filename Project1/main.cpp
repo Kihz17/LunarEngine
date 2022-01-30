@@ -98,8 +98,6 @@ static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     gameEngine->camera.Zoom(yoffset);
 }
 
-void SetupWalls(Mesh* plane);
-Entity* CreatePhysicsSphere(Mesh* sphereMesh, float radius, const glm::vec3& position, const std::string& name);
 float GetRandom(float low, float high);
 
 int main() 
@@ -187,7 +185,7 @@ int main()
         lightInfo.postion = glm::vec3(0.0f, 10.0f, 0.0f);
         lightInfo.intensity = 30.0f;
         Light* light = new Light(lightInfo);
-        Entity* lightEntity = EntityManager::CreateEntity("lightTest");
+        Entity* lightEntity = gameEngine->GetEntityManager().CreateEntity("lightTest");
         lightEntity->AddComponent<LightComponent>(light);
     }
     {
@@ -195,7 +193,7 @@ int main()
         lightInfo.postion = glm::vec3(20.0f, 10.0f, 0.0f);
         lightInfo.intensity = 30.0f;
         Light* light = new Light(lightInfo);
-        Entity* lightEntity = EntityManager::CreateEntity("lightTest1");
+        Entity* lightEntity = gameEngine->GetEntityManager().CreateEntity("lightTest1");
         lightEntity->AddComponent<LightComponent>(light);
     }
     {
@@ -203,7 +201,7 @@ int main()
         lightInfo.postion = glm::vec3(0.0f, 10.0f, 20.0f);
         lightInfo.intensity = 30.0f;
         Light* light = new Light(lightInfo);
-        Entity* lightEntity = EntityManager::CreateEntity("lightTest2");
+        Entity* lightEntity = gameEngine->GetEntityManager().CreateEntity("lightTest2");
         lightEntity->AddComponent<LightComponent>(light);
     }
     {
@@ -211,7 +209,7 @@ int main()
         lightInfo.postion = glm::vec3(-20.0f, 10.0f, 0.0f);
         lightInfo.intensity = 30.0f;
         Light* light = new Light(lightInfo);
-        Entity* lightEntity = EntityManager::CreateEntity("lightTest3");
+        Entity* lightEntity = gameEngine->GetEntityManager().CreateEntity("lightTest3");
         lightEntity->AddComponent<LightComponent>(light);
     }
     {
@@ -219,41 +217,47 @@ int main()
         lightInfo.postion = glm::vec3(0.0f, 10.0f, -20.0f);
         lightInfo.intensity = 30.0f;
         Light* light = new Light(lightInfo);
-        Entity* lightEntity = EntityManager::CreateEntity("lightTest4");
+        Entity* lightEntity = gameEngine->GetEntityManager().CreateEntity("lightTest4");
         lightEntity->AddComponent<LightComponent>(light);
     }
 
     // SHADER BALL TEST
-    //Entity* testEntity = EntityManager::CreateEntity("shaderBall");
-    //testEntity->AddComponent<PositionComponent>();
-    //testEntity->AddComponent<RotationComponent>();
-    //testEntity->AddComponent<ScaleComponent>();
+    Entity* testEntity = gameEngine->GetEntityManager().CreateEntity("shaderBall");
+    testEntity->AddComponent<PositionComponent>();
+    testEntity->AddComponent<RotationComponent>();
+    testEntity->AddComponent<ScaleComponent>();
 
-    //RenderComponent::RenderInfo testInfo;
-    //testInfo.vao = shaderBall->GetVertexArray();
-    //testInfo.indexCount = shaderBall->GetIndexBuffer()->GetCount();
-    //testInfo.albedoTextures.push_back({ blue, 1.0f });
-    //testInfo.normalTexture = normalTexture;
-    ////testInfo.roughnessTexture = roughnessTexture;
-    ////testInfo.metalTexture = metalnessTexture;
-    ////testInfo.aoTexture = aoTexture;
-    //testEntity->AddComponent<RenderComponent>(testInfo);
+    RenderComponent::RenderInfo testInfo;
+    testInfo.vao = shaderBall->GetVertexArray();
+    testInfo.indexCount = shaderBall->GetIndexBuffer()->GetCount();
+    testInfo.albedoTextures.push_back({ blue, 1.0f });
+    testInfo.normalTexture = normalTexture;
+    //testInfo.roughnessTexture = roughnessTexture;
+    //testInfo.metalTexture = metalnessTexture;
+    //testInfo.aoTexture = aoTexture;
+    testEntity->AddComponent<RenderComponent>(testInfo);
 
-    SetupWalls(plane);
+    AnimationComponent* animComp = testEntity->AddComponent<AnimationComponent>();
+    animComp->currentTime = 0;
+    animComp->duration = 11.0f;
+    animComp->speed = 1.0f;
+    animComp->playing = true;
+    animComp->keyFramePositions.push_back({ 0, glm::vec3(0.0f, 0.0f, 0.0f)});
+    animComp->keyFramePositions.push_back({ 1, glm::vec3(0.0f, 0.0f, 0.0f) });
+    animComp->keyFramePositions.push_back({ 2, glm::vec3(1.1f, 0.0f, 0.0f) });
+    animComp->keyFramePositions.push_back({ 3, glm::vec3(2.2f, 0.0f, 0.0f) });
+    animComp->keyFramePositions.push_back({ 4, glm::vec3(3.3f, 0.0f, 0.0f) });
+    animComp->keyFramePositions.push_back({ 5, glm::vec3(4.4f, 0.0f, 0.0f) });
+    animComp->keyFramePositions.push_back({ 6, glm::vec3(5.5f, 0.1f, 0.0f) });
+    animComp->keyFramePositions.push_back({ 7, glm::vec3(4.4f, 0.2f, 0.0f) });
+    animComp->keyFramePositions.push_back({ 8, glm::vec3(3.3f, 0.3f, 0.0f) });
+    animComp->keyFramePositions.push_back({ 9, glm::vec3(2.2f, 0.2f, 0.0f) });
+    animComp->keyFramePositions.push_back({ 10, glm::vec3(1.1f, 0.1f, 0.0f) });
+    animComp->keyFramePositions.push_back({ 11, glm::vec3(0.0f, 0.0f, 0.0f) });
+    animComp->keyFrameScales.push_back({ 0, glm::vec3(1.0f, 1.0f, 1.0f) });
+    animComp->keyFrameRotations.push_back({ 0, glm::quat(1.0f, 0.0f, 0.0f, 0.0f)});
 
-    // Initialize physics spheres
-    Entity* physicsSpheres[5];
-    physicsSpheres[0] = CreatePhysicsSphere(sphere, 0.5f, glm::vec3(0.0f, 5.0f, -20.0f), std::string("physics1"));
-    physicsSpheres[1] = CreatePhysicsSphere(sphere, 3.0f, glm::vec3(0.0f, 5.0f, 20.0f), std::string("physics2"));
-    physicsSpheres[2] = CreatePhysicsSphere(sphere, 2.0f, glm::vec3(0.0f, 5.0f, 0.0f), std::string("physics3"));
-    physicsSpheres[3] = CreatePhysicsSphere(sphere, 1.5f, glm::vec3(20.0f, 5.0f, 0.0f), std::string("physics4"));
-    physicsSpheres[4] = CreatePhysicsSphere(sphere, 1.0f, glm::vec3(-20.0f, 5.0f, 0.0f), std::string("physics5"));
-
-    Entity* controlledSphere = physicsSpheres[0];
-    controlledSphere->GetComponent<RenderComponent>()->colorOverride = glm::vec3(0.0f, 0.2f, 0.8f);
-
-    SoundManager::CreateSound3D("ballCollide", "assets/sounds/hit.mp3", glm::vec3(0.0f, 5.0f, 0.0f));
-
+    gameEngine->camera.position = glm::vec3(0.0f, 0.0f, 20.0f);
     float lastFrameTime = glfwGetTime();
     float deltaTime = 0.0f;
     while (!glfwWindowShouldClose(window))
@@ -267,117 +271,33 @@ int main()
         // Update camera
         if (Input::GetCursorMode() == CursorMode::Locked)
         {
-            RigidBodyComponent* rigidBody = controlledSphere->GetComponent<RigidBodyComponent>();
-            const glm::vec3& cameraDir = gameEngine->camera.front;
             if (Input::IsKeyPressed(Key::KeyCode::W))
             {
-                rigidBody->ptr->ApplyForce(cameraDir * 20.0f);
-                //gameEngine->camera.Move(MoveDirection::Forward, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Forward, deltaTime);
             }
             if (Input::IsKeyPressed(Key::KeyCode::A))
             {
-                glm::vec3 left = -glm::normalize(glm::cross(cameraDir, gameEngine->camera.worldUp));
-                rigidBody->ptr->ApplyForce(left * 20.0f);
-                //gameEngine->camera.Move(MoveDirection::Left, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Left, deltaTime);
             }
             if (Input::IsKeyPressed(Key::KeyCode::S))
             {
-                rigidBody->ptr->ApplyForce(-cameraDir * 20.0f);
-                //gameEngine->camera.Move(MoveDirection::Back, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Back, deltaTime);
             }
             if (Input::IsKeyPressed(Key::KeyCode::D))
             {
-                glm::vec3 right = glm::normalize(glm::cross(cameraDir, gameEngine->camera.worldUp));
-                rigidBody->ptr->ApplyForce(right * 20.0f);
-                //gameEngine->camera.Move(MoveDirection::Right, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Right, deltaTime);
             }
             if (Input::IsKeyPressed(Key::KeyCode::Space))
             {
-                rigidBody->ptr->ApplyImpulse(glm::vec3(0.0f, 15.0f, 0.0f));
-                //gameEngine->camera.Move(MoveDirection::Up, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Up, deltaTime);
             }
             if (Input::IsKeyPressed(Key::KeyCode::LeftShift))
             {
-                //gameEngine->camera.Move(MoveDirection::Down, deltaTime);
+                gameEngine->camera.Move(MoveDirection::Down, deltaTime);
             }
         }
 
-        // Select sphere
-        if (Input::IsKeyPressed(Key::One))
-        {
-            // Change current sphere back to gray
-            RenderComponent* renderComp = controlledSphere->GetComponent<RenderComponent>(); 
-            renderComp->isColorOverride = true;
-            renderComp->colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
-
-            controlledSphere = physicsSpheres[0];
-
-            // Change new sphere to blue
-            renderComp = controlledSphere->GetComponent<RenderComponent>();
-            renderComp->isColorOverride = true;
-            renderComp->colorOverride = glm::vec3(0.0f, 0.2f, 0.8f);
-        }
-        else if (Input::IsKeyPressed(Key::Two))
-        {
-            // Change current sphere back to gray
-            RenderComponent* renderComp = controlledSphere->GetComponent<RenderComponent>();
-            renderComp->isColorOverride = true;
-            renderComp->colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
-
-            controlledSphere = physicsSpheres[1];
-
-            // Change new sphere to blue
-            renderComp = controlledSphere->GetComponent<RenderComponent>();
-            renderComp->isColorOverride = true;
-            renderComp->colorOverride = glm::vec3(0.0f, 0.2f, 0.8f);
-        }
-        else if (Input::IsKeyPressed(Key::Three))
-        {
-            // Change current sphere back to gray
-            RenderComponent* renderComp = controlledSphere->GetComponent<RenderComponent>();
-            renderComp->isColorOverride = true;
-            renderComp->colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
-
-            controlledSphere = physicsSpheres[2];
-
-            // Change new sphere to blue
-            renderComp = controlledSphere->GetComponent<RenderComponent>();
-            renderComp->isColorOverride = true;
-            renderComp->colorOverride = glm::vec3(0.0f, 0.2f, 0.8f);
-        }
-        else if (Input::IsKeyPressed(Key::Four))
-        {
-            // Change current sphere back to gray
-            RenderComponent* renderComp = controlledSphere->GetComponent<RenderComponent>();
-            renderComp->isColorOverride = true;
-            renderComp->colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
-
-            controlledSphere = physicsSpheres[3];
-
-            // Change new sphere to blue
-            renderComp = controlledSphere->GetComponent<RenderComponent>();
-            renderComp->isColorOverride = true;
-            renderComp->colorOverride = glm::vec3(0.0f, 0.2f, 0.8f);
-        }
-        else if (Input::IsKeyPressed(Key::Five))
-        {
-            // Change current sphere back to gray
-            RenderComponent* renderComp = controlledSphere->GetComponent<RenderComponent>();
-            renderComp->isColorOverride = true;
-            renderComp->colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
-
-            controlledSphere = physicsSpheres[4];
-
-            // Change new sphere to blue
-            renderComp = controlledSphere->GetComponent<RenderComponent>();
-            renderComp->isColorOverride = true;
-            renderComp->colorOverride = glm::vec3(0.0f, 0.2f, 0.8f);
-        }
-
         gameEngine->Update(deltaTime);
-
-        const glm::vec3& spherePos = controlledSphere->GetComponent<PositionComponent>()->value;
-        gameEngine->camera.position = spherePos -(glm::normalize(gameEngine->camera.front) * 8.0f);
 
         gameEngine->Render();
     }
@@ -399,136 +319,6 @@ int main()
 // LATER
 // SSAO? Raytracing? Raymarching?
 // Post processing
-
-void SetupWalls(Mesh* plane)
-{
-    // GROUND PLANE TEST
-    {
-        Entity* ground = EntityManager::CreateEntity("ground");
-        PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(20.0f));
-        RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>();
-
-        Physics::RigidBodyInfo rigidInfo;
-        rigidInfo.linearDamping = 0.0f;
-        rigidInfo.isStatic = true;
-        rigidInfo.mass = 1.0f;
-        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
-        rigidInfo.linearVelocity = glm::vec3(0.0f);
-        rigidInfo.friction = 0.95f;
-        RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
-        gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
-
-        // Render Info
-        RenderComponent::RenderInfo groundInfo;
-        groundInfo.vao = plane->GetVertexArray();
-        groundInfo.indexCount = plane->GetIndexBuffer()->GetCount();
-        groundInfo.isColorOverride = true;
-        groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
-        ground->AddComponent<RenderComponent>(groundInfo);
-    }
-
-    // Wall 1
-    {
-        Entity* wall = EntityManager::CreateEntity("wall1");
-        PositionComponent* groundPos = wall->AddComponent<PositionComponent>();
-        RotationComponent* rotComponent = wall->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = wall->AddComponent<ScaleComponent>();
-
-        Physics::RigidBodyInfo rigidInfo;
-        rigidInfo.linearDamping = 0.0f;
-        rigidInfo.isStatic = true;
-        rigidInfo.mass = 1.0f;
-        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
-        rigidInfo.linearVelocity = glm::vec3(0.0f);
-        RigidBodyComponent* rigidComp = wall->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(30.0f, glm::vec3(-1.0f, 0.0f, 0.0f))));
-        gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
-    }
-
-    // Wall 2
-    {
-        Entity* wall = EntityManager::CreateEntity("wall2");
-        PositionComponent* groundPos = wall->AddComponent<PositionComponent>();
-        RotationComponent* rotComponent = wall->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = wall->AddComponent<ScaleComponent>();
-
-        Physics::RigidBodyInfo rigidInfo;
-        rigidInfo.linearDamping = 0.0f;
-        rigidInfo.isStatic = true;
-        rigidInfo.mass = 1.0f;
-        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
-        rigidInfo.linearVelocity = glm::vec3(0.0f);
-        RigidBodyComponent* rigidComp = wall->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(30.0f, glm::vec3(1.0f, 0.0f, 0.0f))));
-        gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
-    }
-
-    // Wall 3
-    {
-        Entity* wall = EntityManager::CreateEntity("wall3");
-        PositionComponent* groundPos = wall->AddComponent<PositionComponent>();
-        RotationComponent* rotComponent = wall->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = wall->AddComponent<ScaleComponent>();
-
-        Physics::RigidBodyInfo rigidInfo;
-        rigidInfo.linearDamping = 0.0f;
-        rigidInfo.isStatic = true;
-        rigidInfo.mass = 1.0f;
-        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
-        rigidInfo.linearVelocity = glm::vec3(0.0f);
-        RigidBodyComponent* rigidComp = wall->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(30.0f, glm::vec3(0.0f, 0.0f, 1.0f))));
-        gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
-    }
-
-    // Wall 4
-    {
-        Entity* wall = EntityManager::CreateEntity("wall4");
-        PositionComponent* groundPos = wall->AddComponent<PositionComponent>();
-        RotationComponent* rotComponent = wall->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = wall->AddComponent<ScaleComponent>();
-
-        Physics::RigidBodyInfo rigidInfo;
-        rigidInfo.linearDamping = 0.0f;
-        rigidInfo.isStatic = true;
-        rigidInfo.mass = 1.0f;
-        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
-        rigidInfo.linearVelocity = glm::vec3(0.0f);
-        RigidBodyComponent* rigidComp = wall->AddComponent<RigidBodyComponent>(gameEngine->physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(30.0f, glm::vec3(0.0f, 0.0f, -1.0f))));
-        gameEngine->physicsWorld->AddRigidBody(rigidComp->ptr);
-    }
-}
-
-Entity* CreatePhysicsSphere(Mesh* sphereMesh, float radius, const glm::vec3& position, const std::string& name)
-{
-    Entity* physicsSphere = EntityManager::CreateEntity(name);
-    physicsSphere->AddComponent<PositionComponent>();
-    physicsSphere->AddComponent<ScaleComponent>(glm::vec3(radius, radius, radius));
-    physicsSphere->AddComponent<RotationComponent>();
-
-    Physics::SphereShape* shape = new Physics::SphereShape(radius);
-
-    // Rigid Body
-    Physics::RigidBodyInfo rigidInfo;
-    rigidInfo.linearDamping = 0.3f;
-    rigidInfo.angularDamping = 0.001f;
-    rigidInfo.isStatic = false;
-    rigidInfo.mass = radius;
-    rigidInfo.position = position;
-    rigidInfo.linearVelocity = glm::vec3(0.0f);
-    rigidInfo.restitution = 0.8f;
-    Physics::IRigidBody* rigidBody = gameEngine->physicsFactory->CreateRigidBody(rigidInfo, shape);
-    physicsSphere->AddComponent<RigidBodyComponent>(rigidBody);
-    gameEngine->physicsWorld->AddRigidBody(physicsSphere->GetComponent<RigidBodyComponent>()->ptr);
-
-    // Render Info
-    RenderComponent::RenderInfo sphereInfo;
-    sphereInfo.vao = sphereMesh->GetVertexArray();
-    sphereInfo.indexCount = sphereMesh->GetIndexBuffer()->GetCount();
-    sphereInfo.isColorOverride = true;
-    sphereInfo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
-    physicsSphere->AddComponent<RenderComponent>(sphereInfo);
-
-    return physicsSphere;
-}
 
 float GetRandom(float low, float high)
 {

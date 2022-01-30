@@ -29,6 +29,9 @@
     <Filter Include="Sounds">
       <UniqueIdentifier>{80ad583f-3657-441f-a828-2b8e29ed14fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{82257d01-e102-43dd-9820-6102051bcdc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -130,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
       <Filter>Sounds</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationManager.cpp">
+      <Filter>Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -254,6 +260,9 @@
     </ClInclude>
     <ClInclude Include="DSP.h">
       <Filter>Sounds</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationManager.h">
+      <Filter>Animation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

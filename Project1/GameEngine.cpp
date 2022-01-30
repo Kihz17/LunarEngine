@@ -2,7 +2,6 @@
 
 #include "PhysicsFactory.h"
 #include "EntityPanel.h"
-#include "EntityManager.h"
 #include "ShaderLibrary.h"
 #include "CollisionListener.h"
 #include "SoundManager.h"
@@ -19,7 +18,6 @@ GameEngine::GameEngine(WindowSpecs* window, bool editorMode)
 {
 	// Initialize systems
 	Renderer::Initialize(window);
-    EntityManager::Initialize();
     SoundManager::Initilaize();
 
     physicsWorld->RegisterCollisionListener(new CollisionListener());
@@ -27,7 +25,7 @@ GameEngine::GameEngine(WindowSpecs* window, bool editorMode)
 
     if (editorMode)
     {
-        panels.push_back(new EntityPanel());
+        
     }
 }
 
@@ -40,13 +38,14 @@ GameEngine::~GameEngine()
 
     ShaderLibrary::CleanUp();
     Renderer::CleanUp();
-    EntityManager::CleanUp();
     SoundManager::CleanUp();
 }
 
 void GameEngine::Update(float deltaTime)
 {
     camera.Update(deltaTime);
+
+    animationManager.Update(entityManager.GetEntities(), deltaTime);
     physicsWorld->Update(deltaTime);
 
     // Update 3D listener
@@ -73,6 +72,7 @@ void GameEngine::Render()
     {
         panel->OnUpdate();
     }
+    entityPanel.Update(entityManager.GetEntities());
 
     Renderer::DrawFrame();
 
@@ -85,7 +85,7 @@ void GameEngine::Render()
 
 void GameEngine::SubmitEntitiesToRender()
 {
-    const std::unordered_map<unsigned int, Entity*>& entities = EntityManager::GetEntities();
+    const std::unordered_map<unsigned int, Entity*>& entities = entityManager.GetEntities();
     std::unordered_map<unsigned int, Entity*>::const_iterator it = entities.begin();
     while (it != entities.end())
     {

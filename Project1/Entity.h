@@ -56,6 +56,8 @@ public:
 		return false;
 	}
 
+	const std::string& GetName() const { return name; }
+
 	void RemoveComponent(Component* component);
 
 	const std::vector<Component*>& GetComponents() const { return components; }

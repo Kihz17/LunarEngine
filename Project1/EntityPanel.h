@@ -1,12 +1,15 @@
 #pragma once
 
 #include "IPanel.h"
+#include "Entity.h"
+ 
+#include <unordered_map>
 
-class EntityPanel : public IPanel
+class EntityPanel
 {
 public:
 	EntityPanel();
 	virtual ~EntityPanel();
 
-	virtual void OnUpdate() override;
+	void Update(const std::unordered_map<unsigned int, Entity*>& entities);
 };

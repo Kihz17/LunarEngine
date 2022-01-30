@@ -1,6 +1,6 @@
 #include "EntityPanel.h"
 #include "Components.h"
-#include "EntityManager.h"
+#include "Entity.h"
 
 #include <unordered_map>
 #include <string>
@@ -31,13 +31,12 @@ void ShowEntity(const Entity* entity)
     }
 }
 
-void EntityPanel::OnUpdate()
+void EntityPanel::Update(const std::unordered_map<unsigned int, Entity*>& entities)
 {
     ImGui::Begin("Entities");
 
     if (ImGui::CollapsingHeader("Entities"))
     {
-        const std::unordered_map<unsigned int, Entity*> entities = EntityManager::GetEntities();
         std::unordered_map<unsigned int, Entity*>::const_iterator it = entities.begin();
         while (it != entities.end())
         {
