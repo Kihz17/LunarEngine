@@ -514,8 +514,8 @@ void Renderer::GeometryPass()
 		}
 
 		glm::mat4 transform = glm::mat4(1.0f);
-		transform *= glm::toMat4(submission.rotation);
 		transform *= glm::translate(glm::mat4(1.0f), submission.position);
+		transform *= glm::toMat4(submission.rotation);
 		transform *= glm::scale(glm::mat4(1.0f), submission.scale);
 
 		glm::mat4 projViewModel = projection * view * transform;
@@ -676,9 +676,9 @@ void Renderer::ForwardPass()
 		RenderComponent* renderComponent = submission.renderComponent;
 
 		glm::mat4 transform = glm::mat4(1.0f);
+		transform *= glm::translate(glm::mat4(1.0f), submission.position);
 		transform *= glm::toMat4(submission.rotation);
 		transform *= glm::scale(glm::mat4(1.0f), submission.scale);
-		transform *= glm::translate(glm::mat4(1.0f), submission.position);
 
 		forwardShader->SetMat4("uMatModel", transform);
 		forwardShader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));

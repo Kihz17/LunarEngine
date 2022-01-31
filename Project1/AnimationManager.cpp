@@ -1,12 +1,32 @@
 #include "AnimationManager.h"
 #include "Components.h"
+#include "KeyFrameListener.h"
 
 #include <glm/gtx/easing.hpp>
 
 #include <iostream>
 
+const glm::vec3 red = glm::vec3(0.8f, 0.0f, 0.0f);
+const glm::vec3 yellow = glm::vec3(0.4f, 0.4f, 0.0f);
+const glm::vec3 green = glm::vec3(0.0f, 0.8f, 0.0f);
+const glm::vec3 white = glm::vec3(1.0f, 1.0f, 1.0f);
+
+AnimationManager::AnimationManager()
+    : paused(false),
+    keyFrameListener(new KeyFrameListener())
+{
+
+}
+
+AnimationManager::~AnimationManager()
+{
+    delete keyFrameListener;
+}
+
 void AnimationManager::Update(const std::unordered_map<unsigned int, Entity*>& entities, float deltaTime)
 {
+    if (paused) return;
+
     AnimationComponent* animComp = nullptr;
     PositionComponent* posComp = nullptr;
     ScaleComponent* scaleComp = nullptr;
@@ -65,13 +85,36 @@ void AnimationManager::Update(const std::unordered_map<unsigned int, Entity*>& e
         }
 
         // Update position
-        UpdateAnimationPosition(animComp, posComp);
-
+        glm::vec3 posColor = glm::vec3(1.0f);
+        UpdateAnimationPosition(animComp, posComp, posColor);
+      
         // Update scale
-        UpdateAnimationScale(animComp, scaleComp);
+        glm::vec3 scaleColor = glm::vec3(1.0f);
+        UpdateAnimationScale(animComp, scaleComp, scaleColor);
 
         // Update Rotation
-        UpdateAnimationRotation(animComp, rotComp);
+        glm::vec3 rotColor = glm::vec3(1.0f);
+        UpdateAnimationRotation(animComp, rotComp, rotColor);
+
+        RenderComponent* renderComp = entity->GetComponent<RenderComponent>();
+        glm::vec3 finalColor = glm::vec3(1.0f);
+        if(renderComp) // Update the color of the mesh
+        {
+            if (posColor != white) // Proritize position
+            {
+                finalColor = posColor;
+            }
+            else if (scaleColor != white)
+            {
+                finalColor = scaleColor;
+            }
+            else if (rotColor != white)
+            {
+                finalColor = rotColor;
+            }
+
+            renderComp->colorOverride = finalColor;
+        }
     }
 }
 
@@ -108,7 +151,7 @@ int AnimationManager::FindKeyFrameRotationIndex(AnimationComponent* animComp, fl
     return animComp->keyFrameRotations.size() - 1;
 }
 
-void AnimationManager::UpdateAnimationPosition(AnimationComponent* animComp, PositionComponent* posComp)
+void AnimationManager::UpdateAnimationPosition(AnimationComponent* animComp, PositionComponent* posComp, glm::vec3& color)
 {
     // Only 1 keyframe in the animation, just use that
     if (animComp->keyFramePositions.size() == 1)
@@ -134,26 +177,38 @@ void AnimationManager::UpdateAnimationPosition(AnimationComponent* animComp, Pos
     const KeyFramePositionComponent& keyFramePos2 = animComp->keyFramePositions[nextIndex];
 
     float positionFraction = (animComp->currentTime - keyFramePos1.time) / (keyFramePos2.time - keyFramePos1.time);
-
     switch (keyFramePos2.easingType)
     {
     case EaseIn:
         positionFraction = glm::sineEaseIn(positionFraction);
+        color = red;
         break;
     case EaseOut:
         positionFraction = glm::sineEaseOut(positionFraction);
+        color = yellow;
         break;
     case EaseInOut:
         positionFraction = glm::sineEaseInOut(positionFraction);
+        color = green;
         break;
     default:
+        color = white;
         break;
     }
 
     posComp->value = keyFramePos1.position + (keyFramePos2.position - keyFramePos1.position) * positionFraction;
+
+    if (positionFraction > keyFramePos1.time && positionFraction < keyFramePos2.time)
+    {
+        KeyFrame frame;
+        frame.time = positionFraction;
+        frame.type = KeyFrameType::Position;
+        frame.easingType = keyFramePos2.easingType;
+        keyFrameListener->OnKeyFrame(frame);
+    }
 }
 
-void AnimationManager::UpdateAnimationScale(AnimationComponent* animComp, ScaleComponent* scaleComp)
+void AnimationManager::UpdateAnimationScale(AnimationComponent* animComp, ScaleComponent* scaleComp, glm::vec3& color)
 {
     // Only 1 keyframe in the animation, just use that
     if (animComp->keyFrameScales.size() == 1)
@@ -184,21 +239,35 @@ void AnimationManager::UpdateAnimationScale(AnimationComponent* animComp, ScaleC
     {
     case EaseIn:
         scaleFraction = glm::sineEaseIn(scaleFraction);
+        color = red;
         break;
     case EaseOut:
         scaleFraction = glm::sineEaseOut(scaleFraction);
+        color = yellow;
         break;
     case EaseInOut:
         scaleFraction = glm::sineEaseInOut(scaleFraction);
+        color = green;
         break;
     default:
+        color = white;
         break;
     }
 
-    scaleComp->value = keyFrameScale1.scale + (keyFrameScale2.scale - keyFrameScale2.scale) * scaleFraction;
+    scaleComp->value = keyFrameScale1.scale + (keyFrameScale2.scale - keyFrameScale1.scale) * scaleFraction;
+
+
+    if (scaleFraction > keyFrameScale1.time && scaleFraction < keyFrameScale2.time)
+    {
+        KeyFrame frame;
+        frame.time = scaleFraction;
+        frame.type = KeyFrameType::Scale;
+        frame.easingType = keyFrameScale2.easingType;
+        keyFrameListener->OnKeyFrame(frame);
+    }
 }
 
-void AnimationManager::UpdateAnimationRotation(AnimationComponent* animComp, RotationComponent* rotComp)
+void AnimationManager::UpdateAnimationRotation(AnimationComponent* animComp, RotationComponent* rotComp, glm::vec3& color)
 {
     // Only 1 keyframe in the animation, just use that
     if (animComp->keyFrameRotations.size() == 1)
@@ -229,14 +298,18 @@ void AnimationManager::UpdateAnimationRotation(AnimationComponent* animComp, Rot
     {
     case EaseIn:
         rotFraction = glm::sineEaseIn(rotFraction);
+        color = red;
         break;
     case EaseOut:
         rotFraction = glm::sineEaseOut(rotFraction);
+        color = yellow;
         break;
     case EaseInOut:
         rotFraction = glm::sineEaseInOut(rotFraction);
+        color = green;
         break;
     default:
+        color = white;
         break;
     }
 
@@ -251,5 +324,14 @@ void AnimationManager::UpdateAnimationRotation(AnimationComponent* animComp, Rot
     else
     {
         rotComp->value = keyFrameRot1.rotation + (keyFrameRot2.rotation - keyFrameRot1.rotation) * rotFraction;
+    }
+
+    if (rotFraction > keyFrameRot1.time && rotFraction < keyFrameRot2.time)
+    {
+        KeyFrame frame;
+        frame.time = rotFraction;
+        frame.type = KeyFrameType::Rotation;
+        frame.easingType = keyFrameRot2.easingType;
+        keyFrameListener->OnKeyFrame(frame);
     }
 }

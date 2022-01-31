@@ -42,6 +42,7 @@ struct PositionComponent : public Component
 
 struct RotationComponent : public Component
 {
+	RotationComponent(const glm::quat& quat) : value(quat) {}
 	RotationComponent() : value(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)) {}
 
 	virtual void ImGuiUpdate() override
@@ -311,6 +312,10 @@ enum EasingType
 	None
 };
 
+#define DIRECT_ROTATION 0
+#define LERP_ROTATION 1
+#define SLERP_ROTATION 2
+
 struct KeyFramePositionComponent : Component
 {
 	KeyFramePositionComponent() = default;
@@ -376,7 +381,15 @@ struct AnimationComponent : Component
 
 	virtual void ImGuiUpdate() override
 	{
+		if (ImGui::TreeNode("Animation"))
+		{
+			ImGui::DragFloat("Speed", &speed, 0.01);
 
+			ImGui::NewLine();
+			ImGui::Checkbox("Playing", &playing);
+
+			ImGui::TreePop();
+		}
 	}
 
 	bool playing;

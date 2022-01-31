@@ -79,9 +79,6 @@
     <ClCompile Include="IndexBuffer.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Graphics\Input</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -136,6 +133,15 @@
     </ClCompile>
     <ClCompile Include="AnimationManager.cpp">
       <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyFrameListener.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Key.cpp">
+      <Filter>Graphics\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Graphics\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,15 +199,6 @@
     </ClInclude>
     <ClInclude Include="GLCommon.h">
       <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyCodes.h">
-      <Filter>Graphics\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="MouseCodes.h">
-      <Filter>Graphics\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Graphics\Input</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Graphics</Filter>
@@ -263,6 +260,18 @@
     </ClInclude>
     <ClInclude Include="AnimationManager.h">
       <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="IKeyFrameListener.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyFrameListener.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Key.h">
+      <Filter>Graphics\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Graphics\Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

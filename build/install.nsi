@@ -4,7 +4,7 @@ OutFile "Installer.exe"
 RequestExecutionLevel admin
 
 # define the directory to install to.
-InstallDir $DESKTOP\PhysProj1\
+InstallDir $DESKTOP\Lunar\
 
 # start our default section
 Section

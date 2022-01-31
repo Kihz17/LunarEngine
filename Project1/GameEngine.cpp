@@ -5,6 +5,7 @@
 #include "ShaderLibrary.h"
 #include "CollisionListener.h"
 #include "SoundManager.h"
+#include "InputManager.h"
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
@@ -43,6 +44,15 @@ GameEngine::~GameEngine()
 
 void GameEngine::Update(float deltaTime)
 {
+    if (InputManager::GetCursorMode() == CursorMode::Locked)
+    {
+        camera.Look(InputManager::GetMouseX(), InputManager::GetMouseY());
+        float scroll = InputManager::GetScrollY();
+        if(scroll != 0.0) camera.Zoom(scroll);
+    }
+
+    InputManager::ClearState(); 
+  
     camera.Update(deltaTime);
 
     animationManager.Update(entityManager.GetEntities(), deltaTime);

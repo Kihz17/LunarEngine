@@ -1,12 +1,14 @@
 #include "Camera.h"
-#include "Input.h"
+#include "InputManager.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <iostream>
 
 Camera::Camera(const glm::vec3& position, const glm::vec3& up, float yaw, float pitch, float zoomSpeed)
 	: position(position),
 	prevPosition(position),
-	speed(8.0f),
+	speed(30.0f),
 	sensitivity(0.1f),
 	yaw(yaw),
 	pitch(pitch),
@@ -68,7 +70,8 @@ void Camera::UpdateCamera()
 
 void Camera::Move(MoveDirection direction, float deltaTime)
 {
-	float scalar = speed * (Input::IsKeyPressed(Key::LeftControl) ? 2.0f : 1.0f) * deltaTime;
+	Key* ctrl = InputManager::ListenToKey(GLFW_KEY_LEFT_CONTROL);
+	float scalar = speed * (ctrl->IsPressed() ? 2.0f : 1.0f) * deltaTime;
 
 	if (direction == MoveDirection::Forward)
 	{
