@@ -2,8 +2,11 @@
 
 #include <Physics.h>
 
+#include "GLCommon.h"
+#include "ApplicationLayerManager.h"
 #include "EntityManager.h"
 #include "AnimationManager.h"
+#include "SteeringBehaviourManager.h"
 
 #include "Renderer.h"
 #include "EntityPanel.h"
@@ -12,33 +15,44 @@
 class GameEngine
 {
 public:
-	GameEngine(WindowSpecs* window, bool editorMode);
+	GameEngine(const WindowSpecs& windowSpecs, bool editorMode);
 	~GameEngine();
 
-	void Update(float deltaTime);
+	void Run();
+	void Stop() { running = false; }
+
 	void Render();
 
 	void AddPanel(IPanel* panel) { panels.push_back(panel); }
 
-	AnimationManager& GetAnimationManager() { return animationManager; }
+	void AddLayer(ApplicationLayer* layer);
+	void AddOverlay(ApplicationLayer* layer);
+	void RemoveLayer(ApplicationLayer* layer);
+	void RemoveOverlay(ApplicationLayer* layer);
+
 	EntityManager& GetEntityManager() { return entityManager; }
+
+	Entity* SpawnPhysicsSphere(const std::string& name, const glm::vec3& position, float radius, Mesh* sphereMesh);
+
+	const WindowSpecs& GetWindowSpecs() const { return windowSpecs; }
 
 	Camera camera;
 	Physics::IPhysicsFactory* physicsFactory;
 	Physics::IPhysicsWorld* physicsWorld;
 
+	static WindowSpecs InitializeGLFW(bool initImGui);
 private:
 	void SubmitEntitiesToRender();
 
-	AnimationManager animationManager;
+	ApplicationLayerManager layerManager;
 	EntityManager entityManager;
 
-	WindowSpecs* windowSpecs;
+	WindowSpecs windowSpecs;
 
 	EntityPanel entityPanel;
 	std::vector<IPanel*> panels;
 
 	bool editorMode;
 
-	Mesh* isoSphere;
+	bool running;
 };

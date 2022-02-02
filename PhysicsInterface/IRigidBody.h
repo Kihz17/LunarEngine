@@ -40,6 +40,10 @@ namespace Physics
 	public:
 		virtual ~IRigidBody() = default;
 
+		virtual void GetLinearVelocity(glm::vec3& vel) = 0;
+		virtual glm::vec3 GetLinearVelocity() = 0;
+		virtual void SetLinearVelocity(const glm::vec3& vel) = 0;
+
 		virtual void GetPosition(glm::vec3& pos) = 0;
 		virtual glm::vec3 GetPosition() = 0;
 		virtual void SetPosition(const glm::vec3& pos) = 0;

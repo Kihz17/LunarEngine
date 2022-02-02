@@ -7,6 +7,11 @@ double InputManager::mouseY = 0.0;
 double InputManager::scrollX = 0.0;
 double InputManager::scrollY = 0.0;
 
+void InputManager::Initialize()
+{
+
+}
+
 Key* InputManager::GetKey(int keyCode)
 {
 	std::unordered_map<int, Key*>::iterator it = keys.find(keyCode);

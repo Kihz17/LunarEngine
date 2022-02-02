@@ -42,7 +42,7 @@ bool TestMovingSpherePlane(const glm::vec3& a, const glm::vec3& b, float r, cons
 	if (distA * distB < 0.0f) return true;
 
 	// Intersects if start or end position within radius of the plane
-	if (abs(distA) <= r || abs(distB) <= r) return true;
+	if (abs(distA) <= r || abs(distB) < r) return true;
 
 	return false;
 }

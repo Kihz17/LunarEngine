@@ -26,11 +26,32 @@
     <Filter Include="ECS">
       <UniqueIdentifier>{c632f52c-c701-43b6-8beb-e7a001fd5f24}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sounds">
-      <UniqueIdentifier>{80ad583f-3657-441f-a828-2b8e29ed14fc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Animation">
       <UniqueIdentifier>{82257d01-e102-43dd-9820-6102051bcdc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI">
+      <UniqueIdentifier>{7d14364b-5738-46be-b8d1-998129189ae2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Steering">
+      <UniqueIdentifier>{7911f849-211c-4e9d-8cb6-627e21100e36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Steering\Impl">
+      <UniqueIdentifier>{c98ace7f-f391-4b22-9854-ce1d84e04358}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sound">
+      <UniqueIdentifier>{80ad583f-3657-441f-a828-2b8e29ed14fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{42b2a9cf-b644-43a2-a3f0-4f7c824a81d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Misc">
+      <UniqueIdentifier>{836167a5-7249-43f0-82db-6e07a037d3c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{8925e9b5-cba6-40e1-b10b-447987a5b457}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Layers">
+      <UniqueIdentifier>{d1407cdc-83a8-43bc-bceb-7e47fa5028c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -56,11 +77,9 @@
       <Filter>Vendor\imgui</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="glad.c" />
     <ClCompile Include="Texture.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Mesh.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -118,7 +137,6 @@
     <ClCompile Include="CollisionListener.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
-    <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="Entity.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
@@ -126,10 +144,10 @@
       <Filter>ECS</Filter>
     </ClCompile>
     <ClCompile Include="DSP.cpp">
-      <Filter>Sounds</Filter>
+      <Filter>Sound</Filter>
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
-      <Filter>Sounds</Filter>
+      <Filter>Sound</Filter>
     </ClCompile>
     <ClCompile Include="AnimationManager.cpp">
       <Filter>Animation</Filter>
@@ -142,6 +160,51 @@
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Graphics\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="SteeringBehaviourManager.cpp">
+      <Filter>AI\Steering</Filter>
+    </ClCompile>
+    <ClCompile Include="SteeringBehaviour.cpp">
+      <Filter>AI\Steering</Filter>
+    </ClCompile>
+    <ClCompile Include="WanderBehaviour.cpp">
+      <Filter>AI\Steering\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image.cpp">
+      <Filter>Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekBehaviour.cpp">
+      <Filter>AI\Steering\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="FleeBehaviour.cpp">
+      <Filter>AI\Steering\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="EvadeBehaviour.cpp">
+      <Filter>AI\Steering\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="PursueBehaviour.cpp">
+      <Filter>AI\Steering\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngine.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayerManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="AILayer.cpp">
+      <Filter>Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationLayer.cpp">
+      <Filter>Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>Layers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -242,7 +305,6 @@
     <ClInclude Include="CollisionListener.h">
       <Filter>Physics</Filter>
     </ClInclude>
-    <ClInclude Include="GameEngine.h" />
     <ClInclude Include="Components.h">
       <Filter>ECS</Filter>
     </ClInclude>
@@ -253,10 +315,10 @@
       <Filter>ECS</Filter>
     </ClInclude>
     <ClInclude Include="SoundManager.h">
-      <Filter>Sounds</Filter>
+      <Filter>Sound</Filter>
     </ClInclude>
     <ClInclude Include="DSP.h">
-      <Filter>Sounds</Filter>
+      <Filter>Sound</Filter>
     </ClInclude>
     <ClInclude Include="AnimationManager.h">
       <Filter>Animation</Filter>
@@ -272,6 +334,54 @@
     </ClInclude>
     <ClInclude Include="InputManager.h">
       <Filter>Graphics\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="SteeringBehaviourManager.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="SteeringBehaviour.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="ISteeringBehaviour.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="WanderBehaviour.h">
+      <Filter>AI\Steering\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekBehaviour.h">
+      <Filter>AI\Steering\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Steering.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="FleeBehaviour.h">
+      <Filter>AI\Steering\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="EvadeBehaviour.h">
+      <Filter>AI\Steering\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="PursueBehaviour.h">
+      <Filter>AI\Steering\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngine.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayerManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="AILayer.h">
+      <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationLayer.h">
+      <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>Layers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

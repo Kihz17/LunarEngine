@@ -14,6 +14,8 @@ enum class CursorMode
 class InputManager
 {
 public:
+	static void Initialize();
+
 	static Key* GetKey(int keyCode);
 	static Key* ListenToKey(int keycode);
 

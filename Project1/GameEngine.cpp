@@ -11,62 +11,33 @@
 #include "vendor/imgui/imgui_impl_opengl3.h"
 #include "vendor/imgui/imgui_impl_glfw.h"
 
-GameEngine::GameEngine(WindowSpecs* window, bool editorMode)
-	: windowSpecs(window),
+static void ErrorCallback(int error, const char* description)
+{
+    fprintf(stderr, "[ERROR] %d: %s\n", error, description);
+}
+
+GameEngine::GameEngine(const WindowSpecs& windowSpecs, bool editorMode)
+	: editorMode(editorMode),
+    windowSpecs(windowSpecs),
     physicsFactory(new PhysicsFactory()),
-	physicsWorld(physicsFactory->CreateWorld()),
-    editorMode(editorMode)
+    physicsWorld(physicsFactory->CreateWorld())
 {
 	// Initialize systems
-	Renderer::Initialize(window);
+    InputManager::Initialize();
+	Renderer::Initialize(&this->windowSpecs);
     SoundManager::Initilaize();
 
     physicsWorld->RegisterCollisionListener(new CollisionListener());
     physicsWorld->SetGravity(glm::vec3(0.0f, -9.81f, 0.0f));
-
-    if (editorMode)
-    {
-        
-    }
 }
 
 GameEngine::~GameEngine()
 {
-    delete windowSpecs;
-	delete physicsWorld;
-	delete physicsFactory;
     for (IPanel* panel : panels) delete panel;
 
     ShaderLibrary::CleanUp();
     Renderer::CleanUp();
     SoundManager::CleanUp();
-}
-
-void GameEngine::Update(float deltaTime)
-{
-    if (InputManager::GetCursorMode() == CursorMode::Locked)
-    {
-        camera.Look(InputManager::GetMouseX(), InputManager::GetMouseY());
-        float scroll = InputManager::GetScrollY();
-        if(scroll != 0.0) camera.Zoom(scroll);
-    }
-
-    InputManager::ClearState(); 
-  
-    camera.Update(deltaTime);
-
-    animationManager.Update(entityManager.GetEntities(), deltaTime);
-    physicsWorld->Update(deltaTime);
-
-    // Update 3D listener
-    ListenerInfo listenerInfo;
-    listenerInfo.position = camera.position;
-    listenerInfo.velocity = (camera.position - camera.prevPosition) / deltaTime;
-    listenerInfo.direction = camera.front;
-    listenerInfo.up = camera.up;
-    SoundManager::Update(deltaTime, listenerInfo);
-
-    SubmitEntitiesToRender();
 }
 
 void GameEngine::Render()
@@ -149,4 +120,173 @@ void GameEngine::SubmitEntitiesToRender()
 
         it++;
     }
+}
+
+Entity* GameEngine::SpawnPhysicsSphere(const std::string& name, const glm::vec3& position, float radius, Mesh* sphereMesh)
+{
+    Entity* physicsSphere = entityManager.CreateEntity(name);
+    physicsSphere->AddComponent<PositionComponent>();
+    physicsSphere->AddComponent<ScaleComponent>(glm::vec3(radius, radius, radius));
+    physicsSphere->AddComponent<RotationComponent>();
+
+    Physics::SphereShape* shape = new Physics::SphereShape(radius);
+
+    // Rigid Body
+    Physics::RigidBodyInfo rigidInfo;
+    rigidInfo.linearDamping = 0.99f;
+    rigidInfo.angularDamping = 0.001f;
+    rigidInfo.isStatic = false;
+    rigidInfo.mass = radius;
+    rigidInfo.position = position;
+    rigidInfo.linearVelocity = glm::vec3(0.0f);
+    rigidInfo.restitution = 0.8f;
+    Physics::IRigidBody* rigidBody = physicsFactory->CreateRigidBody(rigidInfo, shape);
+    physicsSphere->AddComponent<RigidBodyComponent>(rigidBody);
+    physicsWorld->AddRigidBody(physicsSphere->GetComponent<RigidBodyComponent>()->ptr);
+
+    // Render Info
+    RenderComponent::RenderInfo sphereInfo;
+    sphereInfo.vao = sphereMesh->GetVertexArray();
+    sphereInfo.indexCount = sphereMesh->GetIndexBuffer()->GetCount();
+    sphereInfo.isColorOverride = true;
+    sphereInfo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
+    physicsSphere->AddComponent<RenderComponent>(sphereInfo);
+
+    return physicsSphere;
+}
+
+void GameEngine::Run()
+{
+    this->running = true;
+
+    float lastFrameTime = glfwGetTime();
+    float deltaTime = 0.0f;
+    while (running)
+    {
+        float currentFrameTime = glfwGetTime();
+        deltaTime = std::min(currentFrameTime - lastFrameTime, 0.1f);
+        lastFrameTime = currentFrameTime;
+
+        glfwPollEvents();
+
+        // Update 3D listener
+        ListenerInfo listenerInfo;
+        listenerInfo.position = camera.position;
+        listenerInfo.velocity = (camera.position - camera.prevPosition) / deltaTime;
+        listenerInfo.direction = camera.front;
+        listenerInfo.up = camera.up;
+        SoundManager::Update(deltaTime, listenerInfo);
+
+        for (ApplicationLayer* layer : this->layerManager)
+        {
+            layer->OnUpdate(deltaTime);
+        }
+
+        physicsWorld->Update(deltaTime);
+
+        // Update camera
+        camera.Update(deltaTime);
+
+        InputManager::ClearState();
+
+        // Submit all renderable entities
+        SubmitEntitiesToRender();
+        Render();
+    }
+
+    if (editorMode)
+    {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+    }
+}
+
+WindowSpecs GameEngine::InitializeGLFW(bool initImGui)
+{
+    WindowSpecs windowSpecs;
+    windowSpecs.window = nullptr;
+    windowSpecs.width = 0;
+    windowSpecs.height = 0;
+    glfwSetErrorCallback(ErrorCallback);
+
+    if (!glfwInit())
+    {
+        std::cout << "Error initializing GLFW!\n";
+        return windowSpecs;
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+     //glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+    GLFWmonitor* glfwMonitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* glfwMode = glfwGetVideoMode(glfwMonitor); // contains relevant information about display (width, height, refreshRate, rgb bits)
+
+    // Update window with video mode values
+    glfwWindowHint(GLFW_RED_BITS, glfwMode->redBits);
+    glfwWindowHint(GLFW_GREEN_BITS, glfwMode->greenBits);
+    glfwWindowHint(GLFW_BLUE_BITS, glfwMode->blueBits);
+    glfwWindowHint(GLFW_REFRESH_RATE, glfwMode->refreshRate);
+
+    int WIDTH = glfwMode->width;
+    int HEIGHT = glfwMode->height;
+
+    // Create window
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Lunar Engine", glfwMonitor, nullptr);
+    glfwMakeContextCurrent(window);
+    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    glfwSwapInterval(1);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);  // Set depth function to less than AND equal for skybox depth trick.
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+    // Assign callbacks
+    glfwSetKeyCallback(window, InputManager::KeyCallback);
+    glfwSetCursorPosCallback(window, InputManager::MousePosCallback);
+    glfwSetMouseButtonCallback(window, InputManager::MouseKeyCallback);
+    glfwSetScrollCallback(window, InputManager::ScrollCallback);
+
+    // Initialize ImGui
+    if (initImGui)
+    {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init("#version 420");
+        ImGui::StyleColorsDark();
+
+        // ImGui flags
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    }
+
+    windowSpecs.window = window;
+    windowSpecs.width = WIDTH;
+    windowSpecs.height = HEIGHT;
+    return windowSpecs;
+}
+
+void GameEngine::AddLayer(ApplicationLayer* layer)
+{
+    this->layerManager.AddLayer(layer);
+    layer->OnAttach();
+}
+
+void GameEngine::AddOverlay(ApplicationLayer* layer)
+{
+    this->layerManager.AddOverlay(layer);
+    layer->OnAttach();
+}
+
+void GameEngine::RemoveLayer(ApplicationLayer* layer)
+{
+    this->layerManager.RemoveLayer(layer, true);
+}
+
+void GameEngine::RemoveOverlay(ApplicationLayer* layer)
+{
+    this->layerManager.RemoveOverlay(layer, true);
 }

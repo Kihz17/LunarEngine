@@ -3,6 +3,7 @@
 #include "VertexArrayObject.h"
 #include "Texture.h"
 #include "Light.h"
+#include "ISteeringBehaviour.h"
 
 #include <IRigidBody.h>
 
@@ -400,4 +401,50 @@ struct AnimationComponent : Component
 	std::vector<KeyFramePositionComponent> keyFramePositions;
 	std::vector<KeyFrameScaleComponent> keyFrameScales;
 	std::vector<KeyFrameRotationComponent> keyFrameRotations;
+};
+
+struct SteeringBehaviourComponent : public Component
+{
+	SteeringBehaviourComponent(std::vector<ISteeringBehaviour*> behaviours) : behaviours(behaviours) {}
+	SteeringBehaviourComponent() {}
+
+	virtual void ImGuiUpdate() override
+	{
+
+	}
+
+	void AddBehaviour(int priority, ISteeringBehaviour* behaviour)
+	{
+		if (behaviour->GetType() != SteeringBehaviourType::Normal) return;
+
+		int prioSize = priority + 1;
+		if (prioSize > behaviours.size())
+		{
+			behaviours.resize(prioSize);
+		}
+
+		behaviours[priority] = behaviour;
+	}
+
+	void AddTargetingBehaviour(int priority, ISteeringBehaviour* behaviour)
+	{
+		if (behaviour->GetType() != SteeringBehaviourType::Targeting) return;
+
+		int prioSize = priority + 1;
+		if (prioSize > targetingBehaviours.size())
+		{
+			targetingBehaviours.resize(prioSize);
+		}
+
+		targetingBehaviours[priority] = behaviour;
+	}
+
+private:
+	friend class SteeringBehaviourManager;
+
+	ISteeringBehaviour* active = nullptr;
+	int activePriority = -1;
+
+	std::vector<ISteeringBehaviour*> behaviours;
+	std::vector<ISteeringBehaviour*> targetingBehaviours;
 };

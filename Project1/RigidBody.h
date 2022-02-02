@@ -11,6 +11,9 @@ public:
 	virtual ~RigidBody();
 
 	// Inherited from IRigidBody
+	virtual void GetLinearVelocity(glm::vec3& vel) override { vel = linearVelocity; }
+	virtual glm::vec3 GetLinearVelocity() override { return linearVelocity; }
+	virtual void SetLinearVelocity(const glm::vec3& vel) override { linearVelocity = vel; }
 	virtual void GetPosition(glm::vec3& pos) override { pos = position; }
 	virtual glm::vec3 GetPosition() override { return position; }
 	virtual void SetPosition(const glm::vec3& pos) override { position = pos; }

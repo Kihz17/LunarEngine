@@ -1,4 +1,4 @@
-#include "GLCommon.h"
+
 #include "Renderer.h"
 #include "InputManager.h"
 #include "GameEngine.h"
@@ -6,94 +6,29 @@
 #include "Components.h"
 #include "PhysicsFactory.h"
 #include "SoundManager.h"
+#include "PhysicsWorld.h"
 
-#include "vendor/imgui/imgui.h"
-#include "vendor/imgui/imgui_impl_opengl3.h"
-#include "vendor/imgui/imgui_impl_glfw.h"
+#include "PlayerController.h"
+#include "AnimationLayer.h"
+#include "AILayer.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-
-static GameEngine* gameEngine;
-GLuint WIDTH = 1280;
-GLuint HEIGHT = 720;
+#include "Steering.h"
 
 glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
-static void ErrorCallback(int error, const char* description)
-{
-    fprintf(stderr, "[ERROR] %d: %s\n", error, description);
-}
-
-
-//static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-//{
-//    gameEngine->camera.Zoom(yoffset);
-//}
-
 float GetRandom(float low, float high);
 
-void ShaderBallTest(Mesh* shaderBall, Texture* normalTexture, Texture* albedo);
-void RenderPipelineKeys(GLFWwindow* window);
+void ShaderBallTest(Mesh* shaderBall, Texture* normalTexture, Texture* albedo, GameEngine& gameEngine);
+void RenderPipelineKeys(GLFWwindow* window, int width, int height);
 
 int main() 
 {
-    glfwSetErrorCallback(ErrorCallback);
+    WindowSpecs windowSpecs = GameEngine::InitializeGLFW(true);
 
-    if (!glfwInit())
-    {
-        return -1;
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-   // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    //glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
-    GLFWmonitor* glfwMonitor = glfwGetPrimaryMonitor();
-    const GLFWvidmode* glfwMode = glfwGetVideoMode(glfwMonitor); // contains relevant information about display (width, height, refreshRate, rgb bits)
-
-    // Update window with video mode values
-    glfwWindowHint(GLFW_RED_BITS, glfwMode->redBits);
-    glfwWindowHint(GLFW_GREEN_BITS, glfwMode->greenBits);
-    glfwWindowHint(GLFW_BLUE_BITS, glfwMode->blueBits);
-    glfwWindowHint(GLFW_REFRESH_RATE, glfwMode->refreshRate);
-
-    WIDTH = glfwMode->width;
-    HEIGHT = glfwMode->height;
-
-    // Create window
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Engine", glfwMonitor, nullptr);
-    glfwMakeContextCurrent(window);
-    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    glfwSwapInterval(1);
-
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);  // Set depth function to less than AND equal for skybox depth trick.
-    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
-    // Assign callbacks
-    glfwSetKeyCallback(window, InputManager::KeyCallback);
-    glfwSetCursorPosCallback(window, InputManager::MousePosCallback);
-    glfwSetMouseButtonCallback(window, InputManager::MouseKeyCallback);
-    glfwSetScrollCallback(window, InputManager::ScrollCallback);
-
-    // Initialize ImGui
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 420");
-    ImGui::StyleColorsDark();
-
-    // ImGui flags
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-    WindowSpecs* specs = new WindowSpecs();
-    specs->window = window;
-    specs->width = WIDTH;
-    specs->height = HEIGHT;
-
-    gameEngine = new GameEngine(specs, true);
+    // Load models
+    Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
+    Mesh* sphere = new Mesh("assets/models/sphere.obj");
+    Mesh* plane = new Mesh("assets/models/plane.obj");
 
     // Load textures
     Texture* albedoTexture = new Texture("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -104,9 +39,12 @@ int main()
     Texture* blue = new Texture("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture* grassTexture = new Texture("assets/textures/grass.png", TextureFilterType::Linear, TextureWrapType::Repeat);
 
-    // Load models
-    Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
-    Mesh* sphere = new Mesh("assets/models/sphere.obj");
+    GameEngine gameEngine(windowSpecs, true);
+
+    Entity* sphereEnt = gameEngine.SpawnPhysicsSphere("sphere", glm::vec3(0.0f, 5.0f, 0.0f), 1.0f, sphere);
+    gameEngine.AddLayer(new PlayerController(gameEngine.camera, sphereEnt, gameEngine.GetWindowSpecs()));
+    gameEngine.AddLayer(new AnimationLayer(gameEngine.GetEntityManager().GetEntities()));
+    gameEngine.AddLayer(new AILayer(gameEngine.GetEntityManager().GetEntities()));
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
@@ -114,73 +52,119 @@ int main()
     {
         LightInfo lightInfo;
         lightInfo.postion = glm::vec3(0.0f, 10.0f, 0.0f);
-        lightInfo.intensity = 30.0f;
+        lightInfo.intensity = 60.0f;
         Light* light = new Light(lightInfo);
-        Entity* lightEntity = gameEngine->GetEntityManager().CreateEntity("lightTest");
+        Entity* lightEntity = gameEngine.GetEntityManager().CreateEntity("lightTest");
         lightEntity->AddComponent<LightComponent>(light);
     }
 
     // SHADER BALL TEST
-    ShaderBallTest(shaderBall, normalTexture, blue);
+    //ShaderBallTest(shaderBall, normalTexture, blue);
 
-    Key* wKey = InputManager::ListenToKey(GLFW_KEY_W);
-    Key* aKey = InputManager::ListenToKey(GLFW_KEY_A);
-    Key* sKey = InputManager::ListenToKey(GLFW_KEY_S);
-    Key* dKey = InputManager::ListenToKey(GLFW_KEY_D);
-    Key* spaceKey = InputManager::ListenToKey(GLFW_KEY_SPACE);
-    Key* leftShiftKey = InputManager::ListenToKey(GLFW_KEY_LEFT_SHIFT);
-
-    float lastFrameTime = glfwGetTime();
-    float deltaTime = 0.0f;
-    while (!glfwWindowShouldClose(window))
     {
-        float currentFrameTime = glfwGetTime();
-        deltaTime = std::min(currentFrameTime - lastFrameTime, 0.1f);
-        lastFrameTime = currentFrameTime;
+        Entity* ground = gameEngine.GetEntityManager().CreateEntity("ground");
+        PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(20.0f));
+        RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
+        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>();
 
-        glfwPollEvents();
+        Physics::RigidBodyInfo rigidInfo;
+        rigidInfo.linearDamping = 0.0f;
+        rigidInfo.isStatic = true;
+        rigidInfo.mass = 1.0f;
+        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
+        rigidInfo.linearVelocity = glm::vec3(0.0f);
+        rigidInfo.friction = 0.95f;
+        RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine.physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
+        gameEngine.physicsWorld->AddRigidBody(rigidComp->ptr);
 
-        RenderPipelineKeys(window);
-
-        // Update camera
-        if (InputManager::GetCursorMode() == CursorMode::Locked)
-        {
-            if (wKey->IsPressed())
-            {
-                gameEngine->camera.Move(MoveDirection::Forward, deltaTime);
-            }
-            if (aKey->IsPressed())
-            {
-                gameEngine->camera.Move(MoveDirection::Left, deltaTime);
-            }
-            if (sKey->IsPressed())
-            {
-                gameEngine->camera.Move(MoveDirection::Back, deltaTime);
-            }
-            if (dKey->IsPressed())
-            {
-                gameEngine->camera.Move(MoveDirection::Right, deltaTime);
-            }
-            if (spaceKey->IsPressed())
-            {
-                gameEngine->camera.Move(MoveDirection::Up, deltaTime);
-            }
-            if (leftShiftKey->IsPressed())
-            {
-                gameEngine->camera.Move(MoveDirection::Down, deltaTime);
-            }
-        }
-
-        gameEngine->Update(deltaTime);
-
-        gameEngine->Render();
+        // Render Info
+        RenderComponent::RenderInfo groundInfo;
+        groundInfo.vao = plane->GetVertexArray();
+        groundInfo.indexCount = plane->GetIndexBuffer()->GetCount();
+        groundInfo.isColorOverride = true;
+        groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
+        ground->AddComponent<RenderComponent>(groundInfo);
     }
 
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    //SteeringBehaviourComponent* sComp = sphereEnt->AddComponent<SteeringBehaviourComponent>();
+    //SeekBehaviour* seek = new SeekBehaviour(1.0f, 100.0f, 1.0f, 100.0f);
+    //FleeBehaviour* flee = new FleeBehaviour(50.0f, 50.0f, 1.0f, 100.0f);
+    //sComp->behaviours.push_back(flee);
+    //sComp->behaviours.push_back(new WanderBehaviour(1.0f, 1.5f, 10.0f, 10.0f, 10.0f));
 
-    delete gameEngine;
+    //Entity* testE = gameEngine.GetEntityManager().CreateEntity("camera");
+    //PositionComponent* posCompTest = testE->AddComponent<PositionComponent>();
+    //{
+    //    // Rigid Body
+    //    Physics::RigidBodyInfo rigidInfo;
+    //    rigidInfo.linearDamping = 0.5f;
+    //    rigidInfo.angularDamping = 0.001f;
+    //    rigidInfo.isStatic = false;
+    //    rigidInfo.mass = 1.0f;
+    //    rigidInfo.position = gameEngine.camera.position;
+    //    rigidInfo.linearVelocity = glm::vec3(0.0f);
+    //    rigidInfo.restitution = 0.8f;
+    //    Physics::SphereShape* sh = new Physics::SphereShape(1.0f);
+    //    Physics::IRigidBody* rigidBody = gameEngine.physicsFactory->CreateRigidBody(rigidInfo, sh);
+    //    testE->AddComponent<RigidBodyComponent>(rigidBody);
+    //    gameEngine.physicsWorld->AddRigidBody(testE->GetComponent<RigidBodyComponent>()->ptr);
+    //}
+
+    //flee->SetTarget(testE);
+
+    //Key* wKey = InputManager::ListenToKey(GLFW_KEY_W);
+    //Key* aKey = InputManager::ListenToKey(GLFW_KEY_A);
+    //Key* sKey = InputManager::ListenToKey(GLFW_KEY_S);
+    //Key* dKey = InputManager::ListenToKey(GLFW_KEY_D);
+    //Key* spaceKey = InputManager::ListenToKey(GLFW_KEY_SPACE);
+    //Key* leftShiftKey = InputManager::ListenToKey(GLFW_KEY_LEFT_SHIFT);
+
+    //float lastFrameTime = glfwGetTime();
+    //float deltaTime = 0.0f;
+    //while (!glfwWindowShouldClose(window))
+    //{
+    //    float currentFrameTime = glfwGetTime();
+    //    deltaTime = std::min(currentFrameTime - lastFrameTime, 0.1f);
+    //    lastFrameTime = currentFrameTime;
+
+    //    glfwPollEvents();
+
+    //    RenderPipelineKeys(window);
+
+    //    // Update camera
+    //    if (InputManager::GetCursorMode() == CursorMode::Locked)
+    //    {
+    //        if (wKey->IsPressed())
+    //        {
+    //            gameEngine.camera.Move(MoveDirection::Forward, deltaTime);
+    //        }
+    //        if (aKey->IsPressed())
+    //        {
+    //            gameEngine.camera.Move(MoveDirection::Left, deltaTime);
+    //        }
+    //        if (sKey->IsPressed())
+    //        {
+    //            gameEngine.camera.Move(MoveDirection::Back, deltaTime);
+    //        }
+    //        if (dKey->IsPressed())
+    //        {
+    //            gameEngine.camera.Move(MoveDirection::Right, deltaTime);
+    //        }
+    //        if (spaceKey->IsPressed())
+    //        {
+    //            gameEngine.camera.Move(MoveDirection::Up, deltaTime);
+    //        }
+    //        if (leftShiftKey->IsPressed())
+    //        {
+    //            gameEngine.camera.Move(MoveDirection::Down, deltaTime);
+    //        }
+    //    }
+
+    //    gameEngine.Update(deltaTime);
+    //    gameEngine.Render();
+    //}
+
+    gameEngine.Run();
 
 	return 0;
 }
@@ -199,9 +183,9 @@ float GetRandom(float low, float high)
     return low + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) / (high - low));
 }
 
-void ShaderBallTest(Mesh* shaderBall, Texture* normalTexture, Texture* albedo)
+void ShaderBallTest(Mesh* shaderBall, Texture* normalTexture, Texture* albedo, GameEngine& gameEngine)
 {
-    Entity* testEntity = gameEngine->GetEntityManager().CreateEntity("shaderBall");
+    Entity* testEntity = gameEngine.GetEntityManager().CreateEntity("shaderBall");
     testEntity->AddComponent<PositionComponent>();
     testEntity->AddComponent<RotationComponent>();
     testEntity->AddComponent<ScaleComponent>();
@@ -217,70 +201,10 @@ void ShaderBallTest(Mesh* shaderBall, Texture* normalTexture, Texture* albedo)
     testEntity->AddComponent<RenderComponent>(testInfo);
 }
 
-void RenderPipelineKeys(GLFWwindow* window)
+void RenderPipelineKeys(GLFWwindow* window, int width, int height)
 {
-    Key* escKey = InputManager::ListenToKey(GLFW_KEY_ESCAPE);
-    Key* f1Key = InputManager::ListenToKey(GLFW_KEY_F1);
-    Key* f2Key = InputManager::ListenToKey(GLFW_KEY_F2);
-    Key* f3Key = InputManager::ListenToKey(GLFW_KEY_F3);
-    Key* f4Key = InputManager::ListenToKey(GLFW_KEY_F4);
-    Key* f5Key = InputManager::ListenToKey(GLFW_KEY_F5);
-    Key* f6Key = InputManager::ListenToKey(GLFW_KEY_F6);
-    Key* f7Key = InputManager::ListenToKey(GLFW_KEY_F7);
-    Key* f8Key = InputManager::ListenToKey(GLFW_KEY_F8);
-    Key* f9Key = InputManager::ListenToKey(GLFW_KEY_F9);
+
     Key* spaceKey = InputManager::ListenToKey(GLFW_KEY_SPACE);
 
-    if (escKey->IsJustPressed())
-    {
-        CursorMode cursorMode = InputManager::GetCursorMode();
-        if (cursorMode == CursorMode::Locked)
-        {
-            lastCursorPos = glm::vec2(InputManager::GetMouseX(), InputManager::GetMouseY());
-            InputManager::SetCursorMode(CursorMode::Normal);
-            glfwSetCursorPos(window, WIDTH / 2.0f, HEIGHT / 2.0f);
-        }
-        else if (cursorMode == CursorMode::Normal)
-        {
-            glfwSetCursorPos(window, lastCursorPos.x, lastCursorPos.y);
-            InputManager::SetCursorMode(CursorMode::Locked);
-        }
-    }
-    
-    if (f1Key->IsJustPressed())
-    {
-        Renderer::SetViewType(1);
-    }
-    else if (f2Key->IsJustPressed())
-    {
-        Renderer::SetViewType(2);
-    }
-    else if (f3Key->IsJustPressed())
-    {
-        Renderer::SetViewType(3);
-    }
-    else if (f4Key->IsJustPressed())
-    {
-        Renderer::SetViewType(4);
-    }
-    else if (f5Key->IsJustPressed())
-    {
-        Renderer::SetViewType(5);
-    }
-    else if (f6Key->IsJustPressed())
-    {
-        Renderer::SetViewType(6);
-    }
-    else if (f7Key->IsJustPressed())
-    {
-        Renderer::SetViewType(7);
-    }
-    else if (f8Key->IsJustPressed())
-    {
-        Renderer::SetViewType(8);
-    }
-    else if (f9Key->IsJustPressed())
-    {
-        Renderer::SetViewType(9);
-    }
+
 }
