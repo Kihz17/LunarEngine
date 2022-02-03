@@ -19,7 +19,6 @@ glm::vec2 lastCursorPos = glm::vec2(0.0f);
 float GetRandom(float low, float high);
 
 void ShaderBallTest(Mesh* shaderBall, Texture* normalTexture, Texture* albedo, GameEngine& gameEngine);
-void RenderPipelineKeys(GLFWwindow* window, int width, int height);
 
 int main() 
 {
@@ -45,6 +44,8 @@ int main()
     gameEngine.AddLayer(new PlayerController(gameEngine.camera, sphereEnt, gameEngine.GetWindowSpecs()));
     gameEngine.AddLayer(new AnimationLayer(gameEngine.GetEntityManager().GetEntities()));
     gameEngine.AddLayer(new AILayer(gameEngine.GetEntityManager().GetEntities()));
+
+    Entity* behaviourTest = gameEngine.SpawnPhysicsSphere("behaviourTest", glm::vec3(20.0f, 5.0f, 0.0f), 1.0f, sphere);
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
@@ -112,58 +113,6 @@ int main()
 
     //flee->SetTarget(testE);
 
-    //Key* wKey = InputManager::ListenToKey(GLFW_KEY_W);
-    //Key* aKey = InputManager::ListenToKey(GLFW_KEY_A);
-    //Key* sKey = InputManager::ListenToKey(GLFW_KEY_S);
-    //Key* dKey = InputManager::ListenToKey(GLFW_KEY_D);
-    //Key* spaceKey = InputManager::ListenToKey(GLFW_KEY_SPACE);
-    //Key* leftShiftKey = InputManager::ListenToKey(GLFW_KEY_LEFT_SHIFT);
-
-    //float lastFrameTime = glfwGetTime();
-    //float deltaTime = 0.0f;
-    //while (!glfwWindowShouldClose(window))
-    //{
-    //    float currentFrameTime = glfwGetTime();
-    //    deltaTime = std::min(currentFrameTime - lastFrameTime, 0.1f);
-    //    lastFrameTime = currentFrameTime;
-
-    //    glfwPollEvents();
-
-    //    RenderPipelineKeys(window);
-
-    //    // Update camera
-    //    if (InputManager::GetCursorMode() == CursorMode::Locked)
-    //    {
-    //        if (wKey->IsPressed())
-    //        {
-    //            gameEngine.camera.Move(MoveDirection::Forward, deltaTime);
-    //        }
-    //        if (aKey->IsPressed())
-    //        {
-    //            gameEngine.camera.Move(MoveDirection::Left, deltaTime);
-    //        }
-    //        if (sKey->IsPressed())
-    //        {
-    //            gameEngine.camera.Move(MoveDirection::Back, deltaTime);
-    //        }
-    //        if (dKey->IsPressed())
-    //        {
-    //            gameEngine.camera.Move(MoveDirection::Right, deltaTime);
-    //        }
-    //        if (spaceKey->IsPressed())
-    //        {
-    //            gameEngine.camera.Move(MoveDirection::Up, deltaTime);
-    //        }
-    //        if (leftShiftKey->IsPressed())
-    //        {
-    //            gameEngine.camera.Move(MoveDirection::Down, deltaTime);
-    //        }
-    //    }
-
-    //    gameEngine.Update(deltaTime);
-    //    gameEngine.Render();
-    //}
-
     gameEngine.Run();
 
 	return 0;
@@ -199,12 +148,4 @@ void ShaderBallTest(Mesh* shaderBall, Texture* normalTexture, Texture* albedo, G
     //testInfo.metalTexture = metalnessTexture;
     //testInfo.aoTexture = aoTexture;
     testEntity->AddComponent<RenderComponent>(testInfo);
-}
-
-void RenderPipelineKeys(GLFWwindow* window, int width, int height)
-{
-
-    Key* spaceKey = InputManager::ListenToKey(GLFW_KEY_SPACE);
-
-
 }

@@ -22,8 +22,6 @@ SteeringBehaviour::~SteeringBehaviour()
 void SteeringBehaviour::Update(Physics::IRigidBody* rigidBody, glm::quat& rotation, float deltaTime)
 {
 	glm::vec3 force = ComputeSteeringForce(rigidBody, rotation);
-	std::cout << "Force: " << force.x << " " << force.y << " " << force.z << "\n";
-	//rigidBody->SetLinearVelocity(rigidBody->GetLinearVelocity() + (force * deltaTime * 1.0f));
 	rigidBody->ApplyForce(force);
 	LookAtDirection(rigidBody->GetLinearVelocity(), rotation, deltaTime);
 }

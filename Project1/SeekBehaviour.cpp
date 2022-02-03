@@ -1,9 +1,11 @@
 #include "SeekBehaviour.h"
 #include "Components.h"
 
-SeekBehaviour::SeekBehaviour(float arriveRadius, float speed, float turnSpeed, float maxForce)
+SeekBehaviour::SeekBehaviour(float slowingRadius, SeekType type, float speed, float turnSpeed, float maxForce)
 	: SteeringBehaviour(SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
-	arriveRadius(arriveRadius)
+	arriveRadius(arriveRadius),
+	type(type),
+	withinRadius(false)
 {
 
 }
@@ -24,14 +26,19 @@ glm::vec3 SeekBehaviour::ComputeSteeringForce(Physics::IRigidBody* rigidBody, gl
 	glm::vec3 velocity = glm::normalize(direction) * speed;
 	
 	float distance = glm::length(direction);
-	if (distance < arriveRadius)
+	withinRadius = distance < arriveRadius;
+	if (type == SeekType::Approach && withinRadius) // Slowly approach when in radius
 	{
 		velocity *= ((distance - 0.75f) / arriveRadius);
 	}
+	else if (type == SeekType::Stop) // Stop when in radius
+	{
+		velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+	}
 
 	glm::vec3 steer = velocity - rigidBody->GetLinearVelocity();
-	steer.x = std::min(steer.x, maxForce);
-	steer.y = std::min(steer.y, maxForce);
-	steer.z = std::min(steer.z, maxForce);
+	steer.x = glm::clamp(steer.x, -maxForce, maxForce);
+	steer.y = glm::clamp(steer.y, -maxForce, maxForce);
+	steer.z = glm::clamp(steer.z, -maxForce, maxForce);
 	return steer;
 }

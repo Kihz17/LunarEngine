@@ -3,7 +3,7 @@
 #include "VertexArrayObject.h"
 #include "Texture.h"
 #include "Light.h"
-#include "ISteeringBehaviour.h"
+#include "ISteeringCondition.h"
 
 #include <IRigidBody.h>
 
@@ -405,7 +405,7 @@ struct AnimationComponent : Component
 
 struct SteeringBehaviourComponent : public Component
 {
-	SteeringBehaviourComponent(std::vector<ISteeringBehaviour*> behaviours) : behaviours(behaviours) {}
+	SteeringBehaviourComponent(std::vector<ISteeringCondition*> behaviours) : behaviours(behaviours) {}
 	SteeringBehaviourComponent() {}
 
 	virtual void ImGuiUpdate() override
@@ -413,9 +413,9 @@ struct SteeringBehaviourComponent : public Component
 
 	}
 
-	void AddBehaviour(int priority, ISteeringBehaviour* behaviour)
+	void AddBehaviour(int priority, ISteeringCondition* behaviour)
 	{
-		if (behaviour->GetType() != SteeringBehaviourType::Normal) return;
+		if (behaviour->GetBehaviour()->GetType() != SteeringBehaviourType::Normal) return;
 
 		int prioSize = priority + 1;
 		if (prioSize > behaviours.size())
@@ -426,9 +426,9 @@ struct SteeringBehaviourComponent : public Component
 		behaviours[priority] = behaviour;
 	}
 
-	void AddTargetingBehaviour(int priority, ISteeringBehaviour* behaviour)
+	void AddTargetingBehaviour(int priority, ISteeringCondition* behaviour)
 	{
-		if (behaviour->GetType() != SteeringBehaviourType::Targeting) return;
+		if (behaviour->GetBehaviour()->GetType() != SteeringBehaviourType::Targeting) return;
 
 		int prioSize = priority + 1;
 		if (prioSize > targetingBehaviours.size())
@@ -440,11 +440,11 @@ struct SteeringBehaviourComponent : public Component
 	}
 
 private:
-	friend class SteeringBehaviourManager;
+	friend class AILayer;
 
-	ISteeringBehaviour* active = nullptr;
+	ISteeringCondition* active = nullptr;
 	int activePriority = -1;
 
-	std::vector<ISteeringBehaviour*> behaviours;
-	std::vector<ISteeringBehaviour*> targetingBehaviours;
+	std::vector<ISteeringCondition*> behaviours;
+	std::vector<ISteeringCondition*> targetingBehaviours;
 };

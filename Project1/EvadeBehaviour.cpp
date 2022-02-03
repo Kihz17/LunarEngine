@@ -41,9 +41,9 @@ glm::vec3 EvadeBehaviour::ComputeSteeringForce(Physics::IRigidBody* rigidBody, g
 	glm::vec3 velocity = glm::normalize(futurePos - rigidBody->GetPosition()) * speed;
 
 	glm::vec3 steer = velocity - rigidBody->GetLinearVelocity();
-	steer.x = std::min(steer.x, maxForce);
-	steer.y = std::min(steer.y, maxForce);
-	steer.z = std::min(steer.z, maxForce);
+	steer.x = glm::clamp(steer.x, -maxForce, maxForce);
+	steer.y = glm::clamp(steer.y, -maxForce, maxForce);
+	steer.z = glm::clamp(steer.z, -maxForce, maxForce);
 
 	return steer;
 }

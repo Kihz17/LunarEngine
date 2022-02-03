@@ -35,9 +35,6 @@
     <Filter Include="AI\Steering">
       <UniqueIdentifier>{7911f849-211c-4e9d-8cb6-627e21100e36}</UniqueIdentifier>
     </Filter>
-    <Filter Include="AI\Steering\Impl">
-      <UniqueIdentifier>{c98ace7f-f391-4b22-9854-ce1d84e04358}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sound">
       <UniqueIdentifier>{80ad583f-3657-441f-a828-2b8e29ed14fc}</UniqueIdentifier>
     </Filter>
@@ -52,6 +49,12 @@
     </Filter>
     <Filter Include="Layers">
       <UniqueIdentifier>{d1407cdc-83a8-43bc-bceb-7e47fa5028c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Steering\Conditions">
+      <UniqueIdentifier>{5b35fb9c-b460-415e-8f92-2f0096aad4cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Steering\Behaviours">
+      <UniqueIdentifier>{c98ace7f-f391-4b22-9854-ce1d84e04358}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -168,7 +171,7 @@
       <Filter>AI\Steering</Filter>
     </ClCompile>
     <ClCompile Include="WanderBehaviour.cpp">
-      <Filter>AI\Steering\Impl</Filter>
+      <Filter>AI\Steering\Behaviours</Filter>
     </ClCompile>
     <ClCompile Include="Utils.cpp">
       <Filter>Utils</Filter>
@@ -180,16 +183,16 @@
       <Filter>Vendor</Filter>
     </ClCompile>
     <ClCompile Include="SeekBehaviour.cpp">
-      <Filter>AI\Steering\Impl</Filter>
+      <Filter>AI\Steering\Behaviours</Filter>
     </ClCompile>
     <ClCompile Include="FleeBehaviour.cpp">
-      <Filter>AI\Steering\Impl</Filter>
+      <Filter>AI\Steering\Behaviours</Filter>
     </ClCompile>
     <ClCompile Include="EvadeBehaviour.cpp">
-      <Filter>AI\Steering\Impl</Filter>
+      <Filter>AI\Steering\Behaviours</Filter>
     </ClCompile>
     <ClCompile Include="PursueBehaviour.cpp">
-      <Filter>AI\Steering\Impl</Filter>
+      <Filter>AI\Steering\Behaviours</Filter>
     </ClCompile>
     <ClCompile Include="GameEngine.cpp">
       <Filter>Core</Filter>
@@ -205,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="PlayerController.cpp">
       <Filter>Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="ApproachShootCondition.cpp">
+      <Filter>AI\Steering\Conditions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -345,25 +351,25 @@
       <Filter>AI\Steering</Filter>
     </ClInclude>
     <ClInclude Include="WanderBehaviour.h">
-      <Filter>AI\Steering\Impl</Filter>
+      <Filter>AI\Steering\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="SeekBehaviour.h">
-      <Filter>AI\Steering\Impl</Filter>
+      <Filter>AI\Steering\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="Steering.h">
       <Filter>AI\Steering</Filter>
     </ClInclude>
     <ClInclude Include="FleeBehaviour.h">
-      <Filter>AI\Steering\Impl</Filter>
+      <Filter>AI\Steering\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="EvadeBehaviour.h">
-      <Filter>AI\Steering\Impl</Filter>
+      <Filter>AI\Steering\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="PursueBehaviour.h">
-      <Filter>AI\Steering\Impl</Filter>
+      <Filter>AI\Steering\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="GameEngine.h">
       <Filter>Core</Filter>
@@ -382,6 +388,15 @@
     </ClInclude>
     <ClInclude Include="PlayerController.h">
       <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="ISteeringCondition.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="ApproachShootCondition.h">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="ApproachBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
