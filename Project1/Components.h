@@ -12,6 +12,7 @@
 
 #include "vendor/imgui/imgui.h"
 
+#include <unordered_set>
 #include <string>
 
 struct Component
@@ -447,4 +448,14 @@ private:
 
 	std::vector<ISteeringCondition*> behaviours;
 	std::vector<ISteeringCondition*> targetingBehaviours;
+};
+
+struct TagComponent : public Component
+{
+	TagComponent() {}
+
+	void AddTag(const std::string& tag) { tags.insert(tag); }
+	bool HasTag(const std::string& tag) const { return tags.find(tag) != tags.end(); }
+
+	std::unordered_set<std::string> tags;
 };
