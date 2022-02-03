@@ -1,9 +1,9 @@
 #include "SeekBehaviour.h"
 #include "Components.h"
 
-SeekBehaviour::SeekBehaviour(float slowingRadius, SeekType type, float speed, float turnSpeed, float maxForce)
-	: SteeringBehaviour(SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
-	arriveRadius(arriveRadius),
+SeekBehaviour::SeekBehaviour(Physics::IRigidBody* rigidBody, float slowingRadius, SeekType type, float speed, float turnSpeed, float maxForce)
+	: SteeringBehaviour(rigidBody, SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
+	arriveRadius(slowingRadius),
 	type(type),
 	withinRadius(false)
 {
@@ -15,7 +15,7 @@ SeekBehaviour::~SeekBehaviour()
 
 }
 
-glm::vec3 SeekBehaviour::ComputeSteeringForce(Physics::IRigidBody* rigidBody, glm::quat& rotation)
+glm::vec3 SeekBehaviour::ComputeSteeringForce()
 {
 	if (!target) return glm::vec3(0.0f, 0.0f, 0.0f);
 

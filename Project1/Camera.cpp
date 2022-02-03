@@ -134,3 +134,9 @@ void Camera::Zoom(float y)
 {
 	currentZoomSpeed = y < 0 ? -zoomSpeed : zoomSpeed;
 }
+
+glm::quat Camera::GetQuaternion() const
+{
+	glm::mat4 viewMatrix = glm::lookAt(position, position + front, up);
+	return glm::conjugate(glm::toQuat(viewMatrix)); // Need to conjugate the quaternion because the mat4 returned by glm::lookAt is the inverse of the "real" transform
+}

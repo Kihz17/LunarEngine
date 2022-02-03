@@ -1,8 +1,8 @@
 #include "PursueBehaviour.h"
 #include "Components.h"
 
-PursueBehaviour::PursueBehaviour(float maxSteps, float speed, float turnSpeed, float maxForce)
-	: SteeringBehaviour(SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
+PursueBehaviour::PursueBehaviour(Physics::IRigidBody* rigidBody, float maxSteps, float speed, float turnSpeed, float maxForce)
+	: SteeringBehaviour(rigidBody, SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
 	maxSteps(maxSteps)
 {
 
@@ -13,7 +13,7 @@ PursueBehaviour::~PursueBehaviour()
 
 }
 
-glm::vec3 PursueBehaviour::ComputeSteeringForce(Physics::IRigidBody* rigidBody, glm::quat& rotation)
+glm::vec3 PursueBehaviour::ComputeSteeringForce()
 {
 	if (!target) return glm::vec3(0.0f, 0.0f, 0.0f);
 

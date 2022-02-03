@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 enum class MoveDirection
 {
@@ -19,6 +20,7 @@ public:
 	~Camera();
 
 	glm::mat4 GetViewMatrix() const;
+	glm::quat GetQuaternion() const;
 
 	void Update(float deltaTime);
 	void Move(MoveDirection direction, float deltaTime);

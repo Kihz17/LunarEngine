@@ -1,8 +1,8 @@
 #include "FleeBehaviour.h"
 #include "Components.h"
 
-FleeBehaviour::FleeBehaviour(float fleeRadius, float speed, float turnSpeed, float maxForce)
-	: SteeringBehaviour(SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
+FleeBehaviour::FleeBehaviour(Physics::IRigidBody* rigidBody, float fleeRadius, float speed, float turnSpeed, float maxForce)
+	: SteeringBehaviour(rigidBody, SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
 	fleeRadius(fleeRadius)
 {
 
@@ -13,7 +13,7 @@ FleeBehaviour::~FleeBehaviour()
 
 }
 
-glm::vec3 FleeBehaviour::ComputeSteeringForce(Physics::IRigidBody* rigidBody, glm::quat& rotation)
+glm::vec3 FleeBehaviour::ComputeSteeringForce()
 {
 	if (!target) return glm::vec3(0.0f, 0.0f, 0.0f);
 

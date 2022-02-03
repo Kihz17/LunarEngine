@@ -1,5 +1,6 @@
 #include "WanderBehaviour.h"
 #include "Utils.h"
+#include "Components.h"
 
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/random.hpp>
@@ -7,8 +8,8 @@
 #include <iostream>
 #include <algorithm>
 
-WanderBehaviour::WanderBehaviour(float distanceToCircle, float circleRadius, float speed, float turnSpeed, float maxForce)
-	: SteeringBehaviour(SteeringBehaviourType::Normal, speed, turnSpeed, maxForce),
+WanderBehaviour::WanderBehaviour(Physics::IRigidBody* rigidBody, float distanceToCircle, float circleRadius, float speed, float turnSpeed, float maxForce)
+	: SteeringBehaviour(rigidBody, SteeringBehaviourType::Normal, speed, turnSpeed, maxForce),
 	distanceToCircle(distanceToCircle),
 	circleRadius(circleRadius)
 {
@@ -20,9 +21,9 @@ WanderBehaviour::~WanderBehaviour()
 
 }
 
-glm::vec3 WanderBehaviour::ComputeSteeringForce(Physics::IRigidBody* rigidBody, glm::quat& rotation)
+glm::vec3 WanderBehaviour::ComputeSteeringForce()
 {
-	float yaw = glm::yaw(rotation);
+	float yaw = glm::yaw(rigidBody->GetOrientation());
 	glm::vec3 pos = rigidBody->GetPosition();
 	glm::vec3 center = pos + glm::vec3(cos(-yaw), 0.0f, sin(-yaw)) * distanceToCircle;
 

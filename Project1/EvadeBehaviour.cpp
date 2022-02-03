@@ -1,8 +1,8 @@
 #include "EvadeBehaviour.h"
 #include "Components.h"
 
-EvadeBehaviour::EvadeBehaviour(float maxSteps, float speed, float turnSpeed, float maxForce)
-	: SteeringBehaviour(SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
+EvadeBehaviour::EvadeBehaviour(Physics::IRigidBody* rigidBody,  float maxSteps, float speed, float turnSpeed, float maxForce)
+	: SteeringBehaviour(rigidBody, SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
 	maxSteps(maxSteps)
 {
 
@@ -13,7 +13,7 @@ EvadeBehaviour::~EvadeBehaviour()
 
 }
 
-glm::vec3 EvadeBehaviour::ComputeSteeringForce(Physics::IRigidBody* rigidBody, glm::quat& rotation)
+glm::vec3 EvadeBehaviour::ComputeSteeringForce()
 {
 	if (!target) return glm::vec3(0.0f, 0.0f, 0.0f);
 

@@ -12,10 +12,10 @@ enum class SeekType
 class SeekBehaviour : public SteeringBehaviour
 {
 public:
-	SeekBehaviour(float arriveRadius, SeekType type, float speed = 1.0f, float turnSpeed = 1.0f, float maxForce = 10.0f);
+	SeekBehaviour(Physics::IRigidBody* rigidBody, float arriveRadius, SeekType type, float speed = 1.0f, float turnSpeed = 1.0f, float maxForce = 10.0f);
 	virtual ~SeekBehaviour();
 
-	virtual glm::vec3 ComputeSteeringForce(Physics::IRigidBody* rigidBody, glm::quat& rotation) override;
+	virtual glm::vec3 ComputeSteeringForce() override;
 
 	bool IsWithinRadius() const { return withinRadius; }
 

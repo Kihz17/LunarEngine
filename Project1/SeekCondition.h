@@ -3,11 +3,11 @@
 #include "ISteeringCondition.h"
 #include "SeekBehaviour.h"
 
-class ApproachShootCondition : public ISteeringCondition
+class SeekCondition : public ISteeringCondition
 {
 public:
-	ApproachShootCondition(SeekBehaviour* behaviour, float shootInterval);
-	virtual ~ApproachShootCondition();
+	SeekCondition(SeekBehaviour* behaviour);
+	virtual ~SeekCondition();
 
 	virtual bool CanUse(const std::unordered_map<unsigned int, Entity*>& entities) override;
 	virtual bool CanContinueToUse(const std::unordered_map<unsigned int, Entity*>& entities) override;
@@ -20,6 +20,4 @@ private:
 	Entity* FindTarget(const std::unordered_map<unsigned int, Entity*>& entities);
 
 	SeekBehaviour* behaviour;
-	float lastShootTime;
-	float shootInterval;
 };

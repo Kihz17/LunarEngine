@@ -13,6 +13,8 @@
 #include "AILayer.h"
 
 #include "Steering.h"
+#include "ApproachShootCondition.h"
+#include "SeekCondition.h"
 
 glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
@@ -41,11 +43,18 @@ int main()
     GameEngine gameEngine(windowSpecs, true);
 
     Entity* sphereEnt = gameEngine.SpawnPhysicsSphere("sphere", glm::vec3(0.0f, 5.0f, 0.0f), 1.0f, sphere);
+    TagComponent* playerTags = sphereEnt->AddComponent<TagComponent>();
+    playerTags->AddTag("player");
+
     gameEngine.AddLayer(new PlayerController(gameEngine.camera, sphereEnt, gameEngine.GetWindowSpecs()));
     gameEngine.AddLayer(new AnimationLayer(gameEngine.GetEntityManager().GetEntities()));
     gameEngine.AddLayer(new AILayer(gameEngine.GetEntityManager().GetEntities()));
 
     Entity* behaviourTest = gameEngine.SpawnPhysicsSphere("behaviourTest", glm::vec3(20.0f, 5.0f, 0.0f), 1.0f, sphere);
+    SteeringBehaviourComponent* bComp = behaviourTest->AddComponent<SteeringBehaviourComponent>();
+    /*bComp->AddTargetingBehaviour(0, new ApproachShootCondition(new SeekBehaviour(behaviourTest->GetComponent<RigidBodyComponent>()->ptr, 
+        10.0f, SeekType::Approach, 10.0f), 5.0f));*/
+    bComp->AddTargetingBehaviour(0, new SeekCondition(new SeekBehaviour(behaviourTest->GetComponent<RigidBodyComponent>()->ptr, 10.0f, SeekType::None, 10.0f)));
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 

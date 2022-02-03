@@ -67,22 +67,17 @@ void GameEngine::Render()
 void GameEngine::SubmitEntitiesToRender()
 {
     const std::unordered_map<unsigned int, Entity*>& entities = entityManager.GetEntities();
-    std::unordered_map<unsigned int, Entity*>::const_iterator it = entities.begin();
-    while (it != entities.end())
+    std::unordered_map<unsigned int, Entity*>::const_iterator it;
+    for (it = entities.begin(); it != entities.end(); it++)
     {
         Entity* entity = it->second;
         RenderComponent* renderComponent = entity->GetComponent<RenderComponent>();
-        if (!renderComponent) // Can't be rendered
-        {
-            it++;
-            continue;
-        }
+        if (!renderComponent) continue; // Can't be rendered
 
         PositionComponent* posComponent = entity->GetComponent<PositionComponent>();
         if (!posComponent) // Can't be rendered
         {
             std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a position component!" << std::endl;
-            it++;
             continue;
         }
 
@@ -90,7 +85,6 @@ void GameEngine::SubmitEntitiesToRender()
         if (!rotComponent) // Can't be rendered
         {
             std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a rotation component!" << std::endl;
-            it++;
             continue;
         }
 
@@ -98,7 +92,6 @@ void GameEngine::SubmitEntitiesToRender()
         if (!scaleComponent) // Can't be rendered
         {
             std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a scale component!" << std::endl;
-            it++;
             continue;
         }
 
@@ -117,8 +110,6 @@ void GameEngine::SubmitEntitiesToRender()
         submission.rotation = rotComponent->value;
         submission.scale = scaleComponent->value;
         Renderer::Submit(submission);
-
-        it++;
     }
 }
 

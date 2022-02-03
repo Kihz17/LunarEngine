@@ -48,6 +48,7 @@ namespace Physics
 		virtual glm::vec3 GetPosition() = 0;
 		virtual void SetPosition(const glm::vec3& pos) = 0;
 
+		virtual glm::quat GetOrientation() const = 0;
 		virtual void GetOrientation(glm::quat& orien) = 0;
 		virtual void SetOrientation(const glm::quat& orien) = 0;
 

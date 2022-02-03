@@ -454,6 +454,11 @@ struct TagComponent : public Component
 {
 	TagComponent() {}
 
+	virtual void ImGuiUpdate() override
+	{
+
+	}
+
 	void AddTag(const std::string& tag) { tags.insert(tag); }
 	bool HasTag(const std::string& tag) const { return tags.find(tag) != tags.end(); }
 

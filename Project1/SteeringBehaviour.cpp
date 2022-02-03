@@ -4,12 +4,13 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-SteeringBehaviour::SteeringBehaviour(SteeringBehaviourType type, float speed, float turnSpeed, float maxForce)
+SteeringBehaviour::SteeringBehaviour(Physics::IRigidBody* rigidBody, SteeringBehaviourType type, float speed, float turnSpeed, float maxForce)
 	: type(type),
 	turnSpeed(turnSpeed),
 	maxForce(maxForce),
 	speed(speed),
-	target(nullptr)
+	target(nullptr),
+	rigidBody(rigidBody)
 {
 
 }
@@ -19,15 +20,15 @@ SteeringBehaviour::~SteeringBehaviour()
 
 }
 
-void SteeringBehaviour::Update(Physics::IRigidBody* rigidBody, glm::quat& rotation, float deltaTime)
+void SteeringBehaviour::Update(float deltaTime)
 {
-	glm::vec3 force = ComputeSteeringForce(rigidBody, rotation);
+	glm::vec3 force = ComputeSteeringForce();
 	rigidBody->ApplyForce(force);
-	LookAtDirection(rigidBody->GetLinearVelocity(), rotation, deltaTime);
+	LookAtDirection(rigidBody->GetLinearVelocity(), deltaTime);
 }
 
-void SteeringBehaviour::LookAtDirection(const glm::vec3& direction, glm::quat& rotation, float deltaTime)
+void SteeringBehaviour::LookAtDirection(const glm::vec3& direction, float deltaTime)
 {
 	glm::quat desiredRot = glm::quatLookAt(direction, glm::vec3(0.0f, 1.0f, 0.0f)); // Get the quat that is "looking" in the direction
-	rotation = glm::slerp(rotation, desiredRot, deltaTime * turnSpeed); // Linearly interpolate between the current rotation and desired rotation
+	rigidBody->SetOrientation(glm::slerp(rigidBody->GetOrientation(), desiredRot, deltaTime * turnSpeed)); // Linearly interpolate between the current rotation and desired rotation
 }

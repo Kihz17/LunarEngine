@@ -4,7 +4,7 @@
 #include <iostream>
 
 AILayer::AILayer(const std::unordered_map<unsigned int, Entity*>& entities)
-    :entities(entities)
+    : entities(entities)
 {
 
 }
@@ -43,7 +43,7 @@ void AILayer::OnUpdate(float deltaTime)
         ISteeringCondition* activeBehaviour = behaviourComp->active;
         int activePrio = behaviourComp->activePriority;
 
-        if (!activeBehaviour->CanContinueToUse()) // This behaviour can no longer be used, stop it
+        if (activeBehaviour && !activeBehaviour->CanContinueToUse(entities)) // This behaviour can no longer be used, stop it
         {
             behaviourComp->active = nullptr;
             behaviourComp->activePriority = -1;
@@ -55,7 +55,7 @@ void AILayer::OnUpdate(float deltaTime)
         }
         else // We have an active behaviour
         {
-            bool shouldStop = !activeBehaviour->CanContinueToUse();
+            bool shouldStop = !activeBehaviour->CanContinueToUse(entities);
             int targetSearchIndex = shouldStop ? behaviourComp->targetingBehaviours.size() : activePrio;
             int normalSearchIndex = shouldStop ? behaviourComp->behaviours.size() : activePrio;
 
@@ -71,7 +71,7 @@ void AILayer::OnUpdate(float deltaTime)
                 std::vector<ISteeringCondition*>& targeting = behaviourComp->targetingBehaviours;
                 for (int i = 0; i < activePrio; i++)
                 {
-                    if (targeting[i]->CanUse()) // We can use this!
+                    if (targeting[i]->CanUse(entities)) // We can use this!
                     {
                         targeting[i]->OnStart();
                         behaviourComp->active = targeting[i];
@@ -86,7 +86,7 @@ void AILayer::OnUpdate(float deltaTime)
                     std::vector<ISteeringCondition*>& normal = behaviourComp->targetingBehaviours;
                     for (int i = 0; i < activePrio; i++)
                     {
-                        if (normal[i]->CanUse()) // We can use this!
+                        if (normal[i]->CanUse(entities)) // We can use this!
                         {
                             normal[i]->OnStart();
                             behaviourComp->active = normal[i];
@@ -101,7 +101,8 @@ void AILayer::OnUpdate(float deltaTime)
         // Update the active behaviour
         if (behaviourComp->active)
         {
-            behaviourComp->active->GetBehaviour()->Update(rigidComp->ptr, rotComp->value, deltaTime);
+            behaviourComp->active->GetBehaviour()->Update(deltaTime); // Update the actual behaviour
+            behaviourComp->active->Update(deltaTime); // Update the behaviour condition
         }
     }
 }
@@ -112,7 +113,7 @@ void AILayer::TryActivateBehaviour(SteeringBehaviourComponent* behaviourComp)
     std::vector<ISteeringCondition*>& targeting = behaviourComp->targetingBehaviours;
     for (int i = 0; i < targeting.size(); i++)
     {
-        if (targeting[i]->CanUse()) // We can use this!
+        if (targeting[i]->CanUse(entities)) // We can use this!
         {
             targeting[i]->OnStart();
             behaviourComp->active = targeting[i];
@@ -125,7 +126,7 @@ void AILayer::TryActivateBehaviour(SteeringBehaviourComponent* behaviourComp)
     std::vector<ISteeringCondition*>& normal = behaviourComp->behaviours;
     for (int i = 0; i < normal.size(); i++)
     {
-        if (normal[i]->CanUse()) // We can use this!
+        if (normal[i]->CanUse(entities)) // We can use this!
         {
             normal[i]->OnStart();
             behaviourComp->active = normal[i];

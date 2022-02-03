@@ -17,6 +17,7 @@ public:
 	virtual void GetPosition(glm::vec3& pos) override { pos = position; }
 	virtual glm::vec3 GetPosition() override { return position; }
 	virtual void SetPosition(const glm::vec3& pos) override { position = pos; }
+	virtual glm::quat GetOrientation() const override { return rotation; }
 	virtual void GetOrientation(glm::quat& orien) override { orien = rotation; }
 	virtual void SetOrientation(const glm::quat& orien) override { rotation = orien; }
 	virtual void ApplyForce(const glm::vec3& force) override { this->force += force; }

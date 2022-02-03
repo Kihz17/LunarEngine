@@ -17,7 +17,7 @@ Key* f7Key = InputManager::ListenToKey(GLFW_KEY_F7);
 Key* f8Key = InputManager::ListenToKey(GLFW_KEY_F8);
 Key* f9Key = InputManager::ListenToKey(GLFW_KEY_F9);
 
-float moveSpeed = 20.0f;
+float moveSpeed = 50.0f;
 
 PlayerController::PlayerController(Camera& camera, Entity* entity, const WindowSpecs& windowSpecs)
 	: camera(camera),
@@ -35,11 +35,16 @@ PlayerController::~PlayerController()
 
 void PlayerController::OnUpdate(float deltaTime) 
 {
-    camera.Look(InputManager::GetMouseX(), InputManager::GetMouseY());
-    float scroll = InputManager::GetScrollY();
-    if (scroll != 0.0) camera.Zoom(scroll);
+    if (InputManager::GetCursorMode() == CursorMode::Locked)
+    {
+        camera.Look(InputManager::GetMouseX(), InputManager::GetMouseY()); // Update camera view
+
+        float scroll = InputManager::GetScrollY();
+        if (scroll != 0.0) camera.Zoom(scroll);
+    }
 
 	Physics::IRigidBody* rigid = entity->GetComponent<RigidBodyComponent>()->ptr;
+    rigid->SetOrientation(camera.GetQuaternion()); // Apply camera view to our rotation
 	glm::vec3 direction = camera.front;
 	if (wKey->IsPressed())
 	{

@@ -179,6 +179,7 @@
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="EntityPanel.cpp" />
     <ClCompile Include="SeekBehaviour.cpp" />
+    <ClCompile Include="SeekCondition.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderLibrary.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -206,7 +207,6 @@
     <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="ApplicationLayer.h" />
     <ClInclude Include="ApplicationLayerManager.h" />
-    <ClInclude Include="ApproachBehaviour.h" />
     <ClInclude Include="ApproachShootCondition.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionHandler.h" />
@@ -240,6 +240,7 @@
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="EntityPanel.h" />
     <ClInclude Include="SeekBehaviour.h" />
+    <ClInclude Include="SeekCondition.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderLibrary.h" />
     <ClInclude Include="SoundManager.h" />

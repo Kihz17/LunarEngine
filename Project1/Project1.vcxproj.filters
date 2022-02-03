@@ -212,6 +212,9 @@
     <ClCompile Include="ApproachShootCondition.cpp">
       <Filter>AI\Steering\Conditions</Filter>
     </ClCompile>
+    <ClCompile Include="SeekCondition.cpp">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -395,8 +398,8 @@
     <ClInclude Include="ApproachShootCondition.h">
       <Filter>AI\Steering\Conditions</Filter>
     </ClInclude>
-    <ClInclude Include="ApproachBehaviour.h">
-      <Filter>AI\Steering\Behaviours</Filter>
+    <ClInclude Include="SeekCondition.h">
+      <Filter>AI\Steering\Conditions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
