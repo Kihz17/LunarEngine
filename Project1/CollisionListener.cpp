@@ -19,23 +19,27 @@ void CollisionListener::Collide(CollisionEvent& collisionEvent)
 			collisionEvent.isCancelled = true;
 			return;
 		}
+
+		// Player collided with an entity, they should die
+		if (tagA->HasTag("player") && (tagB->HasTag("enemy") || tagB->HasTag("bullet")))
+		{
+			// TODO: Kill player
+		}
+		else if (tagB->HasTag("player") && (tagA->HasTag("enemy") || tagA->HasTag("bullet")))
+		{
+			// TODO: Kill player
+		}
 	}
 
+	// Remove bullets on collision
 	if (tagA && tagA->HasTag("bullet"))
 	{
-		std::cout << "Bullet remove!\n";
 		collisionEvent.physicsWorld->RemoveRigidBody(collisionEvent.bodyA);
 		delete ownerA;
-		//delete collisionEvent.ownerA;
-		// TODO: Remove entity
-		// TODO: Remove rigid from phys world
 	}
 	if (tagB && tagB->HasTag("bullet"))
 	{
-		std::cout << "Bullet remove!\n";
 		collisionEvent.physicsWorld->RemoveRigidBody(collisionEvent.bodyB);
 		delete ownerB;
-		//delete collisionEvent.ownerB;
-		// TODO: Remove entity
 	}
 }
