@@ -14,6 +14,7 @@ public:
 
 	const std::unordered_map<unsigned int, Entity*>& GetEntities();
 	Entity* CreateEntity(const std::string& name);
+	Entity* CreateEntity();
 
 private:
 	std::unordered_map<unsigned int, Entity*> entities;

@@ -1,6 +1,7 @@
 #include "GameEngine.h"
 
 #include "PhysicsFactory.h"
+#include "PhysicsWorld.h"
 #include "EntityPanel.h"
 #include "ShaderLibrary.h"
 #include "CollisionListener.h"
@@ -133,15 +134,18 @@ Entity* GameEngine::SpawnPhysicsSphere(const std::string& name, const glm::vec3&
     rigidInfo.restitution = 0.8f;
     Physics::IRigidBody* rigidBody = physicsFactory->CreateRigidBody(rigidInfo, shape);
     physicsSphere->AddComponent<RigidBodyComponent>(rigidBody);
-    physicsWorld->AddRigidBody(physicsSphere->GetComponent<RigidBodyComponent>()->ptr);
+    physicsWorld->AddRigidBody(physicsSphere->GetComponent<RigidBodyComponent>()->ptr, physicsSphere);
 
-    // Render Info
-    RenderComponent::RenderInfo sphereInfo;
-    sphereInfo.vao = sphereMesh->GetVertexArray();
-    sphereInfo.indexCount = sphereMesh->GetIndexBuffer()->GetCount();
-    sphereInfo.isColorOverride = true;
-    sphereInfo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
-    physicsSphere->AddComponent<RenderComponent>(sphereInfo);
+    if (sphereMesh)
+    {
+        // Render Info
+        RenderComponent::RenderInfo sphereInfo;
+        sphereInfo.vao = sphereMesh->GetVertexArray();
+        sphereInfo.indexCount = sphereMesh->GetIndexBuffer()->GetCount();
+        sphereInfo.isColorOverride = true;
+        sphereInfo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
+        physicsSphere->AddComponent<RenderComponent>(sphereInfo);
+    }
 
     return physicsSphere;
 }

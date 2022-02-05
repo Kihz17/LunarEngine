@@ -15,6 +15,11 @@
 #include "Steering.h"
 #include "ApproachShootCondition.h"
 #include "SeekCondition.h"
+#include "FleeCondition.h"
+#include "WanderCondition.h"
+#include "IdleCondition.h"
+#include "EvadeCondition.h"
+#include "PursueCondition.h"
 
 glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
@@ -42,27 +47,44 @@ int main()
 
     GameEngine gameEngine(windowSpecs, true);
 
-    Entity* sphereEnt = gameEngine.SpawnPhysicsSphere("sphere", glm::vec3(0.0f, 5.0f, 0.0f), 1.0f, sphere);
+    Entity* sphereEnt = gameEngine.SpawnPhysicsSphere("sphere", glm::vec3(0.0f, 5.0f, 0.0f), 1.0f, nullptr);
     TagComponent* playerTags = sphereEnt->AddComponent<TagComponent>();
     playerTags->AddTag("player");
 
-    gameEngine.AddLayer(new PlayerController(gameEngine.camera, sphereEnt, gameEngine.GetWindowSpecs()));
+    gameEngine.AddLayer(new PlayerController(gameEngine.camera, sphereEnt, gameEngine.GetWindowSpecs(), gameEngine.GetEntityManager(), gameEngine.physicsFactory, gameEngine.physicsWorld, sphere));
     gameEngine.AddLayer(new AnimationLayer(gameEngine.GetEntityManager().GetEntities()));
     gameEngine.AddLayer(new AILayer(gameEngine.GetEntityManager().GetEntities()));
 
-    Entity* behaviourTest = gameEngine.SpawnPhysicsSphere("behaviourTest", glm::vec3(20.0f, 5.0f, 0.0f), 1.0f, sphere);
-    SteeringBehaviourComponent* bComp = behaviourTest->AddComponent<SteeringBehaviourComponent>();
-    /*bComp->AddTargetingBehaviour(0, new ApproachShootCondition(new SeekBehaviour(behaviourTest->GetComponent<RigidBodyComponent>()->ptr, 
-        10.0f, SeekType::Approach, 10.0f), 5.0f));*/
-    bComp->AddTargetingBehaviour(0, new SeekCondition(new SeekBehaviour(behaviourTest->GetComponent<RigidBodyComponent>()->ptr, 10.0f, SeekType::None, 10.0f)));
+    // Type A
+    //Entity* typeA = gameEngine.SpawnPhysicsSphere("typeA", glm::vec3(20.0f, 5.0f, 0.0f), 1.0f, sphere);
+    //SteeringBehaviourComponent* typeAComp = typeA->AddComponent<SteeringBehaviourComponent>();
+    //typeAComp->AddTargetingBehaviour(0, new SeekCondition(new SeekBehaviour(typeA->GetComponent<RigidBodyComponent>()->ptr, 1.0f, SeekType::None, false, 10.0f)));
+    //typeAComp->AddTargetingBehaviour(1, new FleeCondition(new FleeBehaviour(typeA->GetComponent<RigidBodyComponent>()->ptr, 10.0f)));
+
+    // Type B
+    Entity* typeB = gameEngine.SpawnPhysicsSphere("typeB", glm::vec3(10.0f, 5.0f, -20.0f), 1.0f, sphere);
+    SteeringBehaviourComponent* typeBComp = typeB->AddComponent<SteeringBehaviourComponent>();
+    typeBComp->AddTargetingBehaviour(0, new EvadeCondition(new EvadeBehaviour(typeB->GetComponent<RigidBodyComponent>()->ptr, 1.0f, 60.0f, 1.0f, 100.0f)));
+    typeBComp->AddTargetingBehaviour(1, new PursueCondition(new PursueBehaviour(typeB->GetComponent<RigidBodyComponent>()->ptr, 1.0f, 40.0f, 1.0f, 100.0f)));
+
+    // Type C
+    //Entity* typeC = gameEngine.SpawnPhysicsSphere("typeC", glm::vec3(0.0f, 5.0f, 20.0f), 1.0f, sphere);
+    //SteeringBehaviourComponent* typeCComp = typeC->AddComponent<SteeringBehaviourComponent>();
+    //typeCComp->AddTargetingBehaviour(0, new ApproachShootCondition(new SeekBehaviour(typeC->GetComponent<RigidBodyComponent>()->ptr, 10.0f, SeekType::Approach, true, 10.0f), 5.0f));
+
+    //// Type D
+    //Entity* typeD = gameEngine.SpawnPhysicsSphere("typeD", glm::vec3(-20.0f, 5.0f, 0.0f), 1.0f, sphere);
+    //SteeringBehaviourComponent* typeDComp = typeD->AddComponent<SteeringBehaviourComponent>();
+    //typeDComp->AddBehaviour(0, new WanderCondition(new WanderBehaviour(typeD->GetComponent<RigidBodyComponent>()->ptr, 20.0f, 10.0f, 10.0f), 6.0f, 3.0f));
+    //typeDComp->AddBehaviour(1, new IdleCondition(new IdleBehaviour(typeD->GetComponent<RigidBodyComponent>()->ptr), 3.0f, 6.0f));
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
     // Setup some lights
     {
         LightInfo lightInfo;
-        lightInfo.postion = glm::vec3(0.0f, 10.0f, 0.0f);
-        lightInfo.intensity = 60.0f;
+        lightInfo.postion = glm::vec3(0.0f, 45.0f, 0.0f);
+        lightInfo.intensity = 350.0f;
         Light* light = new Light(lightInfo);
         Entity* lightEntity = gameEngine.GetEntityManager().CreateEntity("lightTest");
         lightEntity->AddComponent<LightComponent>(light);
@@ -85,7 +107,7 @@ int main()
         rigidInfo.linearVelocity = glm::vec3(0.0f);
         rigidInfo.friction = 0.95f;
         RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine.physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
-        gameEngine.physicsWorld->AddRigidBody(rigidComp->ptr);
+        gameEngine.physicsWorld->AddRigidBody(rigidComp->ptr, ground);
 
         // Render Info
         RenderComponent::RenderInfo groundInfo;

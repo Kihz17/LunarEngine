@@ -12,7 +12,7 @@ enum class SeekType
 class SeekBehaviour : public SteeringBehaviour
 {
 public:
-	SeekBehaviour(Physics::IRigidBody* rigidBody, float arriveRadius, SeekType type, float speed = 1.0f, float turnSpeed = 1.0f, float maxForce = 10.0f);
+	SeekBehaviour(Physics::IRigidBody* rigidBody, float arriveRadius, SeekType type, bool maintainRadius = false, float speed = 1.0f, float turnSpeed = 1.0f, float maxForce = 10.0f);
 	virtual ~SeekBehaviour();
 
 	virtual glm::vec3 ComputeSteeringForce() override;
@@ -23,4 +23,5 @@ private:
 	float arriveRadius;
 	bool withinRadius;
 	SeekType type;
+	bool maintainRadius;
 };

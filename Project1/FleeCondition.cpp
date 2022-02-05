@@ -1,31 +1,31 @@
-#include "SeekCondition.h"
+#include "FleeCondition.h"
 #include "Utils.h"
 #include "Components.h"
 
 #include <iostream>
 
-SeekCondition::SeekCondition(SeekBehaviour* behaviour)
+FleeCondition::FleeCondition(FleeBehaviour* behaviour)
 	: behaviour(behaviour)
 {
 
 }
 
-SeekCondition::~SeekCondition()
+FleeCondition::~FleeCondition()
 {
 
 }
 
-bool SeekCondition::CanUse(const std::unordered_map<unsigned int, Entity*>& entities)
+bool FleeCondition::CanUse(const std::unordered_map<unsigned int, Entity*>& entities)
 {
 	Entity* foundTarget = FindTarget(entities);
 	if (foundTarget) behaviour->SetTarget(foundTarget); // We found a target, make sure to tell the behaviour who we are targeting
 	return foundTarget; // Only start if we found a target
 }
 
-bool SeekCondition::CanContinueToUse(const std::unordered_map<unsigned int, Entity*>& entities)
+bool FleeCondition::CanContinueToUse(const std::unordered_map<unsigned int, Entity*>& entities)
 {
 	Entity* target = behaviour->GetTarget();
-	if (!target) // We have no target anymore, look for a new one
+	if (!behaviour->GetTarget()) // We have no target anymore, look for a new one
 	{
 		target = FindTarget(entities);
 	}
@@ -35,33 +35,31 @@ bool SeekCondition::CanContinueToUse(const std::unordered_map<unsigned int, Enti
 		RotationComponent* rotComp = target->GetComponent<RotationComponent>();
 		glm::vec3 playerDir = glm::rotate(rotComp->value, -Utils::FrontVec());
 		glm::vec3 seekDir = glm::normalize(posComp->value - behaviour->GetRigidBody()->GetPosition());
-		float dot = glm::dot(playerDir, seekDir);
-		if (glm::dot(playerDir, seekDir) <= 0.0f) // Not looking away, search for a new target
+		if (glm::dot(playerDir, glm::normalize(behaviour->GetRigidBody()->GetPosition())) <= 0.0f) // Not looking away, search for a new target
 		{
 			target = FindTarget(entities);
 		}
 	}
 
-	if (target) behaviour->SetTarget(target);
 	return target; // Keep running if we still have a target
 }
 
-void SeekCondition::OnStart()
+void FleeCondition::OnStart()
 {
 
 }
 
-void SeekCondition::OnStop()
+void FleeCondition::OnStop()
 {
 
 }
 
-void SeekCondition::Update(float deltaTime)
+void FleeCondition::Update(float deltaTime)
 {
 
 }
 
-Entity* SeekCondition::FindTarget(const std::unordered_map<unsigned int, Entity*>& entities)
+Entity* FleeCondition::FindTarget(const std::unordered_map<unsigned int, Entity*>& entities)
 {
 	Entity* foundTarget = nullptr;
 	float closestTarget = -1.0f;
@@ -82,7 +80,7 @@ Entity* SeekCondition::FindTarget(const std::unordered_map<unsigned int, Entity*
 		glm::vec3 playerDir = glm::rotate(rotComp->value, -Utils::FrontVec());
 		glm::vec3 seekDir = glm::normalize(posComp->value - behaviour->GetRigidBody()->GetPosition());
 		float dot = glm::dot(playerDir, seekDir);
-		if (dot <= 0.0f) continue; // The player is not looking away from us
+		if (dot >= 0.0f) continue; // The player is not looking away from us
 
 		glm::vec3 difference = behaviour->GetRigidBody()->GetPosition() - posComp->value;
 		float distance = glm::length(difference);

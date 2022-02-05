@@ -1,11 +1,12 @@
 #include "SeekBehaviour.h"
 #include "Components.h"
 
-SeekBehaviour::SeekBehaviour(Physics::IRigidBody* rigidBody, float slowingRadius, SeekType type, float speed, float turnSpeed, float maxForce)
+SeekBehaviour::SeekBehaviour(Physics::IRigidBody* rigidBody, float slowingRadius, SeekType type, bool maintainRadius, float speed, float turnSpeed, float maxForce)
 	: SteeringBehaviour(rigidBody, SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
 	arriveRadius(slowingRadius),
 	type(type),
-	withinRadius(false)
+	withinRadius(false),
+	maintainRadius(maintainRadius)
 {
 
 }
@@ -27,7 +28,15 @@ glm::vec3 SeekBehaviour::ComputeSteeringForce()
 	
 	float distance = glm::length(direction);
 	withinRadius = distance < arriveRadius;
-	if (type == SeekType::Approach && withinRadius) // Slowly approach when in radius
+	if (withinRadius && maintainRadius) // We should be maintaining the raidius instead of continuing to move towards our target
+	{
+		velocity = rigidBody->GetPosition() - posComp->value;
+		if (glm::length(velocity) > speed)
+		{
+			velocity = glm::normalize(velocity) * speed;
+		}
+	}
+	else if (type == SeekType::Approach && withinRadius) // Slowly approach when in radius
 	{
 		velocity *= ((distance - 0.75f) / arriveRadius);
 	}

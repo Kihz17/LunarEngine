@@ -1,4 +1,5 @@
 #include "EntityManager.h"
+#include "UUID.h"
 
 #include <iostream>
 
@@ -41,4 +42,9 @@ Entity* EntityManager::CreateEntity(const std::string& name)
 	Entity* newEntity = new Entity(ID, name);
 	entities.insert({ ID , newEntity });
 	return newEntity;
+}
+
+Entity* EntityManager::CreateEntity()
+{
+	return CreateEntity(std::to_string(UUID()));
 }

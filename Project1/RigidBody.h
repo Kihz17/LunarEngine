@@ -26,8 +26,10 @@ public:
 	virtual void ApplyImpulseAtPoint(const glm::vec3& impulse, const glm::vec3& relativePoint) override { ApplyTorqueImpulse(glm::cross(relativePoint, impulse)); }
 	virtual void ApplyTorque(const glm::vec3& torque) override { this->torque += torque; }
 	virtual void ApplyTorqueImpulse(const glm::vec3& torqueImpulse) override { angularVelocity += torqueImpulse; }
+	virtual void SetGravityAcceleration(const glm::vec3& gravity) override { this->gravity = gravity; }
+	virtual void UseLocalGravity(bool value) override { useLocalGravity = value; }
+	virtual bool IsUseLocalGravity() const override { return useLocalGravity; }
 
-	void SetGravityAcceleration(const glm::vec3& gravity) { this->gravity = gravity; }
 	void UpdateAcceleration();
 
 	void ClearForces();
@@ -76,4 +78,6 @@ private:
 
 	float linearDamping;
 	float angularDamping;
+
+	bool useLocalGravity;
 };

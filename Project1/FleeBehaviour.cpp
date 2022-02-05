@@ -1,7 +1,7 @@
 #include "FleeBehaviour.h"
 #include "Components.h"
 
-FleeBehaviour::FleeBehaviour(Physics::IRigidBody* rigidBody, float fleeRadius, float speed, float turnSpeed, float maxForce)
+FleeBehaviour::FleeBehaviour(Physics::IRigidBody* rigidBody, float speed, float turnSpeed, float maxForce, float fleeRadius)
 	: SteeringBehaviour(rigidBody, SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
 	fleeRadius(fleeRadius)
 {

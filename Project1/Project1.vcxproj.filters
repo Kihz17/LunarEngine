@@ -215,6 +215,27 @@
     <ClCompile Include="SeekCondition.cpp">
       <Filter>AI\Steering\Conditions</Filter>
     </ClCompile>
+    <ClCompile Include="FleeCondition.cpp">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="IdleBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="WanderCondition.cpp">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="IdleCondition.cpp">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="EvadeCondition.cpp">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="PursueCondition.cpp">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="UUID.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -400,6 +421,27 @@
     </ClInclude>
     <ClInclude Include="SeekCondition.h">
       <Filter>AI\Steering\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="FleeCondition.h">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="IdleBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="WanderCondition.h">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="IdleCondition.h">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="EvadeCondition.h">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="PursueCondition.h">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="UUID.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

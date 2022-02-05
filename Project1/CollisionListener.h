@@ -2,11 +2,12 @@
 
 #include <ICollisionListener.h>
 
-class CollisionListener : public Physics::ICollisionListener
+class Entity;
+class CollisionListener : public Physics::ICollisionListener<Entity>
 {
 public:
 	CollisionListener() = default;
 	virtual ~CollisionListener() = default;
 
-	virtual void Collide(Physics::IRigidBody* bodyA, Physics::IRigidBody* bodyB) override;
+	virtual void Collide(CollisionEvent& collisionEvent) override;
 };

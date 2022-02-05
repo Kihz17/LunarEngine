@@ -5,3 +5,4 @@
 #include "FleeBehaviour.h"
 #include "EvadeBehaviour.h"
 #include "PursueBehaviour.h"
+#include "IdleBehaviour.h"

@@ -1,14 +1,32 @@
 #pragma once
 
+#include "IPhysicsWorld.h"
 #include "IRigidBody.h"
+
 namespace Physics
 {
-	class ICollisionListener
+	enum class CollisionType
+	{
+		SphereSphere,
+		SpherePlane
+	};
+		
+	template<class RigidBodyOwner> class ICollisionListener
 	{
 	public:
+		struct CollisionEvent
+		{
+			CollisionType type;
+			IRigidBody* bodyA;
+			IRigidBody* bodyB;
+			IPhysicsWorld<RigidBodyOwner>* physicsWorld;
+
+			bool isCancelled = false;
+		};
+
 		virtual ~ICollisionListener() = default;
 
-		virtual void Collide(IRigidBody* bodyA, IRigidBody* bodyB) = 0;
+		virtual void Collide(CollisionEvent& collisionEvent) = 0;
 
 	protected:
 		ICollisionListener() = default;

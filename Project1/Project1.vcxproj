@@ -159,10 +159,14 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="EvadeBehaviour.cpp" />
+    <ClCompile Include="EvadeCondition.cpp" />
     <ClCompile Include="FleeBehaviour.cpp" />
+    <ClCompile Include="FleeCondition.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="IdleBehaviour.cpp" />
+    <ClCompile Include="IdleCondition.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Key.cpp" />
@@ -175,6 +179,7 @@
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="PrimitiveShape.cpp" />
     <ClCompile Include="PursueBehaviour.cpp" />
+    <ClCompile Include="PursueCondition.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="EntityPanel.cpp" />
@@ -190,6 +195,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="UUID.cpp" />
     <ClCompile Include="vendor\imgui\imgui.cpp" />
     <ClCompile Include="vendor\imgui\imgui_demo.cpp" />
     <ClCompile Include="vendor\imgui\imgui_draw.cpp" />
@@ -200,6 +206,7 @@
     <ClCompile Include="VertexArrayObject.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="WanderBehaviour.cpp" />
+    <ClCompile Include="WanderCondition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
@@ -216,10 +223,14 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="EvadeBehaviour.h" />
+    <ClInclude Include="EvadeCondition.h" />
     <ClInclude Include="FleeBehaviour.h" />
+    <ClInclude Include="FleeCondition.h" />
     <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="GLCommon.h" />
+    <ClInclude Include="IdleBehaviour.h" />
+    <ClInclude Include="IdleCondition.h" />
     <ClInclude Include="ISteeringBehaviour.h" />
     <ClInclude Include="IKeyFrameListener.h" />
     <ClInclude Include="IndexBuffer.h" />
@@ -236,6 +247,7 @@
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="PrimitiveShape.h" />
     <ClInclude Include="PursueBehaviour.h" />
+    <ClInclude Include="PursueCondition.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="EntityPanel.h" />
@@ -251,6 +263,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="UUID.h" />
     <ClInclude Include="vendor\imgui\imconfig.h" />
     <ClInclude Include="vendor\imgui\imgui.h" />
     <ClInclude Include="vendor\imgui\imgui_impl_glfw.h" />
@@ -264,6 +277,7 @@
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexInformation.h" />
     <ClInclude Include="WanderBehaviour.h" />
+    <ClInclude Include="WanderCondition.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

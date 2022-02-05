@@ -3,7 +3,7 @@
 #include "RigidBody.h"
 #include "PhysicsWorld.h"
 
-Physics::IPhysicsWorld* PhysicsFactory::CreateWorld()
+Physics::IPhysicsWorld<Entity>* PhysicsFactory::CreateWorld()
 {
 	return new PhysicsWorld();
 }

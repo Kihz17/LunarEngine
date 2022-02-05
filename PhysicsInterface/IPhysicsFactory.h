@@ -5,12 +5,12 @@
 
 namespace Physics
 {
-	class IPhysicsFactory
+	template<class RigidBodyOwner> class IPhysicsFactory
 	{
 	public:
 		virtual ~IPhysicsFactory() = default;
 
-		virtual IPhysicsWorld* CreateWorld() = 0;
+		virtual IPhysicsWorld<RigidBodyOwner>* CreateWorld() = 0;
 
 		virtual IRigidBody* CreateRigidBody(const RigidBodyInfo& info, IShape* shape) = 0;
 

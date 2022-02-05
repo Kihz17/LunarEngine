@@ -1,28 +1,28 @@
-#include "SeekCondition.h"
+#include "PursueCondition.h"
 #include "Utils.h"
 #include "Components.h"
 
 #include <iostream>
 
-SeekCondition::SeekCondition(SeekBehaviour* behaviour)
+PursueCondition::PursueCondition(PursueBehaviour* behaviour)
 	: behaviour(behaviour)
 {
 
 }
 
-SeekCondition::~SeekCondition()
+PursueCondition::~PursueCondition()
 {
 
 }
 
-bool SeekCondition::CanUse(const std::unordered_map<unsigned int, Entity*>& entities)
+bool PursueCondition::CanUse(const std::unordered_map<unsigned int, Entity*>& entities)
 {
 	Entity* foundTarget = FindTarget(entities);
-	if (foundTarget) behaviour->SetTarget(foundTarget); // We found a target, make sure to tell the behaviour who we are targeting
+	behaviour->SetTarget(foundTarget); // We found a target, make sure to tell the behaviour who we are targeting
 	return foundTarget; // Only start if we found a target
 }
 
-bool SeekCondition::CanContinueToUse(const std::unordered_map<unsigned int, Entity*>& entities)
+bool PursueCondition::CanContinueToUse(const std::unordered_map<unsigned int, Entity*>& entities)
 {
 	Entity* target = behaviour->GetTarget();
 	if (!target) // We have no target anymore, look for a new one
@@ -42,26 +42,26 @@ bool SeekCondition::CanContinueToUse(const std::unordered_map<unsigned int, Enti
 		}
 	}
 
-	if (target) behaviour->SetTarget(target);
+	behaviour->SetTarget(target);
 	return target; // Keep running if we still have a target
 }
 
-void SeekCondition::OnStart()
+void PursueCondition::OnStart()
 {
 
 }
 
-void SeekCondition::OnStop()
+void PursueCondition::OnStop()
 {
 
 }
 
-void SeekCondition::Update(float deltaTime)
+void PursueCondition::Update(float deltaTime)
 {
 
 }
 
-Entity* SeekCondition::FindTarget(const std::unordered_map<unsigned int, Entity*>& entities)
+Entity* PursueCondition::FindTarget(const std::unordered_map<unsigned int, Entity*>& entities)
 {
 	Entity* foundTarget = nullptr;
 	float closestTarget = -1.0f;
@@ -72,19 +72,10 @@ Entity* SeekCondition::FindTarget(const std::unordered_map<unsigned int, Entity*
 		TagComponent* tagComp = entity->GetComponent<TagComponent>();
 		if (!tagComp || !tagComp->HasTag("player")) continue; // Verify that the entity is a player
 
-		RotationComponent* rotComp = entity->GetComponent<RotationComponent>();
-		if (!rotComp) continue; // We didn't have a rotation component for some reason????
+		RigidBodyComponent* rigidComp = entity->GetComponent<RigidBodyComponent>();
+		if (!rigidComp) continue; // We didn't have a rigid component for some reason????
 
-		PositionComponent* posComp = entity->GetComponent<PositionComponent>();
-		if (!posComp) continue; // We didn't have a position component for some reason????
-
-		// Check if player is looking away
-		glm::vec3 playerDir = glm::rotate(rotComp->value, -Utils::FrontVec());
-		glm::vec3 seekDir = glm::normalize(posComp->value - behaviour->GetRigidBody()->GetPosition());
-		float dot = glm::dot(playerDir, seekDir);
-		if (dot <= 0.0f) continue; // The player is not looking away from us
-
-		glm::vec3 difference = behaviour->GetRigidBody()->GetPosition() - posComp->value;
+		glm::vec3 difference = behaviour->GetRigidBody()->GetPosition() - rigidComp->ptr->GetPosition();
 		float distance = glm::length(difference);
 		if (closestTarget == -1.0f || distance < closestTarget) // We found a new closer target!
 		{

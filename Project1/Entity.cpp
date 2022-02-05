@@ -16,19 +16,15 @@ Entity::~Entity()
 
 void Entity::RemoveComponent(Component* c)
 {
+	int removeIndex = -1;
 	for (unsigned int i = 0; i < components.size(); i++)
 	{
 		if (this->components[i] == c)
 		{
-			delete this->components[i];
-
-			if (this->components.size() > 0)
-			{
-				this->components[i] = this->components[components.size()];
-			}
-
-			this->components.pop_back();
-			return;
+			removeIndex = i;
+			break;
 		}
 	}
+
+	if (removeIndex != -1) components.erase(components.begin() + removeIndex);
 }

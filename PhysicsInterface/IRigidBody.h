@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm/glm.hpp>]
+#include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
 namespace Physics
@@ -60,6 +60,10 @@ namespace Physics
 
 		virtual void ApplyTorque(const glm::vec3& torque) = 0;
 		virtual void ApplyTorqueImpulse(const glm::vec3& torqueImpulse) = 0;
+
+		virtual void SetGravityAcceleration(const glm::vec3& gravity) = 0;
+		virtual void UseLocalGravity(bool value) = 0;
+		virtual bool IsUseLocalGravity() const = 0;
 
 	protected:
 		IRigidBody() = default;

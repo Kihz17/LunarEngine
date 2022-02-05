@@ -14,7 +14,8 @@ RigidBody::RigidBody(const Physics::RigidBodyInfo info, Physics::IShape* shape)
 	linearDamping(info.linearDamping),
 	angularDamping(info.angularDamping),
 	friction(info.friction),
-	restitution(info.restitution)
+	restitution(info.restitution),
+	useLocalGravity(false)
 {
 	if (isStatic || mass <= 0.0f) // Static object
 	{
@@ -30,7 +31,7 @@ RigidBody::RigidBody(const Physics::RigidBodyInfo info, Physics::IShape* shape)
 
 RigidBody::~RigidBody()
 {
-
+	delete shape;
 }
 
 void RigidBody::ApplyForceAtPoint(const glm::vec3& force, const glm::vec3& relativePoint)

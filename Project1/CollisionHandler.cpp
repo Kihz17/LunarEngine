@@ -1,6 +1,9 @@
 #include "CollisionHandler.h"
 #include "RigidBody.h"
+#include "Entity.h"
+#include "PhysicsWorld.h"
 
+#include <ICollisionListener.h>
 #include <iostream>
 
 bool TestMovingSphere(
@@ -59,7 +62,9 @@ glm::vec3 ProjectOn(glm::vec3 b, glm::vec3 a)
 	return glm::vec3(b.x * mult, b.y * mult, b.z * mult);
 }
 
-bool CollisionHandler::CollideSphereSphere(RigidBody* bodyA, Physics::SphereShape* sphereA, RigidBody* bodyB, Physics::SphereShape* sphereB, float deltaTime)
+bool CollisionHandler::CollideSphereSphere(RigidBody* bodyA, Physics::SphereShape* sphereA, 
+	RigidBody* bodyB, Physics::SphereShape* sphereB, 
+	float deltaTime, std::vector<Physics::ICollisionListener<Entity>*>& listeners, PhysicsWorld* physicsWorld)
 {
 	if (bodyA->IsStatic() && bodyB->IsStatic()) return false;
 
@@ -70,6 +75,14 @@ bool CollisionHandler::CollideSphereSphere(RigidBody* bodyA, Physics::SphereShap
 	if (!TestMovingSphere(bodyA->previousPosition, sphereA->GetRadius(), bodyB->previousPosition, sphereB->GetRadius(), velocityA, velocityB, t)) return false; // No current or future collision
 
 	if (t > deltaTime) return false; // No collision at this current step
+	Physics::ICollisionListener<Entity>::CollisionEvent collisionEvent;
+	collisionEvent.type = Physics::CollisionType::SphereSphere;
+	collisionEvent.bodyA = bodyA;
+	collisionEvent.bodyB = bodyB;
+	collisionEvent.physicsWorld = physicsWorld;
+	for (Physics::ICollisionListener<Entity>* listener : listeners) listener->Collide(collisionEvent);
+
+	if (collisionEvent.isCancelled) return false;
 
 	float fractDt = t / (glm::length(velocityA) + glm::length(velocityB));
 	fractDt = glm::clamp(fractDt, 0.0f, 1.0f);
@@ -126,10 +139,20 @@ bool CollisionHandler::CollideSphereSphere(RigidBody* bodyA, Physics::SphereShap
 	return true;
 }
 
-bool CollisionHandler::CollideSpherePlane(RigidBody* bodyA, Physics::SphereShape* sphere, RigidBody* bodyB, Physics::PlaneShape* plane, float deltaTime)
+bool CollisionHandler::CollideSpherePlane(RigidBody* bodyA, Physics::SphereShape* sphere, 
+	RigidBody* bodyB, Physics::PlaneShape* plane, 
+	float deltaTime, std::vector<Physics::ICollisionListener<Entity>*>& listeners, PhysicsWorld* physicsWorld)
 {
 	if (!TestMovingSpherePlane(bodyA->previousPosition, bodyA->position, sphere->GetRadius(), plane->GetNormal(), plane->GetDotProduct())) return false;
 
+	Physics::ICollisionListener<Entity>::CollisionEvent collisionEvent;
+	collisionEvent.type = Physics::CollisionType::SpherePlane;
+	collisionEvent.bodyA = bodyA;
+	collisionEvent.bodyB = bodyB;
+	collisionEvent.physicsWorld = physicsWorld;
+	for (Physics::ICollisionListener<Entity>* listener : listeners) listener->Collide(collisionEvent);
+
+	if (collisionEvent.isCancelled) return false;
 	glm::vec3 closestPoint = ClosestPointToPlane(bodyA->position, plane->GetNormal(), plane->GetDotProduct());
 	glm::vec3 overlapVec = closestPoint - bodyA->position;
 	float overlapLength = glm::length(overlapVec);
@@ -174,7 +197,8 @@ bool CollisionHandler::CollideSpherePlane(RigidBody* bodyA, Physics::SphereShape
 	return true;
 }
 
-void CollisionHandler::Collide(float deltaTime, std::vector<RigidBody*>& rigidBodies, std::vector<CollidingBodies>& collidingBodies)
+void CollisionHandler::Collide(float deltaTime, std::vector<RigidBody*>& rigidBodies, std::vector<CollidingBodies>& collidingBodies, 
+	std::vector<Physics::ICollisionListener<Entity>*>& listeners, PhysicsWorld* physicsWorld)
 {
 	int bodyCount = rigidBodies.size();
 	for (int i = 0; i < bodyCount - 1; i++)
@@ -193,14 +217,14 @@ void CollisionHandler::Collide(float deltaTime, std::vector<RigidBody*>& rigidBo
 			{
 				if (shapeB->GetShapeType() == Physics::ShapeType::Sphere)
 				{
-					if (CollideSphereSphere(bodyA, Physics::SphereShape::Cast(shapeA), bodyB, Physics::SphereShape::Cast(shapeB), deltaTime))
+					if (CollideSphereSphere(bodyA, Physics::SphereShape::Cast(shapeA), bodyB, Physics::SphereShape::Cast(shapeB), deltaTime, listeners, physicsWorld))
 					{
 						collision = true;
 					}
 				}
 				else if (shapeB->GetShapeType() == Physics::ShapeType::Plane)
 				{
-					if (CollideSpherePlane(bodyA, Physics::SphereShape::Cast(shapeA), bodyB, Physics::PlaneShape::Cast(shapeB), deltaTime))
+					if (CollideSpherePlane(bodyA,  Physics::SphereShape::Cast(shapeA), bodyB, Physics::PlaneShape::Cast(shapeB), deltaTime, listeners, physicsWorld))
 					{
 						collision = true;
 					}
@@ -210,7 +234,7 @@ void CollisionHandler::Collide(float deltaTime, std::vector<RigidBody*>& rigidBo
 			{
 				if (shapeB->GetShapeType() == Physics::ShapeType::Sphere)
 				{
-					if (CollideSpherePlane(bodyB, Physics::SphereShape::Cast(shapeB), bodyA, Physics::PlaneShape::Cast(shapeA), deltaTime))
+					if (CollideSpherePlane(bodyB, Physics::SphereShape::Cast(shapeB), bodyA, Physics::PlaneShape::Cast(shapeA), deltaTime, listeners, physicsWorld))
 					{
 						collision = true;
 					}

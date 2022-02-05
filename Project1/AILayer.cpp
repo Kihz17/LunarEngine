@@ -1,6 +1,7 @@
 #include "AILayer.h"
 #include "Components.h"
 
+#include <algorithm>
 #include <iostream>
 
 AILayer::AILayer(const std::unordered_map<unsigned int, Entity*>& entities)
@@ -40,24 +41,20 @@ void AILayer::OnUpdate(float deltaTime)
             continue;
         }
 
-        ISteeringCondition* activeBehaviour = behaviourComp->active;
-        int activePrio = behaviourComp->activePriority;
-
-        if (activeBehaviour && !activeBehaviour->CanContinueToUse(entities)) // This behaviour can no longer be used, stop it
+        if (behaviourComp->active && !behaviourComp->active->CanContinueToUse(entities)) // This behaviour can no longer be used, stop it
         {
+            behaviourComp->active->OnStop();
             behaviourComp->active = nullptr;
             behaviourComp->activePriority = -1;
         }
 
-        if (behaviourComp->active == nullptr) // No behaviour active, try to start one
+        if (!behaviourComp->active) // No behaviour active, try to start one
         {
             TryActivateBehaviour(behaviourComp);
         }
         else // We have an active behaviour
         {
-            bool shouldStop = !activeBehaviour->CanContinueToUse(entities);
-            int targetSearchIndex = shouldStop ? behaviourComp->targetingBehaviours.size() : activePrio;
-            int normalSearchIndex = shouldStop ? behaviourComp->behaviours.size() : activePrio;
+            bool shouldStop = !behaviourComp->active->CanContinueToUse(entities);
 
             if (shouldStop) // The active behaviour can no longer be used, search for a new one to activate
             {
@@ -69,7 +66,8 @@ void AILayer::OnUpdate(float deltaTime)
             else // Active behaviour is still running, check if any behaviours with a higher priority can run
             {
                 std::vector<ISteeringCondition*>& targeting = behaviourComp->targetingBehaviours;
-                for (int i = 0; i < activePrio; i++)
+                int checkIndex = std::min(behaviourComp->activePriority, (int) targeting.size());
+                for (int i = 0; i < checkIndex; i++)
                 {
                     if (targeting[i]->CanUse(entities)) // We can use this!
                     {
@@ -83,8 +81,9 @@ void AILayer::OnUpdate(float deltaTime)
                 SteeringBehaviourType type = behaviourComp->active->GetBehaviour()->GetType();
                 if (type != SteeringBehaviourType::Targeting) // Only check "normal" behaviours if the active one is not targeting
                 {
-                    std::vector<ISteeringCondition*>& normal = behaviourComp->targetingBehaviours;
-                    for (int i = 0; i < activePrio; i++)
+                    std::vector<ISteeringCondition*>& normal = behaviourComp->behaviours;
+                    checkIndex = std::min(behaviourComp->activePriority, (int)normal.size());
+                    for (int i = 0; i < checkIndex; i++)
                     {
                         if (normal[i]->CanUse(entities)) // We can use this!
                         {

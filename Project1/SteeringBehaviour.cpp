@@ -24,7 +24,11 @@ void SteeringBehaviour::Update(float deltaTime)
 {
 	glm::vec3 force = ComputeSteeringForce();
 	rigidBody->ApplyForce(force);
-	LookAtDirection(rigidBody->GetLinearVelocity(), deltaTime);
+	glm::vec3 dir = rigidBody->GetLinearVelocity();
+	if (glm::length(dir) != 0.0f)
+	{
+		LookAtDirection(glm::normalize(dir), deltaTime);
+	}
 }
 
 void SteeringBehaviour::LookAtDirection(const glm::vec3& direction, float deltaTime)
