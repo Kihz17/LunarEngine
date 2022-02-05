@@ -6,6 +6,12 @@
 
 #include <iostream>
 
+CollisionListener::CollisionListener(EntityManager& entityManager)
+	: entityManager(entityManager)
+{
+
+}
+
 void CollisionListener::Collide(CollisionEvent& collisionEvent)
 {
 	Entity* ownerA = collisionEvent.physicsWorld->GetRigidBodyOwner(collisionEvent.bodyA);
@@ -35,11 +41,11 @@ void CollisionListener::Collide(CollisionEvent& collisionEvent)
 	if (tagA && tagA->HasTag("bullet"))
 	{
 		collisionEvent.physicsWorld->RemoveRigidBody(collisionEvent.bodyA);
-		delete ownerA;
+		entityManager.DeleteEntity(ownerA);
 	}
 	if (tagB && tagB->HasTag("bullet"))
 	{
 		collisionEvent.physicsWorld->RemoveRigidBody(collisionEvent.bodyB);
-		delete ownerB;
+		entityManager.DeleteEntity(ownerB);
 	}
 }

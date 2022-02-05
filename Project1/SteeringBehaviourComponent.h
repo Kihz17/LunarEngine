@@ -10,6 +10,12 @@ struct SteeringBehaviourComponent : public Component
 	SteeringBehaviourComponent(std::vector<ISteeringCondition*> behaviours) : behaviours(behaviours) {}
 	SteeringBehaviourComponent() {}
 
+	virtual ~SteeringBehaviourComponent()
+	{
+		for (ISteeringCondition* condition : targetingBehaviours) delete condition;
+		for (ISteeringCondition* condition : behaviours) delete condition;
+	}
+
 	virtual void ImGuiUpdate() override
 	{
 
@@ -40,9 +46,6 @@ struct SteeringBehaviourComponent : public Component
 
 		targetingBehaviours[priority] = behaviour;
 	}
-
-private:
-	friend class AILayer;
 
 	ISteeringCondition* active = nullptr;
 	int activePriority = -1;

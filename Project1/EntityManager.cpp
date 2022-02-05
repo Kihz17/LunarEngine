@@ -19,6 +19,8 @@ EntityManager::~EntityManager()
 	}
 
 	entities.clear();
+
+	for (IEntityRemoveListener* removeListener : removeListeners) delete removeListener;
 }
 
 
@@ -27,8 +29,7 @@ void EntityManager::RemoveEntity(unsigned int id)
 	std::unordered_map<unsigned int, Entity*>::iterator it = entities.find(id);
 	if (it == entities.end()) return;
 
-	delete it->second;
-	entities.erase(id);
+	DeleteEntity(it->second);
 }
 
 const std::unordered_map<unsigned int, Entity*>& EntityManager::GetEntities()
@@ -47,4 +48,11 @@ Entity* EntityManager::CreateEntity(const std::string& name)
 Entity* EntityManager::CreateEntity()
 {
 	return CreateEntity(std::to_string(UUID()));
+}
+
+void EntityManager::DeleteEntity(Entity* entity)
+{
+	for (IEntityRemoveListener* removeListener : removeListeners) removeListener->OnEntityRemove(entity);
+	entities.erase(entity->id);
+	delete entity;
 }

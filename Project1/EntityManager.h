@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Entity.h"
+#include "IEntityRemoveListener.h"
 
 #include <unordered_map>
+#include <vector>
 
 class EntityManager
 {
@@ -16,7 +17,12 @@ public:
 	Entity* CreateEntity(const std::string& name);
 	Entity* CreateEntity();
 
+	void AddEntityRemoveListener(IEntityRemoveListener* removeListener) { removeListeners.push_back(removeListener); }
+	void DeleteEntity(Entity* entity);
+
 private:
 	std::unordered_map<unsigned int, Entity*> entities;
 	unsigned int currentEntityID;
+
+	std::vector<IEntityRemoveListener*> removeListeners;
 };

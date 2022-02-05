@@ -35,6 +35,7 @@ bool EvadeCondition::CanContinueToUse(const std::unordered_map<unsigned int, Ent
 		glm::vec3 bulletVelocity = rigidComp->ptr->GetLinearVelocity();
 		glm::vec3 bulletToEntity = behaviour->GetRigidBody()->GetPosition() - rigidComp->ptr->GetPosition();
 		float dot = glm::dot(bulletVelocity, bulletToEntity);
+		std::cout << "Dot: " << dot << "\n";
 		if (dot <= 0.0f) // Bullet isn't even travelling in our general direction
 		{
 			target = TryFindBullet(entities); // Try to find new target
@@ -77,7 +78,7 @@ Entity* EvadeCondition::TryFindBullet(const std::unordered_map<unsigned int, Ent
 		glm::vec3 bulletVelocity = rigidComp->ptr->GetLinearVelocity();
 		glm::vec3 bulletToEntity = behaviour->GetRigidBody()->GetPosition() - rigidComp->ptr->GetPosition();
 		float dot = glm::dot(bulletVelocity, bulletToEntity);
-		//std::cout << "Dot: " << dot << "\n";
+		std::cout << "Dot: " << dot << "\n";
 		if (dot <= 0.0f) continue; // Bullet isn't even travelling in our general direction
 
 		float distance = glm::length(bulletToEntity);
@@ -88,5 +89,5 @@ Entity* EvadeCondition::TryFindBullet(const std::unordered_map<unsigned int, Ent
 		}
 	}
 
-	return nullptr;
+	return foundTarget;
 }

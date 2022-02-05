@@ -7,6 +7,10 @@ struct LightComponent : public Component
 {
 	LightComponent() : ptr(nullptr) {}
 	LightComponent(Light* ptr) : ptr(ptr) {}
+	virtual ~LightComponent()
+	{
+		delete ptr;
+	}
 
 	virtual void ImGuiUpdate() override
 	{

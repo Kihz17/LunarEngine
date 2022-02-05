@@ -190,8 +190,10 @@
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="SteeringBehaviour.cpp" />
+    <ClCompile Include="SteeringBehaviourComponent.h" />
     <ClCompile Include="SteeringBehaviourManager.cpp" />
     <ClCompile Include="AILayer.cpp" />
+    <ClCompile Include="SteeringEntityRemoveListener.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -210,6 +212,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="AnimationComponent.h" />
     <ClInclude Include="AnimationLayer.h" />
     <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="ApplicationLayer.h" />
@@ -218,6 +221,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionHandler.h" />
     <ClInclude Include="CollisionListener.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="DSP.h" />
     <ClInclude Include="Entity.h" />
@@ -231,6 +235,7 @@
     <ClInclude Include="GLCommon.h" />
     <ClInclude Include="IdleBehaviour.h" />
     <ClInclude Include="IdleCondition.h" />
+    <ClInclude Include="IEntityRemoveListener.h" />
     <ClInclude Include="ISteeringBehaviour.h" />
     <ClInclude Include="IKeyFrameListener.h" />
     <ClInclude Include="IndexBuffer.h" />
@@ -240,17 +245,23 @@
     <ClInclude Include="Key.h" />
     <ClInclude Include="KeyFrameListener.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LightComponent.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="PhysicsFactory.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="PositionComponent.h" />
     <ClInclude Include="PrimitiveShape.h" />
     <ClInclude Include="PursueBehaviour.h" />
     <ClInclude Include="PursueCondition.h" />
+    <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="EntityPanel.h" />
+    <ClInclude Include="RigidBodyComponent.h" />
+    <ClInclude Include="RotationComponent.h" />
+    <ClInclude Include="ScaleComponent.h" />
     <ClInclude Include="SeekBehaviour.h" />
     <ClInclude Include="SeekCondition.h" />
     <ClInclude Include="Shader.h" />
@@ -260,10 +271,13 @@
     <ClInclude Include="SteeringBehaviour.h" />
     <ClInclude Include="SteeringBehaviourManager.h" />
     <ClInclude Include="AILayer.h" />
+    <ClInclude Include="SteeringEntityRemoveListener.h" />
+    <ClInclude Include="TagComponent.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="UUID.h" />
+    <ClInclude Include="VelocityComponent.h" />
     <ClInclude Include="vendor\imgui\imconfig.h" />
     <ClInclude Include="vendor\imgui\imgui.h" />
     <ClInclude Include="vendor\imgui\imgui_impl_glfw.h" />

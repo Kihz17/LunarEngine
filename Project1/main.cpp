@@ -20,6 +20,7 @@
 #include "IdleCondition.h"
 #include "EvadeCondition.h"
 #include "PursueCondition.h"
+#include "SteeringEntityRemoveListener.h"
 
 glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
@@ -29,6 +30,13 @@ void ShaderBallTest(Mesh* shaderBall, Texture* normalTexture, Texture* albedo, G
 
 int main() 
 {
+    // TODO:
+    // Fix EVADE
+    // Reset game when player dies
+    // enemies spawn at random intervals
+    // Add varying health to enemies
+    // A way to show "forward" on enemies (gun models?)
+
     WindowSpecs windowSpecs = GameEngine::InitializeGLFW(true);
 
     // Load models
@@ -53,30 +61,32 @@ int main()
 
     gameEngine.AddLayer(new PlayerController(gameEngine.camera, sphereEnt, gameEngine.GetWindowSpecs(), gameEngine.GetEntityManager(), gameEngine.physicsFactory, gameEngine.physicsWorld, sphere));
     gameEngine.AddLayer(new AnimationLayer(gameEngine.GetEntityManager().GetEntities()));
-    gameEngine.AddLayer(new AILayer(gameEngine.GetEntityManager().GetEntities()));
+    AILayer* aiLayer = new AILayer(gameEngine.GetEntityManager().GetEntities());
+    gameEngine.AddLayer(aiLayer);
+    gameEngine.GetEntityManager().AddEntityRemoveListener(new SteeringEntityRemoveListener(aiLayer));
 
     // Type A
     //Entity* typeA = gameEngine.SpawnPhysicsSphere("typeA", glm::vec3(20.0f, 5.0f, 0.0f), 1.0f, sphere);
     //SteeringBehaviourComponent* typeAComp = typeA->AddComponent<SteeringBehaviourComponent>();
-    //typeAComp->AddTargetingBehaviour(0, new SeekCondition(new SeekBehaviour(typeA->GetComponent<RigidBodyComponent>()->ptr, 1.0f, SeekType::None, false, 10.0f)));
-    //typeAComp->AddTargetingBehaviour(1, new FleeCondition(new FleeBehaviour(typeA->GetComponent<RigidBodyComponent>()->ptr, 10.0f)));
+    //typeAComp->AddTargetingBehaviour(0, new SeekCondition(aiLayer->CreateBehaviour<SeekBehaviour>(typeA->GetComponent<RigidBodyComponent>()->ptr, 1.0f, SeekType::None, false, 10.0f)));
+    //typeAComp->AddTargetingBehaviour(1, new FleeCondition(aiLayer->CreateBehaviour<FleeBehaviour>(typeA->GetComponent<RigidBodyComponent>()->ptr, 10.0f)));
 
     // Type B
     Entity* typeB = gameEngine.SpawnPhysicsSphere("typeB", glm::vec3(10.0f, 5.0f, -20.0f), 1.0f, sphere);
     SteeringBehaviourComponent* typeBComp = typeB->AddComponent<SteeringBehaviourComponent>();
-    typeBComp->AddTargetingBehaviour(0, new EvadeCondition(new EvadeBehaviour(typeB->GetComponent<RigidBodyComponent>()->ptr, 1.0f, 60.0f, 1.0f, 100.0f)));
-    typeBComp->AddTargetingBehaviour(1, new PursueCondition(new PursueBehaviour(typeB->GetComponent<RigidBodyComponent>()->ptr, 1.0f, 40.0f, 1.0f, 100.0f)));
+    typeBComp->AddTargetingBehaviour(0, new EvadeCondition(aiLayer->CreateBehaviour<EvadeBehaviour>(typeB->GetComponent<RigidBodyComponent>()->ptr, 1.0f, 60.0f, 1.0f, 100.0f)));
+    typeBComp->AddTargetingBehaviour(1, new PursueCondition(aiLayer->CreateBehaviour<PursueBehaviour>(typeB->GetComponent<RigidBodyComponent>()->ptr, 1.0f, 40.0f, 1.0f, 100.0f)));
 
     // Type C
     //Entity* typeC = gameEngine.SpawnPhysicsSphere("typeC", glm::vec3(0.0f, 5.0f, 20.0f), 1.0f, sphere);
     //SteeringBehaviourComponent* typeCComp = typeC->AddComponent<SteeringBehaviourComponent>();
-    //typeCComp->AddTargetingBehaviour(0, new ApproachShootCondition(new SeekBehaviour(typeC->GetComponent<RigidBodyComponent>()->ptr, 10.0f, SeekType::Approach, true, 10.0f), 5.0f));
+    //typeCComp->AddTargetingBehaviour(0, new ApproachShootCondition(aiLayer->CreateBehaviour<SeekBehaviour>(typeC->GetComponent<RigidBodyComponent>()->ptr, 10.0f, SeekType::Approach, true, 10.0f), 5.0f));
 
     //// Type D
     //Entity* typeD = gameEngine.SpawnPhysicsSphere("typeD", glm::vec3(-20.0f, 5.0f, 0.0f), 1.0f, sphere);
     //SteeringBehaviourComponent* typeDComp = typeD->AddComponent<SteeringBehaviourComponent>();
-    //typeDComp->AddBehaviour(0, new WanderCondition(new WanderBehaviour(typeD->GetComponent<RigidBodyComponent>()->ptr, 20.0f, 10.0f, 10.0f), 6.0f, 3.0f));
-    //typeDComp->AddBehaviour(1, new IdleCondition(new IdleBehaviour(typeD->GetComponent<RigidBodyComponent>()->ptr), 3.0f, 6.0f));
+    //typeDComp->AddBehaviour(0, new WanderCondition(aiLayer->CreateBehaviour<WanderBehaviour>(typeD->GetComponent<RigidBodyComponent>()->ptr, 20.0f, 10.0f, 10.0f), 6.0f, 3.0f));
+    //typeDComp->AddBehaviour(1, new IdleCondition(aiLayer->CreateBehaviour<IdleBehaviour>(typeD->GetComponent<RigidBodyComponent>()->ptr), 3.0f, 6.0f));
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 

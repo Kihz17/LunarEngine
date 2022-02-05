@@ -56,6 +56,9 @@
     <Filter Include="AI\Steering\Behaviours">
       <UniqueIdentifier>{c98ace7f-f391-4b22-9854-ce1d84e04358}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ECS\Components">
+      <UniqueIdentifier>{c205ef22-6ba0-4c77-b747-713728797036}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -235,6 +238,12 @@
     </ClCompile>
     <ClCompile Include="UUID.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="SteeringBehaviourComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="SteeringEntityRemoveListener.cpp">
+      <Filter>AI\Steering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -442,6 +451,42 @@
     </ClInclude>
     <ClInclude Include="UUID.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RotationComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="VelocityComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBodyComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="LightComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TagComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IEntityRemoveListener.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="SteeringEntityRemoveListener.h">
+      <Filter>AI\Steering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

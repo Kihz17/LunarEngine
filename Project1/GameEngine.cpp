@@ -28,7 +28,7 @@ GameEngine::GameEngine(const WindowSpecs& windowSpecs, bool editorMode)
 	Renderer::Initialize(&this->windowSpecs);
     SoundManager::Initilaize();
 
-    physicsWorld->RegisterCollisionListener(new CollisionListener());
+    physicsWorld->RegisterCollisionListener(new CollisionListener(this->entityManager));
     physicsWorld->SetGravity(glm::vec3(0.0f, -9.81f, 0.0f));
 }
 
