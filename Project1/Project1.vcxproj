@@ -121,6 +121,8 @@
       <PreprocessorDefinitions>SOLUTION_DIR=R"($(SolutionDir))";NORMAL_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\vertShader_01.glsl)";NORMAL_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\fragShader_01.glsl)";OUTLINE_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineVert.glsl)";OUTLINE_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineFrag.glsl)";_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>Default</LanguageStandard>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <OmitFramePointers>false</OmitFramePointers>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,13 +151,13 @@
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="AnimationLayer.cpp" />
-    <ClCompile Include="AnimationManager.cpp" />
     <ClCompile Include="ApplicationLayerManager.cpp" />
     <ClCompile Include="ApproachShootCondition.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionHandler.cpp" />
     <ClCompile Include="CollisionListener.cpp" />
     <ClCompile Include="DSP.cpp" />
+    <ClCompile Include="EnemySpawner.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="EvadeBehaviour.cpp" />
@@ -191,7 +193,6 @@
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="SteeringBehaviour.cpp" />
     <ClCompile Include="SteeringBehaviourComponent.h" />
-    <ClCompile Include="SteeringBehaviourManager.cpp" />
     <ClCompile Include="AILayer.cpp" />
     <ClCompile Include="SteeringEntityRemoveListener.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -214,7 +215,6 @@
     <ClInclude Include="AABB.h" />
     <ClInclude Include="AnimationComponent.h" />
     <ClInclude Include="AnimationLayer.h" />
-    <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="ApplicationLayer.h" />
     <ClInclude Include="ApplicationLayerManager.h" />
     <ClInclude Include="ApproachShootCondition.h" />
@@ -224,6 +224,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="DSP.h" />
+    <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="EvadeBehaviour.h" />
@@ -269,7 +270,6 @@
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Steering.h" />
     <ClInclude Include="SteeringBehaviour.h" />
-    <ClInclude Include="SteeringBehaviourManager.h" />
     <ClInclude Include="AILayer.h" />
     <ClInclude Include="SteeringEntityRemoveListener.h" />
     <ClInclude Include="TagComponent.h" />

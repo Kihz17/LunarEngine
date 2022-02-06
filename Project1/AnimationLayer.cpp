@@ -11,7 +11,7 @@ const glm::vec3 yellow = glm::vec3(0.4f, 0.4f, 0.0f);
 const glm::vec3 green = glm::vec3(0.0f, 0.8f, 0.0f);
 const glm::vec3 white = glm::vec3(1.0f, 1.0f, 1.0f);
 
-AnimationLayer::AnimationLayer(const std::unordered_map<unsigned int, Entity*>& entities)
+AnimationLayer::AnimationLayer(const std::vector<Entity*>& entities)
     : paused(false),
     keyFrameListener(new KeyFrameListener()),
     entities(entities)
@@ -33,11 +33,9 @@ void AnimationLayer::OnUpdate(float deltaTime)
     ScaleComponent* scaleComp = nullptr;
     RotationComponent* rotComp = nullptr;
 
-    std::unordered_map<unsigned int, Entity*>::const_iterator it;
-    for (it = entities.begin(); it != entities.end(); it++)
+    for (Entity* entity : entities)
     {
-        Entity* entity = it->second;
-
+        if (!entity->IsValid()) continue;
         animComp = entity->GetComponent<AnimationComponent>();
         if (!animComp || !animComp->playing) continue;
 

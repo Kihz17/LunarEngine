@@ -1,13 +1,21 @@
 #include "ApproachShootCondition.h"
 #include "GLCommon.h"
 #include "Components.h"
+#include "UUID.h"
+
+#include <Shapes.h>
 
 #include <iostream>
 
-ApproachShootCondition::ApproachShootCondition(SeekBehaviour* behaviour, float shootInterval)
+ApproachShootCondition::ApproachShootCondition(SeekBehaviour* behaviour, float shootInterval, EntityManager& entityManager,
+	Physics::IPhysicsFactory<Entity>* physicsFactory, Physics::IPhysicsWorld<Entity>* physicsWorld, Mesh* bulletMesh)
 	: behaviour(behaviour),
 	shootInterval(shootInterval),
-	lastShootTime(-1.0f)
+	lastShootTime(-1.0f),
+	entityManager(entityManager),
+	physicsFactory(physicsFactory),
+	physicsWorld(physicsWorld),
+	bulletMesh(bulletMesh)
 {
 
 }
@@ -17,7 +25,7 @@ ApproachShootCondition::~ApproachShootCondition()
 
 }
 
-bool ApproachShootCondition::CanUse(const std::unordered_map<unsigned int, Entity*>& entities)
+bool ApproachShootCondition::CanUse(const std::vector<Entity*>& entities)
 {
 	
 	Entity* foundTarget = FindTarget(entities);
@@ -25,7 +33,7 @@ bool ApproachShootCondition::CanUse(const std::unordered_map<unsigned int, Entit
 	return foundTarget; // Only start if we found a target
 }
 
-bool ApproachShootCondition::CanContinueToUse(const std::unordered_map<unsigned int, Entity*>& entities)
+bool ApproachShootCondition::CanContinueToUse(const std::vector<Entity*>& entities)
 {
 	if (behaviour->GetTarget()) return true; // We still have a target, keep running
 
@@ -52,20 +60,21 @@ void ApproachShootCondition::Update(float deltaTime)
 	float currentTime = (float) glfwGetTime();
 	if (lastShootTime == -1.0f || (currentTime - lastShootTime) >= shootInterval) // We can shoot!
 	{
-		// TODO: Shoot the thing
 		lastShootTime = currentTime;
-		std::cout << "Shoot!\n";
+		glm::vec3 spawnPos = behaviour->GetRigidBody()->GetPosition();
+		spawnPos.y += 0.5f;
+		glm::vec3 bulletDirection = glm::normalize(behaviour->GetTarget()->GetComponent<PositionComponent>()->value - spawnPos);
+		spawnPos += glm::vec3(bulletDirection.x, 0.0f, bulletDirection.z) * 2.0f;
+		SpawnBullet(spawnPos, bulletDirection);
 	}
 }
 
-Entity* ApproachShootCondition::FindTarget(const std::unordered_map<unsigned int, Entity*>& entities)
+Entity* ApproachShootCondition::FindTarget(const std::vector<Entity*>& entities)
 {
 	Entity* foundTarget = nullptr;
 	float closestTarget = -1.0f;
-	std::unordered_map<unsigned int, Entity*>::const_iterator it;
-	for (it = entities.begin(); it != entities.end(); it++)
+	for (Entity* entity : entities)
 	{
-		Entity* entity = it->second;
 		TagComponent* tagComp = entity->GetComponent<TagComponent>();
 		if (!tagComp || !tagComp->HasTag("player")) continue; // Verify that the entity is a player
 
@@ -82,4 +91,42 @@ Entity* ApproachShootCondition::FindTarget(const std::unordered_map<unsigned int
 	}
 
 	return foundTarget;
+}
+
+Entity* ApproachShootCondition::SpawnBullet(const glm::vec3& position, const glm::vec3& direction)
+{
+	constexpr float bulletRadius = 0.2f;
+	constexpr float bulletSpeed = 40.0f;
+	Entity* physicsSphere = entityManager.CreateEntity(std::to_string(UUID()));
+	physicsSphere->AddComponent<PositionComponent>();
+	physicsSphere->AddComponent<ScaleComponent>(glm::vec3(bulletRadius, bulletRadius, bulletRadius));
+	physicsSphere->AddComponent<RotationComponent>();
+	TagComponent* tagComp = physicsSphere->AddComponent<TagComponent>();
+	tagComp->AddTag("bullet");
+
+	Physics::SphereShape* shape = new Physics::SphereShape(bulletRadius);
+
+	// Rigid Body
+	Physics::RigidBodyInfo rigidInfo;
+	rigidInfo.linearDamping = 0.001f;
+	rigidInfo.angularDamping = 0.001f;
+	rigidInfo.isStatic = false;
+	rigidInfo.mass = 0.01f;
+	rigidInfo.position = position;
+	rigidInfo.linearVelocity = direction * bulletSpeed;
+	rigidInfo.restitution = 0.001f;
+	Physics::IRigidBody* rigidBody = physicsFactory->CreateRigidBody(rigidInfo, shape);
+	rigidBody->UseLocalGravity(true);
+	rigidBody->SetGravityAcceleration(glm::vec3(0.0f, -2.5f, 0.0f));
+	physicsSphere->AddComponent<RigidBodyComponent>(rigidBody);
+	physicsWorld->AddRigidBody(physicsSphere->GetComponent<RigidBodyComponent>()->ptr, physicsSphere);
+
+	// Render Info
+	RenderComponent::RenderInfo sphereInfo;
+	sphereInfo.vao = bulletMesh->GetVertexArray();
+	sphereInfo.indexCount = bulletMesh->GetIndexBuffer()->GetCount();
+	sphereInfo.isColorOverride = true;
+	sphereInfo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
+	physicsSphere->AddComponent<RenderComponent>(sphereInfo);
+	return physicsSphere;
 }

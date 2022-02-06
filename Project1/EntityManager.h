@@ -11,18 +11,17 @@ public:
 	EntityManager();
 	virtual ~EntityManager();
 
-	void RemoveEntity(unsigned int id);
-
-	const std::unordered_map<unsigned int, Entity*>& GetEntities();
+	const std::vector<Entity*>& GetEntities();
 	Entity* CreateEntity(const std::string& name);
 	Entity* CreateEntity();
 
 	void AddEntityRemoveListener(IEntityRemoveListener* removeListener) { removeListeners.push_back(removeListener); }
 	void DeleteEntity(Entity* entity);
-
+	void CleanEntities();
 private:
-	std::unordered_map<unsigned int, Entity*> entities;
+	std::vector<Entity*> entities;
 	unsigned int currentEntityID;
 
 	std::vector<IEntityRemoveListener*> removeListeners;
+	std::vector<Entity*> invalidEntities;
 };

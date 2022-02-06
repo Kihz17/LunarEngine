@@ -31,18 +31,15 @@ void ShowEntity(const Entity* entity)
     }
 }
 
-void EntityPanel::Update(const std::unordered_map<unsigned int, Entity*>& entities)
+void EntityPanel::Update(const std::vector<Entity*>& entities)
 {
     ImGui::Begin("Entities");
 
     if (ImGui::CollapsingHeader("Entities"))
     {
-        std::unordered_map<unsigned int, Entity*>::const_iterator it = entities.begin();
-        while (it != entities.end())
+        for(Entity* entity : entities)
         {
-            const Entity* entity = it->second;
             ShowEntity(entity);
-            it++;
         }
     }
 

@@ -9,12 +9,12 @@ SteeringEntityRemoveListener::SteeringEntityRemoveListener(AILayer* layer)
 
 void SteeringEntityRemoveListener::OnEntityRemove(Entity* entity)
 {
-	SteeringBehaviourComponent* steeringComp = entity->GetComponent<SteeringBehaviourComponent>();
-	if (steeringComp) // This entity has a steering behaviour, make sure to delete the behaviours that belong to it
-	{
-		for (ISteeringCondition* condition : steeringComp->targetingBehaviours) RemoveBehaviour(condition->GetBehaviour());
-		for (ISteeringCondition* condition : steeringComp->behaviours) RemoveBehaviour(condition->GetBehaviour());
-	}
+	//SteeringBehaviourComponent* steeringComp = entity->GetComponent<SteeringBehaviourComponent>();
+	//if (steeringComp) // This entity has a steering behaviour, make sure to delete the behaviours that belong to it
+	//{
+	//	for (ISteeringCondition* condition : steeringComp->targetingBehaviours) RemoveBehaviour(condition->GetBehaviour());
+	//	for (ISteeringCondition* condition : steeringComp->behaviours) RemoveBehaviour(condition->GetBehaviour());
+	//}
 
 	// Check if any active behaviours has the entity to remove as a target
 	for (ISteeringBehaviour* activeBehaviour : activeBehaviours)

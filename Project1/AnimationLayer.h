@@ -14,7 +14,7 @@ class RotationComponent;
 class AnimationLayer : public ApplicationLayer
 {
 public:
-	AnimationLayer(const std::unordered_map<unsigned int, Entity*>& entities);
+	AnimationLayer(const std::vector<Entity*>& entities);
 	virtual ~AnimationLayer();
 
 	virtual void OnUpdate(float deltaTime) override;
@@ -33,5 +33,5 @@ private:
 	bool paused;
 
 	IKeyFrameListener* keyFrameListener;
-	const std::unordered_map<unsigned int, Entity*>& entities;
+	const std::vector<Entity*>& entities;
 };

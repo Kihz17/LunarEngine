@@ -14,7 +14,7 @@ enum class CursorMode
 class InputManager
 {
 public:
-	static void Initialize();
+	static void Initialize(GLFWwindow* window);
 
 	static Key* GetKey(int keyCode);
 	static Key* ListenToKey(int keycode);
@@ -43,4 +43,6 @@ private:
 	static double mouseY;
 	static double scrollX;
 	static double scrollY;
+
+	static GLFWwindow* window;
 };

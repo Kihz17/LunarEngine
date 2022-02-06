@@ -4,7 +4,8 @@
 
 Entity::Entity(unsigned int id, const std::string& name)
 	: id(id),
-	name(name)
+	name(name),
+	valid(true)
 {
 
 }

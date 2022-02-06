@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 
-AILayer::AILayer(const std::unordered_map<unsigned int, Entity*>& entities)
+AILayer::AILayer(const std::vector<Entity*>& entities)
     : entities(entities)
 {
 
@@ -20,10 +20,9 @@ void AILayer::OnUpdate(float deltaTime)
     RigidBodyComponent* rigidComp = nullptr;
     RotationComponent* rotComp = nullptr;
     SteeringBehaviourComponent* behaviourComp = nullptr;
-    std::unordered_map<unsigned int, Entity*>::const_iterator it;
-    for (it = entities.begin(); it != entities.end(); it++)
+    for (Entity* entity : entities)
     {
-        Entity* entity = it->second;
+        if (!entity->IsValid()) continue;
         behaviourComp = entity->GetComponent<SteeringBehaviourComponent>();
         if (!behaviourComp) continue;
 

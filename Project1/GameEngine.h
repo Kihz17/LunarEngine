@@ -5,8 +5,6 @@
 #include "GLCommon.h"
 #include "ApplicationLayerManager.h"
 #include "EntityManager.h"
-#include "AnimationManager.h"
-#include "SteeringBehaviourManager.h"
 
 #include "Renderer.h"
 #include "EntityPanel.h"

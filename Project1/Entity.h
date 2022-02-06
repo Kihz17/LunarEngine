@@ -2,7 +2,8 @@
 
 #include <string>
 #include <vector>
-
+#include <assert.h>
+#include <iostream>
 class Component;
 class Entity
 {
@@ -37,7 +38,7 @@ public:
 	{
 		for (unsigned int i = 0; i < components.size(); i++)
 		{
-			if (dynamic_cast<T*>(components[i]) != 0)
+			if (dynamic_cast<T*>(components[i]))
 			{
 				return dynamic_cast<T*>(components[i]);
 			}
@@ -50,13 +51,14 @@ public:
 	{
 		for (unsigned int i = 0; i < components.size(); i++)
 		{
-			if (dynamic_cast<T*>(components[i]) != 0) return true;
+			return dynamic_cast<T*>(components[i]);
 		}
 
 		return false;
 	}
 
 	const std::string& GetName() const { return name; }
+	bool IsValid() const { return valid; }
 
 	void RemoveComponent(Component* component);
 
@@ -72,7 +74,7 @@ private:
 	friend class EntityManager;
 
 	Entity(unsigned int id, const std::string& name);
-
+	bool valid;
 };
 
 typedef std::vector<Entity*>::iterator entity_iterator;

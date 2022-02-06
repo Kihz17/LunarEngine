@@ -1,6 +1,7 @@
 #include "PlayerController.h"
 #include "InputManager.h"
 #include "Components.h"
+#include "UUID.h"
 
 #include <Shapes.h>
 
@@ -43,6 +44,8 @@ PlayerController::~PlayerController()
 
 void PlayerController::OnUpdate(float deltaTime) 
 {
+    Physics::IRigidBody* rigid = entity->GetComponent<RigidBodyComponent>()->ptr;
+
     if (InputManager::GetCursorMode() == CursorMode::Locked)
     {
         camera.Look(InputManager::GetMouseX(), InputManager::GetMouseY()); // Update camera view
@@ -50,7 +53,6 @@ void PlayerController::OnUpdate(float deltaTime)
         float scroll = InputManager::GetScrollY();
         if (scroll != 0.0) camera.Zoom(scroll);
 
-	    Physics::IRigidBody* rigid = entity->GetComponent<RigidBodyComponent>()->ptr;
         rigid->SetOrientation(camera.GetQuaternion()); // Apply camera view to our rotation
 	    glm::vec3 direction = camera.front;
         direction.y = 0.0f;
@@ -76,14 +78,14 @@ void PlayerController::OnUpdate(float deltaTime)
 		    rigid->ApplyForce(right * moveSpeed);
 	    }
 
-        camera.position = rigid->GetPosition();
-        camera.position.y += 2.0f;
-
         if (lmbKey->IsJustPressed())
         {
             SpawnBullet(camera.position, camera.front);
         }
     }
+
+    camera.position = rigid->GetPosition();
+    camera.position.y += 2.0f;
 
     if (escKey->IsJustPressed())
     {
@@ -143,7 +145,7 @@ Entity* PlayerController::SpawnBullet(const glm::vec3 & position, const glm::vec
 {
     constexpr float bulletRadius = 0.2f;
     constexpr float bulletSpeed = 40.0f;
-    Entity* physicsSphere = entityManager.CreateEntity(name);
+    Entity* physicsSphere = entityManager.CreateEntity(std::to_string(UUID()));
     physicsSphere->AddComponent<PositionComponent>();
     physicsSphere->AddComponent<ScaleComponent>(glm::vec3(bulletRadius, bulletRadius, bulletRadius));
     physicsSphere->AddComponent<RotationComponent>();

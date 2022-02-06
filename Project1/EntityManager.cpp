@@ -11,28 +11,14 @@ EntityManager::EntityManager()
 
 EntityManager::~EntityManager()
 {
-	std::unordered_map<unsigned int, Entity*>::iterator it = entities.begin();
-	while (it != entities.end())
-	{
-		delete it->second;
-		it++;
-	}
+	for (Entity* entity : entities) delete entity;
 
 	entities.clear();
 
 	for (IEntityRemoveListener* removeListener : removeListeners) delete removeListener;
 }
 
-
-void EntityManager::RemoveEntity(unsigned int id)
-{
-	std::unordered_map<unsigned int, Entity*>::iterator it = entities.find(id);
-	if (it == entities.end()) return;
-
-	DeleteEntity(it->second);
-}
-
-const std::unordered_map<unsigned int, Entity*>& EntityManager::GetEntities()
+const std::vector<Entity*>& EntityManager::GetEntities()
 {
 	return entities;
 }
@@ -41,7 +27,7 @@ Entity* EntityManager::CreateEntity(const std::string& name)
 {
 	unsigned int ID = currentEntityID++;
 	Entity* newEntity = new Entity(ID, name);
-	entities.insert({ ID , newEntity });
+	entities.push_back(newEntity);
 	return newEntity;
 }
 
@@ -53,6 +39,26 @@ Entity* EntityManager::CreateEntity()
 void EntityManager::DeleteEntity(Entity* entity)
 {
 	for (IEntityRemoveListener* removeListener : removeListeners) removeListener->OnEntityRemove(entity);
-	entities.erase(entity->id);
-	delete entity;
+	entity->valid = false;
+	invalidEntities.push_back(entity);
+}
+
+void EntityManager::CleanEntities()
+{
+	for (Entity* e : invalidEntities)
+	{
+		int eraseIndex = -1;
+		for (int i = 0; i < entities.size(); i++)
+		{
+			if (e == entities[i])
+			{
+				eraseIndex = i;
+				break;
+			}
+		}
+		if (eraseIndex != -1) entities.erase(entities.begin() + eraseIndex);
+		delete e;
+	}
+
+	invalidEntities.clear();
 }

@@ -7,13 +7,10 @@
 #include <glm/glm.hpp>
 #include <unordered_map>
 
-// TODO: Make sure to delete behaviour
-// Make sure to delete condition
-
 class AILayer : public ApplicationLayer
 {
 public:
-	AILayer(const std::unordered_map<unsigned int, Entity*>& entities);
+	AILayer(const std::vector<Entity*>& entities);
 	virtual ~AILayer();
 
 	virtual void OnUpdate(float deltaTime) override;
@@ -34,6 +31,6 @@ private:
 
 	void TryActivateBehaviour(SteeringBehaviourComponent* behaviourComp);
 
-	const std::unordered_map<unsigned int, Entity*>& entities;
+	const std::vector<Entity*>& entities;
 	std::vector<ISteeringBehaviour*> activeBehaviours;
 };

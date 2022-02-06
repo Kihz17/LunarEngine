@@ -1,9 +1,13 @@
 #include "EvadeBehaviour.h"
 #include "Components.h"
+#include "Utils.h"
 
-EvadeBehaviour::EvadeBehaviour(Physics::IRigidBody* rigidBody,  float maxSteps, float speed, float turnSpeed, float maxForce)
+#include <glm/gtx/rotate_vector.hpp>
+
+EvadeBehaviour::EvadeBehaviour(Physics::IRigidBody* rigidBody, float angleRandomizer, float speed, float turnSpeed, float maxForce)
 	: SteeringBehaviour(rigidBody, SteeringBehaviourType::Targeting, speed, turnSpeed, maxForce),
-	maxSteps(maxSteps)
+	angleRandomizer(angleRandomizer),
+	flipDir(false)
 {
 
 }
@@ -17,30 +21,22 @@ glm::vec3 EvadeBehaviour::ComputeSteeringForce()
 {
 	if (!target) return glm::vec3(0.0f, 0.0f, 0.0f);
 
-	PositionComponent* posComp = target->GetComponent<PositionComponent>();
-	if (!posComp) return glm::vec3(0.0f, 0.0f, 0.0f);
-
 	RigidBodyComponent* rigidComp = target->GetComponent<RigidBodyComponent>();
 	if (!rigidComp) return glm::vec3(0.0f, 0.0f, 0.0f);
 
-	glm::vec3 direction = posComp->value - rigidBody->GetPosition();
-	float distance = glm::length(direction);
+	glm::vec3 targetPosition = rigidComp->ptr->GetPosition();
+	glm::vec3 targetVelocity = rigidComp->ptr->GetLinearVelocity();
 
-	float speed = glm::length(rigidBody->GetLinearVelocity());
-	float t;
-	if (speed <= distance / maxSteps) // Target is far away
-	{
-		t = maxSteps;
-	}
-	else // Target is close
-	{
-		t = distance / speed;
-	}
+	glm::vec3 ourPosition = rigidBody->GetPosition();
+	glm::vec3 ourVelocity = rigidBody->GetLinearVelocity();
 
-	glm::vec3 futurePos = posComp->value + rigidComp->ptr->GetLinearVelocity() * t;
-	glm::vec3 velocity = glm::normalize(futurePos - rigidBody->GetPosition()) * speed;
+	glm::vec3 moveDirection = glm::cross(glm::normalize(targetVelocity), glm::vec3(0.0f, 1.0f, 0.0f));
+	moveDirection = glm::rotateY(moveDirection, Utils::RandFloat(-angleRandomizer, angleRandomizer));
+	if (flipDir) moveDirection *= -1.0f;
 
-	glm::vec3 steer = velocity - rigidBody->GetLinearVelocity();
+	glm::vec3 velocity = moveDirection * speed;
+
+	glm::vec3 steer = velocity - ourVelocity;
 	steer.x = glm::clamp(steer.x, -maxForce, maxForce);
 	steer.y = glm::clamp(steer.y, -maxForce, maxForce);
 	steer.z = glm::clamp(steer.z, -maxForce, maxForce);

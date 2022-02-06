@@ -3,7 +3,7 @@
 #include "IPanel.h"
 #include "Entity.h"
  
-#include <unordered_map>
+#include <vector>
 
 class EntityPanel
 {
@@ -11,5 +11,5 @@ public:
 	EntityPanel();
 	virtual ~EntityPanel();
 
-	void Update(const std::unordered_map<unsigned int, Entity*>& entities);
+	void Update(const std::vector<Entity*>& entities);
 };

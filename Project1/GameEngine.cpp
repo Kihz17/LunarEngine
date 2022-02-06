@@ -24,7 +24,7 @@ GameEngine::GameEngine(const WindowSpecs& windowSpecs, bool editorMode)
     physicsWorld(physicsFactory->CreateWorld())
 {
 	// Initialize systems
-    InputManager::Initialize();
+    InputManager::Initialize(windowSpecs.window);
 	Renderer::Initialize(&this->windowSpecs);
     SoundManager::Initilaize();
 
@@ -44,57 +44,47 @@ GameEngine::~GameEngine()
 void GameEngine::Render()
 {
     // Start ImGui frame
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
+    if (editorMode)
+    {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+    }
 
     Renderer::BeginFrame(camera);
 
-    for (IPanel* panel : panels)
+    if (editorMode)
     {
-        panel->OnUpdate();
+        for (IPanel* panel : panels)
+        {
+            panel->OnUpdate();
+        }
+        entityPanel.Update(entityManager.GetEntities());
     }
-    entityPanel.Update(entityManager.GetEntities());
 
     Renderer::DrawFrame();
 
     // Render ImGui
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    if (editorMode)
+    {
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
 
     Renderer::EndFrame();
 }
 
 void GameEngine::SubmitEntitiesToRender()
 {
-    const std::unordered_map<unsigned int, Entity*>& entities = entityManager.GetEntities();
-    std::unordered_map<unsigned int, Entity*>::const_iterator it;
-    for (it = entities.begin(); it != entities.end(); it++)
+    const std::vector<Entity*>& entities = entityManager.GetEntities();
+    for (Entity* entity : entities)
     {
-        Entity* entity = it->second;
-        RenderComponent* renderComponent = entity->GetComponent<RenderComponent>();
-        if (!renderComponent) continue; // Can't be rendered
-
+        if (entity == nullptr) std::cout << "ge nullEnt\n";
         PositionComponent* posComponent = entity->GetComponent<PositionComponent>();
-        if (!posComponent) // Can't be rendered
-        {
-            std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a position component!" << std::endl;
-            continue;
-        }
+        if (!posComponent)  continue; // Can't be rendered
 
         RotationComponent* rotComponent = entity->GetComponent<RotationComponent>();
-        if (!rotComponent) // Can't be rendered
-        {
-            std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a rotation component!" << std::endl;
-            continue;
-        }
-
-        ScaleComponent* scaleComponent = entity->GetComponent<ScaleComponent>();
-        if (!scaleComponent) // Can't be rendered
-        {
-            std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a scale component!" << std::endl;
-            continue;
-        }
+        if (!rotComponent) continue; // Can't be rendered
 
         // Sync position component with rigidbody
         RigidBodyComponent* rigidBodyComponent = entity->GetComponent<RigidBodyComponent>();
@@ -102,6 +92,16 @@ void GameEngine::SubmitEntitiesToRender()
         {
             rigidBodyComponent->ptr->GetPosition(posComponent->value); // Update position component
             rigidBodyComponent->ptr->GetOrientation(rotComponent->value); // Update rotation component
+        }
+
+        RenderComponent* renderComponent = entity->GetComponent<RenderComponent>();
+        if (!renderComponent) continue; // Can't be rendered
+
+        ScaleComponent* scaleComponent = entity->GetComponent<ScaleComponent>();
+        if (!scaleComponent) // Can't be rendered
+        {
+            std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a scale component!" << std::endl;
+            continue;
         }
 
         // Tell the renderer to render this entity
@@ -183,6 +183,7 @@ void GameEngine::Run()
         camera.Update(deltaTime);
 
         InputManager::ClearState();
+        entityManager.CleanEntities(); // Remove invalid entities
 
         // Submit all renderable entities
         SubmitEntitiesToRender();

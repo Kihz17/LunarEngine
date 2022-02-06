@@ -22,10 +22,16 @@ glm::vec3 PursueBehaviour::ComputeSteeringForce()
 	RigidBodyComponent* rigidComp = target->GetComponent<RigidBodyComponent>();
 	if (!rigidComp) return glm::vec3(0.0f, 0.0f, 0.0f);
 
-	glm::vec3 direction = rigidComp->ptr->GetPosition() - rigidBody->GetPosition();
+	glm::vec3 targetPosition = rigidComp->ptr->GetPosition();
+	glm::vec3 targetVelocity = rigidComp->ptr->GetLinearVelocity();
+
+	glm::vec3 ourPosition = rigidBody->GetPosition();
+	glm::vec3 ourVelocity = rigidBody->GetLinearVelocity();
+
+	glm::vec3 direction = targetPosition - ourPosition;
 	float distance = glm::length(direction);
 
-	float speed = glm::length(rigidBody->GetLinearVelocity());
+	float speed = glm::length(ourVelocity);
 	float t;
 	if (speed <= distance / maxSteps) // Target is far away
 	{
@@ -36,11 +42,10 @@ glm::vec3 PursueBehaviour::ComputeSteeringForce()
 		t = distance / speed;
 	}
 
-	glm::vec3 futurePos = rigidComp->ptr->GetPosition() + rigidComp->ptr->GetLinearVelocity() * t;
-	glm::vec3 velocity = glm::normalize(futurePos - rigidBody->GetPosition()) * this->speed;
-	//std::cout << "Vel: " << velocity.x << " " << velocity.y << " " << velocity.z << " " << "\n";
+	glm::vec3 futurePos = targetPosition + targetVelocity * t;
+	glm::vec3 velocity = glm::normalize(futurePos - ourPosition) * this->speed;
 
-	glm::vec3 steer = velocity - rigidBody->GetLinearVelocity();
+	glm::vec3 steer = velocity - ourVelocity;
 	steer.x = glm::clamp(steer.x, -maxForce, maxForce);
 	steer.y = glm::clamp(steer.y, -maxForce, maxForce);
 	steer.z = glm::clamp(steer.z, -maxForce, maxForce);

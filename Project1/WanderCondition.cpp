@@ -19,7 +19,7 @@ WanderCondition::~WanderCondition()
 
 }
 
-bool WanderCondition::CanUse(const std::unordered_map<unsigned int, Entity*>& entities)
+bool WanderCondition::CanUse(const std::vector<Entity*>& entities)
 {
 	float currentTime = (float) glfwGetTime();
 	if (currentTime - endTime >= waitTime) return true; // We have waited long enough, use it again
@@ -27,7 +27,7 @@ bool WanderCondition::CanUse(const std::unordered_map<unsigned int, Entity*>& en
 	return false;
 }
 
-bool WanderCondition::CanContinueToUse(const std::unordered_map<unsigned int, Entity*>& entities)
+bool WanderCondition::CanContinueToUse(const std::vector<Entity*>& entities)
 {
 	float currentTime = (float) glfwGetTime();
 	if (currentTime - startTime >= useTime) return false; // Stop using if we have been idle for our wait time

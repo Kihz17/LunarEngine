@@ -11,6 +11,7 @@
 #include "PlayerController.h"
 #include "AnimationLayer.h"
 #include "AILayer.h"
+#include "EnemySpawner.h"
 
 #include "Steering.h"
 #include "ApproachShootCondition.h"
@@ -31,13 +32,11 @@ void ShaderBallTest(Mesh* shaderBall, Texture* normalTexture, Texture* albedo, G
 int main() 
 {
     // TODO:
-    // Fix EVADE
-    // Reset game when player dies
-    // enemies spawn at random intervals
-    // Add varying health to enemies
     // A way to show "forward" on enemies (gun models?)
+    // Eahc type must be different model
+    // Each behaviour must be diff color
 
-    WindowSpecs windowSpecs = GameEngine::InitializeGLFW(true);
+    WindowSpecs windowSpecs = GameEngine::InitializeGLFW(false);
 
     // Load models
     Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
@@ -53,7 +52,7 @@ int main()
     Texture* blue = new Texture("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture* grassTexture = new Texture("assets/textures/grass.png", TextureFilterType::Linear, TextureWrapType::Repeat);
 
-    GameEngine gameEngine(windowSpecs, true);
+    GameEngine gameEngine(windowSpecs, false);
 
     Entity* sphereEnt = gameEngine.SpawnPhysicsSphere("sphere", glm::vec3(0.0f, 5.0f, 0.0f), 1.0f, nullptr);
     TagComponent* playerTags = sphereEnt->AddComponent<TagComponent>();
@@ -65,28 +64,7 @@ int main()
     gameEngine.AddLayer(aiLayer);
     gameEngine.GetEntityManager().AddEntityRemoveListener(new SteeringEntityRemoveListener(aiLayer));
 
-    // Type A
-    //Entity* typeA = gameEngine.SpawnPhysicsSphere("typeA", glm::vec3(20.0f, 5.0f, 0.0f), 1.0f, sphere);
-    //SteeringBehaviourComponent* typeAComp = typeA->AddComponent<SteeringBehaviourComponent>();
-    //typeAComp->AddTargetingBehaviour(0, new SeekCondition(aiLayer->CreateBehaviour<SeekBehaviour>(typeA->GetComponent<RigidBodyComponent>()->ptr, 1.0f, SeekType::None, false, 10.0f)));
-    //typeAComp->AddTargetingBehaviour(1, new FleeCondition(aiLayer->CreateBehaviour<FleeBehaviour>(typeA->GetComponent<RigidBodyComponent>()->ptr, 10.0f)));
-
-    // Type B
-    Entity* typeB = gameEngine.SpawnPhysicsSphere("typeB", glm::vec3(10.0f, 5.0f, -20.0f), 1.0f, sphere);
-    SteeringBehaviourComponent* typeBComp = typeB->AddComponent<SteeringBehaviourComponent>();
-    typeBComp->AddTargetingBehaviour(0, new EvadeCondition(aiLayer->CreateBehaviour<EvadeBehaviour>(typeB->GetComponent<RigidBodyComponent>()->ptr, 1.0f, 60.0f, 1.0f, 100.0f)));
-    typeBComp->AddTargetingBehaviour(1, new PursueCondition(aiLayer->CreateBehaviour<PursueBehaviour>(typeB->GetComponent<RigidBodyComponent>()->ptr, 1.0f, 40.0f, 1.0f, 100.0f)));
-
-    // Type C
-    //Entity* typeC = gameEngine.SpawnPhysicsSphere("typeC", glm::vec3(0.0f, 5.0f, 20.0f), 1.0f, sphere);
-    //SteeringBehaviourComponent* typeCComp = typeC->AddComponent<SteeringBehaviourComponent>();
-    //typeCComp->AddTargetingBehaviour(0, new ApproachShootCondition(aiLayer->CreateBehaviour<SeekBehaviour>(typeC->GetComponent<RigidBodyComponent>()->ptr, 10.0f, SeekType::Approach, true, 10.0f), 5.0f));
-
-    //// Type D
-    //Entity* typeD = gameEngine.SpawnPhysicsSphere("typeD", glm::vec3(-20.0f, 5.0f, 0.0f), 1.0f, sphere);
-    //SteeringBehaviourComponent* typeDComp = typeD->AddComponent<SteeringBehaviourComponent>();
-    //typeDComp->AddBehaviour(0, new WanderCondition(aiLayer->CreateBehaviour<WanderBehaviour>(typeD->GetComponent<RigidBodyComponent>()->ptr, 20.0f, 10.0f, 10.0f), 6.0f, 3.0f));
-    //typeDComp->AddBehaviour(1, new IdleCondition(aiLayer->CreateBehaviour<IdleBehaviour>(typeD->GetComponent<RigidBodyComponent>()->ptr), 3.0f, 6.0f));
+    gameEngine.AddLayer(new EnemySpawner(3.0f, 40.0f, gameEngine.GetEntityManager(), gameEngine.physicsFactory, gameEngine.physicsWorld, sphere, aiLayer));
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
@@ -127,32 +105,6 @@ int main()
         groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
         ground->AddComponent<RenderComponent>(groundInfo);
     }
-
-    //SteeringBehaviourComponent* sComp = sphereEnt->AddComponent<SteeringBehaviourComponent>();
-    //SeekBehaviour* seek = new SeekBehaviour(1.0f, 100.0f, 1.0f, 100.0f);
-    //FleeBehaviour* flee = new FleeBehaviour(50.0f, 50.0f, 1.0f, 100.0f);
-    //sComp->behaviours.push_back(flee);
-    //sComp->behaviours.push_back(new WanderBehaviour(1.0f, 1.5f, 10.0f, 10.0f, 10.0f));
-
-    //Entity* testE = gameEngine.GetEntityManager().CreateEntity("camera");
-    //PositionComponent* posCompTest = testE->AddComponent<PositionComponent>();
-    //{
-    //    // Rigid Body
-    //    Physics::RigidBodyInfo rigidInfo;
-    //    rigidInfo.linearDamping = 0.5f;
-    //    rigidInfo.angularDamping = 0.001f;
-    //    rigidInfo.isStatic = false;
-    //    rigidInfo.mass = 1.0f;
-    //    rigidInfo.position = gameEngine.camera.position;
-    //    rigidInfo.linearVelocity = glm::vec3(0.0f);
-    //    rigidInfo.restitution = 0.8f;
-    //    Physics::SphereShape* sh = new Physics::SphereShape(1.0f);
-    //    Physics::IRigidBody* rigidBody = gameEngine.physicsFactory->CreateRigidBody(rigidInfo, sh);
-    //    testE->AddComponent<RigidBodyComponent>(rigidBody);
-    //    gameEngine.physicsWorld->AddRigidBody(testE->GetComponent<RigidBodyComponent>()->ptr);
-    //}
-
-    //flee->SetTarget(testE);
 
     gameEngine.Run();
 

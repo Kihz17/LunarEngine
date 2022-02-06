@@ -19,13 +19,13 @@ IdleCondition::~IdleCondition()
 
 }
 
-bool IdleCondition::CanUse(const std::unordered_map<unsigned int, Entity*>& entities)
+bool IdleCondition::CanUse(const std::vector<Entity*>& entities)
 {
 	float currentTime = (float)glfwGetTime();
 	if (currentTime - endTime >= waitTime) return true; // We have waited long enough, use it again
 }
 
-bool IdleCondition::CanContinueToUse(const std::unordered_map<unsigned int, Entity*>& entities)
+bool IdleCondition::CanContinueToUse(const std::vector<Entity*>& entities)
 {
 	float currentTime = (float)glfwGetTime();
 	if (currentTime - startTime >= useTime) return false; // Stop using if we have been idle for our wait time

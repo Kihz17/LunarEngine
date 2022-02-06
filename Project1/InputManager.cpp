@@ -7,9 +7,11 @@ double InputManager::mouseY = 0.0;
 double InputManager::scrollX = 0.0;
 double InputManager::scrollY = 0.0;
 
-void InputManager::Initialize()
-{
+GLFWwindow* InputManager::window;
 
+void InputManager::Initialize(GLFWwindow* window)
+{
+	InputManager::window = window;
 }
 
 Key* InputManager::GetKey(int keyCode)
@@ -45,12 +47,12 @@ void InputManager::ClearState()
 
 void InputManager::SetCursorMode(CursorMode mode)
 {
-	glfwSetInputMode(static_cast<GLFWwindow*>(glfwGetCurrentContext()), GLFW_CURSOR, GLFW_CURSOR_NORMAL + (int)mode);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL + (int)mode);
 }
 
 CursorMode InputManager::GetCursorMode()
 {
-	return (CursorMode)(glfwGetInputMode(static_cast<GLFWwindow*>(glfwGetCurrentContext()), GLFW_CURSOR) - GLFW_CURSOR_NORMAL);
+	return (CursorMode)(glfwGetInputMode(window, GLFW_CURSOR) - GLFW_CURSOR_NORMAL);
 }
 
 void InputManager::KeyCallback(GLFWwindow* window, int keyId, int scancode, int action, int mods)

@@ -29,12 +29,10 @@ glm::vec3 WanderBehaviour::ComputeSteeringForce()
 
 	// Get a random point on the edge of the circle
 	float randAngle = Utils::RandFloat(0.0f, Utils::PI() * 2.0f);
-	//std::cout << "Rand angle: " << randAngle << "\n";
 	float x = sin(randAngle) * circleRadius;
 	float z = cos(randAngle) * circleRadius;
 
 	glm::vec3 targetPos = glm::vec3(center.x + x, pos.y, center.z + z);
-	//std::cout << "Target: " << targetPos.x << " " << targetPos.y << " " << targetPos.z << "\n";
 	glm::vec3 velocity = glm::normalize(targetPos - pos) * speed;
 	glm::vec3 steer = velocity - rigidBody->GetLinearVelocity();
 	steer.x = glm::clamp(steer.x, -maxForce, maxForce);
