@@ -5,3 +5,16 @@ INSTALLING:
 
 CONTROLS:
 WASD to move camera
+Mouse to Look
+ESC to toggle mouse cursor
+LMB to shoot
+
+COLORS:
+Evade - Blue
+Flee - Yellow
+Idle - White
+Pursue - Red
+Seek - Purple
+Wander - Green
+
+Video: https://www.youtube.com/watch?v=mRGF0ZgChHQ

@@ -28,14 +28,14 @@ void ShaderLibrary::Add(const std::string& name, Shader* shader)
 	shaders.insert({ name, shader });
 }
 
-void ShaderLibrary::Load(const std::string& path)
+Shader* ShaderLibrary::Load(const std::string& name, const std::string& path)
 {
 	Shader* shader = new Shader(path);
-	std::string name = shader->GetFileName();
 	shaders.insert({ name, shader });
+	return shader;
 }
 
-const Shader* ShaderLibrary::Get(const std::string& name)
+Shader* ShaderLibrary::Get(const std::string& name)
 {
 	std::unordered_map<std::string, Shader*>::iterator it = shaders.find(name);
 	if (it == shaders.end())

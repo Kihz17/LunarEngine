@@ -1,73 +1,120 @@
-#include "Framebuffer.h"
+#include "FrameBuffer.h"
 
 #include <iostream>
 
-Framebuffer::Framebuffer()
+FrameBuffer::FrameBuffer()
 	: attachments(nullptr),
 	renderBufferID(0)
 {
 	glGenFramebuffers(1, &ID);
 }
 
-Framebuffer::~Framebuffer()
+FrameBuffer::~FrameBuffer()
 {
 	glDeleteFramebuffers(1, &ID);
 
-	std::unordered_map<std::string, ColorBuffer>::iterator it = colorBuffers.begin();
-	while (it != colorBuffers.end()) // Destroy create textures
-	{
-		if (it->second.texture) delete it->second.texture;
-		it++;
-	}
+	if (depthBuffer.texture) delete depthBuffer.texture;
 
-	colorBuffers.clear();
-
-	if (renderBufferID)
-	{
-		glDeleteRenderbuffers(1, &renderBufferID);
-	}
-
-	delete[] attachments;
+	if(attachments) delete[] attachments;
 }
 
-void Framebuffer::Bind() const
+void FrameBuffer::Bind() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, ID);
 }
 
-void Framebuffer::BindRead() const
+void FrameBuffer::BindRead() const
 {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, ID);
 }
 
-void Framebuffer::BindWrite() const
+void FrameBuffer::BindWrite() const
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ID);
 }
 
-void Framebuffer::Unbind() const
+void FrameBuffer::Unbind() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Framebuffer::UnbindRead() const
+void FrameBuffer::UnbindRead() const
 {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 }
 
-void Framebuffer::UnbindWrite() const
+void FrameBuffer::UnbindWrite() const
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
-//void Framebuffer::AddCubeBuffer(const std::string& name, int width, GLenum minFilter, GLenum format, GLenum internalFormat, GLenum type)
+void FrameBuffer::SetColorBufferWrite(ColorBufferType type) const
+{
+	glDrawBuffer(ColorBufferConversion::ConvertTypeToGLType(type));
+}
+
+void FrameBuffer::SetColorBufferWriteAttachment(unsigned int attachment) const
+{
+	glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachment);
+}
+
+void FrameBuffer::SetColorBufferRead(ColorBufferType type) const
+{
+	glReadBuffer(ColorBufferConversion::ConvertTypeToGLType(type));
+}
+
+void FrameBuffer::SetColorBufferReadAttachment(unsigned int attachment) const
+{
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
+}
+
+bool FrameBuffer::CheckComplete() const
+{
+	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+}
+
+ITexture* FrameBuffer::GetColorAttachment(const std::string& name)
+{
+	for (ColorBuffer& colorBuffer : colorBuffers)
+	{
+		if (colorBuffer.name == name) return colorBuffer.texture;
+	}
+
+	return nullptr;
+}
+
+void FrameBuffer::AddColorAttachment2D(const std::string& name, ITexture* texture, unsigned int index)
+{
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, texture->GetID(), 0);
+
+	if (index + 1 > colorBuffers.size())
+	{
+		colorBuffers.push_back({ name, texture });
+	}
+	else
+	{
+		colorBuffers[index] = { name, texture };
+	}
+
+	UpdateAttachmentArray(); // We've added a new color buffer, we have to refresh our attachments array
+
+	glDrawBuffers(colorBuffers.size(), attachments); // Tell OpenGL about our new color attachments 
+}
+
+
+void FrameBuffer::SetRenderBuffer(IRenderBuffer* renderBuffer, GLenum attachmentType) const
+{
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentType, GL_RENDERBUFFER, renderBuffer->GetID());
+}
+
+//void Framebuffer::AddColorBuffer(const std::string& name, GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, TextureFilterType filter, TextureWrapType wrap)
 //{
 //	ColorBuffer buffer;
-//	buffer.texture = new CubeMap(width, minFilter, format, internalFormat, type);
+//	buffer.texture = new Texture(internalFormat, format, dataFormat, width, height, filter, wrap, false);
 //
 //	Bind();
 //	buffer.attachment = colorBuffers.size();
-//	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + buffer.attachment, , buffer.texture->GetID(), 0);
+//	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + buffer.attachment, GL_TEXTURE_2D, buffer.texture->GetID(), 0);
 //
 //	colorBuffers.insert({ name, buffer });
 //
@@ -79,111 +126,35 @@ void Framebuffer::UnbindWrite() const
 //	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 //	{
 //		std::cout << "Framebuffer not complete!" << std::endl;
-//	}
+//	}	
 //
 //	Unbind();
 //}
 
-void Framebuffer::AddColorBuffer(const std::string& name, GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, TextureFilterType filter, TextureWrapType wrap)
+
+void FrameBuffer::SetDepthBuffer(ITexture* texture, int level)
 {
-	ColorBuffer buffer;
-	buffer.texture = new Texture(internalFormat, format, dataFormat, width, height, filter, wrap, false);
-
 	Bind();
-	buffer.attachment = colorBuffers.size();
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + buffer.attachment, GL_TEXTURE_2D, buffer.texture->GetID(), 0);
-
-	colorBuffers.insert({ name, buffer });
-
-	// We've added a new color buffer, we have to refresh our attachments array
-	UpdateAttachmentArray();
-
-	glDrawBuffers(colorBuffers.size(), attachments); // Tell OpenGL about our new color attachments 
+	depthBuffer.texture = texture;
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture->GetID(), level);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
 		std::cout << "Framebuffer not complete!" << std::endl;
-	}	
+	}
 
 	Unbind();
 }
 
-void Framebuffer::SetRenderBuffer(int width, int height, GLenum internalFormat, GLenum attachmentType, bool attach)
-{
-	Bind();
-	glGenRenderbuffers(1, &renderBufferID);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
-	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
-	if(attach)
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentType, GL_RENDERBUFFER, renderBufferID);
-	Unbind();
-}
-
-void Framebuffer::UpdateAttachmentArray()
+void FrameBuffer::UpdateAttachmentArray()
 {
 	if (attachments)
 		delete[] attachments;
 
-	std::vector<ColorBuffer*> sortedBuffers;
-	std::unordered_map<std::string, ColorBuffer>::iterator it = colorBuffers.begin();
-	while (it != colorBuffers.end())
-	{
-		sortedBuffers.push_back(&it->second);
-		it++;
-	}
-
-	// Sort the buffers
-	for (int i = 0; i < sortedBuffers.size(); i++)
-	{
-		for (int j = i + 1; j < sortedBuffers.size(); j++)
-		{
-			if (sortedBuffers[j]->attachment < sortedBuffers[i]->attachment)
-			{
-				ColorBuffer* temp = sortedBuffers[i];
-				sortedBuffers[i] = sortedBuffers[j];
-				sortedBuffers[j] = temp;
-			}
-		}
-	}
-
-	int size = sortedBuffers.size();
+	int size = colorBuffers.size();
 	attachments = new unsigned int[size];
 	for (int i = 0; i < size; i++)
 	{
-		attachments[i] = GL_COLOR_ATTACHMENT0 + sortedBuffers[i]->attachment;
+		attachments[i] = GL_COLOR_ATTACHMENT0 + i;
 	}
-}
-
-void Framebuffer::UpdateRenderBufferStorage(int width, int height, GLenum internalFormat) const
-{
-	BindRenderBuffer();
-	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
-}
-
-void Framebuffer::BindRenderBuffer() const
-{
-	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
-}
-
-void Framebuffer::BindColorBuffer(const std::string& name, uint32_t slot)
-{
-	if (colorBuffers.count(name) <= 0)
-	{
-		std::cout << "Could not find color buffer with name '" << name << "'!" << std::endl;
-		return;
-	}
-		
-	const ColorBuffer& buffer = colorBuffers.at(name);
-	buffer.texture->BindToSlot(slot);
-}
-
-const ITexture* Framebuffer::GetColorBufferTexture(const std::string& name) const
-{
-	if (colorBuffers.count(name) <= 0)
-	{
-		std::cout << "Could not find color buffer with name '" << name << "'!" << std::endl;
-		return nullptr;
-	}
-
-	return colorBuffers.at(name).texture;
 }

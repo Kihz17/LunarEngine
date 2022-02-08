@@ -5,10 +5,11 @@
 #include "GLCommon.h"
 #include "ApplicationLayerManager.h"
 #include "EntityManager.h"
-
-#include "Renderer.h"
+#include "Window.h"
+#include "Mesh.h"
 #include "EntityPanel.h"
 #include "IPanel.h"
+#include "Camera.h"
 
 class GameEngine
 {

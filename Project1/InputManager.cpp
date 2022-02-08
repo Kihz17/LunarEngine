@@ -1,5 +1,7 @@
 #include "InputManager.h"
 
+#include <iostream>
+
 std::unordered_map<int, Key*> InputManager::keys;
 
 double InputManager::mouseX = 0.0;
@@ -12,6 +14,32 @@ GLFWwindow* InputManager::window;
 void InputManager::Initialize(GLFWwindow* window)
 {
 	InputManager::window = window;
+
+	for (int i = 0; i <= 130; i++)
+	{
+		ListenToKey(GLFW_KEY_SPACE + i);
+	}
+
+	for (int i = 0; i <= 92; i++)
+	{
+		ListenToKey(GLFW_KEY_ESCAPE + i);
+	}
+
+	for (int i = 0; i <= 7; i++)
+	{
+		ListenToKey(GLFW_MOUSE_BUTTON_1 + i);
+	}
+}
+
+void InputManager::CleanUp()
+{
+	std::unordered_map<int, Key*>::iterator it; 
+	for (it = keys.begin(); it != keys.end(); it++)
+	{
+		delete it->second;
+	}
+
+	keys.clear();
 }
 
 Key* InputManager::GetKey(int keyCode)

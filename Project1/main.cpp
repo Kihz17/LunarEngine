@@ -1,42 +1,27 @@
-
-#include "Renderer.h"
-#include "InputManager.h"
 #include "GameEngine.h"
+#include "Window.h"
+#include "Mesh.h"
+
+#include "InputManager.h"
 #include "EntityManager.h"
+#include "TextureManager.h"
+
 #include "Components.h"
 #include "PhysicsFactory.h"
-#include "SoundManager.h"
 #include "PhysicsWorld.h"
 
-#include "PlayerController.h"
-#include "AnimationLayer.h"
-#include "AILayer.h"
-#include "EnemySpawner.h"
-
-#include "Steering.h"
-#include "ApproachShootCondition.h"
-#include "SeekCondition.h"
-#include "FleeCondition.h"
-#include "WanderCondition.h"
-#include "IdleCondition.h"
-#include "EvadeCondition.h"
-#include "PursueCondition.h"
-#include "SteeringEntityRemoveListener.h"
+#include "FreeCamController.h"
+#include "Texture2D.h"
 
 glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
 float GetRandom(float low, float high);
 
-void ShaderBallTest(Mesh* shaderBall, Texture* normalTexture, Texture* albedo, GameEngine& gameEngine);
+void ShaderBallTest(Mesh* shaderBall, ITexture* normalTexture, ITexture* albedo, GameEngine& gameEngine);
 
 int main() 
 {
-    // TODO:
-    // A way to show "forward" on enemies (gun models?)
-    // Eahc type must be different model
-    // Each behaviour must be diff color
-
-    WindowSpecs windowSpecs = GameEngine::InitializeGLFW(false);
+    WindowSpecs windowSpecs = GameEngine::InitializeGLFW(true);
 
     // Load models
     Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
@@ -44,27 +29,16 @@ int main()
     Mesh* plane = new Mesh("assets/models/plane.obj");
 
     // Load textures
-    Texture* albedoTexture = new Texture("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture* normalTexture = new Texture("assets/textures/pbr/rustediron/rustediron_normal.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture* roughnessTexture = new Texture("assets/textures/pbr/rustediron/rustediron_roughness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture* metalnessTexture = new Texture("assets/textures/pbr/rustediron/rustediron_metalness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture* aoTexture = new Texture("assets/textures/pbr/rustediron/rustediron_ao.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture* blue = new Texture("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture* grassTexture = new Texture("assets/textures/grass.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* normalTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_normal.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* roughnessTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_roughness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* metalnessTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_metalness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* aoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_ao.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* blue = TextureManager::CreateTexture2D("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* grassTexture = TextureManager::CreateTexture2D("assets/textures/grass.png", TextureFilterType::Linear, TextureWrapType::Repeat);
 
-    GameEngine gameEngine(windowSpecs, false);
-
-    Entity* sphereEnt = gameEngine.SpawnPhysicsSphere("sphere", glm::vec3(0.0f, 5.0f, 0.0f), 1.0f, nullptr);
-    TagComponent* playerTags = sphereEnt->AddComponent<TagComponent>();
-    playerTags->AddTag("player");
-
-    gameEngine.AddLayer(new PlayerController(gameEngine.camera, sphereEnt, gameEngine.GetWindowSpecs(), gameEngine.GetEntityManager(), gameEngine.physicsFactory, gameEngine.physicsWorld, sphere));
-    gameEngine.AddLayer(new AnimationLayer(gameEngine.GetEntityManager().GetEntities()));
-    AILayer* aiLayer = new AILayer(gameEngine.GetEntityManager().GetEntities());
-    gameEngine.AddLayer(aiLayer);
-    gameEngine.GetEntityManager().AddEntityRemoveListener(new SteeringEntityRemoveListener(aiLayer));
-
-    gameEngine.AddLayer(new EnemySpawner(3.0f, 40.0f, gameEngine.GetEntityManager(), gameEngine.physicsFactory, gameEngine.physicsWorld, sphere, aiLayer));
+    GameEngine gameEngine(windowSpecs, true);
+    gameEngine.AddLayer(new FreeCamController(gameEngine.camera, gameEngine.GetWindowSpecs()));
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
@@ -79,13 +53,13 @@ int main()
     }
 
     // SHADER BALL TEST
-    //ShaderBallTest(shaderBall, normalTexture, blue);
+    ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
 
     {
         Entity* ground = gameEngine.GetEntityManager().CreateEntity("ground");
         PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(20.0f));
         RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>();
+        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(2.0f, 1.0f, 2.0f));
 
         Physics::RigidBodyInfo rigidInfo;
         rigidInfo.linearDamping = 0.0f;
@@ -115,6 +89,8 @@ int main()
 // 1. Fix IBL
 // 2. Instanced rendering
 // 3. Prodecural grass
+// 4. Look into improving lighting
+// 5. Shadow mapping
 
 // LATER
 // SSAO? Raytracing? Raymarching?
@@ -125,10 +101,10 @@ float GetRandom(float low, float high)
     return low + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) / (high - low));
 }
 
-void ShaderBallTest(Mesh* shaderBall, Texture* normalTexture, Texture* albedo, GameEngine& gameEngine)
+void ShaderBallTest(Mesh* shaderBall, ITexture* normalTexture, ITexture* albedo, GameEngine& gameEngine)
 {
     Entity* testEntity = gameEngine.GetEntityManager().CreateEntity("shaderBall");
-    testEntity->AddComponent<PositionComponent>();
+    testEntity->AddComponent<PositionComponent>(glm::vec3(0.0f, 10.0f, 0.0f));
     testEntity->AddComponent<RotationComponent>();
     testEntity->AddComponent<ScaleComponent>();
 

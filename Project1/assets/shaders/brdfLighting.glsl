@@ -99,7 +99,7 @@ void main()
 	float depth = texture(gPosition, mTextureCoordinates).a;
 	
 	vec3 color = vec3(0.0f);
-		
+	
 	if(depth == 1.0f) // Nothing obstructing us here, just show the env map color
 	{
 		color = texture(uEnvMap, mTextureCoordinates).rgb; // Convert and sample from spherical environment map coords
@@ -148,7 +148,7 @@ void main()
 				kD *= 1.0f - metalness;
 				
 				vec3 diffuse = kD * albedo / PI;
-				color += (diffuse + specular) * light.color.rgb * lightDot; // Compute diffuse color
+				color += (diffuse + specular) * light.color.rgb * lightDot * light.color.a; // Compute diffuse color
 			}
 			
 			else if(light.param1.x == 1.0f) // Point light
@@ -225,7 +225,7 @@ void main()
 	}
 	
 	// Gamma correction
-	color.rgb = LinearizeColor(color.rgb);
+	//color.rgb = LinearizeColor(color.rgb);
 	
 	// Allow viewing from a specific buffer
 	if(uViewType == 1)

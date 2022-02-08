@@ -15,6 +15,7 @@ class InputManager
 {
 public:
 	static void Initialize(GLFWwindow* window);
+	static void CleanUp();
 
 	static Key* GetKey(int keyCode);
 	static Key* ListenToKey(int keycode);

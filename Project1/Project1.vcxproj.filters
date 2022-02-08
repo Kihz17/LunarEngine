@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Vendor">
       <UniqueIdentifier>{51d20c87-9428-43c7-87cf-9cd07ccf4d72}</UniqueIdentifier>
     </Filter>
@@ -13,9 +9,6 @@
     </Filter>
     <Filter Include="Graphics">
       <UniqueIdentifier>{b7dd52a2-6785-424f-9688-ccbbc4130d4c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Graphics\Input">
-      <UniqueIdentifier>{f6659c61-4573-4b64-97e9-a775c40d1e0e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Panels">
       <UniqueIdentifier>{404aecaf-a80a-42ea-8d01-cc436dea2ba5}</UniqueIdentifier>
@@ -59,6 +52,21 @@
     <Filter Include="ECS\Components">
       <UniqueIdentifier>{c205ef22-6ba0-4c77-b747-713728797036}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{f6659c61-4573-4b64-97e9-a775c40d1e0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Interfaces">
+      <UniqueIdentifier>{47021e8f-8adc-4470-bb34-7d7a4971dc16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Textures">
+      <UniqueIdentifier>{f9283625-aac5-4521-bc56-b852ec1932ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\RenderPasses">
+      <UniqueIdentifier>{07bd463c-2aef-488c-8fbd-6aac0ae1d1b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Shader">
+      <UniqueIdentifier>{cd003429-dd94-40a2-817d-9af60e1f2230}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -83,9 +91,6 @@
       <Filter>Vendor\imgui</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Texture.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -110,13 +115,7 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderLibrary.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Framebuffer.cpp">
+    <ClCompile Include="FrameBuffer.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
@@ -159,10 +158,10 @@
       <Filter>Animation</Filter>
     </ClCompile>
     <ClCompile Include="Key.cpp">
-      <Filter>Graphics\Input</Filter>
+      <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
-      <Filter>Graphics\Input</Filter>
+      <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="SteeringBehaviour.cpp">
       <Filter>AI\Steering</Filter>
@@ -242,6 +241,51 @@
     <ClCompile Include="EnemySpawner.cpp">
       <Filter>Layers</Filter>
     </ClCompile>
+    <ClCompile Include="FreeCamController.cpp">
+      <Filter>Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="CSMShadowMapping.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="UniformBuffer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="IFrameBuffer.cpp">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>Graphics\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureArray.cpp">
+      <Filter>Graphics\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeMap.cpp">
+      <Filter>Graphics\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Graphics\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderBuffer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryPass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderLibrary.cpp">
+      <Filter>Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvironmentMapPass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="LightingPass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="ForwardRenderPass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -272,9 +316,6 @@
       <Filter>Vendor\imgui</Filter>
     </ClInclude>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Texture.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -305,13 +346,7 @@
     <ClInclude Include="Renderer.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderLibrary.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Framebuffer.h">
+    <ClInclude Include="FrameBuffer.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
@@ -363,10 +398,10 @@
       <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="Key.h">
-      <Filter>Graphics\Input</Filter>
+      <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
-      <Filter>Graphics\Input</Filter>
+      <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="SteeringBehaviour.h">
       <Filter>AI\Steering</Filter>
@@ -481,6 +516,69 @@
     </ClInclude>
     <ClInclude Include="EnemySpawner.h">
       <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeCamController.h">
+      <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="CSMShadowMapping.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformBuffer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="IUniformBuffer.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IFrameBuffer.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="ITexture.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Graphics\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2D.h">
+      <Filter>Graphics\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureArray.h">
+      <Filter>Graphics\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeMap.h">
+      <Filter>Graphics\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderBuffer.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderBuffer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryPass.h">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderPass.h">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderLibrary.h">
+      <Filter>Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderSubmission.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvironmentMapPass.h">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="LightingPass.h">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="ForwardRenderPass.h">
+      <Filter>Graphics\RenderPasses</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

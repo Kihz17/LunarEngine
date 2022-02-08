@@ -18,7 +18,7 @@ public:
 	virtual glm::vec3 ComputeSteeringForce() override;
 
 	bool IsWithinRadius() const { return withinRadius; }
-
+	virtual glm::vec3 GetColor() const override { return glm::vec3(0.8f, 0.0, 0.8f); }
 private:
 	float arriveRadius;
 	bool withinRadius;

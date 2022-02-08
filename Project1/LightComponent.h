@@ -23,11 +23,8 @@ struct LightComponent : public Component
 			}
 			ImGui::ColorEdit3("Diffuse", (float*)&ptr->color);
 			ImGui::DragFloat("Radius", &ptr->radius, 0.01f);
-			if (ptr->lightType == LightType::Point)
-			{
-				ImGui::DragFloat("Intensity", &ptr->intensity, 0.01f);
-			}
-
+			ImGui::DragFloat("Intensity", &ptr->intensity, 0.01f);
+			
 			ImGui::NewLine();
 
 			// Atten selection

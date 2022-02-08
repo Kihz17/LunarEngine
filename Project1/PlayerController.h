@@ -5,6 +5,7 @@
 #include "Renderer.h"
 #include "EntityManager.h"
 #include "Mesh.h"
+#include "Key.h"
 
 #include <IPhysicsFactory.h>
 #include <glm/glm.hpp>
@@ -25,9 +26,17 @@ private:
 	Entity* entity;
 	const WindowSpecs& windowSpecs;
 	glm::vec2 lastCursorPos;
+	float moveSpeed;
 
 	EntityManager& entityManager;
 	Physics::IPhysicsFactory<Entity>* physicsFactory;
 	Physics::IPhysicsWorld<Entity>* physicsWorld;
 	Mesh* bulletMesh;
+
+	Key* wKey;
+	Key* aKey;
+	Key* sKey;
+	Key* dKey;
+	Key* escKey;
+	Key* lmbKey;
 };

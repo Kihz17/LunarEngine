@@ -7,6 +7,13 @@
 #include "CollisionListener.h"
 #include "SoundManager.h"
 #include "InputManager.h"
+#include "TextureManager.h"
+#include "Renderer.h"
+
+#include "PositionComponent.h"
+#include "ScaleComponent.h"
+#include "RotationComponent.h"
+#include "RigidBodyComponent.h"
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
@@ -25,6 +32,7 @@ GameEngine::GameEngine(const WindowSpecs& windowSpecs, bool editorMode)
 {
 	// Initialize systems
     InputManager::Initialize(windowSpecs.window);
+    TextureManager::Initialize();
 	Renderer::Initialize(&this->windowSpecs);
     SoundManager::Initilaize();
 
@@ -39,6 +47,7 @@ GameEngine::~GameEngine()
     ShaderLibrary::CleanUp();
     Renderer::CleanUp();
     SoundManager::CleanUp();
+    TextureManager::CleanUp(); // This should be last, to give other things time if they want to remove textures
 }
 
 void GameEngine::Render()

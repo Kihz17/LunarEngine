@@ -26,4 +26,5 @@ public:
 	virtual Physics::IRigidBody* GetRigidBody() = 0;
 
 	virtual SteeringBehaviourType GetType() const = 0;
+	virtual glm::vec3 GetColor() const = 0;
 };

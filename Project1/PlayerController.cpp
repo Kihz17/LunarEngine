@@ -5,24 +5,6 @@
 
 #include <Shapes.h>
 
-Key* wKey = InputManager::ListenToKey(GLFW_KEY_W);
-Key* aKey = InputManager::ListenToKey(GLFW_KEY_A);
-Key* sKey = InputManager::ListenToKey(GLFW_KEY_S);
-Key* dKey = InputManager::ListenToKey(GLFW_KEY_D);
-Key* escKey = InputManager::ListenToKey(GLFW_KEY_ESCAPE);
-Key* f1Key = InputManager::ListenToKey(GLFW_KEY_F1);
-Key* f2Key = InputManager::ListenToKey(GLFW_KEY_F2);
-Key* f3Key = InputManager::ListenToKey(GLFW_KEY_F3);
-Key* f4Key = InputManager::ListenToKey(GLFW_KEY_F4);
-Key* f5Key = InputManager::ListenToKey(GLFW_KEY_F5);
-Key* f6Key = InputManager::ListenToKey(GLFW_KEY_F6);
-Key* f7Key = InputManager::ListenToKey(GLFW_KEY_F7);
-Key* f8Key = InputManager::ListenToKey(GLFW_KEY_F8);
-Key* f9Key = InputManager::ListenToKey(GLFW_KEY_F9);
-Key* lmbKey = InputManager::ListenToKey(GLFW_MOUSE_BUTTON_LEFT);
-
-float moveSpeed = 50.0f;
-
 PlayerController::PlayerController(Camera& camera, Entity* entity, const WindowSpecs& windowSpecs, EntityManager& entityManager, 
     Physics::IPhysicsFactory<Entity>* physicsFactory, Physics::IPhysicsWorld<Entity>* physicsWorld, Mesh* bulletMesh)
 	: camera(camera),
@@ -32,9 +14,15 @@ PlayerController::PlayerController(Camera& camera, Entity* entity, const WindowS
     entityManager(entityManager),
     physicsFactory(physicsFactory),
     physicsWorld(physicsWorld),
-    bulletMesh(bulletMesh)
+    bulletMesh(bulletMesh),
+    moveSpeed(50.0f)
 {
-
+    wKey = InputManager::GetKey(GLFW_KEY_W);
+    aKey = InputManager::GetKey(GLFW_KEY_A);
+    sKey = InputManager::GetKey(GLFW_KEY_S);
+    dKey = InputManager::GetKey(GLFW_KEY_D);
+    escKey = InputManager::GetKey(GLFW_KEY_ESCAPE);
+    lmbKey = InputManager::GetKey(GLFW_MOUSE_BUTTON_LEFT);
 }
 
 PlayerController::~PlayerController()
@@ -101,43 +89,6 @@ void PlayerController::OnUpdate(float deltaTime)
             glfwSetCursorPos(windowSpecs.window, lastCursorPos.x, lastCursorPos.y);
             InputManager::SetCursorMode(CursorMode::Locked);
         }
-    }
-
-    if (f1Key->IsJustPressed())
-    {
-        Renderer::SetViewType(1);
-    }
-    else if (f2Key->IsJustPressed())
-    {
-        Renderer::SetViewType(2);
-    }
-    else if (f3Key->IsJustPressed())
-    {
-        Renderer::SetViewType(3);
-    }
-    else if (f4Key->IsJustPressed())
-    {
-        Renderer::SetViewType(4);
-    }
-    else if (f5Key->IsJustPressed())
-    {
-        Renderer::SetViewType(5);
-    }
-    else if (f6Key->IsJustPressed())
-    {
-        Renderer::SetViewType(6);
-    }
-    else if (f7Key->IsJustPressed())
-    {
-        Renderer::SetViewType(7);
-    }
-    else if (f8Key->IsJustPressed())
-    {
-        Renderer::SetViewType(8);
-    }
-    else if (f9Key->IsJustPressed())
-    {
-        Renderer::SetViewType(9);
     }
 }
 

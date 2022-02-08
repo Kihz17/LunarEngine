@@ -1,44 +1,58 @@
 #pragma once
 
-#include "Texture.h"
+#include "IFrameBuffer.h"
 
-#include <string>
-#include <unordered_map>
+#include <vector>
 
 struct ColorBuffer
 {
+	std::string name;
 	ITexture* texture = nullptr;
-	unsigned int attachment;
 };
 
-class Framebuffer
+struct DepthBuffer
+{
+	ITexture* texture = nullptr;
+};
+
+class FrameBuffer : public IFrameBuffer
 {
 public:
-	Framebuffer();
-	virtual ~Framebuffer();
+	FrameBuffer();
+	virtual ~FrameBuffer();
 
-	void Bind() const;
-	void BindRead() const;
-	void BindWrite() const;
+	virtual void Bind() const override;
+	virtual void BindRead() const override;
+	virtual void BindWrite() const override;
 
-	void Unbind() const;
-	void UnbindRead() const;
-	void UnbindWrite() const;
+	virtual void Unbind() const override;
+	virtual void UnbindRead() const override;;
+	virtual void UnbindWrite() const override;
 
-	//void AddCubeBuffer(const std::string& name, int width, GLenum minFilter, GLenum format, GLenum internalFormat, GLenum type);
-	void AddColorBuffer(const std::string& name, GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, TextureFilterType filter, TextureWrapType wrap);
-	void SetRenderBuffer(int width, int height, GLenum internalFormat, GLenum attachmentType, bool attach = true);
+	virtual void SetColorBufferWrite(ColorBufferType type) const override;
+	virtual void SetColorBufferWriteAttachment(unsigned int attachment) const override;
 
-	void BindRenderBuffer() const;
-	void UpdateRenderBufferStorage(int width, int height, GLenum internalFormat) const;
-	void BindColorBuffer(const std::string& name, uint32_t slot = 0);
+	virtual void SetColorBufferRead(ColorBufferType type) const override;
+	virtual void SetColorBufferReadAttachment(unsigned int attachment) const override;
 
-	const ITexture* GetColorBufferTexture(const std::string& name) const;
+	virtual bool CheckComplete() const override;
+
+	virtual ITexture* GetColorAttachment(const std::string& name) override;
+	virtual void AddColorAttachment2D(const std::string& name, ITexture* texture, unsigned int index) override;
+
+	virtual void SetRenderBuffer(IRenderBuffer* renderBuffer, GLenum attachmentType) const override;
+
+
+	void SetDepthBuffer(ITexture* texture, int level);
+
 private:
 	void UpdateAttachmentArray();
 
 	GLuint ID;
 	GLuint renderBufferID;
-	std::unordered_map<std::string, ColorBuffer> colorBuffers;
+
+	std::vector<ColorBuffer> colorBuffers;
+
+	DepthBuffer depthBuffer;
 	unsigned int* attachments;
 };

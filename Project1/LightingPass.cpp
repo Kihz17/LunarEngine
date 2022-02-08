@@ -1,0 +1,105 @@
+#include "LightingPass.h"
+#include "FrameBuffer.h"
+#include "TextureManager.h"
+#include "RenderBuffer.h"
+#include "ShaderLibrary.h"
+#include "Light.h"
+#include "Renderer.h"
+
+#include <sstream>
+
+LightingPass::LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, glm::vec3& cameraPosition)
+	: geometryBuffer(gBuffer),
+	environmentBuffer(eBuffer),
+	shader(ShaderLibrary::Load(Renderer::LIGHTING_SHADER_KEY, "assets/shaders/brdfLighting.glsl")), 
+	cameraPosition(cameraPosition),
+	quad(ShapeType::Quad)
+{
+	// Setup shader uniforms
+	shader->Bind();
+	shader->InitializeUniform("uInverseView");
+	shader->InitializeUniform("uInverseProjection");
+	shader->InitializeUniform("uView");
+	shader->InitializeUniform("gPosition");
+	shader->InitializeUniform("gAlbedo");
+	shader->InitializeUniform("gNormal");
+	shader->InitializeUniform("gEffects");
+	shader->InitializeUniform("uLightAmount");
+
+	for (int i = 0; i < Light::MAX_LIGHTS; i++)
+	{
+		{
+			std::stringstream ss;
+			ss << "uLightArray[" << i << "].position";
+			shader->InitializeUniform(ss.str());
+		}
+		{
+			std::stringstream ss;
+			ss << "uLightArray[" << i << "].direction";
+			shader->InitializeUniform(ss.str());
+		}
+		{
+			std::stringstream ss;
+			ss << "uLightArray[" << i << "].color";
+			shader->InitializeUniform(ss.str());
+		}
+		{
+			std::stringstream ss;
+			ss << "uLightArray[" << i << "].param1";
+			shader->InitializeUniform(ss.str());
+		}
+	}
+
+	shader->InitializeUniform("uEnvMap");
+	shader->InitializeUniform("uIrradianceMap");
+	shader->InitializeUniform("uEnvMapPreFilter");
+	shader->InitializeUniform("uEnvMapLUT");
+	shader->InitializeUniform("uViewType");
+	shader->InitializeUniform("uReflectivity");
+	shader->InitializeUniform("uCameraPosition");
+
+	shader->SetInt("uViewType", 1); // Regular color view by default
+
+	// Set samplers for lighting
+	shader->SetInt("gPosition", 0);
+	shader->SetInt("gAlbedo", 1);
+	shader->SetInt("gNormal", 2);
+	shader->SetInt("gEffects", 3);
+	shader->SetInt("uEnvMap", 4);
+	shader->SetInt("uIrradianceMap", 5);
+	shader->SetInt("uEnvMapPreFilter", 6);
+	shader->SetInt("uEnvMapLUT", 7);
+
+	shader->Unbind();
+}
+
+LightingPass::~LightingPass()
+{
+	
+}
+
+void LightingPass::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Disable depth buffer so that the quad doesnt get discarded
+
+	shader->Bind();
+
+	// Bind G-Buffer textures
+	geometryBuffer->GetColorAttachment("position")->BindToSlot(0);
+	geometryBuffer->GetColorAttachment("albedo")->BindToSlot(1);
+	geometryBuffer->GetColorAttachment("normal")->BindToSlot(2);
+	geometryBuffer->GetColorAttachment("effects")->BindToSlot(3);
+
+	// Bind environment map stuff
+	environmentBuffer->GetColorAttachment("environment")->BindToSlot(4);
+
+	shader->SetMat4("uInverseView", glm::transpose(view));
+	shader->SetMat4("uInverseProjection", glm::inverse(projection));
+	shader->SetMat4("uView", view);
+	shader->SetFloat3("uCameraPosition", cameraPosition);
+
+	// TODO: Move these into gBuffer so it can be passed in with the geometry
+	shader->SetFloat3("uReflectivity", glm::vec3(0.04f));
+
+	quad.Draw();
+}

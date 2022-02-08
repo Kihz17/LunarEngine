@@ -9,6 +9,7 @@ public:
 	virtual ~EvadeBehaviour();
 
 	virtual glm::vec3 ComputeSteeringForce() override;
+	virtual glm::vec3 GetColor() const override { return glm::vec3(0.0f, 0.0, 0.8f); }
 
 	bool flipDir;
 

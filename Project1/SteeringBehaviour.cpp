@@ -27,7 +27,7 @@ void SteeringBehaviour::Update(float deltaTime)
 	glm::vec3 dir = rigidBody->GetLinearVelocity();
 	if (glm::length(dir) != 0.0f)
 	{
-		LookAtDirection(glm::normalize(dir), deltaTime);
+		LookAtDirection(-glm::normalize(dir), deltaTime);
 	}
 }
 

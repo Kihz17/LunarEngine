@@ -22,7 +22,6 @@ bool EvadeCondition::CanUse(const std::vector<Entity*>& entities)
 	if (target)
 	{
 		behaviour->SetTarget(target);
-		behaviour->flipDir = Utils::RandBool();
 	}
 	
 	return target;
@@ -53,7 +52,7 @@ bool EvadeCondition::CanContinueToUse(const std::vector<Entity*>& entities)
 
 void EvadeCondition::OnStart()
 {
-
+	behaviour->flipDir = Utils::RandBool();
 }
 
 void EvadeCondition::OnStop()

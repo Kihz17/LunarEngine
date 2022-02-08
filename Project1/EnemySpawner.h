@@ -12,7 +12,7 @@ class EnemySpawner : public ApplicationLayer
 {
 public:
 	EnemySpawner(float spawnInterval, float spawnRadius, EntityManager& entityManager, 
-		Physics::IPhysicsFactory<Entity>* physicsFactory, Physics::IPhysicsWorld<Entity>* physicsWorld, Mesh* enemyMesh, AILayer* aiLayer);
+		Physics::IPhysicsFactory<Entity>* physicsFactory, Physics::IPhysicsWorld<Entity>* physicsWorld, AILayer* aiLayer, Mesh* typeAMesh, Mesh* typeBMesh, Mesh* typeCMesh, Mesh* typeDMesh, Mesh* sphere);
 	virtual ~EnemySpawner();
 
 	virtual void OnUpdate(float deltaTime) override;
@@ -22,7 +22,7 @@ private:
 	void SpawnTypeB();
 	void SpawnTypeC();
 	void SpawnTypeD();
-	Entity* SpawnPhysicsSphere(const glm::vec3& color);
+	Entity* SpawnPhysicsSphere(const glm::vec3& color, Mesh* mesh);
 
 	float spawnInterval;
 	float spawnRadius;
@@ -30,6 +30,11 @@ private:
 	EntityManager& entityManager;
 	Physics::IPhysicsFactory<Entity>* physicsFactory;
 	Physics::IPhysicsWorld<Entity>* physicsWorld;
-	Mesh* enemyMesh;
 	AILayer* aiLayer;
+
+	Mesh* typeAMesh;
+	Mesh* typeBMesh;
+	Mesh* typeCMesh;
+	Mesh* typeDMesh;
+	Mesh* sphere;
 };

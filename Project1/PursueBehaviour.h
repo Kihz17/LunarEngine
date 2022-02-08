@@ -9,7 +9,7 @@ public:
 	virtual ~PursueBehaviour();
 
 	virtual glm::vec3 ComputeSteeringForce() override;
-
+	virtual glm::vec3 GetColor() const override { return glm::vec3(0.8f, 0.0, 0.0f); }
 private:
 	float maxSteps;
 };

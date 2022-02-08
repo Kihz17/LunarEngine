@@ -2,7 +2,6 @@
 
 #include "pch.h"
 #include "AABB.h"
-#include "Texture.h"
 #include "VertexInformation.h"
 #include "VertexArrayObject.h"
 

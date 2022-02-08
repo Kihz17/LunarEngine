@@ -2,7 +2,7 @@
 
 #include "Component.h"
 #include "VertexArrayObject.h"
-#include "Texture.h"
+#include "ITexture.h"
 
 struct RenderComponent : public Component
 {
@@ -13,12 +13,12 @@ struct RenderComponent : public Component
 
 		bool isColorOverride = false;
 		glm::vec3 colorOverride = glm::vec3(0.0f);
-		std::vector<std::pair<Texture*, float>> albedoTextures;
+		std::vector<std::pair<ITexture*, float>> albedoTextures;
 
-		Texture* normalTexture = nullptr;
-		Texture* roughnessTexture = nullptr;
-		Texture* metalTexture = nullptr;
-		Texture* aoTexture = nullptr;
+		ITexture* normalTexture = nullptr;
+		ITexture* roughnessTexture = nullptr;
+		ITexture* metalTexture = nullptr;
+		ITexture* aoTexture = nullptr;
 
 		float roughness = 0.01f;
 		float metalness = 0.02f;
@@ -118,13 +118,13 @@ struct RenderComponent : public Component
 	// Diffuse color
 	bool isColorOverride;
 	glm::vec3 colorOverride;
-	std::vector<std::pair<Texture*, float>> albedoTextures;
+	std::vector<std::pair<ITexture*, float>> albedoTextures;
 
 	// Materials Textures
-	Texture* normalTexture;
-	Texture* roughnessTexture;
-	Texture* metalTexture;
-	Texture* aoTexture;
+	ITexture* normalTexture;
+	ITexture* roughnessTexture;
+	ITexture* metalTexture;
+	ITexture* aoTexture;
 
 	// Material values (should only be used if material textures are not present)
 	float roughness;
