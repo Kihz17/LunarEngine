@@ -1,5 +1,7 @@
 #include "Key.h"
 
+#include <iostream>
+
 Key::Key(int keyCode)
 	: keyCode(keyCode),
 	down(false),

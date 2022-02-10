@@ -17,9 +17,6 @@ enum class ShaderSourceType
 class Shader
 {
 public:
-	Shader(const std::string& path);
-	virtual ~Shader();
-
 	void InitializeUniform(const std::string& name);
 
 	void Bind() const;
@@ -38,6 +35,11 @@ public:
 	void SetMat4(const std::string& name, const glm::mat4& value) const;
 
 private:
+	friend class ShaderLibrary;
+
+	Shader(const std::string& path);
+	virtual ~Shader();
+
 	GLuint GetUniformID(const std::string& name) const;
 
 	GLuint ID;

@@ -9,13 +9,15 @@
 #include "EnvironmentMapPass.h"
 #include "LightingPass.h"
 #include "ForwardRenderPass.h"
+#include "CascadedShadowMapping.h"
 
 #include <vector>
 
+class Light;
 class Renderer
 {
 public:
-	static void Initialize(WindowSpecs* window);
+	static void Initialize(const Camera& camera, WindowSpecs* window);
 	static void CleanUp();
 
 	static void SetViewType(uint32_t type);
@@ -28,6 +30,8 @@ public:
 	static void EndFrame();
 
 	static void Submit(const RenderSubmission& submission);
+
+	static void SetShadowMappingDirectionalLight(Light* light);
 
 	static const std::string LIGHTING_SHADER_KEY;
 	static const std::string FORWARD_SHADER_KEY;
@@ -46,4 +50,5 @@ private:
 	static EnvironmentMapPass* envMapPass;
 	static LightingPass* lightingPass;
 	static ForwardRenderPass* forwardPass;
+	static CascadedShadowMapping* shadowMappingPass;
 };

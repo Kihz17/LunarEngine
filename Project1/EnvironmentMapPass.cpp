@@ -12,7 +12,6 @@ EnvironmentMapPass::EnvironmentMapPass(const WindowSpecs* windowSpecs)
 	envMapHDR(nullptr),
 	envMapCube(TextureManager::CreateCubeMap(1024, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT)),
 	cubeMapBuffer(new FrameBuffer()),
-	cubeMapRenderBuffer(new RenderBuffer(envMapCube->GetWidth(), envMapCube->GetHeight(), GL_DEPTH_COMPONENT24)),
 	conversionShader(ShaderLibrary::Load(CUBE_MAP_CONVERT_SHADER_KEY, "assets/shaders/equirectangularToCubeMap.glsl")),
 	windowSpecs(windowSpecs)
 {
@@ -20,10 +19,6 @@ EnvironmentMapPass::EnvironmentMapPass(const WindowSpecs* windowSpecs)
 	environmentBuffer->Bind();
 	environmentBuffer->AddColorAttachment2D("environment", TextureManager::CreateTexture2D(GL_RGBA16F, GL_RGBA, GL_FLOAT, windowSpecs->width, windowSpecs->height, TextureFilterType::Linear, TextureWrapType::None), 0);
 	environmentBuffer->Unbind();
-
-	//cubeMapBuffer->Bind();
-	//cubeMapBuffer->SetRenderBuffer(cubeMapRenderBuffer, GL_DEPTH_ATTACHMENT);
-	//cubeMapBuffer->Unbind();
 
 	// Setup shader uniforms
 	shader->Bind();
@@ -45,12 +40,12 @@ EnvironmentMapPass::~EnvironmentMapPass()
 {
 	delete environmentBuffer;
 	delete cubeMapBuffer;
-	delete cubeMapRenderBuffer;
 }
 
 void EnvironmentMapPass::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_CULL_FACE); // Make sure none of our cubes faces get culled
 
 	environmentBuffer->Bind();
 	shader->Bind();
@@ -59,11 +54,15 @@ void EnvironmentMapPass::DoPass(std::vector<RenderSubmission>& submissions, cons
 	envMapCube->BindToSlot(0);
 	cube.Draw();
 	environmentBuffer->Unbind();
+
+	glEnable(GL_CULL_FACE); // Re-enable face culling
 }
 
 void EnvironmentMapPass::SetEnvironmentMapEquirectangular(const std::string& path)
 {
 	envMapHDR = TextureManager::CreateTexture2D(path, TextureFilterType::Linear, TextureWrapType::Repeat, true, true, true); // new HDR env map
+
+	glDisable(GL_CULL_FACE); // Make sure none of our cubes faces get culled
 
 	// Convert the HDR equirectangular texture to its cube map equivalent
 	{
@@ -97,7 +96,8 @@ void EnvironmentMapPass::SetEnvironmentMapEquirectangular(const std::string& pat
 
 		envMapCube->ComputeMipmap();
 		cubeMapBuffer->Unbind();
-
-		glViewport(0, 0, windowSpecs->width, windowSpecs->height); // Set viewport back to native width/height
 	}
+
+	glViewport(0, 0, windowSpecs->width, windowSpecs->height); // Set viewport back to native width/height
+	glEnable(GL_CULL_FACE); // Re-enable face culling
 }

@@ -1,4 +1,5 @@
 #include "FrameBuffer.h"
+#include "Texture2D.h"
 
 #include <iostream>
 
@@ -12,8 +13,6 @@ FrameBuffer::FrameBuffer()
 FrameBuffer::~FrameBuffer()
 {
 	glDeleteFramebuffers(1, &ID);
-
-	if (depthBuffer.texture) delete depthBuffer.texture;
 
 	if(attachments) delete[] attachments;
 }
@@ -50,7 +49,7 @@ void FrameBuffer::UnbindWrite() const
 
 void FrameBuffer::SetColorBufferWrite(ColorBufferType type) const
 {
-	glDrawBuffer(ColorBufferConversion::ConvertTypeToGLType(type));
+	glDrawBuffer(FrameBufferConversion::ConvertTypeToGLType(type));
 }
 
 void FrameBuffer::SetColorBufferWriteAttachment(unsigned int attachment) const
@@ -60,7 +59,7 @@ void FrameBuffer::SetColorBufferWriteAttachment(unsigned int attachment) const
 
 void FrameBuffer::SetColorBufferRead(ColorBufferType type) const
 {
-	glReadBuffer(ColorBufferConversion::ConvertTypeToGLType(type));
+	glReadBuffer(FrameBufferConversion::ConvertTypeToGLType(type));
 }
 
 void FrameBuffer::SetColorBufferReadAttachment(unsigned int attachment) const
@@ -83,9 +82,9 @@ ITexture* FrameBuffer::GetColorAttachment(const std::string& name)
 	return nullptr;
 }
 
-void FrameBuffer::AddColorAttachment2D(const std::string& name, ITexture* texture, unsigned int index)
+void FrameBuffer::AddColorAttachment2D(const std::string& name, ITexture* texture, unsigned int index, FrameBufferOperationType operationType)
 {
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, texture->GetID(), 0);
+	glFramebufferTexture2D(FrameBufferConversion::ConvertOperationToGL(operationType), GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, texture->GetID(), 0);
 
 	if (index + 1 > colorBuffers.size())
 	{
@@ -101,49 +100,21 @@ void FrameBuffer::AddColorAttachment2D(const std::string& name, ITexture* textur
 	glDrawBuffers(colorBuffers.size(), attachments); // Tell OpenGL about our new color attachments 
 }
 
+void FrameBuffer::SetDepthAttachment(ITexture* texture, FrameBufferOperationType operationType, int level)
+{
+	glFramebufferTexture(FrameBufferConversion::ConvertOperationToGL(operationType), GL_DEPTH_ATTACHMENT, texture->GetID(), level);
+	depthBuffer = texture;
+}
+
+void FrameBuffer::SetDepthAttachment2D(Texture2D* texture, FrameBufferOperationType operationType, int level)
+{
+	glFramebufferTexture(FrameBufferConversion::ConvertOperationToGL(operationType), GL_DEPTH_ATTACHMENT, texture->GetID(), level);
+	depthBuffer = texture;
+}
 
 void FrameBuffer::SetRenderBuffer(IRenderBuffer* renderBuffer, GLenum attachmentType) const
 {
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentType, GL_RENDERBUFFER, renderBuffer->GetID());
-}
-
-//void Framebuffer::AddColorBuffer(const std::string& name, GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, TextureFilterType filter, TextureWrapType wrap)
-//{
-//	ColorBuffer buffer;
-//	buffer.texture = new Texture(internalFormat, format, dataFormat, width, height, filter, wrap, false);
-//
-//	Bind();
-//	buffer.attachment = colorBuffers.size();
-//	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + buffer.attachment, GL_TEXTURE_2D, buffer.texture->GetID(), 0);
-//
-//	colorBuffers.insert({ name, buffer });
-//
-//	// We've added a new color buffer, we have to refresh our attachments array
-//	UpdateAttachmentArray();
-//
-//	glDrawBuffers(colorBuffers.size(), attachments); // Tell OpenGL about our new color attachments 
-//
-//	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-//	{
-//		std::cout << "Framebuffer not complete!" << std::endl;
-//	}	
-//
-//	Unbind();
-//}
-
-
-void FrameBuffer::SetDepthBuffer(ITexture* texture, int level)
-{
-	Bind();
-	depthBuffer.texture = texture;
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture->GetID(), level);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		std::cout << "Framebuffer not complete!" << std::endl;
-	}
-
-	Unbind();
 }
 
 void FrameBuffer::UpdateAttachmentArray()

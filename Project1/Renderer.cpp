@@ -21,13 +21,14 @@ glm::vec3 Renderer::cameraPos(0.0f);
 static std::vector<RenderSubmission> submissions;
 static std::vector<RenderSubmission> forwardSubmissions;
 
-float Renderer::farPlane = 1000.0f;
+float Renderer::farPlane = 500.0f;
 float Renderer::nearPlane = 0.1f;
 
 GeometryPass* Renderer::geometryPass = nullptr;
 EnvironmentMapPass* Renderer::envMapPass = nullptr;
 LightingPass* Renderer::lightingPass = nullptr;
 ForwardRenderPass* Renderer::forwardPass = nullptr;
+CascadedShadowMapping* Renderer::shadowMappingPass = nullptr;
 
 const std::string Renderer::LIGHTING_SHADER_KEY = "lShader";
 const std::string Renderer::FORWARD_SHADER_KEY = "fShader";
@@ -38,13 +39,19 @@ static VertexBuffer* grassVBO = nullptr;
 static uint32_t grassCount = 0;
 static float* grassRoots = new float[MAX_GRASS_BLADES]; // Allows for 2048 grass blades (Since this array is so big, i'm allocating on heap instead of stack)
 
-void Renderer::Initialize(WindowSpecs* window)
+void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 {
 	windowDetails = window;
 
 	geometryPass = new GeometryPass(windowDetails);
 	envMapPass = new EnvironmentMapPass(windowDetails);
-	lightingPass = new LightingPass(geometryPass->GetGBuffer(), envMapPass->GetEnvironmentBuffer(), windowDetails, cameraPos);
+
+	CascadedShadowMappingInfo csmInfo(view, camera.fov, nearPlane, farPlane);
+	csmInfo.windowSpecs = windowDetails;
+	csmInfo.zMult = 10.0f;
+	shadowMappingPass = new CascadedShadowMapping(csmInfo);
+
+	lightingPass = new LightingPass(geometryPass->GetGBuffer(), envMapPass->GetEnvironmentBuffer(), windowDetails, cameraPos, shadowMappingPass->GetShadowMap(), shadowMappingPass->GetCascadeLevels());
 	forwardPass = new ForwardRenderPass(geometryPass->GetGBuffer(), windowDetails);
 
 	// TEST SECITON FOR GRASS
@@ -70,7 +77,8 @@ void Renderer::Initialize(WindowSpecs* window)
 		grassVAO->AddVertexBuffer(grassVBO);
 
 		// Grass shader
-		Shader* grassShader = new Shader("assets/shaders/grass.glsl");
+		Shader* grassShader = ShaderLibrary::Load("grassShader", "assets/shaders/grass.glsl");
+		grassShader->Bind();
 		grassShader->InitializeUniform("uWidthHeight");
 		grassShader->InitializeUniform("uLODLevel");
 		grassShader->InitializeUniform("uAlbedoTexture");
@@ -81,9 +89,8 @@ void Renderer::Initialize(WindowSpecs* window)
 		grassShader->InitializeUniform("uAmbientOcculsionTexture");
 		grassShader->InitializeUniform("uMaterialOverrides");
 		grassShader->InitializeUniform("uDiscardTexture");
-		ShaderLibrary::Add("grassShader", grassShader);
+		grassShader->Unbind();
 	}
-
 }
 
 void Renderer::CleanUp()
@@ -122,6 +129,7 @@ void Renderer::EndFrame()
 void Renderer::DrawFrame()
 {
 	geometryPass->DoPass(submissions, projection, view);
+	shadowMappingPass->DoPass(submissions, projection, view);
 	envMapPass->DoPass(submissions, projection, view);
 	lightingPass->DoPass(submissions, projection, view);
 	forwardPass->DoPass(forwardSubmissions, projection, view);
@@ -143,4 +151,9 @@ void Renderer::Submit(const RenderSubmission& submission)
 void Renderer::SetEnvironmentMapEquirectangular(const std::string& path)
 {
 	envMapPass->SetEnvironmentMapEquirectangular(path);
+}
+
+void Renderer::SetShadowMappingDirectionalLight(Light* light)
+{
+	shadowMappingPass->SetDirectionalLight(light);
 }

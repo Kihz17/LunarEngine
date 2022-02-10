@@ -66,9 +66,18 @@ uniform LightInfo uLightArray[MAX_LIGHTS];
 
 // Lighting factors
 uniform sampler2D uEnvMap;
-uniform samplerCube uIrradianceMap;
-uniform samplerCube uEnvMapPreFilter;
-uniform sampler2D uEnvMapLUT;
+
+// Shadow Mapping
+const int MAX_CASCADES = 16;
+const float NEAR_PLANE = 0.1f;
+const float FAR_PLANE = 500.0f;
+uniform sampler2DArray uShadowMap;
+uniform float uCascadePlaneDistances[MAX_CASCADES];
+uniform int uCascadeCount; // # of frusta - 1
+layout (std140, binding = 0) uniform uLightSpaceMatrices // Our UniformBuffer from our cpp code (found in CascadedShadowMapping.h)
+{
+	mat4 lightSpaceMatrices[MAX_CASCADES];
+};
 
 // Extra uniforms
 uniform vec3 uCameraPosition;
@@ -85,6 +94,9 @@ vec3 ComputeFresnelSchlickRoughness(float cosTheta, vec3 surfaceReflection, floa
 float ComputeDistibutionGGX(vec3 normal, vec3 halfwayDir, float roughness); // Computes normal distribution using GGX/Trowbridge-Reitz. Used for approximating surface area of microfacets aligned to the halfway vector (determines strength & area for specular light)
 float ComputeGeometrySmith(float lightDot, float cosTheta, float roughness); // Computes surface area where micro-surface details obstruct another part of the surface causing the light ray to be occluded https://gyazo.com/ef9b603e6f1ccfc2f092563d9ca469df
 float ComputeGeometrySchlickGGX(float NdotV, float roughness);
+
+// Shadow Mapping Functions
+float ComputeShadow(vec3 fragmentPositionWorldSpace, vec3 lightDir, vec3 normal);
 
 void main()
 {
@@ -147,8 +159,11 @@ void main()
 				vec3 kD = vec3(1.0f) - kS; // Represents diffuse ratio
 				kD *= 1.0f - metalness;
 				
+				float shadowContrib = ComputeShadow(worldPos, light.direction, normal);
+				//color.rgb += vec3(shadowContrib);
+				
 				vec3 diffuse = kD * albedo / PI;
-				color += (diffuse + specular) * light.color.rgb * lightDot * light.color.a; // Compute diffuse color
+				color += (diffuse + specular) * light.color.rgb * lightDot * light.color.a * (1.0f - shadowContrib); // Compute diffuse color
 			}
 			
 			else if(light.param1.x == 1.0f) // Point light
@@ -196,30 +211,6 @@ void main()
 								
 				vec3 diffuse = kD * albedo / PI;
 				color += (diffuse + specular) * radiance * lightDot; // Compute diffuse color
-			}
-			
-			else if(light.param1.x == 2.0f) // IBL light
-			{
-				// Re-compute reflection and energy conservation while taking roughness into consideration
-				vec3 F = ComputeFresnelSchlickRoughness(cosTheta, surfaceReflection, roughness);  // Approximate ratio between specular and diffuse reflection
-				
-				// Energy conservation
-				vec3 kS = F;
-				vec3 kD = vec3(1.0f) - kS;
-				kD *= 1.0f - metalness;
-				
-				// Compute diffuse irradiance
-				vec3 diffuseIrradiance = texture(uIrradianceMap, N * mat3(uView)).rgb; // Sample from irradiance cube map
-				diffuseIrradiance *= albedo; // Scale by albedo
-				
-				// Compute specular radiance
-				vec3 specularRadiance = textureLod(uEnvMapPreFilter, R * mat3(uView), roughness * preFilterLODLevel).rgb;
-				vec2 brdfSampling = texture(uEnvMapLUT, vec2(cosTheta, roughness)).rg;
-				specularRadiance *= F * brdfSampling.x + brdfSampling.y;
-				
-				// Compute the actual ambient lighting
-				vec3 ambientIBL = (diffuseIrradiance * kD) + specularRadiance;
-				color += ambientIBL;
 			}
 		}
 	}
@@ -311,6 +302,68 @@ float ComputeGeometrySchlickGGX(float NdotV, float roughness)
     float divisor = NdotV * (1.0f - k) + k;
 
     return NdotV / max(divisor, 0.001f);
+}
+
+float ComputeShadow(vec3 fragmentPositionWorldSpace, vec3 lightDir, vec3 normal)
+{
+	vec4 fragPosViewSpace = uView * vec4(fragmentPositionWorldSpace, 1.0f); // Convert fragment world pos to view space
+	float depth = abs(fragPosViewSpace.z); // Retreive the depth of the fragment in terms of view space
+	
+	// Get the cascade layer we should sample from
+	int cascadeLayer = uCascadeCount; // layer defaults to the worst LOD 
+	for(int i = 0; i < uCascadeCount; i++)
+	{
+		if(depth < uCascadePlaneDistances[i]) // The depth is less than the depth in the current cascade layer, this is the layer we should use
+		{
+			cascadeLayer = i;
+			break;
+		}
+	}
+	
+	vec4 fragPosLightSpace = lightSpaceMatrices[cascadeLayer] * vec4(fragmentPositionWorldSpace, 1.0f); // Convert the fragment position to light space (perspective of the light)
+	vec3 projectionCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	projectionCoords = projectionCoords * 0.5f + 0.5f; // Transform to range 0 - 1
+	
+	float lightDepth = projectionCoords.z; // Get the depth of the fragment from the light's perspective
+	if(lightDepth > 1.0f) // Not apart of this cascade layer
+	{
+		return 0.0f;
+	}
+	
+	// Calculate the bias to prevent shadow acne https://gyazo.com/6ad033769041f184b7b5edae9cecd50b
+	// bias is scaled inversely proportionally to the far plane
+	float bias = max(0.05f * (1.0f - dot(normal, -lightDir * (FAR_PLANE - NEAR_PLANE))), 0.005f); // TODO: Un-hardcode light dir
+	if(cascadeLayer == uCascadeCount)
+	{
+		bias *= 1.0f / (FAR_PLANE * 0.5f);
+	}
+	else
+	{
+		bias *= 1.0f / (uCascadePlaneDistances[cascadeLayer] * 0.5f);
+	}
+	
+	// Percentage Closer Filtering "PCF" (AKA: Anti-aliasing for shadows/Smoothing edges)
+	float shadowContrib = 0.0f;
+	vec2 texelSize = 1.0f / vec2(textureSize(uShadowMap, 0)); // Get the inverse of the dimensions of the shadow map at mip map level 0 (returns the size of a single texel used to offset texture coords)
+	
+	// Sample the surrounding 9 texels 
+	for(int x = -1; x <= 1; x++)
+	{
+		for(int y = -1; y <= 1; y++)
+		{
+			vec2 textureCoords = projectionCoords.xy + vec2(x, y) * texelSize; // Get a neighbouring texel
+			float pcfDepth = texture(uShadowMap, vec3(textureCoords, cascadeLayer)).r; // Sample from that texel
+			shadowContrib += (lightDepth - bias) > pcfDepth ? 1.0f : 0.0f; // Test if we are in the shadow, if we are, add it to our shadow contribution
+		}
+	}
+	shadowContrib /= 9.0f; // Average all of the neighbouring texels
+	
+	if(projectionCoords.z > 1.0f) // We are outside of the far plane of our light's frustum, we shouldn't have a shadow here
+	{
+		return 0.0f;
+	}
+	
+	return shadowContrib;
 }
 
 // RESOURCES

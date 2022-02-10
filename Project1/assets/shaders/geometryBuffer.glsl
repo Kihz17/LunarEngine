@@ -67,7 +67,7 @@ uniform sampler2D uAmbientOcculsionTexture;
 uniform vec4 uMaterialOverrides; // r = roughness, g = metalness, b = ao, w = isMaterialOverride
 
 const float nearPlane = 0.1f;
-const float farPlane = 1000.0f;
+const float farPlane = 500.0f;
 
 float LinearizeDepth(float depth);
 vec3 ComputeTextureNormal();

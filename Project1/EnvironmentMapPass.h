@@ -35,7 +35,6 @@ private:
 	CubeMap* envMapCube;
 
 	IFrameBuffer* cubeMapBuffer;
-	IRenderBuffer* cubeMapRenderBuffer;
 	Shader* conversionShader;
 
 	const WindowSpecs* windowSpecs;

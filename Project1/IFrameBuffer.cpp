@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace ColorBufferConversion
+namespace FrameBufferConversion
 {
 	GLenum ConvertTypeToGLType(ColorBufferType type)
 	{
@@ -29,6 +29,22 @@ namespace ColorBufferConversion
 		default:
 			std::cout << "ColorBufferType did not have a return type!\n";
 			return GL_RIGHT;
+		}
+	}
+
+	GLenum ConvertOperationToGL(FrameBufferOperationType type)
+	{
+		switch (type)
+		{
+		case FrameBufferOperationType::Read:
+			return GL_READ_FRAMEBUFFER;
+		case FrameBufferOperationType::Write:
+			return GL_DRAW_FRAMEBUFFER;
+		case FrameBufferOperationType::ReadWrite:
+			return GL_FRAMEBUFFER;
+		default:
+			std::cout << "FrameBufferOperationType did not have a return type!\n";
+			return GL_FRAMEBUFFER;
 		}
 	}
 }

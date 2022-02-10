@@ -5,14 +5,17 @@
 #include "ShaderLibrary.h"
 #include "Light.h"
 #include "Renderer.h"
+#include "CascadedShadowMapping.h"
 
 #include <sstream>
 
-LightingPass::LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, glm::vec3& cameraPosition)
+LightingPass::LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, glm::vec3& cameraPosition, ITexture* shadowMaps, std::vector<float>& cascadeLevels)
 	: geometryBuffer(gBuffer),
 	environmentBuffer(eBuffer),
 	shader(ShaderLibrary::Load(Renderer::LIGHTING_SHADER_KEY, "assets/shaders/brdfLighting.glsl")), 
 	cameraPosition(cameraPosition),
+	shadowMaps(shadowMaps),
+	cascadeLevels(cascadeLevels),
 	quad(ShapeType::Quad)
 {
 	// Setup shader uniforms
@@ -51,12 +54,15 @@ LightingPass::LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const W
 	}
 
 	shader->InitializeUniform("uEnvMap");
-	shader->InitializeUniform("uIrradianceMap");
-	shader->InitializeUniform("uEnvMapPreFilter");
-	shader->InitializeUniform("uEnvMapLUT");
 	shader->InitializeUniform("uViewType");
 	shader->InitializeUniform("uReflectivity");
 	shader->InitializeUniform("uCameraPosition");
+	shader->InitializeUniform("uShadowMap");
+	for (int i = 0; i < CascadedShadowMapping::MAX_CASCADE_LEVELS; i++)
+	{
+		shader->InitializeUniform(std::string("uCascadePlaneDistances[" + std::to_string(i) + "]"));
+	}
+	shader->InitializeUniform("uCascadeCount");
 
 	shader->SetInt("uViewType", 1); // Regular color view by default
 
@@ -66,9 +72,7 @@ LightingPass::LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const W
 	shader->SetInt("gNormal", 2);
 	shader->SetInt("gEffects", 3);
 	shader->SetInt("uEnvMap", 4);
-	shader->SetInt("uIrradianceMap", 5);
-	shader->SetInt("uEnvMapPreFilter", 6);
-	shader->SetInt("uEnvMapLUT", 7);
+	shader->SetInt("uShadowMap", 5);
 
 	shader->Unbind();
 }
@@ -92,6 +96,16 @@ void LightingPass::DoPass(std::vector<RenderSubmission>& submissions, const glm:
 
 	// Bind environment map stuff
 	environmentBuffer->GetColorAttachment("environment")->BindToSlot(4);
+
+	// Bind shadow map
+	shadowMaps->BindToSlot(5);
+
+	// Shadow mapping details
+	shader->SetInt("uCascadeCount", cascadeLevels.size());
+	for (size_t i = 0; i < cascadeLevels.size(); i++)
+	{
+		shader->SetFloat("uCascadePlaneDistances[" + std::to_string(i) + "]", cascadeLevels[i]);
+	}
 
 	shader->SetMat4("uInverseView", glm::transpose(view));
 	shader->SetMat4("uInverseProjection", glm::inverse(projection));

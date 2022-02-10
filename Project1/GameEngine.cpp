@@ -33,7 +33,7 @@ GameEngine::GameEngine(const WindowSpecs& windowSpecs, bool editorMode)
 	// Initialize systems
     InputManager::Initialize(windowSpecs.window);
     TextureManager::Initialize();
-	Renderer::Initialize(&this->windowSpecs);
+	Renderer::Initialize(camera, &this->windowSpecs);
     SoundManager::Initilaize();
 
     physicsWorld->RegisterCollisionListener(new CollisionListener(this->entityManager));
@@ -191,12 +191,13 @@ void GameEngine::Run()
         // Update camera
         camera.Update(deltaTime);
 
-        InputManager::ClearState();
-        entityManager.CleanEntities(); // Remove invalid entities
-
+        // TODO: Put these back to the end of the loop
         // Submit all renderable entities
         SubmitEntitiesToRender();
         Render();
+
+        InputManager::ClearState();
+        entityManager.CleanEntities(); // Remove invalid entities
     }
 
     if (editorMode)
@@ -247,6 +248,9 @@ WindowSpecs GameEngine::InitializeGLFW(bool initImGui)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);  // Set depth function to less than AND equal for skybox depth trick.
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     // Assign callbacks
     glfwSetKeyCallback(window, InputManager::KeyCallback);

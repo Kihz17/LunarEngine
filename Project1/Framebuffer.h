@@ -10,11 +10,6 @@ struct ColorBuffer
 	ITexture* texture = nullptr;
 };
 
-struct DepthBuffer
-{
-	ITexture* texture = nullptr;
-};
-
 class FrameBuffer : public IFrameBuffer
 {
 public:
@@ -38,12 +33,12 @@ public:
 	virtual bool CheckComplete() const override;
 
 	virtual ITexture* GetColorAttachment(const std::string& name) override;
-	virtual void AddColorAttachment2D(const std::string& name, ITexture* texture, unsigned int index) override;
+	virtual void AddColorAttachment2D(const std::string& name, ITexture* texture, unsigned int index, FrameBufferOperationType operationType = FrameBufferOperationType::ReadWrite) override;
+
+	virtual void SetDepthAttachment(ITexture* texture, FrameBufferOperationType operationType = FrameBufferOperationType::ReadWrite, int level = 0) override;
+	virtual void SetDepthAttachment2D(Texture2D* texture, FrameBufferOperationType operationType = FrameBufferOperationType::ReadWrite, int level = 0) override;
 
 	virtual void SetRenderBuffer(IRenderBuffer* renderBuffer, GLenum attachmentType) const override;
-
-
-	void SetDepthBuffer(ITexture* texture, int level);
 
 private:
 	void UpdateAttachmentArray();
@@ -53,6 +48,7 @@ private:
 
 	std::vector<ColorBuffer> colorBuffers;
 
-	DepthBuffer depthBuffer;
+	ITexture* depthBuffer;
+
 	unsigned int* attachments;
 };

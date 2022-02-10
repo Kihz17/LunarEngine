@@ -11,11 +11,12 @@
 #include "Texture2D.h"
 
 #include <glm/glm.hpp>
+#include <vector>
 
 class LightingPass : public IRenderPass
 {
 public:
-	LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, glm::vec3& cameraPosition);
+	LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, glm::vec3& cameraPosition, ITexture* shadowMaps, std::vector<float>& cascadeLevels);
 	virtual ~LightingPass();
 
 	virtual void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view) override;
@@ -27,6 +28,10 @@ private:
 	Shader* shader;
 
 	glm::vec3& cameraPosition;
+
+	// Shadow Mapping
+	ITexture* shadowMaps;
+	std::vector<float>& cascadeLevels;
 
 	PrimitiveShape quad;
 };

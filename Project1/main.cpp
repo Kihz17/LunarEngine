@@ -27,6 +27,7 @@ int main()
     Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
     Mesh* sphere = new Mesh("assets/models/sphere.obj");
     Mesh* plane = new Mesh("assets/models/plane.obj");
+    Mesh* cube = new Mesh("assets/models/cube.obj");
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -42,15 +43,19 @@ int main()
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
+    gameEngine.camera.position = glm::vec3(0.0f, 10.0f, 30.0f);
+
     // Setup some lights
-    {
-        LightInfo lightInfo;
-        lightInfo.postion = glm::vec3(0.0f, 45.0f, 0.0f);
-        lightInfo.intensity = 350.0f;
-        Light* light = new Light(lightInfo);
-        Entity* lightEntity = gameEngine.GetEntityManager().CreateEntity("lightTest");
-        lightEntity->AddComponent<LightComponent>(light);
-    }
+    
+    LightInfo lightInfo;
+    lightInfo.postion = glm::vec3(0.0f, 45.0f, 0.0f);
+    lightInfo.intensity = 10.0f;
+    Light* light = new Light(lightInfo);
+    light->UpdateLightType(LightType::Directional);
+    Entity* lightEntity = gameEngine.GetEntityManager().CreateEntity("lightTest");
+    lightEntity->AddComponent<LightComponent>(light);
+
+    Renderer::SetShadowMappingDirectionalLight(light);
 
     // SHADER BALL TEST
     ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
@@ -59,7 +64,7 @@ int main()
         Entity* ground = gameEngine.GetEntityManager().CreateEntity("ground");
         PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(20.0f));
         RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(2.0f, 1.0f, 2.0f));
+        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(5.0f, 0.1f, 5.0f));
 
         Physics::RigidBodyInfo rigidInfo;
         rigidInfo.linearDamping = 0.0f;
@@ -73,8 +78,8 @@ int main()
 
         // Render Info
         RenderComponent::RenderInfo groundInfo;
-        groundInfo.vao = plane->GetVertexArray();
-        groundInfo.indexCount = plane->GetIndexBuffer()->GetCount();
+        groundInfo.vao = cube->GetVertexArray();
+        groundInfo.indexCount = cube->GetIndexBuffer()->GetCount();
         groundInfo.isColorOverride = true;
         groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
         ground->AddComponent<RenderComponent>(groundInfo);

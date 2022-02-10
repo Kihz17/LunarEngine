@@ -244,9 +244,6 @@
     <ClCompile Include="FreeCamController.cpp">
       <Filter>Layers</Filter>
     </ClCompile>
-    <ClCompile Include="CSMShadowMapping.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="UniformBuffer.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -284,6 +281,9 @@
       <Filter>Graphics\RenderPasses</Filter>
     </ClCompile>
     <ClCompile Include="ForwardRenderPass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="CascadedShadowMapping.cpp">
       <Filter>Graphics\RenderPasses</Filter>
     </ClCompile>
   </ItemGroup>
@@ -520,9 +520,6 @@
     <ClInclude Include="FreeCamController.h">
       <Filter>Layers</Filter>
     </ClInclude>
-    <ClInclude Include="CSMShadowMapping.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="UniformBuffer.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -578,6 +575,9 @@
       <Filter>Graphics\RenderPasses</Filter>
     </ClInclude>
     <ClInclude Include="ForwardRenderPass.h">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="CascadedShadowMapping.h">
       <Filter>Graphics\RenderPasses</Filter>
     </ClInclude>
   </ItemGroup>

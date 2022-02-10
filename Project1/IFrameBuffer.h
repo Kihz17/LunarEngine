@@ -22,6 +22,14 @@ enum class ColorBufferType
 	None
 };
 
+enum class FrameBufferOperationType
+{
+	Read,
+	Write,
+	ReadWrite
+};
+
+class Texture2D;
 class IFrameBuffer
 {
 public:
@@ -44,15 +52,17 @@ public:
 	virtual bool CheckComplete() const = 0;
 
 	virtual ITexture* GetColorAttachment(const std::string& name) = 0;
-	virtual void AddColorAttachment2D(const std::string& name, ITexture* texture, unsigned int index) = 0;
+	virtual void AddColorAttachment2D(const std::string& name, ITexture* texture, unsigned int index, FrameBufferOperationType operationType = FrameBufferOperationType::ReadWrite) = 0;
 
-	//virtual void SetDepthAttachment() const = 0;
+	virtual void SetDepthAttachment(ITexture* texture, FrameBufferOperationType operationType = FrameBufferOperationType::ReadWrite, int level = 0) = 0;
+	virtual void SetDepthAttachment2D(Texture2D* texture, FrameBufferOperationType operationType = FrameBufferOperationType::ReadWrite, int level = 0) = 0;
 	//virtual void SetStencilAttachment() const = 0;
 
 	virtual void SetRenderBuffer(IRenderBuffer* renderBuffer, GLenum attachmentType) const = 0;
 };
 
-namespace ColorBufferConversion
+namespace FrameBufferConversion
 {
 	GLenum ConvertTypeToGLType(ColorBufferType type);
+	GLenum ConvertOperationToGL(FrameBufferOperationType type);
 }

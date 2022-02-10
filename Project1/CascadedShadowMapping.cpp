@@ -1,28 +1,40 @@
-#include "CSMShadowMapping.h"
+#include "CascadedShadowMapping.h"
 #include "Window.h"
 #include "FrameBuffer.h"
 #include "TextureArray.h"
 #include "TextureManager.h"
+#include "ShaderLibrary.h"
 
+#include <iostream>
+#include <sstream>
 #include <glm/gtc/matrix_transform.hpp>
 
-constexpr unsigned int maxShadowMaps = 16;
+#include "InputManager.h"
+
+const std::string CascadedShadowMapping::DEPTH_MAPPING_SHADER_KEY = "shadowMappingDepthShader";
+const std::string CascadedShadowMapping::DEPTH_DEBUG_SHADER_KEY = "debugDepthShader";
+const int CascadedShadowMapping::MAX_CASCADE_LEVELS = 16;
+
 constexpr unsigned int depthMapResolution = 4096;
 constexpr float lightMapColorBorder[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-CSMShadowMapping::CSMShadowMapping(const CSMShadowMappingInfo& info)
+int cascadeLayer = 0;
+
+CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& info)
 	: lightDepthBuffer(new FrameBuffer()),
-	lightMatricesUBO(new UniformBuffer(sizeof(glm::mat4x4) * maxShadowMaps, GL_STATIC_DRAW, 0)),
-	lightDirection(info.lightDirection),
-	camera(info.camera),
+	lightMatricesUBO(new UniformBuffer(sizeof(glm::mat4x4) * MAX_CASCADE_LEVELS, GL_STATIC_DRAW, 0)),
+	lightDepthMaps(nullptr),
+	depthMappingShader(ShaderLibrary::Load(DEPTH_MAPPING_SHADER_KEY, "assets/shaders/CSMDepth.glsl")),
+	depthDebugShader(ShaderLibrary::Load(DEPTH_DEBUG_SHADER_KEY, "assets/shaders/CMSDepthDebug.glsl")),
+	directionalLight(nullptr),
+	cameraFOV(info.cameraFOV),
 	cameraView(info.cameraView),
 	windowSpecs(info.windowSpecs),
 	projectionNearPlane(info.projectionNearPlane),
 	projectionFarPlane(info.projectionFarPlane),
-	zMult(info.zMult)
+	zMult(info.zMult),
+	quad(ShapeType::Quad)
 {
-	lightDepthBuffer->Bind();
-
 	// Setup shadow cascade levels
 	cascadeLevels.push_back(projectionFarPlane / 50.0f);
 	cascadeLevels.push_back(projectionFarPlane / 25.0f);
@@ -30,26 +42,53 @@ CSMShadowMapping::CSMShadowMapping(const CSMShadowMappingInfo& info)
 	cascadeLevels.push_back(projectionFarPlane / 2.0f);
 
 	// Setup the 3D texture. This is an array of textures that will store a shadow map for each cascade
-	TextureArray* lightDepthMaps = TextureManager::CreateTextureArray(GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_FLOAT, depthMapResolution, depthMapResolution,
+	// Has to be initialized AFTER our cascade levels are setup
+	lightDepthMaps = TextureManager::CreateTextureArray(GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_FLOAT, depthMapResolution, depthMapResolution,
 		int(cascadeLevels.size()) + 1, TextureFilterType::Nearest, TextureWrapType::ClampToBorder, false);
 	lightDepthMaps->TextureParameterFloatArray(GL_TEXTURE_BORDER_COLOR, lightMapColorBorder);
 
-	//lightDepthBuffer->SetDepthBuffer(lightDepthMaps, 0); // Assign the depth map texture array to our depth buffer fbo
+	lightDepthBuffer->Bind();
+	lightDepthBuffer->SetDepthAttachment(lightDepthMaps); // Assign the depth map texture array to our depth buffer fbo
 
 	// Strictly using depth map only, don't waste time writing and reading to color buffer
 	lightDepthBuffer->SetColorBufferWrite(ColorBufferType::None);
 	lightDepthBuffer->SetColorBufferRead(ColorBufferType::None);
+	if (!lightDepthBuffer->CheckComplete()) std::cout << "Light Depth Buffer not complete!\n";
 	lightDepthBuffer->Unbind();
+
+	// Setup shader uniforms
+	depthMappingShader->Bind();
+	depthMappingShader->InitializeUniform("uMatModel");
+	depthMappingShader->Unbind();
+
+	// FOR DEBUGGING
+	depthDebugShader->Bind();
+	depthDebugShader->InitializeUniform("uLayer");
+	depthDebugShader->InitializeUniform("uDepthTexture");
+	depthDebugShader->Unbind();
+
+	testKey = InputManager::GetKey(GLFW_KEY_L);
 }
 
-CSMShadowMapping::~CSMShadowMapping()
+CascadedShadowMapping::~CascadedShadowMapping()
 {
 	delete lightDepthBuffer;
 	delete lightMatricesUBO;
 }
 
-void CSMShadowMapping::Update(float deltaTime)
+void CascadedShadowMapping::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view)
 {
+	if (!directionalLight) return; // No directional light, don't map anything
+
+	if (testKey->IsJustPressed())
+	{
+		cascadeLayer++;
+		if (cascadeLayer > cascadeLevels.size())
+		{
+			cascadeLayer = 0;
+		}
+	}
+
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -64,15 +103,48 @@ void CSMShadowMapping::Update(float deltaTime)
 
 	// Generate depth maps by rendering the scene from the light's POV
 	lightDepthBuffer->Bind();
-	//glFramebufferTexture(GL_FRAMEBUFFER, GL_TEXTURE_2D_ARRAY, );
+	depthMappingShader->Bind();
+
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_TEXTURE_2D_ARRAY, lightDepthMaps->GetID(), 0);
+	glViewport(0, 0, depthMapResolution, depthMapResolution); // Set viewport to size of the depth map
+	glClear(GL_DEPTH_BUFFER_BIT); // Re-clear depth buffer
+	glCullFace(GL_FRONT); // Fixes peter panning (shadow offsets)
+
+	for (RenderSubmission& submission : submissions)
+	{
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform *= glm::translate(glm::mat4(1.0f), submission.position);
+		transform *= glm::toMat4(submission.rotation);
+		transform *= glm::scale(glm::mat4(1.0f), submission.scale);
+		depthMappingShader->SetMat4("uMatModel", transform);
+
+		RenderComponent* renderComponent = submission.renderComponent;
+
+		renderComponent->vao->Bind();
+		glDrawElements(GL_TRIANGLES, renderComponent->indexCount, GL_UNSIGNED_INT, 0);
+		renderComponent->vao->Unbind();
+	}
+
 	lightDepthBuffer->Unbind();
+
+	glCullFace(GL_BACK); // Set face culling back to normal
+	glViewport(0, 0, windowSpecs->width, windowSpecs->height); 	// Set viewport back to source
+
+	// FOR DEBUGGING
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//depthDebugShader->Bind();
+	//depthDebugShader->SetInt("uLayer", cascadeLayer);
+	//lightDepthMaps->BindToSlot(0);
+	//depthDebugShader->SetInt("uDepthTexture", 0);
+	//quad.Draw();
 }
 
-std::vector<glm::vec4> CSMShadowMapping::GetFrustumCornersWorldSpace(const glm::mat4& projection)
+std::vector<glm::vec4> CascadedShadowMapping::GetFrustumCornersWorldSpace(const glm::mat4& projection)
 {
 	glm::mat4 inverse = glm::inverse(projection * cameraView);
 
 	std::vector<glm::vec4> frustumCorners;
+
 	// Create bounding boxes for the near, middle and far plane of our frustum https://ogldev.org/www/tutorial49/img7.png
 	for (unsigned int x = 0; x < 2; x++)
 	{
@@ -91,9 +163,9 @@ std::vector<glm::vec4> CSMShadowMapping::GetFrustumCornersWorldSpace(const glm::
 	return frustumCorners;
 }
 
-glm::mat4 CSMShadowMapping::GetLightSpaceMatrix(const float nearPlane, const float farPlane)
+glm::mat4 CascadedShadowMapping::GetLightSpaceMatrix(const float nearPlane, const float farPlane)
 {
-	glm::mat4 projection = glm::perspective(camera.fov, (float) windowSpecs->width / (float) windowSpecs->height, nearPlane, farPlane);
+	glm::mat4 projection = glm::perspective(cameraFOV, (float) windowSpecs->width / (float) windowSpecs->height, nearPlane, farPlane);
 	std::vector<glm::vec4> frustumCorners = GetFrustumCornersWorldSpace(projection);
 
 	// Get the center of the frustum, this is important because we know for sure that our light source is looking here, so we can construct our light view from this point
@@ -102,9 +174,10 @@ glm::mat4 CSMShadowMapping::GetLightSpaceMatrix(const float nearPlane, const flo
 	{
 		center += glm::vec3(point);
 	}
-	center /= frustumCorners.size();
+	center /= frustumCorners.size(); // Average corners
 
-	glm::mat4 lightView = glm::lookAt(center + lightDirection, center, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 eye = center + -directionalLight->GetDirection() * (farPlane - nearPlane);
+	glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// Generate an AABB that fits tightly onto the frustum. This will be used to construct our orthographic projection matrx later on
 	float minX = std::numeric_limits<float>::max();
@@ -148,11 +221,11 @@ glm::mat4 CSMShadowMapping::GetLightSpaceMatrix(const float nearPlane, const flo
 		}
 	}
 
-	const glm::mat4 lightProjection = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ);
+	const glm::mat4 lightProjection = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ - minZ);
 	return lightProjection * lightView;
 }
 
-std::vector<glm::mat4> CSMShadowMapping::GetLightSpaceMatrices()
+std::vector<glm::mat4> CascadedShadowMapping::GetLightSpaceMatrices()
 {
 	std::vector<glm::mat4> matrices;
 	for (size_t i = 0; i < cascadeLevels.size() + 1; i++)

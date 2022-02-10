@@ -22,6 +22,9 @@ FreeCamController::FreeCamController(Camera& camera, const WindowSpecs& windowSp
     f7Key = InputManager::GetKey(GLFW_KEY_F7);
     f8Key = InputManager::GetKey(GLFW_KEY_F8);
     f9Key = InputManager::GetKey(GLFW_KEY_F9);
+
+    lastCursorPos.x = (float) windowSpecs.width / 2.0f;
+    lastCursorPos.y = (float) windowSpecs.height / 2.0f;
 }
 
 FreeCamController::~FreeCamController()
