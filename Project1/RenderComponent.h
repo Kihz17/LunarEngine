@@ -28,6 +28,9 @@ struct RenderComponent : public Component
 		bool isIgnoreLighting = false;
 
 		float alphaTransparency = 1.0f;
+
+		bool castShadows = true;
+		bool castShadowsOn = true;
 	};
 
 	RenderComponent()
@@ -46,7 +49,9 @@ struct RenderComponent : public Component
 		isIgnoreLighting(false),
 		alphaTransparency(1.0f),
 		hasPrevProjViewModel(false),
-		projViewModel(glm::mat4(1.0f))
+		projViewModel(glm::mat4(1.0f)),
+		castShadows(true),
+		castShadowsOn(true)
 	{}
 
 	RenderComponent(const RenderInfo& renderInfo)
@@ -66,7 +71,9 @@ struct RenderComponent : public Component
 		isIgnoreLighting(renderInfo.isIgnoreLighting),
 		alphaTransparency(renderInfo.alphaTransparency),
 		hasPrevProjViewModel(false),
-		projViewModel(glm::mat4(1.0f))
+		projViewModel(glm::mat4(1.0f)),
+		castShadows(renderInfo.castShadows),
+		castShadowsOn(renderInfo.castShadowsOn)
 	{}
 
 	virtual void ImGuiUpdate() override
@@ -101,7 +108,9 @@ struct RenderComponent : public Component
 
 			ImGui::DragFloat("Transparency", &alphaTransparency, 0.001f, 0.0f, 1.0f);
 			ImGui::Checkbox("Ignore Lighting", &isIgnoreLighting);
-
+			ImGui::Checkbox("Cast Shadows", &castShadows);
+			ImGui::Checkbox("Cast Shadows On", &castShadowsOn);
+			
 			ImGui::TreePop();
 		}
 
@@ -138,4 +147,7 @@ struct RenderComponent : public Component
 
 	bool hasPrevProjViewModel;
 	glm::mat4 projViewModel;
+
+	bool castShadows;
+	bool castShadowsOn;
 };

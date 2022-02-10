@@ -42,7 +42,7 @@ void main()
 layout (location = 0) out vec4 gPosition;
 layout (location = 1) out vec4 gAlbedo;
 layout (location = 2) out vec4 gNormal;
-layout (location = 3) out vec3 gEffects;
+layout (location = 3) out vec4 gEffects;
 
 in vec3 mWorldPosition;
 in vec2 mTextureCoordinates;
@@ -59,6 +59,8 @@ uniform vec4 uColorOverride;
 
 uniform bool uHasNormalTexture;
 uniform sampler2D uNormalTexture;
+
+uniform bool uCanCastShadowOn;
 
 // Material
 uniform sampler2D uRoughnessTexture;
@@ -125,6 +127,15 @@ void main()
 		gAlbedo.a = vec3(texture(uRoughnessTexture, mTextureCoordinates)).r; // Sample and assign roughness value
 		gNormal.a = vec3(texture(uMetalnessTexture, mTextureCoordinates)).r; // Sample and assign metalness value
 		gEffects.r = vec3(texture(uAmbientOcculsionTexture, mTextureCoordinates)).r;
+	}
+	
+	if(uCanCastShadowOn)
+	{
+		gEffects.a = 1.0f;
+	}
+	else
+	{
+		gEffects.a = 0.0f;
 	}
 }
 

@@ -109,6 +109,7 @@ void main()
 	float ambientOcculsion = texture(gEffects, mTextureCoordinates).r;
 	vec2 velocity = texture(gEffects, mTextureCoordinates).gb;
 	float depth = texture(gPosition, mTextureCoordinates).a;
+	bool canCastShadowOn = texture(gEffects, mTextureCoordinates).a >= 1.0f;
 	
 	vec3 color = vec3(0.0f);
 	
@@ -159,8 +160,11 @@ void main()
 				vec3 kD = vec3(1.0f) - kS; // Represents diffuse ratio
 				kD *= 1.0f - metalness;
 				
-				float shadowContrib = ComputeShadow(worldPos, light.direction, normal);
-				//color.rgb += vec3(shadowContrib);
+				float shadowContrib = 0.0f;
+				if(canCastShadowOn)
+				{
+					shadowContrib = ComputeShadow(worldPos, light.direction, normal);
+				}
 				
 				vec3 diffuse = kD * albedo / PI;
 				color += (diffuse + specular) * light.color.rgb * lightDot * light.color.a * (1.0f - shadowContrib); // Compute diffuse color

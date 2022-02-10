@@ -37,7 +37,8 @@ CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& in
 {
 	// Setup shadow cascade levels
 	cascadeLevels.push_back(projectionFarPlane / 50.0f);
-	cascadeLevels.push_back(projectionFarPlane / 25.0f);
+	cascadeLevels.push_back(projectionFarPlane / 35.0f);
+	cascadeLevels.push_back(projectionFarPlane / 20.0f);
 	cascadeLevels.push_back(projectionFarPlane / 10.0f);
 	cascadeLevels.push_back(projectionFarPlane / 2.0f);
 
@@ -112,13 +113,14 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission>& submissions, c
 
 	for (RenderSubmission& submission : submissions)
 	{
+		RenderComponent* renderComponent = submission.renderComponent;
+		if (!renderComponent->castShadows) continue;
+
 		glm::mat4 transform = glm::mat4(1.0f);
 		transform *= glm::translate(glm::mat4(1.0f), submission.position);
 		transform *= glm::toMat4(submission.rotation);
 		transform *= glm::scale(glm::mat4(1.0f), submission.scale);
 		depthMappingShader->SetMat4("uMatModel", transform);
-
-		RenderComponent* renderComponent = submission.renderComponent;
 
 		renderComponent->vao->Bind();
 		glDrawElements(GL_TRIANGLES, renderComponent->indexCount, GL_UNSIGNED_INT, 0);

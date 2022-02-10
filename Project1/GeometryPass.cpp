@@ -42,6 +42,7 @@ GeometryPass::GeometryPass(const WindowSpecs* windowSpecs)
 	shader->InitializeUniform("uMetalnessTexture");
 	shader->InitializeUniform("uAmbientOcculsionTexture");
 	shader->InitializeUniform("uMaterialOverrides");
+	shader->InitializeUniform("uCanCastShadowOn");
 	shader->Unbind();
 }
 
@@ -80,6 +81,7 @@ void GeometryPass::DoPass(std::vector<RenderSubmission>& submissions, const glm:
 		shader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
 		shader->SetMat4("uMatProjViewModel", projViewModel);
 		shader->SetMat4("uMatPrevProjViewModel", prevProjViewModel);
+		shader->SetInt("uCanCastShadowOn", (GLboolean) renderComponent->castShadowsOn);
 
 		// Color
 		if (renderComponent->isColorOverride)

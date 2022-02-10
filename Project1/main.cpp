@@ -52,6 +52,7 @@ int main()
     lightInfo.intensity = 10.0f;
     Light* light = new Light(lightInfo);
     light->UpdateLightType(LightType::Directional);
+    light->UpdateDirection(glm::vec3(0.3f, -0.99f, 0.0f));
     Entity* lightEntity = gameEngine.GetEntityManager().CreateEntity("lightTest");
     lightEntity->AddComponent<LightComponent>(light);
 
@@ -91,11 +92,14 @@ int main()
 }
 
 // TODO List
-// 1. Fix IBL
-// 2. Instanced rendering
-// 3. Prodecural grass
-// 4. Look into improving lighting
-// 5. Shadow mapping
+// 1. Procedural Grass
+// 2. Bloom & Emission
+// 3. Anti-Aliasing
+// 4. Light Probes/Global Illumination
+// 5. Water
+// 6. Clouds
+// 7. Frustum culling
+// 8. Instanced rendering
 
 // LATER
 // SSAO? Raytracing? Raymarching?
