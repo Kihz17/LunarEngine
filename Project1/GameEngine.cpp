@@ -114,11 +114,7 @@ void GameEngine::SubmitEntitiesToRender()
         }
 
         // Tell the renderer to render this entity
-        RenderSubmission submission;
-        submission.renderComponent = renderComponent;
-        submission.position = posComponent->value;
-        submission.rotation = rotComponent->value;
-        submission.scale = scaleComponent->value;
+        RenderSubmission submission(renderComponent, posComponent->value, scaleComponent->value, rotComponent->value);
         Renderer::Submit(submission);
     }
 }
@@ -149,8 +145,7 @@ Entity* GameEngine::SpawnPhysicsSphere(const std::string& name, const glm::vec3&
     {
         // Render Info
         RenderComponent::RenderInfo sphereInfo;
-        sphereInfo.vao = sphereMesh->GetVertexArray();
-        sphereInfo.indexCount = sphereMesh->GetIndexBuffer()->GetCount();
+        sphereInfo.mesh = sphereMesh;
         sphereInfo.isColorOverride = true;
         sphereInfo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
         physicsSphere->AddComponent<RenderComponent>(sphereInfo);

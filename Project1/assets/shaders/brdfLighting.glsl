@@ -71,7 +71,7 @@ uniform sampler2D uEnvMap;
 // Shadow Mapping
 const int MAX_CASCADES = 16;
 const float NEAR_PLANE = 0.1f;
-const float FAR_PLANE = 500.0f;
+const float FAR_PLANE = 1000.0f;
 uniform sampler2DArray uShadowMap;
 uniform float uCascadePlaneDistances[MAX_CASCADES];
 uniform int uCascadeCount; // # of frusta - 1
@@ -116,7 +116,8 @@ void main()
 	float ambientOcculsion = gEffectsSample.r;
 	vec2 velocity = gEffectsSample.gb;
 	float depth = gPositionSample.a;
-	bool canCastShadowOn = gEffectsSample.a >= 0.5f;
+	bool canCastShadowOn = gEffectsSample.a > 0.0f;
+	float shadowSoftness = gEffectsSample.a;
 	
 	vec3 color = vec3(0.0f);
 	
@@ -170,7 +171,7 @@ void main()
 				float shadowContrib = 0.0f;
 				if(canCastShadowOn)
 				{
-					shadowContrib = ComputeShadow(worldPos, light.direction, normal);
+					shadowContrib = ComputeShadow(worldPos, light.direction, normal) * shadowSoftness;
 				}
 				
 				vec3 diffuse = kD * albedo / PI;

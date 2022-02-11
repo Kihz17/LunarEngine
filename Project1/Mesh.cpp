@@ -147,20 +147,19 @@ Mesh::Mesh(const std::string& filePath)
 			return;
 		}
 
-		AABB& aabb = submesh.boundingBox;
-		aabb.min = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
-		aabb.max = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+		glm::vec3 min = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
+		glm::vec3 max = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 		for (unsigned int j = 0; j < assimpMesh->mNumVertices; j++)
 		{
 			Vertex vertex;
 			vertex.position = glm::vec3(assimpMesh->mVertices[j].x, assimpMesh->mVertices[j].y, assimpMesh->mVertices[j].z);
 			vertex.normal = glm::vec3(assimpMesh->mNormals[j].x, assimpMesh->mNormals[j].y, assimpMesh->mNormals[j].z);
-			aabb.min.x = glm::min(vertex.position.x, aabb.min.x);
-			aabb.min.y = glm::min(vertex.position.y, aabb.min.y);
-			aabb.min.z = glm::min(vertex.position.z, aabb.min.z);
-			aabb.max.x = glm::max(vertex.position.x, aabb.max.x);
-			aabb.max.y = glm::max(vertex.position.y, aabb.max.y);
-			aabb.max.z = glm::max(vertex.position.z, aabb.max.z);
+			min.x = glm::min(vertex.position.x, min.x);
+			min.y = glm::min(vertex.position.y, min.y);
+			min.z = glm::min(vertex.position.z, min.z);
+			max.x = glm::max(vertex.position.x, max.x);
+			max.y = glm::max(vertex.position.y, max.y);
+			max.z = glm::max(vertex.position.z, max.z);
 
 			if (assimpMesh->HasTextureCoords(0))
 			{
@@ -169,6 +168,8 @@ Mesh::Mesh(const std::string& filePath)
 
 			this->vertices.push_back(vertex);
 		}
+
+		submesh.boundingBox = AABB(min, max);
 
 		for (unsigned int j = 0; j < assimpMesh->mNumFaces; j++)
 		{
@@ -191,19 +192,25 @@ Mesh::Mesh(const std::string& filePath)
 	LoadNodes(scene->mRootNode); // Load all the submeshes
 
 	// Configure parent's bounding box based off of the submeshes we just added
+	glm::vec3 parentMin = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
+	glm::vec3 parentMax = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 	for (Submesh& submesh : this->submeshes)
 	{
 		AABB submeshAABB = submesh.boundingBox;
-		glm::vec3 min = glm::vec3(submesh.transform * glm::vec4(submeshAABB.min, 1.0f));
-		glm::vec3 max = glm::vec3(submesh.transform * glm::vec4(submeshAABB.max, 1.0f));
+		glm::vec3 submeshMin = submeshAABB.GetMin();
+		glm::vec3 submeshMax = submeshAABB.GetMax();
 
-		this->boundingBox.min.x = glm::min(this->boundingBox.min.x, min.x);
-		this->boundingBox.min.y = glm::min(this->boundingBox.min.y, min.y);
-		this->boundingBox.min.z = glm::min(this->boundingBox.min.z, min.z);
-		this->boundingBox.max.x = glm::max(this->boundingBox.max.x, max.x);
-		this->boundingBox.max.y = glm::max(this->boundingBox.max.y, max.y);
-		this->boundingBox.max.z = glm::max(this->boundingBox.max.z, max.z);
+		glm::vec3 min = glm::vec3(submesh.transform * glm::vec4(submeshMin, 1.0f));
+		glm::vec3 max = glm::vec3(submesh.transform * glm::vec4(submeshMax, 1.0f));
+
+		parentMin.x = glm::min(parentMin.x, min.x);
+		parentMin.y = glm::min(parentMin.y, min.y);
+		parentMin.z = glm::min(parentMin.z, min.z);
+		parentMax.x = glm::max(parentMax.x, max.x);
+		parentMax.y = glm::max(parentMax.y, max.y);
+		parentMax.z = glm::max(parentMax.z, max.z);
 	}
+	this->boundingBox = AABB(parentMin, parentMax);
 
 	if (scene->HasMaterials())
 	{

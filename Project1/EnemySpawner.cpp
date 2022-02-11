@@ -132,8 +132,7 @@ Entity* EnemySpawner::SpawnPhysicsSphere(const glm::vec3& color, Mesh* mesh)
 
 	// Render Info
 	RenderComponent::RenderInfo sphereInfo;
-	sphereInfo.vao = mesh->GetVertexArray();
-	sphereInfo.indexCount = mesh->GetIndexBuffer()->GetCount();
+	sphereInfo.mesh = mesh;
 	sphereInfo.isColorOverride = true;
 	sphereInfo.colorOverride = color;
 	physicsSphere->AddComponent<RenderComponent>(sphereInfo);

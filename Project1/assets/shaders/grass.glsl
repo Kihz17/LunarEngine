@@ -102,7 +102,7 @@ uniform vec4 uMaterialOverrides; // r = roughness, g = metalness, b = ao, w = is
 uniform sampler2D uDiscardTexture;
 
 const float nearPlane = 0.1f;
-const float farPlane = 500.0f;
+const float farPlane = 1000.0f;
 
 vec3 LinearizeColor(vec3 color); // Converts to linear color space (sRGB to RGB). In other words, gamma correction https://lettier.github.io/3d-game-shaders-for-beginners/gamma-correction.html
 float LinearizeDepth(float depth);

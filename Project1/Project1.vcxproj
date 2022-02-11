@@ -158,6 +158,7 @@
     <ClCompile Include="CollisionListener.cpp" />
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="DSP.cpp" />
+    <ClCompile Include="DynamicCubeMapRenderer.cpp" />
     <ClCompile Include="EnemySpawner.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityManager.cpp" />
@@ -169,6 +170,7 @@
     <ClCompile Include="ForwardRenderPass.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="FreeCamController.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="GeometryPass.cpp" />
     <ClCompile Include="glad.c" />
@@ -230,6 +232,7 @@
     <ClInclude Include="ApplicationLayer.h" />
     <ClInclude Include="ApplicationLayerManager.h" />
     <ClInclude Include="ApproachShootCondition.h" />
+    <ClInclude Include="IBoundingVolume.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionHandler.h" />
     <ClInclude Include="CollisionListener.h" />
@@ -237,6 +240,7 @@
     <ClInclude Include="Components.h" />
     <ClInclude Include="CubeMap.h" />
     <ClInclude Include="DSP.h" />
+    <ClInclude Include="DynamicCubeMapRenderer.h" />
     <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
@@ -248,6 +252,7 @@
     <ClInclude Include="ForwardRenderPass.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="FreeCamController.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="GeometryPass.h" />
     <ClInclude Include="GLCommon.h" />
@@ -279,6 +284,7 @@
     <ClInclude Include="PrimitiveShape.h" />
     <ClInclude Include="PursueBehaviour.h" />
     <ClInclude Include="PursueCondition.h" />
+    <ClInclude Include="ReflectRefract.h" />
     <ClInclude Include="RenderBuffer.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Renderer.h" />

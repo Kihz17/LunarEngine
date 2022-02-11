@@ -36,10 +36,10 @@ CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& in
 	quad(ShapeType::Quad)
 {
 	// Setup shadow cascade levels
-	cascadeLevels.push_back(projectionFarPlane / 50.0f);
-	cascadeLevels.push_back(projectionFarPlane / 35.0f);
-	cascadeLevels.push_back(projectionFarPlane / 20.0f);
+	cascadeLevels.push_back(projectionFarPlane / 40.0f);
+	cascadeLevels.push_back(projectionFarPlane / 25.0f);
 	cascadeLevels.push_back(projectionFarPlane / 10.0f);
+	cascadeLevels.push_back(projectionFarPlane / 5.0f);
 	cascadeLevels.push_back(projectionFarPlane / 2.0f);
 
 	// Setup the 3D texture. This is an array of textures that will store a shadow map for each cascade
@@ -81,14 +81,15 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission>& submissions, c
 {
 	if (!directionalLight) return; // No directional light, don't map anything
 
-	if (testKey->IsJustPressed())
+	// Debugging
+	/*if (testKey->IsJustPressed())
 	{
 		cascadeLayer++;
 		if (cascadeLayer > cascadeLevels.size())
 		{
 			cascadeLayer = 0;
 		}
-	}
+	}*/
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -116,15 +117,19 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission>& submissions, c
 		RenderComponent* renderComponent = submission.renderComponent;
 		if (!renderComponent->castShadows) continue;
 
-		glm::mat4 transform = glm::mat4(1.0f);
-		transform *= glm::translate(glm::mat4(1.0f), submission.position);
-		transform *= glm::toMat4(submission.rotation);
-		transform *= glm::scale(glm::mat4(1.0f), submission.scale);
-		depthMappingShader->SetMat4("uMatModel", transform);
+		depthMappingShader->SetMat4("uMatModel", submission.transform);
 
-		renderComponent->vao->Bind();
-		glDrawElements(GL_TRIANGLES, renderComponent->indexCount, GL_UNSIGNED_INT, 0);
-		renderComponent->vao->Unbind();
+		// TODO: If object is semi-transparent, make a softer shadow
+		// To do this, we will need to change the texture array into a color attachment instead of a depth attachment
+		// The CMS fragment shader will now need to write the depth to a channel (geometry's z value from the light's perspective), and write
+		// the "softness" value to another channel
+
+		// TODO: Another issue will arise with this ^^^. The "softness" value will be directly associated with the surface the shadow is being casted on, NOT the object casting the shadow.
+		// This is a problem that will need a solution
+
+		renderComponent->mesh->GetVertexArray()->Bind();
+		glDrawElements(GL_TRIANGLES, renderComponent->mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+		renderComponent->mesh->GetVertexArray()->Unbind();
 	}
 
 	lightDepthBuffer->Unbind();

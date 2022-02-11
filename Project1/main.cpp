@@ -79,8 +79,7 @@ int main()
 
         // Render Info
         RenderComponent::RenderInfo groundInfo;
-        groundInfo.vao = cube->GetVertexArray();
-        groundInfo.indexCount = cube->GetIndexBuffer()->GetCount();
+        groundInfo.mesh = cube;
         groundInfo.isColorOverride = true;
         groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
         ground->AddComponent<RenderComponent>(groundInfo);
@@ -125,15 +124,14 @@ void ShaderBallTest(Mesh* shaderBall, ITexture* normalTexture, ITexture* albedo,
     testEntity->AddComponent<ScaleComponent>();
 
     RenderComponent::RenderInfo testInfo;
-    testInfo.vao = shaderBall->GetVertexArray();
-    testInfo.indexCount = shaderBall->GetIndexBuffer()->GetCount();
+    testInfo.mesh = shaderBall;
     testInfo.albedoTextures.push_back({ albedo, 1.0f });
     testInfo.normalTexture = normalTexture;
     //testInfo.roughnessTexture = roughnessTexture;
     //testInfo.metalTexture = metalnessTexture;
     //testInfo.aoTexture = aoTexture;
-    testInfo.reflectRefractType = RRType::Reflect;
-    testInfo.reflectRefractMap = Renderer::GetEnvironmentMapCube();
+    testInfo.reflectRefractType = ReflectRefractType::Reflect;
+    testInfo.reflectRefractMapType = ReflectRefractMapType::Environment;
     testInfo.reflectRefractStrength = 0.5f;
     testEntity->AddComponent<RenderComponent>(testInfo);
 }

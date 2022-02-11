@@ -4,6 +4,7 @@
 #include "RenderSubmission.h"
 #include "Camera.h"
 #include "PrimitiveShape.h"
+#include "Frustum.h"
 
 #include "GeometryPass.h"
 #include "EnvironmentMapPass.h"
@@ -44,6 +45,7 @@ private:
 	static glm::mat4 projection;
 	static glm::mat4 view;
 	static glm::vec3 cameraPos;
+	static Frustum viewFrustum;
 
 	static float farPlane;
 	static float nearPlane;

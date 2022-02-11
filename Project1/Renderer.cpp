@@ -17,11 +17,12 @@ const WindowSpecs* Renderer::windowDetails = nullptr;
 glm::mat4 Renderer::projection(1.0f);
 glm::mat4 Renderer::view(1.0f);
 glm::vec3 Renderer::cameraPos(0.0f);
+Frustum Renderer::viewFrustum;
 
 static std::vector<RenderSubmission> submissions;
 static std::vector<RenderSubmission> forwardSubmissions;
 
-float Renderer::farPlane = 500.0f;
+float Renderer::farPlane = 1000.0f;
 float Renderer::nearPlane = 0.1f;
 
 GeometryPass* Renderer::geometryPass = nullptr;
@@ -113,9 +114,11 @@ void Renderer::BeginFrame(const Camera& camera)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	projection = glm::perspective(camera.fov, (float)windowDetails->width / (float)windowDetails->height, nearPlane, farPlane);
+	float aspect = (float)windowDetails->width / (float)windowDetails->height;
+	projection = glm::perspective(camera.fov, aspect, nearPlane, farPlane);
 	view = camera.GetViewMatrix();
 	cameraPos = camera.position;
+	viewFrustum = FrustumUtils::CreateFrustumFromCamera(camera, aspect, farPlane, nearPlane);
 }
 
 void Renderer::EndFrame()
@@ -128,11 +131,35 @@ void Renderer::EndFrame()
 
 void Renderer::DrawFrame()
 {
-	geometryPass->DoPass(submissions, projection, view);
-	shadowMappingPass->DoPass(submissions, projection, view);
-	envMapPass->DoPass(submissions, projection, view);
-	lightingPass->DoPass(submissions, projection, view);
-	forwardPass->DoPass(forwardSubmissions, projection, view);
+	// TODO: Visualize AABB's
+	// TODO: Make a second frustum that will be 2x wider than our view frustum, specifically for shadow mapping.
+	// This will allow shadows to be cast ourside of our view frustum
+
+	// Cull if not in frustum
+	std::vector<RenderSubmission> culledSubmissions;
+	for (RenderSubmission& submission : submissions)
+	{
+		if (!submission.renderComponent->mesh->GetBoundingBox().IsOnFrustum(viewFrustum, submission.transform)) continue; // Not in our view frustum, no need to render
+		culledSubmissions.push_back(submission);
+	}
+
+	std::vector<RenderSubmission> culledForwardSubmissions;
+	for (RenderSubmission& submission : forwardSubmissions)
+	{
+		if (!submission.renderComponent->mesh->GetBoundingBox().IsOnFrustum(viewFrustum, submission.transform)) continue; // Not in our view frustum, no need to render
+		culledForwardSubmissions.push_back(submission);
+	}
+
+	// Some passes need both
+	std::vector<RenderSubmission> mixedCulledSubmissions;
+	mixedCulledSubmissions.insert(mixedCulledSubmissions.end(), culledSubmissions.begin(), culledSubmissions.end());
+	mixedCulledSubmissions.insert(mixedCulledSubmissions.end(), culledForwardSubmissions.begin(), culledForwardSubmissions.end());
+
+	geometryPass->DoPass(culledSubmissions, projection, view);
+	shadowMappingPass->DoPass(mixedCulledSubmissions, projection, view);
+	envMapPass->DoPass(culledSubmissions, projection, view);
+	lightingPass->DoPass(culledSubmissions, projection, view);
+	forwardPass->DoPass(culledForwardSubmissions, projection, view);
 }
 
 void Renderer::Submit(const RenderSubmission& submission)

@@ -1,23 +1,15 @@
 #pragma once
 
+#include "Mesh.h"
 #include "Component.h"
-#include "VertexArrayObject.h"
 #include "ITexture.h"
-#include "CubeMap.h"
-
-enum class RRType
-{
-	None,
-	Reflect,
-	Refract
-};
+#include "ReflectRefract.h"
 
 struct RenderComponent : public Component
 {
 	struct RenderInfo
 	{
-		VertexArrayObject* vao = nullptr;
-		uint32_t indexCount = 0;
+		Mesh* mesh = nullptr;
 
 		bool isColorOverride = false;
 		glm::vec3 colorOverride = glm::vec3(0.0f);
@@ -39,16 +31,18 @@ struct RenderComponent : public Component
 
 		bool castShadows = true;
 		bool castShadowsOn = true;
+		float shadowSoftness = 1.0f;
 
-		CubeMap* reflectRefractMap = nullptr;
-		RRType reflectRefractType = RRType::None;
+		ReflectRefractType reflectRefractType = ReflectRefractType::None;
+		ReflectRefractMapType reflectRefractMapType = ReflectRefractMapType::Environment;
+		CubeMap* reflectRefractCustomMap = nullptr;
 		float reflectRefractStrength = 0.0f;
 		float refractRatio = 0.0f;
+		ReflectRefractMapPriorityType reflectRefractMapPriority = ReflectRefractMapPriorityType::High;
 	};
 
 	RenderComponent()
-		: vao(nullptr),
-		indexCount(0),
+		: mesh(nullptr),
 		isColorOverride(false),
 		colorOverride(glm::vec3(0.0f)),
 		normalTexture(nullptr),
@@ -65,15 +59,12 @@ struct RenderComponent : public Component
 		projViewModel(glm::mat4(1.0f)),
 		castShadows(true),
 		castShadowsOn(true),
-		reflectRefractMap(nullptr),
-		reflectRefractType(RRType::None),
-		reflectRefractStrength(0.0f),
-		refractRatio(0.0f)
+		shadowSoftness(1.0f),
+		reflectRefractMapPriority(ReflectRefractMapPriorityType::High)
 	{}
 
 	RenderComponent(const RenderInfo& renderInfo)
-		: vao(renderInfo.vao),
-		indexCount(renderInfo.indexCount),
+		: mesh(renderInfo.mesh),
 		isColorOverride(renderInfo.isColorOverride),
 		colorOverride(renderInfo.colorOverride),
 		albedoTextures(renderInfo.albedoTextures),
@@ -91,10 +82,9 @@ struct RenderComponent : public Component
 		projViewModel(glm::mat4(1.0f)),
 		castShadows(renderInfo.castShadows),
 		castShadowsOn(renderInfo.castShadowsOn),
-		reflectRefractMap(renderInfo.reflectRefractMap),
-		reflectRefractType(renderInfo.reflectRefractType),
-		reflectRefractStrength(renderInfo.reflectRefractStrength),
-		refractRatio(renderInfo.refractRatio)
+		shadowSoftness(renderInfo.shadowSoftness),
+		reflectRefractData(renderInfo.reflectRefractType, renderInfo.reflectRefractMapType, renderInfo.reflectRefractCustomMap, renderInfo.reflectRefractStrength, renderInfo.refractRatio),
+		reflectRefractMapPriority(renderInfo.reflectRefractMapPriority)
 	{}
 
 	virtual void ImGuiUpdate() override
@@ -131,19 +121,34 @@ struct RenderComponent : public Component
 			ImGui::Checkbox("Ignore Lighting", &isIgnoreLighting);
 			ImGui::Checkbox("Cast Shadows", &castShadows);
 			ImGui::Checkbox("Cast Shadows On", &castShadowsOn);
+			ImGui::DragFloat("Shadow Softness", &shadowSoftness, 0.001f, 0.0f, 1.0f);
 			
 			ImGui::NewLine();
-			ImGui::DragFloat("Reflect/Refract Strength", &reflectRefractStrength, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Reflect/Refract Strength", &reflectRefractData.strength, 0.001f, 0.0f, 1.0f);
+			ImGui::DragFloat("Refract Ratio", &reflectRefractData.refractRatio, 0.001f);
 
 			ImGui::Text("Reflection/Refraction Type:");
-			int renderSelection = (int) reflectRefractType;
+			int renderSelection = (int) reflectRefractData.type;
 			ImGui::RadioButton("None", &renderSelection, 0); ImGui::SameLine();
 			ImGui::RadioButton("Reflect", &renderSelection, 1); ImGui::SameLine();
 			ImGui::RadioButton("Refract", &renderSelection, 2);
 
-			if (renderSelection != (int)reflectRefractType)
+			if (renderSelection != (int)reflectRefractData.type)
 			{
-				reflectRefractType = (RRType) renderSelection;
+				reflectRefractData.type = (ReflectRefractType) renderSelection;
+			}
+
+			ImGui::NewLine();
+			ImGui::Text("Reflection/Refraction Map Type:");
+			int rrMapTypeSelection = (int)reflectRefractData.mapType;
+			ImGui::RadioButton("Environment", &rrMapTypeSelection, 0); ImGui::SameLine();
+			ImGui::RadioButton("Dynamic Minimal", &rrMapTypeSelection, 1); ImGui::SameLine();
+			ImGui::RadioButton("Dynamic Medium", &rrMapTypeSelection, 2); ImGui::SameLine();
+			ImGui::RadioButton("Dynamic Full", &rrMapTypeSelection, 3);
+
+			if (rrMapTypeSelection != (int)reflectRefractData.mapType)
+			{
+				reflectRefractData.mapType = (ReflectRefractMapType) rrMapTypeSelection;
 			}
 
 			ImGui::TreePop();
@@ -156,8 +161,7 @@ struct RenderComponent : public Component
 		return roughnessTexture && metalTexture && aoTexture;
 	}
 
-	VertexArrayObject* vao;
-	uint32_t indexCount;
+	Mesh* mesh;
 
 	// Diffuse color
 	bool isColorOverride;
@@ -185,9 +189,8 @@ struct RenderComponent : public Component
 
 	bool castShadows;
 	bool castShadowsOn;
+	float shadowSoftness;
 
-	CubeMap* reflectRefractMap;
-	RRType reflectRefractType;
-	float reflectRefractStrength;
-	float refractRatio;
+	ReflectRefractData reflectRefractData;
+	ReflectRefractMapPriorityType reflectRefractMapPriority;
 };

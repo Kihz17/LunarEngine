@@ -123,8 +123,7 @@ Entity* ApproachShootCondition::SpawnBullet(const glm::vec3& position, const glm
 
 	// Render Info
 	RenderComponent::RenderInfo sphereInfo;
-	sphereInfo.vao = bulletMesh->GetVertexArray();
-	sphereInfo.indexCount = bulletMesh->GetIndexBuffer()->GetCount();
+	sphereInfo.mesh = bulletMesh;
 	sphereInfo.isColorOverride = true;
 	sphereInfo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
 	physicsSphere->AddComponent<RenderComponent>(sphereInfo);

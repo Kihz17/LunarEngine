@@ -90,13 +90,8 @@ void ForwardRenderPass::DoPass(std::vector<RenderSubmission>& submissions, const
 	{
 		RenderComponent* renderComponent = submission.renderComponent;
 
-		glm::mat4 transform = glm::mat4(1.0f);
-		transform *= glm::translate(glm::mat4(1.0f), submission.position);
-		transform *= glm::toMat4(submission.rotation);
-		transform *= glm::scale(glm::mat4(1.0f), submission.scale);
-
-		shader->SetMat4("uMatModel", transform);
-		shader->SetMat4("uMatModelInverseTranspose", glm::inverse(transform));
+		shader->SetMat4("uMatModel", submission.transform);
+		shader->SetMat4("uMatModelInverseTranspose", glm::inverse(submission.transform));
 
 		// Color
 		if (renderComponent->isColorOverride)
@@ -168,8 +163,8 @@ void ForwardRenderPass::DoPass(std::vector<RenderSubmission>& submissions, const
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 
-		renderComponent->vao->Bind();
-		glDrawElements(GL_TRIANGLES, renderComponent->indexCount, GL_UNSIGNED_INT, 0);
-		renderComponent->vao->Unbind();
+		renderComponent->mesh->GetVertexArray()->Bind();
+		glDrawElements(GL_TRIANGLES, renderComponent->mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+		renderComponent->mesh->GetVertexArray()->Unbind();
 	}
 }
