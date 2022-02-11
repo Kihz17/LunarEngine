@@ -43,7 +43,7 @@ void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 {
 	windowDetails = window;
 
-	geometryPass = new GeometryPass(windowDetails);
+	geometryPass = new GeometryPass(windowDetails, cameraPos);
 	envMapPass = new EnvironmentMapPass(windowDetails);
 
 	CascadedShadowMappingInfo csmInfo(view, camera.fov, nearPlane, farPlane);

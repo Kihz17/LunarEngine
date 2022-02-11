@@ -3,6 +3,14 @@
 #include "Component.h"
 #include "VertexArrayObject.h"
 #include "ITexture.h"
+#include "CubeMap.h"
+
+enum class RRType
+{
+	None,
+	Reflect,
+	Refract
+};
 
 struct RenderComponent : public Component
 {
@@ -31,6 +39,11 @@ struct RenderComponent : public Component
 
 		bool castShadows = true;
 		bool castShadowsOn = true;
+
+		CubeMap* reflectRefractMap = nullptr;
+		RRType reflectRefractType = RRType::None;
+		float reflectRefractStrength = 0.0f;
+		float refractRatio = 0.0f;
 	};
 
 	RenderComponent()
@@ -51,7 +64,11 @@ struct RenderComponent : public Component
 		hasPrevProjViewModel(false),
 		projViewModel(glm::mat4(1.0f)),
 		castShadows(true),
-		castShadowsOn(true)
+		castShadowsOn(true),
+		reflectRefractMap(nullptr),
+		reflectRefractType(RRType::None),
+		reflectRefractStrength(0.0f),
+		refractRatio(0.0f)
 	{}
 
 	RenderComponent(const RenderInfo& renderInfo)
@@ -73,7 +90,11 @@ struct RenderComponent : public Component
 		hasPrevProjViewModel(false),
 		projViewModel(glm::mat4(1.0f)),
 		castShadows(renderInfo.castShadows),
-		castShadowsOn(renderInfo.castShadowsOn)
+		castShadowsOn(renderInfo.castShadowsOn),
+		reflectRefractMap(renderInfo.reflectRefractMap),
+		reflectRefractType(renderInfo.reflectRefractType),
+		reflectRefractStrength(renderInfo.reflectRefractStrength),
+		refractRatio(renderInfo.refractRatio)
 	{}
 
 	virtual void ImGuiUpdate() override
@@ -111,6 +132,20 @@ struct RenderComponent : public Component
 			ImGui::Checkbox("Cast Shadows", &castShadows);
 			ImGui::Checkbox("Cast Shadows On", &castShadowsOn);
 			
+			ImGui::NewLine();
+			ImGui::DragFloat("Reflect/Refract Strength", &reflectRefractStrength, 0.01f, 0.0f, 1.0f);
+
+			ImGui::Text("Reflection/Refraction Type:");
+			int renderSelection = (int) reflectRefractType;
+			ImGui::RadioButton("None", &renderSelection, 0); ImGui::SameLine();
+			ImGui::RadioButton("Reflect", &renderSelection, 1); ImGui::SameLine();
+			ImGui::RadioButton("Refract", &renderSelection, 2);
+
+			if (renderSelection != (int)reflectRefractType)
+			{
+				reflectRefractType = (RRType) renderSelection;
+			}
+
 			ImGui::TreePop();
 		}
 
@@ -150,4 +185,9 @@ struct RenderComponent : public Component
 
 	bool castShadows;
 	bool castShadowsOn;
+
+	CubeMap* reflectRefractMap;
+	RRType reflectRefractType;
+	float reflectRefractStrength;
+	float refractRatio;
 };

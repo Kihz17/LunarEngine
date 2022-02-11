@@ -13,6 +13,7 @@
 
 #include <vector>
 
+class CubeMap;
 class Light;
 class Renderer
 {
@@ -32,6 +33,8 @@ public:
 	static void Submit(const RenderSubmission& submission);
 
 	static void SetShadowMappingDirectionalLight(Light* light);
+
+	static CubeMap* GetEnvironmentMapCube() { return envMapPass->GetCubeMap(); }
 
 	static const std::string LIGHTING_SHADER_KEY;
 	static const std::string FORWARD_SHADER_KEY;

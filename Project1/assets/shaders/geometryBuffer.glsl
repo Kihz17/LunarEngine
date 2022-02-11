@@ -11,12 +11,14 @@ uniform mat4 uMatView;
 uniform mat4 uMatProjection;
 uniform mat4 uMatProjViewModel;
 uniform mat4 uMatPrevProjViewModel;
+uniform vec3 uCameraPosition;
 
 out vec3 mWorldPosition;
 out vec2 mTextureCoordinates;
 out vec3 mNormal;
 out vec4 mFragPosition;
 out vec4 mPrevFragPosition;
+out vec3 mView;
 
 void main()
 {		
@@ -30,6 +32,8 @@ void main()
 
 	mFragPosition = uMatProjViewModel * vertexPos;
 	mPrevFragPosition = uMatPrevProjViewModel * vertexPos;
+	
+	mView = normalize(mWorldPosition - uCameraPosition);
 	
 	gl_Position = uMatProjection * uMatView * uMatModel * vertexPos;
 };
@@ -49,6 +53,7 @@ in vec2 mTextureCoordinates;
 in vec3 mNormal;
 in vec4 mFragPosition;
 in vec4 mPrevFragPosition;
+in vec3 mView;
 
 uniform sampler2D uAlbedoTexture1;
 uniform sampler2D uAlbedoTexture2;
@@ -61,6 +66,10 @@ uniform bool uHasNormalTexture;
 uniform sampler2D uNormalTexture;
 
 uniform bool uCanCastShadowOn;
+
+// RR = Reflectivity/Refraction
+uniform samplerCube uRRMap;
+uniform vec4 uRRInfo; // x =  1.0f = reflect, 2.0f = refract), y = reflectivity/refraction strength, z = refractive ratio
 
 // Material
 uniform sampler2D uRoughnessTexture;
@@ -90,29 +99,45 @@ void main()
 	
 	gPosition = vec4(mWorldPosition, LinearizeDepth(gl_FragCoord.z)); // Set position with adjusted depth
 	
+	vec3 diffuseColor = vec3(0.0f);
 	if(uColorOverride.w == 1.0f) // Override color
 	{
-		gAlbedo.rgb = uColorOverride.rgb;
+		diffuseColor = uColorOverride.rgb;
 	}
 	else // Sample albedo textures
 	{
-		gAlbedo.rgb = vec3(texture(uAlbedoTexture1, mTextureCoordinates)) * uAlbedoRatios.x;
+		diffuseColor = vec3(texture(uAlbedoTexture1, mTextureCoordinates)) * uAlbedoRatios.x;
 		
 		if(uAlbedoRatios.y > 0.0f)
 		{
-			gAlbedo.rgb += vec3(texture(uAlbedoTexture2, mTextureCoordinates)) * uAlbedoRatios.y;
+			diffuseColor += vec3(texture(uAlbedoTexture2, mTextureCoordinates)) * uAlbedoRatios.y;
 		}
 		
 		if(uAlbedoRatios.z > 0.0f)
 		{
-			gAlbedo.rgb += vec3(texture(uAlbedoTexture3, mTextureCoordinates)) * uAlbedoRatios.z; 
+			diffuseColor += vec3(texture(uAlbedoTexture3, mTextureCoordinates)) * uAlbedoRatios.z; 
 		}
 		
 		if(uAlbedoRatios.w > 0.0f)
 		{
-			gAlbedo.rgb += vec3(texture(uAlbedoTexture4, mTextureCoordinates)) * uAlbedoRatios.w; 
+			diffuseColor += vec3(texture(uAlbedoTexture4, mTextureCoordinates)) * uAlbedoRatios.w; 
 		}
 	}
+	
+	if(uRRInfo.x == 1.0f) // This fragment is reflective, sample from the reflectivty map
+	{
+		vec3 reflectedRay = reflect(mView, mNormal); // Reflect view direction off of surface normal 
+		vec3 reflectedColor = texture(uRRMap, reflectedRay).rgb; // Sample texel from cube map according to reflected ray
+		diffuseColor = mix(diffuseColor, reflectedColor, uRRInfo.y); // Mix between diffuse and reflective color based on our strength [0-1]
+	}
+	else if(uRRInfo.x == 2.0f) // This fragment is refractive, sample from the refractive map
+	{
+		vec3 refractedRay = refract(mView, mNormal, uRRInfo.z); // Refract view direction off of surface normal 
+		vec3 refractedColor = texture(uRRMap, refractedRay).rgb; // Sample texel from cube map according to refracted ray
+		diffuseColor = mix(diffuseColor, refractedColor, uRRInfo.y); // Mix between diffuse and refracted color based on our strength [0-1]
+	}
+	
+	gAlbedo.rgb = diffuseColor;
 
 	gEffects.gb = fragPos - prevFragPos;
 	

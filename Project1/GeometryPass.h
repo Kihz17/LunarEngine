@@ -13,7 +13,7 @@
 class GeometryPass : public IRenderPass
 {
 public:
-	GeometryPass(const WindowSpecs* windowSpecs);
+	GeometryPass(const WindowSpecs* windowSpecs, glm::vec3& cameraPos);
 	virtual ~GeometryPass();
 
 	virtual void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view) override;
@@ -28,5 +28,6 @@ private:
 	
 	Shader* shader;
 
+	glm::vec3& cameraPosition;
 	const WindowSpecs* windowSpecs;
 };

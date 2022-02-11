@@ -5,11 +5,12 @@
 #include "Texture2D.h"
 #include "ShaderLibrary.h"
 
-GeometryPass::GeometryPass(const WindowSpecs* windowSpecs)
+GeometryPass::GeometryPass(const WindowSpecs* windowSpecs, glm::vec3& cameraPos)
 	: geometryBuffer(new FrameBuffer()),
 	geometryRenderBuffer(new RenderBuffer(GL_DEPTH_COMPONENT, windowSpecs->width, windowSpecs->height)),
 	shader(ShaderLibrary::Load(G_SHADER_KEY, "assets/shaders/geometryBuffer.glsl")),
-	windowSpecs(windowSpecs)
+	windowSpecs(windowSpecs),
+	cameraPosition(cameraPos)
 {
 	// Setup frame buffer color attachments
 	geometryBuffer->Bind();
@@ -43,6 +44,9 @@ GeometryPass::GeometryPass(const WindowSpecs* windowSpecs)
 	shader->InitializeUniform("uAmbientOcculsionTexture");
 	shader->InitializeUniform("uMaterialOverrides");
 	shader->InitializeUniform("uCanCastShadowOn");
+	shader->InitializeUniform("uRRMap");
+	shader->InitializeUniform("uRRInfo");
+	shader->InitializeUniform("uCameraPosition");
 	shader->Unbind();
 }
 
@@ -64,6 +68,7 @@ void GeometryPass::DoPass(std::vector<RenderSubmission>& submissions, const glm:
 
 	shader->SetMat4("uMatProjection", projection);
 	shader->SetMat4("uMatView", view);
+	shader->SetFloat3("uCameraPosition", cameraPosition);
 
 	for (RenderSubmission& submission : submissions)
 	{
@@ -137,6 +142,16 @@ void GeometryPass::DoPass(std::vector<RenderSubmission>& submissions, const glm:
 		{
 			shader->SetFloat4("uMaterialOverrides", glm::vec4(renderComponent->roughness, renderComponent->metalness, renderComponent->ao, 1.0f));
 		}
+
+		float rrType = renderComponent->reflectRefractType == RRType::Reflect ? 1.0f : renderComponent->reflectRefractType == RRType::Refract ? 2.0f : 0.0f;
+		shader->SetFloat4("uRRInfo", glm::vec4(rrType, renderComponent->reflectRefractStrength, renderComponent->refractRatio, 0.0f));
+
+		if (renderComponent->reflectRefractType != RRType::None)
+		{
+			renderComponent->reflectRefractMap->BindToSlot(8);
+		}
+
+		shader->SetInt("uRRMap", 8); // This has to be outside of the if because for some strange reason sampling from a cube map that hasn't been set stops everything from rendering, even if the code isn't run
 
 		if (renderComponent->isWireframe)
 		{

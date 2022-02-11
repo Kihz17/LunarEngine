@@ -23,6 +23,8 @@ public:
 
 	void SetEnvironmentMapEquirectangular(const std::string& path);
 
+	CubeMap* GetCubeMap() { return envMapCube; }
+
 	const std::string CUBE_MAP_DRAW_SHADER_KEY = "drawEnvShader";
 	const std::string CUBE_MAP_CONVERT_SHADER_KEY = "hdrToCubeShader";
 

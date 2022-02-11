@@ -91,6 +91,13 @@ int main()
 	return 0;
 }
 
+// Cube map reflections:
+// Three Types:
+// 1. Use env map only
+// 2. Use pre-rendererd cube map
+// 3. Use dynamic cube map with minimal meshes
+// 4. Full dynamic cube map
+
 // TODO List
 // 1. Procedural Grass
 // 2. Bloom & Emission
@@ -125,5 +132,8 @@ void ShaderBallTest(Mesh* shaderBall, ITexture* normalTexture, ITexture* albedo,
     //testInfo.roughnessTexture = roughnessTexture;
     //testInfo.metalTexture = metalnessTexture;
     //testInfo.aoTexture = aoTexture;
+    testInfo.reflectRefractType = RRType::Reflect;
+    testInfo.reflectRefractMap = Renderer::GetEnvironmentMapCube();
+    testInfo.reflectRefractStrength = 0.5f;
     testEntity->AddComponent<RenderComponent>(testInfo);
 }

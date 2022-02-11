@@ -58,6 +58,7 @@ uniform sampler2D gPosition;
 uniform sampler2D gAlbedo;
 uniform sampler2D gNormal;
 uniform sampler2D gEffects;
+uniform sampler2D gReflectivity;
 uniform vec4 gMaterialOverrides;
 
 // Lighitng
@@ -100,16 +101,22 @@ float ComputeShadow(vec3 fragmentPositionWorldSpace, vec3 lightDir, vec3 normal)
 
 void main()
 {
+	vec4 gPositionSample = texture(gPosition, mTextureCoordinates).rgba;
+	vec4 gAlbedoSample = texture(gAlbedo, mTextureCoordinates).rgba;
+	vec4 gNormalSample = texture(gNormal, mTextureCoordinates).rgba;
+	vec4 gEffectsSample = texture(gEffects, mTextureCoordinates).rgba;
+	vec4 gReflectivitySample = texture(gReflectivity, mTextureCoordinates).rgba;
+		
 	// Get geometry buffer data
-	vec3 worldPos = texture(gPosition, mTextureCoordinates).rgb;
-	vec3 albedo = LinearizeColor(texture(gAlbedo, mTextureCoordinates).rgb);
-	vec3 normal = texture(gNormal, mTextureCoordinates).rgb;
-	float roughness = texture(gAlbedo, mTextureCoordinates).a;
-	float metalness = texture(gNormal, mTextureCoordinates).a;
-	float ambientOcculsion = texture(gEffects, mTextureCoordinates).r;
-	vec2 velocity = texture(gEffects, mTextureCoordinates).gb;
-	float depth = texture(gPosition, mTextureCoordinates).a;
-	bool canCastShadowOn = texture(gEffects, mTextureCoordinates).a >= 1.0f;
+	vec3 worldPos = gPositionSample.rgb;
+	vec3 albedo = LinearizeColor(gAlbedoSample.rgb);
+	vec3 normal = gNormalSample.rgb;
+	float roughness = gAlbedoSample.a;
+	float metalness = gNormalSample.a;
+	float ambientOcculsion = gEffectsSample.r;
+	vec2 velocity = gEffectsSample.gb;
+	float depth = gPositionSample.a;
+	bool canCastShadowOn = gEffectsSample.a >= 0.5f;
 	
 	vec3 color = vec3(0.0f);
 	
