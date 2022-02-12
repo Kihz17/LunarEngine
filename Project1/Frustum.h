@@ -6,11 +6,11 @@
 
 // Represents a plant in a frustum. I frustum has 6 plans: near, far, right, left, top, and bottom
 // This will help identify if objects are within a frustum. Will mostly be used for frustum culling
-struct Plan
+struct Plane
 {
-	Plan() = default;
-	Plan(const glm::vec3& p1, const glm::vec3& normal)
-		: normal(glm::normalize(normal)),
+	Plane() = default;
+	Plane(const glm::vec3& p1, const glm::vec3& norm)
+		: normal(glm::normalize(norm)),
 		distance(glm::dot(normal, p1))
 	{}
 
@@ -19,21 +19,21 @@ struct Plan
 		return glm::dot(normal, point) - distance;
 	}
 
-	glm::vec3 normal;
-	float distance; // distance from the origin to the nearest point in the plan
+	glm::vec3 normal = glm::vec3(0.0f, 1.0f, 0.0f);
+	float distance = 0.0f; // distance from the origin to the nearest point in the plan
 };
 
 // Represents a frustum
 struct Frustum
 {
-	Plan top;
-	Plan bottom;
+	Plane top;
+	Plane bottom;
 
-	Plan right;
-	Plan left;
+	Plane right;
+	Plane left;
 
-	Plan far;
-	Plan near;
+	Plane far;
+	Plane near;
 };
 
 namespace FrustumUtils

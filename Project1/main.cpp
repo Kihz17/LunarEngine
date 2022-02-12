@@ -62,7 +62,7 @@ int main()
     Renderer::SetShadowMappingDirectionalLight(light);
 
     // SHADER BALL TEST
-    //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
+    ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
 
     {
         Entity* ground = gameEngine.GetEntityManager().CreateEntity("ground");
@@ -93,13 +93,6 @@ int main()
 	return 0;
 }
 
-// Cube map reflections:
-// Three Types:
-// 1. Use env map only
-// 2. Use pre-rendererd cube map
-// 3. Use dynamic cube map with minimal meshes
-// 4. Full dynamic cube map
-
 // TODO List
 // 1. Procedural Grass
 // 2. Bloom & Emission
@@ -107,8 +100,7 @@ int main()
 // 4. Light Probes/Global Illumination
 // 5. Water
 // 6. Clouds
-// 7. Frustum culling
-// 8. Instanced rendering
+// 7. Instanced rendering
 
 // LATER
 // SSAO? Raytracing? Raymarching?

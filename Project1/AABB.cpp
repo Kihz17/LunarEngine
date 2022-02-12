@@ -77,11 +77,11 @@ bool AABB::IsOnFrustum(const Frustum& frustum, const glm::mat4& transform) const
 		transformedBoundingBox.IsOnOrForwardPlan(frustum.far);
 }
 
-bool AABB::IsOnOrForwardPlan(const Plan& plan) const // Taken from https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
+bool AABB::IsOnOrForwardPlan(const Plane& plane) const // Taken from https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
 {
 	// Compute projection interval radius of b onto L(t) = b.x * p.n
-	const float r = size.x * std::abs(plan.normal.x) + size.y * std::abs(plan.normal.y) + size.z * std::abs(plan.normal.z);
-	return -r <= plan.GetSignedDistanceToPlan(center);
+	const float r = size.x * std::abs(plane.normal.x) + size.y * std::abs(plane.normal.y) + size.z * std::abs(plane.normal.z);
+	return -r < plane.GetSignedDistanceToPlan(center);
 }
 
 void AABB::Resize(const glm::vec3& min, const glm::vec3 max)

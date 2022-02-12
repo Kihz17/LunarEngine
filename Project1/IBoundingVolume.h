@@ -8,7 +8,7 @@ public:
 	virtual ~IBoundingVolume() = default;
 
 	virtual bool IsOnFrustum(const Frustum& frustum, const glm::mat4& transform) const = 0;
-	virtual bool IsOnOrForwardPlan(const Plan& plan) const = 0;
+	virtual bool IsOnOrForwardPlan(const Plane& plane) const = 0;
 
 	bool IsOnFrustum(const Frustum& frustum) const
 	{

@@ -17,7 +17,7 @@ public:
 	virtual ~AABB();
 
 	virtual bool IsOnFrustum(const Frustum& frustum, const glm::mat4& transform) const override;
-	virtual bool IsOnOrForwardPlan(const Plan& plan) const override;
+	virtual bool IsOnOrForwardPlan(const Plane& plan) const override;
 
 	void Resize(const glm::vec3& min, const glm::vec3 max);
 
