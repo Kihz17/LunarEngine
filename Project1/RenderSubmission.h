@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RenderComponent.h"
+#include "VertexArrayObject.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -25,4 +26,14 @@ struct RenderSubmission
 	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 
 	glm::mat4 transform;
+};
+
+struct LineRenderSubmission
+{
+	VertexArrayObject* vao;
+	unsigned int indexCount = 0;
+	glm::vec3 lineColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	float lineWidth = 1.0f;
+
+	glm::mat4 transform = glm::mat4(1.0f);
 };

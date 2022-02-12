@@ -40,6 +40,9 @@ public:
 	Physics::IPhysicsWorld<Entity>* physicsWorld;
 
 	static WindowSpecs InitializeGLFW(bool initImGui);
+
+	bool debugMode;
+
 private:
 	void SubmitEntitiesToRender();
 

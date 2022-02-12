@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IRenderPass.h"
+#include "RenderSubmission.h"
 #include "Window.h"
 #include "IFrameBuffer.h"
 #include "UniformBuffer.h"
@@ -36,13 +36,13 @@ public:
 	float zMult;
 };
 
-class CascadedShadowMapping : public IRenderPass
+class CascadedShadowMapping
 {
 public:
 	CascadedShadowMapping(const CascadedShadowMappingInfo& info);
 	virtual ~CascadedShadowMapping();
 
-	virtual void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view) override;
+	void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view);
 
 	void SetDirectionalLight(Light* directionalLight) { this->directionalLight = directionalLight; }
 

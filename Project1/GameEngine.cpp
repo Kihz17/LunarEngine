@@ -28,7 +28,8 @@ GameEngine::GameEngine(const WindowSpecs& windowSpecs, bool editorMode)
 	: editorMode(editorMode),
     windowSpecs(windowSpecs),
     physicsFactory(new PhysicsFactory()),
-    physicsWorld(physicsFactory->CreateWorld())
+    physicsWorld(physicsFactory->CreateWorld()),
+    debugMode(false)
 {
 	// Initialize systems
     InputManager::Initialize(windowSpecs.window);
@@ -46,7 +47,7 @@ GameEngine::~GameEngine()
 
     ShaderLibrary::CleanUp();
     Renderer::CleanUp();
-    SoundManager::CleanUp();
+   // SoundManager::CleanUp();
     TextureManager::CleanUp(); // This should be last, to give other things time if they want to remove textures
 }
 
@@ -116,6 +117,17 @@ void GameEngine::SubmitEntitiesToRender()
         // Tell the renderer to render this entity
         RenderSubmission submission(renderComponent, posComponent->value, scaleComponent->value, rotComponent->value);
         Renderer::Submit(submission);
+
+        if (debugMode)
+        {
+            const AABB* aabb = renderComponent->mesh->GetBoundingBox();
+            LineRenderSubmission lineSubmission;
+            lineSubmission.vao = aabb->GetVertexArray();
+            lineSubmission.indexCount = aabb->GetIndexCount();
+            lineSubmission.lineColor = glm::vec3(0.0f, 0.0f, 0.8f);
+            lineSubmission.transform = submission.transform;
+            Renderer::SubmitLines(lineSubmission);
+        }
     }
 }
 
@@ -186,13 +198,12 @@ void GameEngine::Run()
         // Update camera
         camera.Update(deltaTime);
 
-        // TODO: Put these back to the end of the loop
+        InputManager::ClearState();
+        entityManager.CleanEntities(); // Remove invalid entities
+
         // Submit all renderable entities
         SubmitEntitiesToRender();
         Render();
-
-        InputManager::ClearState();
-        entityManager.CleanEntities(); // Remove invalid entities
     }
 
     if (editorMode)

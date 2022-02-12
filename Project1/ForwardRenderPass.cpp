@@ -5,10 +5,9 @@
 
 #include <sstream>
 
-ForwardRenderPass::ForwardRenderPass(IFrameBuffer* geometryBuffer, const WindowSpecs* windowSpecs)
+ForwardRenderPass::ForwardRenderPass(IFrameBuffer* geometryBuffer)
 	: geometryBuffer(geometryBuffer),
-	shader(ShaderLibrary::Load(Renderer::FORWARD_SHADER_KEY, "assets/shaders/forward.glsl")),
-	windowSpecs(windowSpecs)
+	shader(ShaderLibrary::Load(Renderer::FORWARD_SHADER_KEY, "assets/shaders/forward.glsl"))
 {
 	// Setup shader uniforms
 	shader->InitializeUniform("uMatModel");
@@ -70,7 +69,7 @@ ForwardRenderPass::~ForwardRenderPass()
 
 }
 
-void ForwardRenderPass::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view)
+void ForwardRenderPass::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view, const WindowSpecs* windowSpecs)
 {
 	geometryBuffer->BindRead(); // Bind for read only
 	geometryBuffer->UnbindWrite();

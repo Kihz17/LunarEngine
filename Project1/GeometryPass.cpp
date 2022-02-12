@@ -6,12 +6,11 @@
 #include "ShaderLibrary.h"
 #include "Renderer.h"
 
-GeometryPass::GeometryPass(const WindowSpecs* windowSpecs, glm::vec3& cameraPos)
+GeometryPass::GeometryPass(const WindowSpecs* windowSpecs)
 	: geometryBuffer(new FrameBuffer()),
 	geometryRenderBuffer(new RenderBuffer(GL_DEPTH_COMPONENT, windowSpecs->width, windowSpecs->height)),
 	shader(ShaderLibrary::Load(G_SHADER_KEY, "assets/shaders/geometryBuffer.glsl")),
-	windowSpecs(windowSpecs),
-	cameraPosition(cameraPos)
+	windowSpecs(windowSpecs)
 {
 	// Setup frame buffer color attachments
 	geometryBuffer->Bind();
@@ -57,7 +56,7 @@ GeometryPass::~GeometryPass()
 	delete geometryRenderBuffer;
 }
 
-void GeometryPass::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view)
+void GeometryPass::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition)
 {
 	glDisable(GL_BLEND); // No blend for deffered rendering
 	glEnable(GL_DEPTH_TEST); // Enable depth testing for scene render

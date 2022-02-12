@@ -1,6 +1,5 @@
 #pragma once
 
-#include "IRenderPass.h"
 #include "IFrameBuffer.h"
 #include "IRenderBuffer.h"
 #include "Window.h"
@@ -11,13 +10,13 @@
 
 #include <glm\glm.hpp>
 
-class EnvironmentMapPass : public IRenderPass
+class EnvironmentMapPass
 {
 public:
 	EnvironmentMapPass(const WindowSpecs* windowSpecs);
 	virtual ~EnvironmentMapPass();
 
-	virtual void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view) override;
+	void DoPass(const glm::mat4& projection, const glm::mat4& view);
 
 	IFrameBuffer* GetEnvironmentBuffer() { return environmentBuffer; }
 

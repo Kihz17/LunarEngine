@@ -11,6 +11,7 @@
 #include "LightingPass.h"
 #include "ForwardRenderPass.h"
 #include "CascadedShadowMapping.h"
+#include "LinePass.h"
 
 #include <vector>
 
@@ -32,6 +33,7 @@ public:
 	static void EndFrame();
 
 	static void Submit(const RenderSubmission& submission);
+	static void SubmitLines(const LineRenderSubmission& submission);
 
 	static void SetShadowMappingDirectionalLight(Light* light);
 
@@ -56,4 +58,5 @@ private:
 	static LightingPass* lightingPass;
 	static ForwardRenderPass* forwardPass;
 	static CascadedShadowMapping* shadowMappingPass;
+	static LinePass* linePass;
 };

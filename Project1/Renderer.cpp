@@ -21,6 +21,7 @@ Frustum Renderer::viewFrustum;
 
 static std::vector<RenderSubmission> submissions;
 static std::vector<RenderSubmission> forwardSubmissions;
+static std::vector<LineRenderSubmission> lineSubmissions;
 
 float Renderer::farPlane = 1000.0f;
 float Renderer::nearPlane = 0.1f;
@@ -30,6 +31,7 @@ EnvironmentMapPass* Renderer::envMapPass = nullptr;
 LightingPass* Renderer::lightingPass = nullptr;
 ForwardRenderPass* Renderer::forwardPass = nullptr;
 CascadedShadowMapping* Renderer::shadowMappingPass = nullptr;
+LinePass* Renderer::linePass = nullptr;
 
 const std::string Renderer::LIGHTING_SHADER_KEY = "lShader";
 const std::string Renderer::FORWARD_SHADER_KEY = "fShader";
@@ -44,59 +46,64 @@ void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 {
 	windowDetails = window;
 
-	geometryPass = new GeometryPass(windowDetails, cameraPos);
-	envMapPass = new EnvironmentMapPass(windowDetails);
+	geometryPass = new GeometryPass(windowDetails);
 
 	CascadedShadowMappingInfo csmInfo(view, camera.fov, nearPlane, farPlane);
 	csmInfo.windowSpecs = windowDetails;
 	csmInfo.zMult = 10.0f;
 	shadowMappingPass = new CascadedShadowMapping(csmInfo);
-
-	lightingPass = new LightingPass(geometryPass->GetGBuffer(), envMapPass->GetEnvironmentBuffer(), windowDetails, cameraPos, shadowMappingPass->GetShadowMap(), shadowMappingPass->GetCascadeLevels());
-	forwardPass = new ForwardRenderPass(geometryPass->GetGBuffer(), windowDetails);
+	envMapPass = new EnvironmentMapPass(windowDetails);
+	lightingPass = new LightingPass(geometryPass->GetGBuffer(), envMapPass->GetEnvironmentBuffer(), windowDetails, shadowMappingPass->GetShadowMap(), shadowMappingPass->GetCascadeLevels());
+	forwardPass = new ForwardRenderPass(geometryPass->GetGBuffer());
+	linePass = new LinePass();
 
 	// TEST SECITON FOR GRASS
-	{
-		grassVAO = new VertexArrayObject();
-		//grassVBO = new VertexBuffer(nullptr, MAX_GRASS_BLADES * sizeof(float) * 3);
+	//{
+	//	grassVAO = new VertexArrayObject();
+	//	//grassVBO = new VertexBuffer(nullptr, MAX_GRASS_BLADES * sizeof(float) * 3);
 
-		float positions[100 * 3];
-		int currentIndex = 0;
-		for (int i = 0; i < 100; i++)
-		{
-			positions[currentIndex] = i;
-			positions[currentIndex + 1] = 10.0f;
-			positions[currentIndex + 2] = 0.0f;
-			currentIndex += 3;
-		}
-		grassVBO = new VertexBuffer(positions, 300 * sizeof(float));
+	//	float positions[100 * 3];
+	//	int currentIndex = 0;
+	//	for (int i = 0; i < 100; i++)
+	//	{
+	//		positions[currentIndex] = i;
+	//		positions[currentIndex + 1] = 10.0f;
+	//		positions[currentIndex + 2] = 0.0f;
+	//		currentIndex += 3;
+	//	}
+	//	grassVBO = new VertexBuffer(positions, 300 * sizeof(float));
 
-		BufferLayout bufferLayout = {
-			{ ShaderDataType::Float3, "vWorldPosition" }
-		};
-		grassVBO->SetLayout(bufferLayout);
-		grassVAO->AddVertexBuffer(grassVBO);
+	//	BufferLayout bufferLayout = {
+	//		{ ShaderDataType::Float3, "vWorldPosition" }
+	//	};
+	//	grassVBO->SetLayout(bufferLayout);
+	//	grassVAO->AddVertexBuffer(grassVBO);
 
-		// Grass shader
-		Shader* grassShader = ShaderLibrary::Load("grassShader", "assets/shaders/grass.glsl");
-		grassShader->Bind();
-		grassShader->InitializeUniform("uWidthHeight");
-		grassShader->InitializeUniform("uLODLevel");
-		grassShader->InitializeUniform("uAlbedoTexture");
-		grassShader->InitializeUniform("uHasNormalTexture");
-		grassShader->InitializeUniform("uNormalTexture");
-		grassShader->InitializeUniform("uRoughnessTexture");
-		grassShader->InitializeUniform("uMetalnessTexture");
-		grassShader->InitializeUniform("uAmbientOcculsionTexture");
-		grassShader->InitializeUniform("uMaterialOverrides");
-		grassShader->InitializeUniform("uDiscardTexture");
-		grassShader->Unbind();
-	}
+	//	// Grass shader
+	//	Shader* grassShader = ShaderLibrary::Load("grassShader", "assets/shaders/grass.glsl");
+	//	grassShader->Bind();
+	//	grassShader->InitializeUniform("uWidthHeight");
+	//	grassShader->InitializeUniform("uLODLevel");
+	//	grassShader->InitializeUniform("uAlbedoTexture");
+	//	grassShader->InitializeUniform("uHasNormalTexture");
+	//	grassShader->InitializeUniform("uNormalTexture");
+	//	grassShader->InitializeUniform("uRoughnessTexture");
+	//	grassShader->InitializeUniform("uMetalnessTexture");
+	//	grassShader->InitializeUniform("uAmbientOcculsionTexture");
+	//	grassShader->InitializeUniform("uMaterialOverrides");
+	//	grassShader->InitializeUniform("uDiscardTexture");
+	//	grassShader->Unbind();
+	//}
 }
 
 void Renderer::CleanUp()
 {
-
+	delete geometryPass;
+	delete envMapPass;
+	delete lightingPass;
+	delete forwardPass;
+	delete shadowMappingPass;
+	delete linePass;
 }
 
 void Renderer::SetViewType(uint32_t type)
@@ -131,22 +138,18 @@ void Renderer::EndFrame()
 
 void Renderer::DrawFrame()
 {
-	// TODO: Visualize AABB's
-	// TODO: Make a second frustum that will be 2x wider than our view frustum, specifically for shadow mapping.
-	// This will allow shadows to be cast ourside of our view frustum
-
 	// Cull if not in frustum
 	std::vector<RenderSubmission> culledSubmissions;
 	for (RenderSubmission& submission : submissions)
 	{
-		if (!submission.renderComponent->mesh->GetBoundingBox().IsOnFrustum(viewFrustum, submission.transform)) continue; // Not in our view frustum, no need to render
+		if (!submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) continue; // Not in our view frustum, no need to render
 		culledSubmissions.push_back(submission);
 	}
 
 	std::vector<RenderSubmission> culledForwardSubmissions;
 	for (RenderSubmission& submission : forwardSubmissions)
 	{
-		if (!submission.renderComponent->mesh->GetBoundingBox().IsOnFrustum(viewFrustum, submission.transform)) continue; // Not in our view frustum, no need to render
+		if (!submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) continue; // Not in our view frustum, no need to render
 		culledForwardSubmissions.push_back(submission);
 	}
 
@@ -155,11 +158,12 @@ void Renderer::DrawFrame()
 	mixedCulledSubmissions.insert(mixedCulledSubmissions.end(), culledSubmissions.begin(), culledSubmissions.end());
 	mixedCulledSubmissions.insert(mixedCulledSubmissions.end(), culledForwardSubmissions.begin(), culledForwardSubmissions.end());
 
-	geometryPass->DoPass(culledSubmissions, projection, view);
+	geometryPass->DoPass(culledSubmissions, projection, view, cameraPos);
 	shadowMappingPass->DoPass(mixedCulledSubmissions, projection, view);
-	envMapPass->DoPass(culledSubmissions, projection, view);
-	lightingPass->DoPass(culledSubmissions, projection, view);
-	forwardPass->DoPass(culledForwardSubmissions, projection, view);
+	envMapPass->DoPass(projection, view);
+	lightingPass->DoPass(culledSubmissions, projection, view, cameraPos);
+	forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
+	linePass->DoPass(lineSubmissions, projection, view, windowDetails);
 }
 
 void Renderer::Submit(const RenderSubmission& submission)
@@ -173,6 +177,11 @@ void Renderer::Submit(const RenderSubmission& submission)
 	{
 		submissions.push_back(submission);
 	}
+}
+
+void Renderer::SubmitLines(const LineRenderSubmission& submission)
+{
+	lineSubmissions.push_back(submission);
 }
 
 void Renderer::SetEnvironmentMapEquirectangular(const std::string& path)

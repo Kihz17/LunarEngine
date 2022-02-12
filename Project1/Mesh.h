@@ -14,21 +14,9 @@
 #include <vector>
 #include <unordered_map>
 
-struct Vertex
-{
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec2 textureCoord;
-};
-
-struct Face
-{
-	uint32_t v1, v2, v3;
-};
-
 struct Submesh
 {
-	Submesh() : boundingBox(glm::vec3(0.0f), glm::vec3(0.0f)) {}
+	Submesh() : boundingBox(new AABB()) {}
 
 	uint32_t baseVertex;
 	uint32_t baseIndex;
@@ -36,7 +24,7 @@ struct Submesh
 	uint32_t indexCount;
 	uint32_t vertexCount;
 
-	AABB boundingBox;
+	AABB* boundingBox;
 
 	glm::mat4 transform{ 1.0f };
 	std::string nodeName;
@@ -62,7 +50,7 @@ public:
 	inline const std::vector<Vertex>& GetVertices() const { return this->vertices; }
 	inline const std::vector<Face>& GetFaces() const { return this->faces; }
 
-	inline const AABB& GetBoundingBox() const { return this->boundingBox; }
+	inline const AABB* GetBoundingBox() const { return this->boundingBox; }
 
 	inline const std::string& GetPath() const { return this->filePath; }
 
@@ -85,7 +73,7 @@ private:
 	std::unordered_map<aiNode*, std::vector<uint32_t>> nodeMap;
 	const aiScene* assimpScene;
 
-	AABB boundingBox;
+	AABB* boundingBox;
 
 	std::string filePath;
 };

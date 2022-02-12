@@ -99,7 +99,7 @@ struct AssimpLogger : public Assimp::LogStream
 };
 
 Mesh::Mesh(const std::string& filePath)
-	: filePath(filePath), boundingBox(glm::vec3(0.0f), glm::vec3(0.0f))
+	: filePath(filePath), boundingBox(nullptr)
 {
 	//AssimpLogger::Initialize();
 
@@ -169,7 +169,7 @@ Mesh::Mesh(const std::string& filePath)
 			this->vertices.push_back(vertex);
 		}
 
-		submesh.boundingBox = AABB(min, max);
+		submesh.boundingBox->Resize(min, max);
 
 		for (unsigned int j = 0; j < assimpMesh->mNumFaces; j++)
 		{
@@ -196,9 +196,9 @@ Mesh::Mesh(const std::string& filePath)
 	glm::vec3 parentMax = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 	for (Submesh& submesh : this->submeshes)
 	{
-		AABB submeshAABB = submesh.boundingBox;
-		glm::vec3 submeshMin = submeshAABB.GetMin();
-		glm::vec3 submeshMax = submeshAABB.GetMax();
+		AABB* submeshAABB = submesh.boundingBox;
+		glm::vec3 submeshMin = submeshAABB->GetMin();
+		glm::vec3 submeshMax = submeshAABB->GetMax();
 
 		glm::vec3 min = glm::vec3(submesh.transform * glm::vec4(submeshMin, 1.0f));
 		glm::vec3 max = glm::vec3(submesh.transform * glm::vec4(submeshMax, 1.0f));
@@ -210,7 +210,7 @@ Mesh::Mesh(const std::string& filePath)
 		parentMax.y = glm::max(parentMax.y, max.y);
 		parentMax.z = glm::max(parentMax.z, max.z);
 	}
-	this->boundingBox = AABB(parentMin, parentMax);
+	this->boundingBox = new AABB(parentMin, parentMax);
 
 	if (scene->HasMaterials())
 	{
@@ -265,6 +265,9 @@ Mesh::~Mesh()
 	delete vertexArray;
 	delete vertexBuffer;
 	delete indexBuffer;
+
+	delete boundingBox;
+	for (Submesh& submesh : submeshes) delete submesh.boundingBox;
 }
 
 void Mesh::LoadNodes(aiNode* node, const glm::mat4& parentTransform)

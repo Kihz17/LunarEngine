@@ -1,21 +1,19 @@
 #pragma once
 
-#include "IRenderPass.h"
+#include "RenderSubmission.h"
 #include "IFrameBuffer.h"
 #include "Shader.h"
 #include "Window.h"
 
-class ForwardRenderPass : public IRenderPass
+class ForwardRenderPass
 {
 public:
-	ForwardRenderPass(IFrameBuffer* geometryBuffer, const WindowSpecs* windowSpecs);
+	ForwardRenderPass(IFrameBuffer* geometryBuffer);
 	virtual ~ForwardRenderPass();
 
-	virtual void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view) override;
+	void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view, const WindowSpecs* windowSpecs);
 
 private:
 	IFrameBuffer* geometryBuffer;
 	Shader* shader;
-
-	const WindowSpecs* windowSpecs;
 };

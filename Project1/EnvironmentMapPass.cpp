@@ -42,7 +42,7 @@ EnvironmentMapPass::~EnvironmentMapPass()
 	delete cubeMapBuffer;
 }
 
-void EnvironmentMapPass::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view)
+void EnvironmentMapPass::DoPass(const glm::mat4& projection, const glm::mat4& view)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_CULL_FACE); // Make sure none of our cubes faces get culled

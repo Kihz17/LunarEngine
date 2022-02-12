@@ -83,6 +83,9 @@ void VertexArrayObject::AddVertexBuffer(VertexBuffer* vertexBuffer)
 	}
 
 	this->vertexBuffers.push_back(vertexBuffer);
+
+	Unbind();
+	vertexBuffer->Unbind();
 }
 
 void VertexArrayObject::SetIndexBuffer(IndexBuffer* indexBuffer)
@@ -90,4 +93,6 @@ void VertexArrayObject::SetIndexBuffer(IndexBuffer* indexBuffer)
 	Bind();
 	indexBuffer->Bind();
 	this->indexBuffer = indexBuffer;
+	Unbind();
+	indexBuffer->Unbind();
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IRenderPass.h"
+#include "RenderSubmission.h"
 #include "IFrameBuffer.h"
 #include "IRenderBuffer.h"
 #include "Shader.h"
@@ -13,21 +13,19 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-class LightingPass : public IRenderPass
+class LightingPass
 {
 public:
-	LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, glm::vec3& cameraPosition, ITexture* shadowMaps, std::vector<float>& cascadeLevels);
+	LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, ITexture* shadowMaps, std::vector<float>& cascadeLevels);
 	virtual ~LightingPass();
 
-	virtual void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view) override;
+	void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition);
 
 private:
 	IFrameBuffer* geometryBuffer;
 	IFrameBuffer* environmentBuffer;
 
 	Shader* shader;
-
-	glm::vec3& cameraPosition;
 
 	// Shadow Mapping
 	ITexture* shadowMaps;

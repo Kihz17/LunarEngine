@@ -9,11 +9,10 @@
 
 #include <sstream>
 
-LightingPass::LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, glm::vec3& cameraPosition, ITexture* shadowMaps, std::vector<float>& cascadeLevels)
+LightingPass::LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, ITexture* shadowMaps, std::vector<float>& cascadeLevels)
 	: geometryBuffer(gBuffer),
 	environmentBuffer(eBuffer),
 	shader(ShaderLibrary::Load(Renderer::LIGHTING_SHADER_KEY, "assets/shaders/brdfLighting.glsl")), 
-	cameraPosition(cameraPosition),
 	shadowMaps(shadowMaps),
 	cascadeLevels(cascadeLevels),
 	quad(ShapeType::Quad)
@@ -82,7 +81,7 @@ LightingPass::~LightingPass()
 	
 }
 
-void LightingPass::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view)
+void LightingPass::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Disable depth buffer so that the quad doesnt get discarded
 

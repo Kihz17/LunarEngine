@@ -6,6 +6,20 @@
 #include <iostream>
 #include <vector>
 
+#include <glm/glm.hpp>
+
+struct Vertex
+{
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 textureCoord;
+};
+
+struct Face
+{
+	uint32_t v1, v2, v3;
+};
+
 // Represents the various data types that can be used inside a shader
 enum class ShaderDataType
 {

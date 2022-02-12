@@ -304,6 +304,9 @@
     <ClCompile Include="AABB.cpp">
       <Filter>Graphics\BoundingVolumes</Filter>
     </ClCompile>
+    <ClCompile Include="LinePass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -550,9 +553,6 @@
     <ClInclude Include="Window.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="IRenderPass.h">
-      <Filter>Graphics\RenderPasses</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Graphics\Shader</Filter>
     </ClInclude>
@@ -609,6 +609,9 @@
     </ClInclude>
     <ClInclude Include="AABB.h">
       <Filter>Graphics\BoundingVolumes</Filter>
+    </ClInclude>
+    <ClInclude Include="LinePass.h">
+      <Filter>Graphics\RenderPasses</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IRenderPass.h"
+#include "RenderSubmission.h"
 #include "IFrameBuffer.h"
 #include "IRenderBuffer.h"
 #include "Window.h"
@@ -10,13 +10,13 @@
 
 #include <string>
 
-class GeometryPass : public IRenderPass
+class GeometryPass 
 {
 public:
-	GeometryPass(const WindowSpecs* windowSpecs, glm::vec3& cameraPos);
+	GeometryPass(const WindowSpecs* windowSpecs);
 	virtual ~GeometryPass();
 
-	virtual void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view) override;
+	void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition);
 
 	IFrameBuffer* GetGBuffer() { return geometryBuffer; }
 
@@ -28,6 +28,5 @@ private:
 	
 	Shader* shader;
 
-	glm::vec3& cameraPosition;
 	const WindowSpecs* windowSpecs;
 };
