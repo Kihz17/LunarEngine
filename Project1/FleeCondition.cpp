@@ -33,7 +33,7 @@ bool FleeCondition::CanContinueToUse(const std::vector<Entity*>& entities)
 	{
 		PositionComponent* posComp = target->GetComponent<PositionComponent>();
 		RotationComponent* rotComp = target->GetComponent<RotationComponent>();
-		glm::vec3 playerDir = glm::rotate(rotComp->value, -Utils::FrontVec());
+		glm::vec3 playerDir = glm::rotate(rotComp->value, Utils::FrontVec());
 		glm::vec3 seekDir = glm::normalize(posComp->value - behaviour->GetRigidBody()->GetPosition());
 		if (glm::dot(playerDir, glm::normalize(behaviour->GetRigidBody()->GetPosition())) <= 0.0f) // Not looking away, search for a new target
 		{
@@ -72,7 +72,7 @@ Entity* FleeCondition::FindTarget(const std::vector<Entity*>& entities)
 		RigidBodyComponent* rigidComp = entity->GetComponent<RigidBodyComponent>();
 
 		// Check if player is looking away
-		glm::vec3 playerDir = glm::rotate(rigidComp->ptr->GetOrientation(), -Utils::FrontVec());
+		glm::vec3 playerDir = glm::rotate(rigidComp->ptr->GetOrientation(), Utils::FrontVec());
 		glm::vec3 seekDir = glm::normalize(rigidComp->ptr->GetPosition() - behaviour->GetRigidBody()->GetPosition());
 		float dot = glm::dot(playerDir, seekDir);
 		if (dot >= 0.0f) continue; // The player is not looking away from us

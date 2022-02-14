@@ -277,9 +277,6 @@
     <ClCompile Include="CascadedShadowMapping.cpp">
       <Filter>Graphics\RenderPasses</Filter>
     </ClCompile>
-    <ClCompile Include="DynamicCubeMapRenderer.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Frustum.cpp">
       <Filter>Graphics\Utils</Filter>
     </ClCompile>
@@ -306,6 +303,9 @@
     </ClCompile>
     <ClCompile Include="LinePass.cpp">
       <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicCubeMapRenderer.cpp">
+      <Filter>Graphics\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -580,9 +580,6 @@
     <ClInclude Include="ReflectRefract.h">
       <Filter>ECS\Components\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicCubeMapRenderer.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Frustum.h">
       <Filter>Graphics\Utils</Filter>
     </ClInclude>
@@ -612,6 +609,9 @@
     </ClInclude>
     <ClInclude Include="LinePass.h">
       <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicCubeMapRenderer.h">
+      <Filter>Graphics\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

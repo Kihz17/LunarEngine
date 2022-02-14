@@ -34,6 +34,7 @@ public:
 
 	virtual ITexture* GetColorAttachment(const std::string& name) override;
 	virtual void AddColorAttachment2D(const std::string& name, ITexture* texture, unsigned int index, FrameBufferOperationType operationType = FrameBufferOperationType::ReadWrite) override;
+	virtual void AddColorAttachmentCubeMapFace(const std::string& name, CubeMap* texture, unsigned int index, CubeMapFace face, FrameBufferOperationType operationType = FrameBufferOperationType::ReadWrite) override;
 
 	virtual void SetDepthAttachment(ITexture* texture, FrameBufferOperationType operationType = FrameBufferOperationType::ReadWrite, int level = 0) override;
 	virtual void SetDepthAttachment2D(Texture2D* texture, FrameBufferOperationType operationType = FrameBufferOperationType::ReadWrite, int level = 0) override;

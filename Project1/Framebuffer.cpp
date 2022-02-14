@@ -1,5 +1,6 @@
 #include "FrameBuffer.h"
 #include "Texture2D.h"
+#include "CubeMap.h"
 
 #include <iostream>
 
@@ -85,6 +86,24 @@ ITexture* FrameBuffer::GetColorAttachment(const std::string& name)
 void FrameBuffer::AddColorAttachment2D(const std::string& name, ITexture* texture, unsigned int index, FrameBufferOperationType operationType)
 {
 	glFramebufferTexture2D(FrameBufferConversion::ConvertOperationToGL(operationType), GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, texture->GetID(), 0);
+
+	if (index + 1 > colorBuffers.size())
+	{
+		colorBuffers.push_back({ name, texture });
+	}
+	else
+	{
+		colorBuffers[index] = { name, texture };
+	}
+
+	UpdateAttachmentArray(); // We've added a new color buffer, we have to refresh our attachments array
+
+	glDrawBuffers(colorBuffers.size(), attachments); // Tell OpenGL about our new color attachments 
+}
+
+void FrameBuffer::AddColorAttachmentCubeMapFace(const std::string& name, CubeMap* texture, unsigned int index, CubeMapFace face, FrameBufferOperationType operationType)
+{
+	glFramebufferTexture2D(FrameBufferConversion::ConvertOperationToGL(operationType), GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_CUBE_MAP_POSITIVE_X + (int) face, texture->GetID(), 0);
 
 	if (index + 1 > colorBuffers.size())
 	{

@@ -140,10 +140,10 @@ struct RenderComponent : public Component
 
 			ImGui::NewLine();
 			ImGui::Text("Reflection/Refraction Map Type:");
-			int rrMapTypeSelection = (int)reflectRefractData.mapType;
-			ImGui::RadioButton("Environment", &rrMapTypeSelection, 0); ImGui::SameLine();
-			ImGui::RadioButton("Dynamic Minimal", &rrMapTypeSelection, 1); ImGui::SameLine();
-			ImGui::RadioButton("Dynamic Medium", &rrMapTypeSelection, 2); ImGui::SameLine();
+			int rrMapTypeSelection = (int) reflectRefractData.mapType;
+			ImGui::RadioButton("Environment", &rrMapTypeSelection, 0);
+			ImGui::RadioButton("Dynamic Minimal", &rrMapTypeSelection, 1);
+			ImGui::RadioButton("Dynamic Medium", &rrMapTypeSelection, 2); 
 			ImGui::RadioButton("Dynamic Full", &rrMapTypeSelection, 3);
 
 			if (rrMapTypeSelection != (int)reflectRefractData.mapType)

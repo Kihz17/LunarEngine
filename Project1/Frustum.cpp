@@ -21,4 +21,24 @@ namespace FrustumUtils
 
 		return frustum;
 	}
+
+	Frustum CreateFrustumFromCamera(const glm::vec3& position, const glm::vec3& front, const glm::vec3& up, const glm::vec3& right, const float fov, const float aspect, const float far, const float near)
+	{
+		Frustum frustum;
+
+		// Compute edges of the frustum https://gyazo.com/05f6bdb2693d048cf11caaf7e0c68992
+		const float halfVerticalSide = far * tanf(fov * 0.5f);
+		const float halfHorizontalSide = halfVerticalSide * aspect;
+		const glm::vec3 frontMultFar = far * front;
+
+		// Generate all edges of the frustum
+		frustum.near = { position + near * front, front };
+		frustum.far = { position + frontMultFar, -front };
+		frustum.right = { position, glm::cross(up, frontMultFar + right * halfHorizontalSide) };
+		frustum.left = { position, glm::cross(frontMultFar - right * halfHorizontalSide, up) };
+		frustum.top = { position, glm::cross(right, frontMultFar - up * halfVerticalSide) };
+		frustum.bottom = { position, glm::cross(frontMultFar + up * halfVerticalSide, right) };
+
+		return frustum;
+	}
 }

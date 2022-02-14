@@ -60,6 +60,8 @@ void GeometryPass::DoPass(std::vector<RenderSubmission>& submissions, const glm:
 {
 	glDisable(GL_BLEND); // No blend for deffered rendering
 	glEnable(GL_DEPTH_TEST); // Enable depth testing for scene render
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
 	geometryBuffer->Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -159,15 +161,15 @@ void GeometryPass::DoPass(std::vector<RenderSubmission>& submissions, const glm:
 			}
 			else if (rrData.mapType == ReflectRefractMapType::DynamicMinimal)
 			{
-				// TODO: Render scene from position with minimal detail
+				Renderer::GenerateDynamicCubeMap(renderComponent->mesh->GetBoundingBox()->GetCenter(), ReflectRefractMapPriorityType::High, renderComponent)->BindToSlot(8);
 			}
 			else if (rrData.mapType == ReflectRefractMapType::DynamicMedium)
 			{
-				// TODO: Render scene from position with medium detail
+				Renderer::GenerateDynamicCubeMap(renderComponent->mesh->GetBoundingBox()->GetCenter(), ReflectRefractMapPriorityType::Medium, renderComponent)->BindToSlot(8);
 			}
 			else if (rrData.mapType == ReflectRefractMapType::DynamicFull)
 			{
-				// TODO: Render scene from position with full detail
+				Renderer::GenerateDynamicCubeMap(renderComponent->mesh->GetBoundingBox()->GetCenter(), ReflectRefractMapPriorityType::Low, renderComponent)->BindToSlot(8);
 			}
 			else if (rrData.mapType == ReflectRefractMapType::Custom)
 			{

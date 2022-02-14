@@ -83,7 +83,8 @@ LightingPass::~LightingPass()
 
 void LightingPass::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Disable depth buffer so that the quad doesnt get discarded
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+	glDisable(GL_DEPTH_TEST); // Disable depth buffer so that the quad doesnt get discarded
 
 	shader->Bind();
 
@@ -115,4 +116,6 @@ void LightingPass::DoPass(std::vector<RenderSubmission>& submissions, const glm:
 	shader->SetFloat3("uReflectivity", glm::vec3(0.04f));
 
 	quad.Draw();
+
+	glEnable(GL_DEPTH_TEST);
 }

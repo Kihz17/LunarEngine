@@ -12,8 +12,10 @@
 #include "ForwardRenderPass.h"
 #include "CascadedShadowMapping.h"
 #include "LinePass.h"
+#include "DynamicCubeMapRenderer.h"
 
 #include <vector>
+#include <unordered_map>
 
 class CubeMap;
 class Light;
@@ -37,6 +39,8 @@ public:
 
 	static void SetShadowMappingDirectionalLight(Light* light);
 
+	static CubeMap* GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore);
+
 	static CubeMap* GetEnvironmentMapCube() { return envMapPass->GetCubeMap(); }
 
 	static const std::string LIGHTING_SHADER_KEY;
@@ -48,6 +52,7 @@ private:
 	static glm::mat4 view;
 	static glm::vec3 cameraPos;
 	static Frustum viewFrustum;
+	static float shadowCullRadius;
 
 	static float farPlane;
 	static float nearPlane;
@@ -59,4 +64,6 @@ private:
 	static ForwardRenderPass* forwardPass;
 	static CascadedShadowMapping* shadowMappingPass;
 	static LinePass* linePass;
+
+	static DynamicCubeMapRenderer* dynamicCubeMapGenerator;
 };

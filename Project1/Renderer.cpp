@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include "ShaderLibrary.h"
 #include "EntityManager.h"
+#include "Utils.h"
 
 #include "FrameBuffer.h"
 #include "TextureManager.h"
@@ -18,6 +19,7 @@ glm::mat4 Renderer::projection(1.0f);
 glm::mat4 Renderer::view(1.0f);
 glm::vec3 Renderer::cameraPos(0.0f);
 Frustum Renderer::viewFrustum;
+float Renderer::shadowCullRadius = 1000.0f;
 
 static std::vector<RenderSubmission> submissions;
 static std::vector<RenderSubmission> forwardSubmissions;
@@ -32,6 +34,8 @@ LightingPass* Renderer::lightingPass = nullptr;
 ForwardRenderPass* Renderer::forwardPass = nullptr;
 CascadedShadowMapping* Renderer::shadowMappingPass = nullptr;
 LinePass* Renderer::linePass = nullptr;
+
+DynamicCubeMapRenderer* Renderer::dynamicCubeMapGenerator = nullptr;
 
 const std::string Renderer::LIGHTING_SHADER_KEY = "lShader";
 const std::string Renderer::FORWARD_SHADER_KEY = "fShader";
@@ -56,6 +60,8 @@ void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 	lightingPass = new LightingPass(geometryPass->GetGBuffer(), envMapPass->GetEnvironmentBuffer(), windowDetails, shadowMappingPass->GetShadowMap(), shadowMappingPass->GetCascadeLevels());
 	forwardPass = new ForwardRenderPass(geometryPass->GetGBuffer());
 	linePass = new LinePass();
+
+	dynamicCubeMapGenerator = new DynamicCubeMapRenderer(windowDetails);
 
 	// TEST SECITON FOR GRASS
 	//{
@@ -104,6 +110,7 @@ void Renderer::CleanUp()
 	delete forwardPass;
 	delete shadowMappingPass;
 	delete linePass;
+	delete dynamicCubeMapGenerator;
 }
 
 void Renderer::SetViewType(uint32_t type)
@@ -138,32 +145,45 @@ void Renderer::EndFrame()
 
 void Renderer::DrawFrame()
 {
+	std::vector<RenderSubmission> culledShadowSubmissions;
+
 	// Cull if not in frustum
 	std::vector<RenderSubmission> culledSubmissions;
 	for (RenderSubmission& submission : submissions)
 	{
-		if (!submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) continue; // Not in our view frustum, no need to render
-		culledSubmissions.push_back(submission);
+		if (submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
+		{
+			culledSubmissions.push_back(submission);
+		}
+
+		if (glm::length(cameraPos - glm::vec3(submission.transform[3])) <= shadowCullRadius) // We are within shadow radius, show shadows
+		{
+			culledShadowSubmissions.push_back(submission);
+		}
 	}
 
 	std::vector<RenderSubmission> culledForwardSubmissions;
 	for (RenderSubmission& submission : forwardSubmissions)
 	{
-		if (!submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) continue; // Not in our view frustum, no need to render
-		culledForwardSubmissions.push_back(submission);
+		if (!submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
+		{
+			culledForwardSubmissions.push_back(submission);
+		}
+
+		if (glm::length(cameraPos - glm::vec3(submission.transform[3])) <= shadowCullRadius) // We are within shadow radius, show shadows
+		{
+			culledShadowSubmissions.push_back(submission);
+		}
 	}
 
-	// Some passes need both
-	std::vector<RenderSubmission> mixedCulledSubmissions;
-	mixedCulledSubmissions.insert(mixedCulledSubmissions.end(), culledSubmissions.begin(), culledSubmissions.end());
-	mixedCulledSubmissions.insert(mixedCulledSubmissions.end(), culledForwardSubmissions.begin(), culledForwardSubmissions.end());
-
-	geometryPass->DoPass(culledSubmissions, projection, view, cameraPos);
-	shadowMappingPass->DoPass(mixedCulledSubmissions, projection, view);
+	//geometryPass->DoPass(culledSubmissions, projection, view, cameraPos);
+	//shadowMappingPass->DoPass(culledShadowSubmissions, projection, view);
 	envMapPass->DoPass(projection, view);
-	lightingPass->DoPass(culledSubmissions, projection, view, cameraPos);
-	forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
-	linePass->DoPass(lineSubmissions, projection, view, windowDetails);
+	//lightingPass->DoPass(culledSubmissions, projection, view, cameraPos);
+	//forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
+	//linePass->DoPass(lineSubmissions, projection, view, windowDetails);
+
+	//GenerateDynamicCubeMap(glm::vec3(0.0f, 8.0f, 10.0f), ReflectRefractMapPriorityType::High, nullptr);
 }
 
 void Renderer::Submit(const RenderSubmission& submission)
@@ -192,4 +212,57 @@ void Renderer::SetEnvironmentMapEquirectangular(const std::string& path)
 void Renderer::SetShadowMappingDirectionalLight(Light* light)
 {
 	shadowMappingPass->SetDirectionalLight(light);
+}
+
+CubeMap* Renderer::GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore)
+{
+	constexpr float fov = glm::radians(90.0f);
+	const float aspect = (float) windowDetails->width / (float) windowDetails->height;
+
+	Frustum frontFrustum = FrustumUtils::CreateFrustumFromCamera(center, Utils::FrontVec(), Utils::UpVec(), Utils::RightVec(), fov, aspect, farPlane, nearPlane);
+	Frustum backFrustum = FrustumUtils::CreateFrustumFromCamera(center, -Utils::FrontVec(), Utils::UpVec(), -Utils::RightVec(), fov, aspect, farPlane, nearPlane);
+	Frustum leftFrustum = FrustumUtils::CreateFrustumFromCamera(center, -Utils::RightVec(), Utils::UpVec(), Utils::FrontVec(), fov, aspect, farPlane, nearPlane);
+	Frustum rightFrustum = FrustumUtils::CreateFrustumFromCamera(center, Utils::RightVec(), Utils::UpVec(), -Utils::FrontVec(), fov, aspect, farPlane, nearPlane);
+	Frustum upFrustum = FrustumUtils::CreateFrustumFromCamera(center, Utils::UpVec(), -Utils::FrontVec(), -Utils::RightVec(), fov, aspect, farPlane, nearPlane);
+	Frustum downFrustum = FrustumUtils::CreateFrustumFromCamera(center, -Utils::UpVec(), Utils::FrontVec(), -Utils::RightVec(), fov, aspect, farPlane, nearPlane);
+
+	std::unordered_map<int, std::vector<RenderSubmission*>> dynamicSubmissions;
+	for (int i = GL_TEXTURE_CUBE_MAP_POSITIVE_X; i <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z; i++)
+	{
+		dynamicSubmissions.insert({ i, std::vector<RenderSubmission*>() });
+	}
+
+	for (RenderSubmission& submission : submissions)
+	{
+		if (submission.renderComponent->reflectRefractMapPriority > meshPriority || submission.renderComponent == ignore) continue; // This mesh shouldn't be considered in this dynamic cube map
+		
+		// Cull objects that aren't within their respective frustums
+		const AABB* aabb = submission.renderComponent->mesh->GetBoundingBox();
+		if (aabb->IsOnFrustum(frontFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_NEGATIVE_Z].push_back(&submission);
+		}
+		if (aabb->IsOnFrustum(backFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_POSITIVE_Z].push_back(&submission);
+		}
+		if (aabb->IsOnFrustum(leftFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_NEGATIVE_X].push_back(&submission);
+		}
+		if (aabb->IsOnFrustum(rightFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_POSITIVE_X].push_back(&submission);
+		}
+		if (aabb->IsOnFrustum(upFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_POSITIVE_Y].push_back(&submission);
+		}
+		if (aabb->IsOnFrustum(downFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_NEGATIVE_Y].push_back(&submission);
+		}
+	}
+
+	return dynamicCubeMapGenerator->GenerateDynamicCubeMap(center, dynamicSubmissions, fov, farPlane, nearPlane, windowDetails);
 }

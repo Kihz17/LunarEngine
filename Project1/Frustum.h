@@ -39,4 +39,5 @@ struct Frustum
 namespace FrustumUtils
 {
 	Frustum CreateFrustumFromCamera(const Camera& camera, const float aspect, const float far, const float near);
+	Frustum CreateFrustumFromCamera(const glm::vec3& position, const glm::vec3& front, const glm::vec3& up, const glm::vec3& right, const float fov, const float aspect, const float far, const float near);
 }

@@ -21,7 +21,6 @@ void ShaderBallTest(Mesh* shaderBall, ITexture* normalTexture, ITexture* albedo,
 
 int main() 
 {
-    // TODO: Look into huge memory allocation at start of program. directly correlated to CSM and the large texture size
     // TODO: Make a second frustum that will be 2x wider than our view frustum, specifically for shadow mapping.
     // This will allow shadows to be cast ourside of our view frustum
     WindowSpecs windowSpecs = GameEngine::InitializeGLFW(true);
@@ -47,7 +46,7 @@ int main()
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
     gameEngine.camera.position = glm::vec3(0.0f, 10.0f, 30.0f);
-    gameEngine.debugMode = true;
+    //gameEngine.debugMode = true;
 
     // Setup some lights    
     LightInfo lightInfo;

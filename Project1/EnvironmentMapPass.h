@@ -24,8 +24,8 @@ public:
 
 	CubeMap* GetCubeMap() { return envMapCube; }
 
-	const std::string CUBE_MAP_DRAW_SHADER_KEY = "drawEnvShader";
-	const std::string CUBE_MAP_CONVERT_SHADER_KEY = "hdrToCubeShader";
+	static const std::string CUBE_MAP_DRAW_SHADER_KEY;
+	static const std::string CUBE_MAP_CONVERT_SHADER_KEY;
 
 private:
 	IFrameBuffer* environmentBuffer;

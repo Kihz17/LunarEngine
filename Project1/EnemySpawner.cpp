@@ -122,7 +122,7 @@ Entity* EnemySpawner::SpawnPhysicsSphere(const glm::vec3& color, Mesh* mesh)
 	rigidInfo.angularDamping = 0.001f;
 	rigidInfo.isStatic = false;
 	rigidInfo.mass = radius;
-	rigidInfo.position = glm::rotateY(Utils::FrontVec(), glm::radians(Utils::RandFloat(0.0f, 360.0f))) * spawnRadius; // Spawn at edge of map
+	rigidInfo.position = glm::rotateY(-Utils::FrontVec(), glm::radians(Utils::RandFloat(0.0f, 360.0f))) * spawnRadius; // Spawn at edge of map
 	rigidInfo.position.y = 1.0f;
 	rigidInfo.linearVelocity = glm::vec3(0.0f);
 	rigidInfo.restitution = 0.8f;

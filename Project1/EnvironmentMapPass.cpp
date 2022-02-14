@@ -4,6 +4,10 @@
 #include "Texture2D.h"
 #include "ShaderLibrary.h"
 #include "RenderBuffer.h"
+#include "Renderer.h"
+
+const std::string EnvironmentMapPass::CUBE_MAP_DRAW_SHADER_KEY = "drawEnvShader";
+const std::string EnvironmentMapPass::CUBE_MAP_CONVERT_SHADER_KEY = "hdrToCubeShader";
 
 EnvironmentMapPass::EnvironmentMapPass(const WindowSpecs* windowSpecs)
 	: environmentBuffer(new FrameBuffer()),
@@ -47,13 +51,15 @@ void EnvironmentMapPass::DoPass(const glm::mat4& projection, const glm::mat4& vi
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_CULL_FACE); // Make sure none of our cubes faces get culled
 
-	environmentBuffer->Bind();
+	//environmentBuffer->Bind();
 	shader->Bind();
 	shader->SetMat4("uProjection", projection);
 	shader->SetMat4("uView", view);
+	//Renderer::GenerateDynamicCubeMap(glm::vec3(0.0f, 8.0f, 10.0f), ReflectRefractMapPriorityType::High, nullptr)->BindToSlot(0);
 	envMapCube->BindToSlot(0);
+	shader->SetInt("uEnvMap", 0);
 	cube.Draw();
-	environmentBuffer->Unbind();
+	//environmentBuffer->Unbind();
 
 	glEnable(GL_CULL_FACE); // Re-enable face culling
 }
@@ -89,7 +95,7 @@ void EnvironmentMapPass::SetEnvironmentMapEquirectangular(const std::string& pat
 		for (int i = 0; i < 6; i++) // Setup all faces of the cube
 		{
 			conversionShader->SetMat4("uView", captureViews[i]);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envMapCube->GetID(), 0);
+			cubeMapBuffer->AddColorAttachmentCubeMapFace("cubeFace", envMapCube, 0, (CubeMapFace)i);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			cube.Draw();
 		}

@@ -21,9 +21,9 @@ enum class ReflectRefractMapType
 
 enum class ReflectRefractMapPriorityType
 {
-	High,
-	Medium,
-	Minimal
+	High = 0, // Essential to the reflection (buildings, terrain, etc)
+	Medium, // Kind of essential (players, enemies)
+	Low // Not really essential (grass, small details, etc)
 };
 
 struct ReflectRefractData
