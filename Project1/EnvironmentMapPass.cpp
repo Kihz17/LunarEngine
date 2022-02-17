@@ -51,15 +51,14 @@ void EnvironmentMapPass::DoPass(const glm::mat4& projection, const glm::mat4& vi
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_CULL_FACE); // Make sure none of our cubes faces get culled
 
-	//environmentBuffer->Bind();
+	environmentBuffer->Bind();
 	shader->Bind();
 	shader->SetMat4("uProjection", projection);
 	shader->SetMat4("uView", view);
-	//Renderer::GenerateDynamicCubeMap(glm::vec3(0.0f, 8.0f, 10.0f), ReflectRefractMapPriorityType::High, nullptr)->BindToSlot(0);
 	envMapCube->BindToSlot(0);
 	shader->SetInt("uEnvMap", 0);
 	cube.Draw();
-	//environmentBuffer->Unbind();
+	environmentBuffer->Unbind();
 
 	glEnable(GL_CULL_FACE); // Re-enable face culling
 }

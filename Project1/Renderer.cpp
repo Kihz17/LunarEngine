@@ -176,14 +176,12 @@ void Renderer::DrawFrame()
 		}
 	}
 
-	//geometryPass->DoPass(culledSubmissions, projection, view, cameraPos);
-	//shadowMappingPass->DoPass(culledShadowSubmissions, projection, view);
+	geometryPass->DoPass(culledSubmissions, projection, view, cameraPos);
+	shadowMappingPass->DoPass(culledShadowSubmissions, projection, view);
 	envMapPass->DoPass(projection, view);
-	//lightingPass->DoPass(culledSubmissions, projection, view, cameraPos);
-	//forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
-	//linePass->DoPass(lineSubmissions, projection, view, windowDetails);
-
-	//GenerateDynamicCubeMap(glm::vec3(0.0f, 8.0f, 10.0f), ReflectRefractMapPriorityType::High, nullptr);
+	lightingPass->DoPass(culledSubmissions, projection, view, cameraPos);
+	forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
+	linePass->DoPass(lineSubmissions, projection, view, windowDetails);
 }
 
 void Renderer::Submit(const RenderSubmission& submission)
@@ -214,10 +212,10 @@ void Renderer::SetShadowMappingDirectionalLight(Light* light)
 	shadowMappingPass->SetDirectionalLight(light);
 }
 
-CubeMap* Renderer::GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore)
+CubeMap* Renderer::GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore, int viewportWidth, int viewportHeight)
 {
 	constexpr float fov = glm::radians(90.0f);
-	const float aspect = (float) windowDetails->width / (float) windowDetails->height;
+	constexpr float aspect = 1.0f; // Since we are making a cube map, our aspect ratio is 1:1
 
 	Frustum frontFrustum = FrustumUtils::CreateFrustumFromCamera(center, Utils::FrontVec(), Utils::UpVec(), Utils::RightVec(), fov, aspect, farPlane, nearPlane);
 	Frustum backFrustum = FrustumUtils::CreateFrustumFromCamera(center, -Utils::FrontVec(), Utils::UpVec(), -Utils::RightVec(), fov, aspect, farPlane, nearPlane);
@@ -264,5 +262,7 @@ CubeMap* Renderer::GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefrac
 		}
 	}
 
-	return dynamicCubeMapGenerator->GenerateDynamicCubeMap(center, dynamicSubmissions, fov, farPlane, nearPlane, windowDetails);
+	CubeMap* cm = dynamicCubeMapGenerator->GenerateDynamicCubeMap(center, dynamicSubmissions, fov, farPlane, nearPlane, windowDetails);
+	glViewport(0, 0, viewportWidth, viewportHeight);
+	return cm;
 }

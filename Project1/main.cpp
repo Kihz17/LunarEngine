@@ -19,6 +19,11 @@ float GetRandom(float low, float high);
 
 void ShaderBallTest(Mesh* shaderBall, ITexture* normalTexture, ITexture* albedo, GameEngine& gameEngine);
 
+// Ask:
+// Dynamic cube map
+// If it's a good idea to keep writing to the same dynaimc cube map
+// Snotify stuff (in person generator)
+
 int main() 
 {
     // TODO: Make a second frustum that will be 2x wider than our view frustum, specifically for shadow mapping.
@@ -54,7 +59,7 @@ int main()
     lightInfo.intensity = 10.0f;
     Light* light = new Light(lightInfo);
     light->UpdateLightType(LightType::Directional);
-    light->UpdateDirection(glm::vec3(0.3f, -0.99f, 0.0f));
+    light->UpdateDirection(glm::vec3(0.8f, -0.99f, -0.27f));
     Entity* lightEntity = gameEngine.GetEntityManager().CreateEntity("lightTest");
     lightEntity->AddComponent<LightComponent>(light);
 

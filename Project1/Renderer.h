@@ -39,7 +39,7 @@ public:
 
 	static void SetShadowMappingDirectionalLight(Light* light);
 
-	static CubeMap* GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore);
+	static CubeMap* GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore, int viewportWidth = windowDetails->width, int viewportHeight = windowDetails->height);
 
 	static CubeMap* GetEnvironmentMapCube() { return envMapPass->GetCubeMap(); }
 

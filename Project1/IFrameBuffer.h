@@ -4,6 +4,7 @@
 #include "IRenderBuffer.h"
 
 #include <string>
+#include <glm/glm.hpp>
 
 enum class ColorBufferType
 {
@@ -71,6 +72,8 @@ public:
 	//virtual void SetStencilAttachment() const = 0;
 
 	virtual void SetRenderBuffer(IRenderBuffer* renderBuffer, GLenum attachmentType) const = 0;
+
+	virtual void ClearColorBuffer(const glm::vec4& value, unsigned int index = 0) const = 0;
 };
 
 namespace FrameBufferConversion

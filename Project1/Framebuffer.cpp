@@ -148,3 +148,8 @@ void FrameBuffer::UpdateAttachmentArray()
 		attachments[i] = GL_COLOR_ATTACHMENT0 + i;
 	}
 }
+
+void FrameBuffer::ClearColorBuffer(const glm::vec4& value, unsigned int index) const
+{
+	glClearBufferfv(GL_COLOR, index, (float*) &value);
+}

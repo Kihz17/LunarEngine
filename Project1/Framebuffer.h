@@ -41,6 +41,8 @@ public:
 
 	virtual void SetRenderBuffer(IRenderBuffer* renderBuffer, GLenum attachmentType) const override;
 
+	virtual void ClearColorBuffer(const glm::vec4& value, unsigned int index = 0) const override;
+
 private:
 	void UpdateAttachmentArray();
 

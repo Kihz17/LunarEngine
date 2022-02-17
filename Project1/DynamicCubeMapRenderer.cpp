@@ -14,7 +14,7 @@ DynamicCubeMapRenderer::DynamicCubeMapRenderer(const WindowSpecs* windowSpecs)
 	: frameBuffer(new FrameBuffer()),
 	cubeMapFrameBuffer(new FrameBuffer()),
 	cubeMap(TextureManager::CreateCubeMap(dynamicMapResolution, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT)),
-	depthBuffer(new RenderBuffer(GL_DEPTH_COMPONENT, windowSpecs->width, windowSpecs->height)),
+	depthBuffer(new RenderBuffer(GL_DEPTH_COMPONENT, dynamicMapResolution, dynamicMapResolution)),
 	shader(ShaderLibrary::Load("dynamicCubeMapGShader", "assets/shaders/dynamicCubeMapGeometry.glsl")),
 	conversionShader(ShaderLibrary::Load("dynamicCubeMapCShader", "assets/shaders/dynamicCubeMapConverter.glsl")),
 	quad(ShapeType::Quad)
@@ -92,6 +92,8 @@ CubeMap* DynamicCubeMapRenderer::GenerateDynamicCubeMap(const glm::vec3& center,
 		shader->SetMat4("uMatView", view);
 		shader->SetMat4("uMatProjection", projection);
 
+		frameBuffer->ClearColorBuffer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)); // Make sure we clear the color buffer with 1.0 at index w incase there is no geometry
+
 		for (RenderSubmission* submissions : submissions)
 		{
 			RenderComponent* renderComponent = submissions->renderComponent;
@@ -149,9 +151,9 @@ CubeMap* DynamicCubeMapRenderer::GenerateDynamicCubeMap(const glm::vec3& center,
 
 		glDisable(GL_DEPTH_TEST); // Disable depth test when cube map face
 		glDisable(GL_CULL_FACE);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		cubeMapFrameBuffer->AddColorAttachmentCubeMapFace("cubeFace", cubeMap, 0, (CubeMapFace)cubeMapIndex);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Renderer::GetEnvironmentMapCube()->BindToSlot(0);
 		conversionShader->SetInt("uEnvMap", 0);
@@ -166,9 +168,7 @@ CubeMap* DynamicCubeMapRenderer::GenerateDynamicCubeMap(const glm::vec3& center,
 		cubeMapFrameBuffer->Unbind();
 	}
 
-	glViewport(0, 0, windowSpecs->width, windowSpecs->height); // Set viewport back to native width/height
-	glEnable(GL_DEPTH_TEST); // Re-enable depth test
-	glEnable(GL_CULL_FACE);
+	cubeMap->ComputeMipmap();
 
 	return cubeMap;
 }
