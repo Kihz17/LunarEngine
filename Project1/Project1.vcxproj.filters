@@ -307,6 +307,27 @@
     <ClCompile Include="DynamicCubeMapRenderer.cpp">
       <Filter>Graphics\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="FlockingBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Coordinator.cpp">
+      <Filter>AI\Steering</Filter>
+    </ClCompile>
+    <ClCompile Include="FormationBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="FormationCondition.cpp">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="FormationLayer.cpp">
+      <Filter>Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="FlockingCondition.cpp">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFollowBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -612,6 +633,30 @@
     </ClInclude>
     <ClInclude Include="DynamicCubeMapRenderer.h">
       <Filter>Graphics\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="FlockingBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Coordinator.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="FormationBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="FormationCondition.h">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="FormationLayer.h">
+      <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="FlockingCondition.h">
+      <Filter>AI\Steering\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="PathFollowBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Path.h">
+      <Filter>AI\Steering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

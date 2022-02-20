@@ -13,21 +13,17 @@
 #include "FreeCamController.h"
 #include "Texture2D.h"
 
+#include "FormationLayer.h"
+#include "AILayer.h"
+
 glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
 float GetRandom(float low, float high);
 
 void ShaderBallTest(Mesh* shaderBall, ITexture* normalTexture, ITexture* albedo, GameEngine& gameEngine);
 
-// Ask:
-// Dynamic cube map
-// If it's a good idea to keep writing to the same dynaimc cube map
-// Snotify stuff (in person generator)
-
 int main() 
 {
-    // TODO: Make a second frustum that will be 2x wider than our view frustum, specifically for shadow mapping.
-    // This will allow shadows to be cast ourside of our view frustum
     WindowSpecs windowSpecs = GameEngine::InitializeGLFW(true);
 
     // Load models
@@ -35,6 +31,7 @@ int main()
     Mesh* sphere = new Mesh("assets/models/sphere.obj");
     Mesh* plane = new Mesh("assets/models/plane.obj");
     Mesh* cube = new Mesh("assets/models/cube.obj");
+    Mesh* ship = new Mesh("assets/models/assault.ply");
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -66,7 +63,7 @@ int main()
     Renderer::SetShadowMappingDirectionalLight(light);
 
     // SHADER BALL TEST
-    ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
+    //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
 
     {
         Entity* ground = gameEngine.GetEntityManager().CreateEntity("ground");
@@ -84,13 +81,23 @@ int main()
         RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine.physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
         gameEngine.physicsWorld->AddRigidBody(rigidComp->ptr, ground);
 
-        // Render Info
-        RenderComponent::RenderInfo groundInfo;
-        groundInfo.mesh = cube;
-        groundInfo.isColorOverride = true;
-        groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
-        ground->AddComponent<RenderComponent>(groundInfo);
+        //// Render Info
+        //RenderComponent::RenderInfo groundInfo;
+        //groundInfo.mesh = cube;
+        //groundInfo.isColorOverride = true;
+        //groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
+        //ground->AddComponent<RenderComponent>(groundInfo);
     }
+
+    FormationLayerInfo formationInfo;
+    formationInfo.mesh = ship;
+    formationInfo.pathMeshes = sphere;
+    formationInfo.entityManager = &gameEngine.GetEntityManager();
+    formationInfo.physicsFactory = gameEngine.physicsFactory;
+    formationInfo.physicsWorld = gameEngine.physicsWorld;
+    gameEngine.AddLayer(new FormationLayer(formationInfo));
+
+    gameEngine.AddLayer(new AILayer(gameEngine.GetEntityManager().GetEntities()));
 
     gameEngine.Run();
 
@@ -98,13 +105,13 @@ int main()
 }
 
 // TODO List
-// 1. Procedural Grass
-// 2. Bloom & Emission
+// 1. Bloom & Emission
+// 2. Instanced rendering
 // 3. Anti-Aliasing
 // 4. Light Probes/Global Illumination
 // 5. Water
 // 6. Clouds
-// 7. Instanced rendering
+// 7. Procedural Grass
 
 // LATER
 // SSAO? Raytracing? Raymarching?

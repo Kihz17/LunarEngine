@@ -47,6 +47,22 @@ struct SteeringBehaviourComponent : public Component
 		targetingBehaviours[priority] = behaviour;
 	}
 
+	ISteeringCondition* GetBehaviour(int priority, SteeringBehaviourType type)
+	{
+		if (type == SteeringBehaviourType::Targeting)
+		{
+			if (priority >= targetingBehaviours.size()) return nullptr;
+			return targetingBehaviours[priority];
+		}
+		else if (type == SteeringBehaviourType::Normal)
+		{
+			if (priority >= behaviours.size()) return nullptr;
+			return behaviours[priority];
+		}
+
+		return nullptr;
+	}
+
 	ISteeringCondition* active = nullptr;
 	int activePriority = -1;
 

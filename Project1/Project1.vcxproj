@@ -156,6 +156,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionHandler.cpp" />
     <ClCompile Include="CollisionListener.cpp" />
+    <ClCompile Include="Coordinator.cpp" />
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="DSP.cpp" />
     <ClCompile Include="DynamicCubeMapRenderer.cpp" />
@@ -167,6 +168,11 @@
     <ClCompile Include="EvadeCondition.cpp" />
     <ClCompile Include="FleeBehaviour.cpp" />
     <ClCompile Include="FleeCondition.cpp" />
+    <ClCompile Include="FlockingBehaviour.cpp" />
+    <ClCompile Include="FlockingCondition.cpp" />
+    <ClCompile Include="FormationBehaviour.cpp" />
+    <ClCompile Include="FormationCondition.cpp" />
+    <ClCompile Include="FormationLayer.cpp" />
     <ClCompile Include="ForwardRenderPass.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="FreeCamController.cpp" />
@@ -186,6 +192,7 @@
     <ClCompile Include="LinePass.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshManager.cpp" />
+    <ClCompile Include="PathFollowBehaviour.cpp" />
     <ClCompile Include="PhysicsFactory.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="PlayerController.cpp" />
@@ -233,6 +240,12 @@
     <ClInclude Include="ApplicationLayer.h" />
     <ClInclude Include="ApplicationLayerManager.h" />
     <ClInclude Include="ApproachShootCondition.h" />
+    <ClInclude Include="Coordinator.h" />
+    <ClInclude Include="FlockingBehaviour.h" />
+    <ClInclude Include="FlockingCondition.h" />
+    <ClInclude Include="FormationBehaviour.h" />
+    <ClInclude Include="FormationCondition.h" />
+    <ClInclude Include="FormationLayer.h" />
     <ClInclude Include="IBoundingVolume.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionHandler.h" />
@@ -278,6 +291,8 @@
     <ClInclude Include="LinePass.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
+    <ClInclude Include="Path.h" />
+    <ClInclude Include="PathFollowBehaviour.h" />
     <ClInclude Include="PhysicsFactory.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="PlayerController.h" />

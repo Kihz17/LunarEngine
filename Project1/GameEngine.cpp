@@ -246,7 +246,7 @@ WindowSpecs GameEngine::InitializeGLFW(bool initImGui)
     int HEIGHT = glfwMode->height;
 
     // Create window
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Lunar Engine", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Lunar Engine", glfwMonitor, nullptr);
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glfwSwapInterval(1);

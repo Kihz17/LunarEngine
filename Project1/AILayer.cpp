@@ -65,10 +65,10 @@ void AILayer::OnUpdate(float deltaTime)
             else // Active behaviour is still running, check if any behaviours with a higher priority can run
             {
                 std::vector<ISteeringCondition*>& targeting = behaviourComp->targetingBehaviours;
-                int checkIndex = std::min(behaviourComp->activePriority, (int) targeting.size());
+                int checkIndex = behaviourComp->active->GetBehaviour()->GetType() == SteeringBehaviourType::Normal ? (int)targeting.size() : std::min(behaviourComp->activePriority, (int) targeting.size());
                 for (int i = 0; i < checkIndex; i++)
                 {
-                    if (targeting[i]->CanUse(entities)) // We can use this!
+                    if (targeting[i] && targeting[i]->CanUse(entities)) // We can use this!
                     {
                         targeting[i]->OnStart();
                         behaviourComp->active = targeting[i];
@@ -84,7 +84,7 @@ void AILayer::OnUpdate(float deltaTime)
                     checkIndex = std::min(behaviourComp->activePriority, (int)normal.size());
                     for (int i = 0; i < checkIndex; i++)
                     {
-                        if (normal[i]->CanUse(entities)) // We can use this!
+                        if (normal[i] && normal[i]->CanUse(entities)) // We can use this!
                         {
                             normal[i]->OnStart();
                             behaviourComp->active = normal[i];
@@ -117,7 +117,7 @@ void AILayer::TryActivateBehaviour(SteeringBehaviourComponent* behaviourComp)
     std::vector<ISteeringCondition*>& targeting = behaviourComp->targetingBehaviours;
     for (int i = 0; i < targeting.size(); i++)
     {
-        if (targeting[i]->CanUse(entities)) // We can use this!
+        if (targeting[i] && targeting[i]->CanUse(entities)) // We can use this!
         {
             targeting[i]->OnStart();
             behaviourComp->active = targeting[i];
@@ -130,7 +130,7 @@ void AILayer::TryActivateBehaviour(SteeringBehaviourComponent* behaviourComp)
     std::vector<ISteeringCondition*>& normal = behaviourComp->behaviours;
     for (int i = 0; i < normal.size(); i++)
     {
-        if (normal[i]->CanUse(entities)) // We can use this!
+        if (normal[i] && normal[i]->CanUse(entities)) // We can use this!
         {
             normal[i]->OnStart();
             behaviourComp->active = normal[i];
