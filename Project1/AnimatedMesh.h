@@ -1,23 +1,22 @@
 #pragma once
 
 #include "IMesh.h"
-#include "Vertex.h"
+#include "AnimatedVertex.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 
-#include <glm/glm.hpp>
-
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <map>
 
-class Mesh : public IMesh
+class AnimatedMesh : public IMesh
 {
 public:
-	Mesh(const std::string& filePath);
-	virtual ~Mesh();
-	
+	AnimatedMesh(const std::string& path);
+	virtual ~AnimatedMesh();
+
 	virtual const std::vector<Submesh>& GetSubmeshes() const override { return this->submeshes; }
 
 	virtual VertexArrayObject* GetVertexArray() override { return this->vertexArray; }
@@ -36,11 +35,10 @@ public:
 private:
 	void SetupMaterials();
 	void LoadNodes(aiNode* node, const glm::mat4& parentTransform = glm::mat4(1.0f));
-
+	
 	Scope<Assimp::Importer> importer;
 
 	std::vector<Submesh> submeshes;
-	glm::mat4 inverseTransform;
 
 	VertexArrayObject* vertexArray;
 	VertexBuffer* vertexBuffer;
@@ -53,6 +51,9 @@ private:
 	const aiScene* assimpScene;
 
 	AABB* boundingBox;
+
+	std::map<std::string, BoneInfo> boneInfo;
+	int boneCount;
 
 	std::string filePath;
 };

@@ -58,7 +58,6 @@ uniform sampler2D gPosition;
 uniform sampler2D gAlbedo;
 uniform sampler2D gNormal;
 uniform sampler2D gEffects;
-uniform sampler2D gReflectivity;
 uniform vec4 gMaterialOverrides;
 
 // Lighitng
@@ -105,7 +104,6 @@ void main()
 	vec4 gAlbedoSample = texture(gAlbedo, mTextureCoordinates).rgba;
 	vec4 gNormalSample = texture(gNormal, mTextureCoordinates).rgba;
 	vec4 gEffectsSample = texture(gEffects, mTextureCoordinates).rgba;
-	vec4 gReflectivitySample = texture(gReflectivity, mTextureCoordinates).rgba;
 		
 	// Get geometry buffer data
 	vec3 worldPos = gPositionSample.rgb;

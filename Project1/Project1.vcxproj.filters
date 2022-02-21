@@ -79,6 +79,9 @@
     <Filter Include="Graphics\BoundingVolumes">
       <UniqueIdentifier>{413b5753-981b-4c49-81e8-719c6786bafa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics\Mesh">
+      <UniqueIdentifier>{2f3240c4-904c-4ac3-9a06-0097ec6fa9fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -103,12 +106,6 @@
       <Filter>Vendor\imgui</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshManager.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -328,6 +325,21 @@
     <ClCompile Include="PathFollowBehaviour.cpp">
       <Filter>AI\Steering\Behaviours</Filter>
     </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedVertex.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedMesh.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="IMesh.cpp">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -358,12 +370,6 @@
       <Filter>Vendor\imgui</Filter>
     </ClInclude>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Mesh.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshManager.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="VertexInformation.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -622,9 +628,6 @@
     <ClInclude Include="FrameBuffer.h">
       <Filter>Graphics\GLWrappers</Filter>
     </ClInclude>
-    <ClInclude Include="IBoundingVolume.h">
-      <Filter>Graphics\BoundingVolumes</Filter>
-    </ClInclude>
     <ClInclude Include="AABB.h">
       <Filter>Graphics\BoundingVolumes</Filter>
     </ClInclude>
@@ -657,6 +660,27 @@
     </ClInclude>
     <ClInclude Include="Path.h">
       <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="IBoundingVolume.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IVertex.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedVertex.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="IMesh.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedMesh.h">
+      <Filter>Graphics\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

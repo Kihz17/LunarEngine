@@ -1,4 +1,4 @@
-#include "Mesh.h"
+#include "AnimatedMesh.h"
 
 #include <assimp/LogStream.hpp>
 #include <assimp/DefaultLogger.hpp>
@@ -6,32 +6,16 @@
 
 #include <iostream>
 
-struct AssimpLogger : public Assimp::LogStream
+AnimatedMesh::AnimatedMesh(const std::string& path)
+	: filePath(path),
+	boundingBox(nullptr),
+	boneCount(0)
 {
-	static void Initialize()
-	{
-		if (Assimp::DefaultLogger::isNullLogger())
-		{
-			Assimp::DefaultLogger::create("", Assimp::Logger::VERBOSE);
-			Assimp::DefaultLogger::get()->attachStream(new AssimpLogger, Assimp::Logger::Err | Assimp::Logger::Warn);
-		}
-	}
+	std::cout << "Loading animated mesh " << path << "...\n";
 
-	virtual void write(const char* message) override
-	{
-		std::cout << "[ASSIMP ERROR]: " << message;
-	}
-};
+	importer = CreateScope<Assimp::Importer>();;
 
-Mesh::Mesh(const std::string& filePath)
-	: filePath(filePath), boundingBox(nullptr)
-{
-	//AssimpLogger::Initialize();
-
-	std::cout << "Loading mesh " << filePath << "..." << std::endl;;
-	this->importer = CreateScope<Assimp::Importer>();
-
-	const aiScene* scene = this->importer->ReadFile(filePath, MeshUtils::ASSIMP_FLAGS);
+	const aiScene* scene = importer->ReadFile(path, MeshUtils::ASSIMP_FLAGS);
 	if (!scene || !scene->HasMeshes())
 	{
 		std::cout << "Failed to load mesh file: " << filePath << std::endl;
@@ -39,12 +23,10 @@ Mesh::Mesh(const std::string& filePath)
 	}
 
 	this->assimpScene = scene;
-	this->inverseTransform = glm::inverse(MeshUtils::ConvertToGLMMat4(scene->mRootNode->mTransformation));
 	this->submeshes.reserve(scene->mNumMeshes);
 
 	uint32_t vertexCount = 0;
 	uint32_t indexCount = 0;
-
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 	{
 		aiMesh* assimpMesh = scene->mMeshes[i];
@@ -63,13 +45,13 @@ Mesh::Mesh(const std::string& filePath)
 
 		if (!assimpMesh->HasPositions())
 		{
-			std::cout << filePath << " does not have position!" << std::endl;
+			std::cout << path << " does not have position!" << std::endl;
 			return;
 		}
 
 		if (!assimpMesh->HasNormals())
 		{
-			std::cout << filePath << " does not have normals!" << std::endl;
+			std::cout << path << " does not have normals!" << std::endl;
 			return;
 		}
 
@@ -96,7 +78,13 @@ Mesh::Mesh(const std::string& filePath)
 				textureCoords.y = assimpMesh->mTextureCoords[0][j].y;
 			}
 
-			this->vertices.push_back(new Vertex(position, normal, textureCoords));
+			int defaultBoneIDs[MAX_BONE_INFLUENCE];
+			for (unsigned int j = 0; j < MAX_BONE_INFLUENCE; j++) defaultBoneIDs[j] = -1;
+
+			float defaultBoneWeights[MAX_BONE_INFLUENCE];
+			for (unsigned int j = 0; j < MAX_BONE_INFLUENCE; j++) defaultBoneWeights[j] = 0.0f;
+
+			this->vertices.push_back(new AnimatedVertex(position, normal, textureCoords,defaultBoneIDs, defaultBoneWeights));
 		}
 
 		submesh.boundingBox->Resize(min, max); // Resize the bounding box to the proper size
@@ -115,6 +103,56 @@ Mesh::Mesh(const std::string& filePath)
 			face.v2 = assimpMesh->mFaces[j].mIndices[1];
 			face.v3 = assimpMesh->mFaces[j].mIndices[2];
 			this->faces.push_back(face);
+		}
+
+		// Assign bones
+		for (unsigned int j = 0; j < assimpMesh->mNumBones; j++)
+		{
+			aiBone* assimpBone = assimpMesh->mBones[j];
+			std::string boneName = assimpBone->mName.C_Str();
+
+			int boneID = -1;
+			if (boneInfo.find(boneName) != boneInfo.end()) // We already have this bone cached
+			{
+				boneID = boneInfo[boneName].id;
+			}
+			else // We haven't cached this bone data yet, store it
+			{
+				// Create new bone info
+				BoneInfo info;
+				info.id = boneCount;
+				info.offset = MeshUtils::ConvertToGLMMat4(assimpBone->mOffsetMatrix);
+				boneInfo.insert({boneName, info});
+
+				boneID = boneCount; // Assign bone ID to current count
+				boneCount++; // Increment bone count
+			}
+
+			if (boneID == -1)
+			{
+				std::cout << "WARNING: Bone ID for mesh " << path << " is -1.\n";
+			}
+
+			// Map bone to specific vertex with weight
+			for (unsigned int k = 0; k < assimpBone->mNumWeights; k++)
+			{
+				int vertexID = assimpBone->mWeights[k].mVertexId;
+				float weight = assimpBone->mWeights[k].mWeight;
+
+				if (vertexID >= vertices.size())
+				{
+					std::cout << "WARNING: Bone vertex ID was greater than number of vertices for " << path << ".\n";
+				}
+
+				for (unsigned int l = 0; l < MAX_BONE_INFLUENCE; l++)
+				{
+					AnimatedVertex* v = dynamic_cast<AnimatedVertex*>(vertices[vertexID]);
+					if (v->Data()[BONE_ID_START_INDEX + l] >= 0) continue; // This index has already been assigned data
+					
+					v->Data()[BONE_ID_START_INDEX + l] = boneID;
+					v->Data()[BONE_WEIGHT_START_INDEX + l] = weight;
+				}
+			}
 		}
 
 		this->submeshes.push_back(submesh);
@@ -151,12 +189,14 @@ Mesh::Mesh(const std::string& filePath)
 	BufferLayout bufferLayout = {
 		{ ShaderDataType::Float3, "vPosition" },
 		{ ShaderDataType::Float3, "vNormal" },
-		{ ShaderDataType::Float2, "vTextureCoordinates" }
+		{ ShaderDataType::Float2, "vTextureCoordinates" },
+		{ ShaderDataType::Int4, "vBoneIDs" },
+		{ ShaderDataType::Float4, "vBoneWeights" }
 	};
 
-	this->vertexArray = new VertexArrayObject(); 
+	this->vertexArray = new VertexArrayObject();
 
-	uint32_t vertexBufferSize = (uint32_t) (this->vertices.size() * Vertex::Size());
+	uint32_t vertexBufferSize = (uint32_t)(this->vertices.size() * AnimatedVertex::Size());
 	float* vertexBuffer = MeshUtils::ConvertVerticesToArray(this->vertices);
 
 	this->vertexBuffer = new VertexBuffer(vertexBuffer, vertexBufferSize);
@@ -175,7 +215,7 @@ Mesh::Mesh(const std::string& filePath)
 	delete[] indexBuffer;
 }
 
-Mesh::~Mesh()
+AnimatedMesh::~AnimatedMesh()
 {
 	delete vertexArray;
 	delete vertexBuffer;
@@ -184,10 +224,9 @@ Mesh::~Mesh()
 	for (IVertex* v : vertices) delete v;
 
 	delete boundingBox;
-	for (Submesh& submesh : submeshes) delete submesh.boundingBox;
 }
 
-void Mesh::LoadNodes(aiNode* node, const glm::mat4& parentTransform)
+void AnimatedMesh::LoadNodes(aiNode* node, const glm::mat4& parentTransform)
 {
 	glm::mat4 transform = parentTransform * MeshUtils::ConvertToGLMMat4(node->mTransformation);
 	this->nodeMap[node].resize(node->mNumMeshes);
@@ -206,7 +245,7 @@ void Mesh::LoadNodes(aiNode* node, const glm::mat4& parentTransform)
 	}
 }
 
-void Mesh::SetupMaterials()
+void AnimatedMesh::SetupMaterials()
 {
 	// TODO: Setup materials
 }

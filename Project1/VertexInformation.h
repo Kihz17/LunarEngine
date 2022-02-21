@@ -8,13 +8,6 @@
 
 #include <glm/glm.hpp>
 
-struct Vertex
-{
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec2 textureCoord;
-};
-
 struct Face
 {
 	uint32_t v1, v2, v3;

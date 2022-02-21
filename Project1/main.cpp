@@ -63,7 +63,7 @@ int main()
     Renderer::SetShadowMappingDirectionalLight(light);
 
     // SHADER BALL TEST
-    //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
+    ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
 
     {
         Entity* ground = gameEngine.GetEntityManager().CreateEntity("ground");
@@ -81,23 +81,13 @@ int main()
         RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine.physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
         gameEngine.physicsWorld->AddRigidBody(rigidComp->ptr, ground);
 
-        //// Render Info
-        //RenderComponent::RenderInfo groundInfo;
-        //groundInfo.mesh = cube;
-        //groundInfo.isColorOverride = true;
-        //groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
-        //ground->AddComponent<RenderComponent>(groundInfo);
+        // Render Info
+        RenderComponent::RenderInfo groundInfo;
+        groundInfo.mesh = cube;
+        groundInfo.isColorOverride = true;
+        groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
+        ground->AddComponent<RenderComponent>(groundInfo);
     }
-
-    FormationLayerInfo formationInfo;
-    formationInfo.mesh = ship;
-    formationInfo.pathMeshes = sphere;
-    formationInfo.entityManager = &gameEngine.GetEntityManager();
-    formationInfo.physicsFactory = gameEngine.physicsFactory;
-    formationInfo.physicsWorld = gameEngine.physicsWorld;
-    gameEngine.AddLayer(new FormationLayer(formationInfo));
-
-    gameEngine.AddLayer(new AILayer(gameEngine.GetEntityManager().GetEntities()));
 
     gameEngine.Run();
 

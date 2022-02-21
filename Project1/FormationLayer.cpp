@@ -200,29 +200,29 @@ void FormationLayer::OnUpdate(float deltaTime)
 
     if (InputManager::GetKey(GLFW_KEY_Z)->IsJustPressed()) // Decrease cohestion
     {
-        ChangeFlockingWeight(-0.01f, FlockingWeightType::Cohesion);
+        ChangeFlockingWeight(-0.1f, FlockingWeightType::Cohesion);
     } 
     else if (InputManager::GetKey(GLFW_KEY_X)->IsJustPressed()) // Increase cohestion
     {
-        ChangeFlockingWeight(0.01f, FlockingWeightType::Cohesion);
+        ChangeFlockingWeight(0.1f, FlockingWeightType::Cohesion);
     }
 
     if (InputManager::GetKey(GLFW_KEY_C)->IsJustPressed()) // Decrease separation
     {
-        ChangeFlockingWeight(-0.01f, FlockingWeightType::Separation);
+        ChangeFlockingWeight(-0.1f, FlockingWeightType::Separation);
     }
     else if (InputManager::GetKey(GLFW_KEY_V)->IsJustPressed()) // Increase separation
     {
-        ChangeFlockingWeight(0.01f, FlockingWeightType::Separation);
+        ChangeFlockingWeight(0.1f, FlockingWeightType::Separation);
     }
 
     if (InputManager::GetKey(GLFW_KEY_B)->IsJustPressed()) // Decrease alignment
     {
-        ChangeFlockingWeight(-0.01f, FlockingWeightType::Alignment);
+        ChangeFlockingWeight(-0.1f, FlockingWeightType::Alignment);
     }
     else if (InputManager::GetKey(GLFW_KEY_N)->IsJustPressed()) // Increase alignment
     {
-        ChangeFlockingWeight(0.01f, FlockingWeightType::Alignment);
+        ChangeFlockingWeight(0.1f, FlockingWeightType::Alignment);
     }
 
     if (InputManager::GetKey(GLFW_KEY_8)->IsJustPressed())

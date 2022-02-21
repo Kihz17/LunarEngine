@@ -150,6 +150,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="AnimatedMesh.cpp" />
+    <ClCompile Include="AnimatedVertex.cpp" />
     <ClCompile Include="AnimationLayer.cpp" />
     <ClCompile Include="ApplicationLayerManager.cpp" />
     <ClCompile Include="ApproachShootCondition.cpp" />
@@ -183,6 +185,7 @@
     <ClCompile Include="IdleBehaviour.cpp" />
     <ClCompile Include="IdleCondition.cpp" />
     <ClCompile Include="IFrameBuffer.cpp" />
+    <ClCompile Include="IMesh.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Key.cpp" />
@@ -191,7 +194,6 @@
     <ClCompile Include="LightingPass.cpp" />
     <ClCompile Include="LinePass.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="PathFollowBehaviour.cpp" />
     <ClCompile Include="PhysicsFactory.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
@@ -228,6 +230,7 @@
     <ClCompile Include="vendor\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="vendor\imgui\imgui_tables.cpp" />
     <ClCompile Include="vendor\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="VertexArrayObject.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="WanderBehaviour.cpp" />
@@ -235,6 +238,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="AnimatedMesh.h" />
+    <ClInclude Include="AnimatedVertex.h" />
     <ClInclude Include="AnimationComponent.h" />
     <ClInclude Include="AnimationLayer.h" />
     <ClInclude Include="ApplicationLayer.h" />
@@ -274,6 +279,7 @@
     <ClInclude Include="IdleCondition.h" />
     <ClInclude Include="IEntityRemoveListener.h" />
     <ClInclude Include="IFrameBuffer.h" />
+    <ClInclude Include="IMesh.h" />
     <ClInclude Include="IRenderBuffer.h" />
     <ClInclude Include="ISteeringBehaviour.h" />
     <ClInclude Include="IKeyFrameListener.h" />
@@ -283,6 +289,7 @@
     <ClInclude Include="ISteeringCondition.h" />
     <ClInclude Include="ITexture.h" />
     <ClInclude Include="IUniformBuffer.h" />
+    <ClInclude Include="IVertex.h" />
     <ClInclude Include="Key.h" />
     <ClInclude Include="KeyFrameListener.h" />
     <ClInclude Include="Light.h" />
@@ -290,7 +297,6 @@
     <ClInclude Include="LightingPass.h" />
     <ClInclude Include="LinePass.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshManager.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="PathFollowBehaviour.h" />
     <ClInclude Include="PhysicsFactory.h" />
@@ -338,6 +344,7 @@
     <ClInclude Include="vendor\imgui\imstb_rectpack.h" />
     <ClInclude Include="vendor\imgui\imstb_textedit.h" />
     <ClInclude Include="vendor\imgui\imstb_truetype.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexArrayObject.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexInformation.h" />
