@@ -13,8 +13,10 @@
 #include "FreeCamController.h"
 #include "Texture2D.h"
 
-#include "FormationLayer.h"
-#include "AILayer.h"
+#include "SkeletalAnimationComponentListener.h"
+#include "SkeletalAnimationLayer.h"
+#include "AnimatedMesh.h"
+#include "Animation.h"
 
 glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
@@ -33,6 +35,9 @@ int main()
     Mesh* cube = new Mesh("assets/models/cube.obj");
     Mesh* ship = new Mesh("assets/models/assault.ply");
 
+    Mesh* vampire = new Mesh("assets/models/Knight_Golden_Male.fbx");
+    //Animation anim("assets/models/BaseCharacter.fbx", vampire);
+
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* normalTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_normal.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -48,7 +53,7 @@ int main()
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
     gameEngine.camera.position = glm::vec3(0.0f, 10.0f, 30.0f);
-    //gameEngine.debugMode = true;
+    gameEngine.debugMode = true;
 
     // Setup some lights    
     LightInfo lightInfo;
@@ -61,9 +66,14 @@ int main()
     lightEntity->AddComponent<LightComponent>(light);
 
     Renderer::SetShadowMappingDirectionalLight(light);
+    
+    // Animation system setup
+    SkeletalAnimationLayer* sal = new SkeletalAnimationLayer();
+    SkeletalAnimationComponentListener* sacl = new SkeletalAnimationComponentListener(sal->animations);
+    gameEngine.AddLayer(sal);
 
     // SHADER BALL TEST
-    ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
+    //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
 
     {
         Entity* ground = gameEngine.GetEntityManager().CreateEntity("ground");
@@ -81,12 +91,28 @@ int main()
         RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine.physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
         gameEngine.physicsWorld->AddRigidBody(rigidComp->ptr, ground);
 
-        // Render Info
-        RenderComponent::RenderInfo groundInfo;
-        groundInfo.mesh = cube;
-        groundInfo.isColorOverride = true;
-        groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
-        ground->AddComponent<RenderComponent>(groundInfo);
+        //// Render Info
+        //RenderComponent::RenderInfo groundInfo;
+        //groundInfo.mesh = cube;
+        //groundInfo.isColorOverride = true;
+        //groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
+        //ground->AddComponent<RenderComponent>(groundInfo);
+    }
+
+    {
+        Entity* animTest = gameEngine.GetEntityManager().CreateEntity("AnimTest");
+        animTest->AddComponent<PositionComponent>();
+        animTest->AddComponent<ScaleComponent>();
+        animTest->AddComponent<RotationComponent>();
+
+        RenderComponent::RenderInfo renderInfo;
+        renderInfo.mesh = vampire;
+        renderInfo.isColorOverride = true;
+        renderInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
+        animTest->AddComponent<RenderComponent>(renderInfo);
+
+        //SkeletalAnimationComponent* animComp = animTest->AddComponent<SkeletalAnimationComponent>();
+        //animComp->SetAnimation(&anim);
     }
 
     gameEngine.Run();

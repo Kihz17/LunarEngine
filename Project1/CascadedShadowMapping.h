@@ -42,7 +42,7 @@ public:
 	CascadedShadowMapping(const CascadedShadowMappingInfo& info);
 	virtual ~CascadedShadowMapping();
 
-	void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view);
+	void DoPass(std::vector<RenderSubmission*>& submissions, const glm::mat4& projection, const glm::mat4& view);
 
 	void SetDirectionalLight(Light* directionalLight) { this->directionalLight = directionalLight; }
 

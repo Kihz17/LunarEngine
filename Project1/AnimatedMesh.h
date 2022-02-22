@@ -33,6 +33,8 @@ public:
 	virtual const std::string& GetPath() const override { return this->filePath; }
 
 private:
+	friend class Animation;
+
 	void SetupMaterials();
 	void LoadNodes(aiNode* node, const glm::mat4& parentTransform = glm::mat4(1.0f));
 	

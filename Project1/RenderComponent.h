@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Mesh.h"
+#include "IMesh.h"
 #include "Component.h"
 #include "ITexture.h"
 #include "ReflectRefract.h"
@@ -9,7 +9,7 @@ struct RenderComponent : public Component
 {
 	struct RenderInfo
 	{
-		Mesh* mesh = nullptr;
+		IMesh* mesh = nullptr;
 
 		bool isColorOverride = false;
 		glm::vec3 colorOverride = glm::vec3(0.0f);
@@ -161,7 +161,7 @@ struct RenderComponent : public Component
 		return roughnessTexture && metalTexture && aoTexture;
 	}
 
-	Mesh* mesh;
+	IMesh* mesh;
 
 	// Diffuse color
 	bool isColorOverride;

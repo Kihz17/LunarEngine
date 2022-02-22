@@ -77,7 +77,7 @@ CascadedShadowMapping::~CascadedShadowMapping()
 	delete lightMatricesUBO;
 }
 
-void CascadedShadowMapping::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view)
+void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, const glm::mat4& projection, const glm::mat4& view)
 {
 	if (!directionalLight) return; // No directional light, don't map anything
 
@@ -112,12 +112,12 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission>& submissions, c
 	glClear(GL_DEPTH_BUFFER_BIT); // Re-clear depth buffer
 	glCullFace(GL_FRONT); // Fixes peter panning (shadow offsets)
 
-	for (RenderSubmission& submission : submissions)
+	for (RenderSubmission* submission : submissions)
 	{
-		RenderComponent* renderComponent = submission.renderComponent;
+		RenderComponent* renderComponent = submission->renderComponent;
 		if (!renderComponent->castShadows) continue;
 
-		depthMappingShader->SetMat4("uMatModel", submission.transform);
+		depthMappingShader->SetMat4("uMatModel", submission->transform);
 
 		// TODO: If object is semi-transparent, make a softer shadow
 		// To do this, we will need to change the texture array into a color attachment instead of a depth attachment

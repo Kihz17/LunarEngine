@@ -19,7 +19,7 @@ public:
 	LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, ITexture* shadowMaps, std::vector<float>& cascadeLevels);
 	virtual ~LightingPass();
 
-	void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition);
+	void DoPass(const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition);
 
 private:
 	IFrameBuffer* geometryBuffer;

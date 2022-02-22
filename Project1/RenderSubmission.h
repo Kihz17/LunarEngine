@@ -13,7 +13,9 @@ struct RenderSubmission
 		position(position),
 		scale(scale),
 		rotation(rotation),
-		transform(1.0f)
+		transform(1.0f),
+		boneMatrices(nullptr),
+		boneMatricesLength(0)
 	{
 		transform *= glm::translate(glm::mat4(1.0f), position);
 		transform *= glm::toMat4(rotation);
@@ -26,6 +28,9 @@ struct RenderSubmission
 	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 
 	glm::mat4 transform;
+
+	glm::mat4* boneMatrices;
+	unsigned int boneMatricesLength;
 };
 
 struct LineRenderSubmission

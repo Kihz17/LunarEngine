@@ -24,12 +24,13 @@ AnimatedVertex::~AnimatedVertex()
 
 void AnimatedVertex::SetBoneIDs(int* boneIDs)
 {
-	unsigned int boneIDSize = 8 + MAX_BONE_INFLUENCE;
+	constexpr unsigned int boneIDSize = 8 + MAX_BONE_INFLUENCE;
 	for (unsigned int i = 8; i < boneIDSize; i++) data[i] = boneIDs[i - 8];
 }
 
 void AnimatedVertex::SetBoneWeights(float* boneWeights)
 {
-	unsigned int boneWeightSize = 12 + MAX_BONE_INFLUENCE;
-	for (unsigned int i = 12; i < boneWeightSize; i++) data[i] = boneWeights[i - 12];
+	constexpr unsigned int boneWeightStart = 8 + MAX_BONE_INFLUENCE;
+	constexpr unsigned int boneWeightSize = boneWeightStart + MAX_BONE_INFLUENCE;
+	for (unsigned int i = boneWeightStart; i < boneWeightSize; i++) data[i] = boneWeights[i - boneWeightStart];
 }

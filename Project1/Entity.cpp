@@ -2,6 +2,8 @@
 #include "Components.h"
 #include "Renderer.h"
 
+std::vector<IComponentListener*> Entity::componentListeners;
+
 Entity::Entity(unsigned int id, const std::string& name)
 	: id(id),
 	name(name),
@@ -27,5 +29,20 @@ void Entity::RemoveComponent(Component* c)
 		}
 	}
 
-	if (removeIndex != -1) components.erase(components.begin() + removeIndex);
+	if (removeIndex != -1)
+	{
+		components.erase(components.begin() + removeIndex);
+		for (IComponentListener* listener : componentListeners) listener->OnRemoveComponent(this, c);
+	}
+}
+
+void Entity::AddComponentListener(IComponentListener* listener)
+{ 
+	componentListeners.push_back(listener); 
+}
+
+void Entity::CleanComponentListeners()
+{
+	for (IComponentListener* listener : componentListeners) delete listener;
+	componentListeners.clear();
 }

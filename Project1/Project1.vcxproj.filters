@@ -82,6 +82,9 @@
     <Filter Include="Graphics\Mesh">
       <UniqueIdentifier>{2f3240c4-904c-4ac3-9a06-0097ec6fa9fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Layers\SkeletalAnimation">
+      <UniqueIdentifier>{cbe9e9cf-2ae7-402f-afc8-204d75246c19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -339,6 +342,18 @@
     </ClCompile>
     <ClCompile Include="IMesh.cpp">
       <Filter>Graphics\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Bone.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="SkeletalAnimationLayer.cpp">
+      <Filter>Layers\SkeletalAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="SkeletalAnimationComponentListener.cpp">
+      <Filter>Layers\SkeletalAnimation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -681,6 +696,24 @@
     </ClInclude>
     <ClInclude Include="AnimatedMesh.h">
       <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletalAnimationComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IComponentListener.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletalAnimationLayer.h">
+      <Filter>Layers\SkeletalAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletalAnimationComponentListener.h">
+      <Filter>Layers\SkeletalAnimation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

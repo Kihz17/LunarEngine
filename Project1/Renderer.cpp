@@ -22,6 +22,7 @@ Frustum Renderer::viewFrustum;
 float Renderer::shadowCullRadius = 1000.0f;
 
 static std::vector<RenderSubmission> submissions;
+static std::vector<RenderSubmission> animatedSubmissions;
 static std::vector<RenderSubmission> forwardSubmissions;
 static std::vector<LineRenderSubmission> lineSubmissions;
 
@@ -145,41 +146,57 @@ void Renderer::EndFrame()
 
 void Renderer::DrawFrame()
 {
-	std::vector<RenderSubmission> culledShadowSubmissions;
+	std::vector<RenderSubmission*> culledShadowSubmissions;
+	std::vector<RenderSubmission*> culledSubmissions;
+	std::vector<RenderSubmission*> culledAnimatedSubmissions;
+	std::vector<RenderSubmission*> culledForwardSubmissions;
 
-	// Cull if not in frustum
-	std::vector<RenderSubmission> culledSubmissions;
+	// Cull deferred submissions
 	for (RenderSubmission& submission : submissions)
 	{
 		if (submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
 		{
-			culledSubmissions.push_back(submission);
+			culledSubmissions.push_back(&submission);
 		}
 
 		if (glm::length(cameraPos - glm::vec3(submission.transform[3])) <= shadowCullRadius) // We are within shadow radius, show shadows
 		{
-			culledShadowSubmissions.push_back(submission);
+			culledShadowSubmissions.push_back(&submission);
 		}
 	}
 
-	std::vector<RenderSubmission> culledForwardSubmissions;
+	// Cull animated submissions
+	for (RenderSubmission& submission : animatedSubmissions)
+	{
+		if (submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
+		{
+			culledAnimatedSubmissions.push_back(&submission);
+		}
+
+		if (glm::length(cameraPos - glm::vec3(submission.transform[3])) <= shadowCullRadius) // We are within shadow radius, show shadows
+		{
+			culledShadowSubmissions.push_back(&submission);
+		}
+	}
+
+	// Cull forward submissions
 	for (RenderSubmission& submission : forwardSubmissions)
 	{
 		if (!submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
 		{
-			culledForwardSubmissions.push_back(submission);
+			culledForwardSubmissions.push_back(&submission);
 		}
 
 		if (glm::length(cameraPos - glm::vec3(submission.transform[3])) <= shadowCullRadius) // We are within shadow radius, show shadows
 		{
-			culledShadowSubmissions.push_back(submission);
+			culledShadowSubmissions.push_back(&submission);
 		}
 	}
 
-	geometryPass->DoPass(culledSubmissions, projection, view, cameraPos);
+	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
 	shadowMappingPass->DoPass(culledShadowSubmissions, projection, view);
 	envMapPass->DoPass(projection, view);
-	lightingPass->DoPass(culledSubmissions, projection, view, cameraPos);
+	lightingPass->DoPass(projection, view, cameraPos);
 	forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
 	linePass->DoPass(lineSubmissions, projection, view, windowDetails);
 }
@@ -190,6 +207,10 @@ void Renderer::Submit(const RenderSubmission& submission)
 	if (renderComponent->alphaTransparency < 1.0f || renderComponent->isIgnoreLighting) // Needs alpha blending, use this in the forward pass
 	{
 		forwardSubmissions.push_back(submission);
+	}
+	else if (submission.boneMatrices) // This submission has an animation
+	{
+		animatedSubmissions.push_back(submission);
 	}
 	else
 	{

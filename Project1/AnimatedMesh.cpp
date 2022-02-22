@@ -6,14 +6,33 @@
 
 #include <iostream>
 
+struct AnimatedAssimpLogger : public Assimp::LogStream
+{
+	static void Initialize()
+	{
+		if (Assimp::DefaultLogger::isNullLogger())
+		{
+			Assimp::DefaultLogger::create("", Assimp::Logger::VERBOSE);
+			Assimp::DefaultLogger::get()->attachStream(new AnimatedAssimpLogger, Assimp::Logger::Err | Assimp::Logger::Warn);
+		}
+	}
+
+	virtual void write(const char* message) override
+	{
+		std::cout << "[ASSIMP ERROR]: " << message;
+	}
+};
+
 AnimatedMesh::AnimatedMesh(const std::string& path)
 	: filePath(path),
 	boundingBox(nullptr),
 	boneCount(0)
 {
+	//AnimatedAssimpLogger::Initialize();
+
 	std::cout << "Loading animated mesh " << path << "...\n";
 
-	importer = CreateScope<Assimp::Importer>();;
+	importer = CreateScope<Assimp::Importer>();
 
 	const aiScene* scene = importer->ReadFile(path, MeshUtils::ASSIMP_FLAGS);
 	if (!scene || !scene->HasMeshes())
@@ -84,7 +103,7 @@ AnimatedMesh::AnimatedMesh(const std::string& path)
 			float defaultBoneWeights[MAX_BONE_INFLUENCE];
 			for (unsigned int j = 0; j < MAX_BONE_INFLUENCE; j++) defaultBoneWeights[j] = 0.0f;
 
-			this->vertices.push_back(new AnimatedVertex(position, normal, textureCoords,defaultBoneIDs, defaultBoneWeights));
+			this->vertices.push_back(new AnimatedVertex(position, normal, textureCoords, defaultBoneIDs, defaultBoneWeights));
 		}
 
 		submesh.boundingBox->Resize(min, max); // Resize the bounding box to the proper size
@@ -94,7 +113,8 @@ AnimatedMesh::AnimatedMesh(const std::string& path)
 		{
 			if (assimpMesh->mFaces[j].mNumIndices != 3)
 			{
-				std::cout << "Face must be a triangle!" << std::endl;
+				std::cout << assimpMesh->mName.C_Str() << " " << assimpMesh->mFaces[j].mNumIndices << std::endl;
+				std::cout << "Face must be a triangle! " << j << std::endl;
 				return;
 			}
 
@@ -151,6 +171,7 @@ AnimatedMesh::AnimatedMesh(const std::string& path)
 					
 					v->Data()[BONE_ID_START_INDEX + l] = boneID;
 					v->Data()[BONE_WEIGHT_START_INDEX + l] = weight;
+					break;
 				}
 			}
 		}
@@ -186,18 +207,34 @@ AnimatedMesh::AnimatedMesh(const std::string& path)
 		SetupMaterials();
 	}
 
-	BufferLayout bufferLayout = {
-		{ ShaderDataType::Float3, "vPosition" },
-		{ ShaderDataType::Float3, "vNormal" },
-		{ ShaderDataType::Float2, "vTextureCoordinates" },
-		{ ShaderDataType::Int4, "vBoneIDs" },
-		{ ShaderDataType::Float4, "vBoneWeights" }
-	};
+	BufferLayout bufferLayout;
+	if (MAX_BONE_INFLUENCE <= 4)
+	{
+		bufferLayout  = {
+			{ ShaderDataType::Float3, "vPosition" },
+			{ ShaderDataType::Float3, "vNormal" },
+			{ ShaderDataType::Float2, "vTextureCoordinates" },
+			{ ShaderDataType::Int4, "vBoneIDs" },
+			{ ShaderDataType::Float4, "vBoneWeights" }
+		};
+	}
+	else if(MAX_BONE_INFLUENCE >= 5)
+	{
+		bufferLayout = {
+			{ ShaderDataType::Float3, "vPosition" },
+			{ ShaderDataType::Float3, "vNormal" },
+			{ ShaderDataType::Float2, "vTextureCoordinates" },
+			{ ShaderDataType::Int4, "vBoneIDs1" },
+			{ ShaderDataType::Int4, "vBoneIDs2" },
+			{ ShaderDataType::Float4, "vBoneWeights1" },
+			{ ShaderDataType::Float4, "vBoneWeights2" }
+		};
+	}
 
 	this->vertexArray = new VertexArrayObject();
 
 	uint32_t vertexBufferSize = (uint32_t)(this->vertices.size() * AnimatedVertex::Size());
-	float* vertexBuffer = MeshUtils::ConvertVerticesToArray(this->vertices);
+	float* vertexBuffer = MeshUtils::ConvertAnimatedVerticesToArray(this->vertices);
 
 	this->vertexBuffer = new VertexBuffer(vertexBuffer, vertexBufferSize);
 	this->vertexBuffer->SetLayout(bufferLayout);

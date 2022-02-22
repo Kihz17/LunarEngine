@@ -1,10 +1,12 @@
 #pragma once
 
+#include "IComponentListener.h"
+
 #include <string>
 #include <vector>
 #include <assert.h>
 #include <iostream>
-class Component;
+
 class Entity
 {
 public:
@@ -17,6 +19,7 @@ public:
 
 		if (dynamic_cast<Component*>(newComponent) == 0) return 0;
 		this->components.push_back(newComponent);
+		for (IComponentListener* listener : componentListeners) listener->OnAddComponent(this, newComponent);
 
 		return newComponent;
 	}
@@ -30,6 +33,7 @@ public:
 		assert(!HasComponent<T>());
 
 		this->components.push_back(newComponent);
+		for (IComponentListener* listener : componentListeners) listener->OnAddComponent(this, newComponent);
 
 		return newComponent;
 	}
@@ -65,6 +69,9 @@ public:
 	const std::vector<Component*>& GetComponents() const { return components; }
 	const std::vector<Entity*>& GetChildren() const { return children; }
 
+	static void AddComponentListener(IComponentListener* listener);
+	static void CleanComponentListeners();
+
 	unsigned int id;
 	std::string name;
 	std::vector<Component*> components;
@@ -75,6 +82,8 @@ private:
 
 	Entity(unsigned int id, const std::string& name);
 	bool valid;
+
+	static std::vector<IComponentListener*> componentListeners;
 };
 
 typedef std::vector<Entity*>::iterator entity_iterator;

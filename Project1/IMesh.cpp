@@ -10,8 +10,8 @@
 const uint32_t MeshUtils::ASSIMP_FLAGS =
 	aiProcess_CalcTangentSpace |        // Create binormals/tangents just in case
 	aiProcess_Triangulate |             // Make sure we're triangles
+	aiProcess_GenSmoothNormals |        // Make sure we have legit normals
 	aiProcess_SortByPType |             // Split meshes by primitive type
-	aiProcess_GenNormals |              // Make sure we have legit normals
 	aiProcess_GenUVCoords |             // Convert UVs if required 
 	aiProcess_OptimizeMeshes |          // Batch draws where possible
 	aiProcess_JoinIdenticalVertices |	// Join up identical vertices
@@ -41,9 +41,9 @@ glm::mat4 MeshUtils::ConvertToGLMMat4(const aiMatrix4x4& matrix)
 
 float* MeshUtils::ConvertVerticesToArray(const std::vector<IVertex*>& vertices)
 {
-	uint32_t vertexBufferSize = (uint32_t)(vertices.size() * Vertex::Length());
-	float* vertexBuffer = new float[vertexBufferSize];
-	uint32_t bufferIndex = 0;
+	float* vertexBuffer = new float[vertices.size() * Vertex::Length()];
+
+	unsigned int bufferIndex = 0;
 	for (int i = 0; i < vertices.size(); i++) // Convert data into contiguous float array 
 	{
 		IVertex* vertex = vertices[i];
@@ -51,7 +51,8 @@ float* MeshUtils::ConvertVerticesToArray(const std::vector<IVertex*>& vertices)
 
 		for (unsigned int j = 0; j < Vertex::Length(); j++)
 		{
-			vertexBuffer[bufferIndex + j] = data[j];
+			int writeIndex = bufferIndex + j;
+			vertexBuffer[writeIndex] = data[j];
 		}
 
 		bufferIndex += Vertex::Length();
@@ -62,9 +63,9 @@ float* MeshUtils::ConvertVerticesToArray(const std::vector<IVertex*>& vertices)
 
 float* MeshUtils::ConvertAnimatedVerticesToArray(const std::vector<IVertex*>& vertices)
 {
-	uint32_t vertexBufferSize = (uint32_t)(vertices.size() * AnimatedVertex::Length());
-	float* vertexBuffer = new float[vertexBufferSize];
-	uint32_t bufferIndex = 0;
+	float* vertexBuffer = new float[vertices.size() * AnimatedVertex::Length()];
+
+	unsigned int bufferIndex = 0;
 	for (int i = 0; i < vertices.size(); i++) // Convert data into contiguous float array 
 	{
 		IVertex* vertex = vertices[i];
@@ -72,7 +73,8 @@ float* MeshUtils::ConvertAnimatedVerticesToArray(const std::vector<IVertex*>& ve
 
 		for (unsigned int j = 0; j < AnimatedVertex::Length(); j++)
 		{
-			vertexBuffer[bufferIndex + j] = data[j];
+			int writeIndex = bufferIndex + j;
+			vertexBuffer[writeIndex] = data[j];
 		}
 
 		bufferIndex += AnimatedVertex::Length();

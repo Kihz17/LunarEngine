@@ -14,6 +14,7 @@
 #include "ScaleComponent.h"
 #include "RotationComponent.h"
 #include "RigidBodyComponent.h"
+#include "SkeletalAnimationComponent.h"
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
@@ -47,7 +48,8 @@ GameEngine::~GameEngine()
 
     ShaderLibrary::CleanUp();
     Renderer::CleanUp();
-   // SoundManager::CleanUp();
+    SoundManager::CleanUp();
+    Entity::CleanComponentListeners();
     TextureManager::CleanUp(); // This should be last, to give other things time if they want to remove textures
 }
 
@@ -116,6 +118,16 @@ void GameEngine::SubmitEntitiesToRender()
 
         // Tell the renderer to render this entity
         RenderSubmission submission(renderComponent, posComponent->value, scaleComponent->value, rotComponent->value);
+
+        // Apply bone data to submission if the entity is animated
+        SkeletalAnimationComponent* animComp = entity->GetComponent<SkeletalAnimationComponent>();
+        if (animComp)
+        {
+
+            submission.boneMatrices = animComp->boneMatrices.data();
+            submission.boneMatricesLength = animComp->boneMatrices.size();
+        }
+
         Renderer::Submit(submission);
 
         if (debugMode)
@@ -129,41 +141,6 @@ void GameEngine::SubmitEntitiesToRender()
             Renderer::SubmitLines(lineSubmission);
         }
     }
-}
-
-Entity* GameEngine::SpawnPhysicsSphere(const std::string& name, const glm::vec3& position, float radius, Mesh* sphereMesh)
-{
-    Entity* physicsSphere = entityManager.CreateEntity(name);
-    physicsSphere->AddComponent<PositionComponent>();
-    physicsSphere->AddComponent<ScaleComponent>(glm::vec3(radius, radius, radius));
-    physicsSphere->AddComponent<RotationComponent>();
-
-    Physics::SphereShape* shape = new Physics::SphereShape(radius);
-
-    // Rigid Body
-    Physics::RigidBodyInfo rigidInfo;
-    rigidInfo.linearDamping = 0.99f;
-    rigidInfo.angularDamping = 0.001f;
-    rigidInfo.isStatic = false;
-    rigidInfo.mass = radius;
-    rigidInfo.position = position;
-    rigidInfo.linearVelocity = glm::vec3(0.0f);
-    rigidInfo.restitution = 0.8f;
-    Physics::IRigidBody* rigidBody = physicsFactory->CreateRigidBody(rigidInfo, shape);
-    physicsSphere->AddComponent<RigidBodyComponent>(rigidBody);
-    physicsWorld->AddRigidBody(physicsSphere->GetComponent<RigidBodyComponent>()->ptr, physicsSphere);
-
-    if (sphereMesh)
-    {
-        // Render Info
-        RenderComponent::RenderInfo sphereInfo;
-        sphereInfo.mesh = sphereMesh;
-        sphereInfo.isColorOverride = true;
-        sphereInfo.colorOverride = glm::vec3(0.8f, 0.8f, 0.8f);
-        physicsSphere->AddComponent<RenderComponent>(sphereInfo);
-    }
-
-    return physicsSphere;
 }
 
 void GameEngine::Run()

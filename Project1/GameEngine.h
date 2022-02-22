@@ -31,8 +31,6 @@ public:
 
 	EntityManager& GetEntityManager() { return entityManager; }
 
-	Entity* SpawnPhysicsSphere(const std::string& name, const glm::vec3& position, float radius, Mesh* sphereMesh);
-
 	const WindowSpecs& GetWindowSpecs() const { return windowSpecs; }
 
 	Camera camera;

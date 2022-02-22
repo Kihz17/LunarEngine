@@ -11,7 +11,7 @@ public:
 	ForwardRenderPass(IFrameBuffer* geometryBuffer);
 	virtual ~ForwardRenderPass();
 
-	void DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view, const WindowSpecs* windowSpecs);
+	void DoPass(std::vector<RenderSubmission*>& submissions, const glm::mat4& projection, const glm::mat4& view, const WindowSpecs* windowSpecs);
 
 private:
 	IFrameBuffer* geometryBuffer;
