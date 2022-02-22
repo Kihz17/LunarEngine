@@ -111,8 +111,6 @@ void AnimationLayer::OnUpdate(float deltaTime)
             {
                 finalColor = rotColor;
             }
-
-            renderComp->colorOverride = finalColor;
         }
     }
 }

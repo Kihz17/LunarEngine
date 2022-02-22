@@ -110,7 +110,7 @@ void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vect
 	// Draw static meshes
 	for (RenderSubmission* submission : submissions)
 	{
-		RenderComponent* renderComponent = submission->renderComponent;
+		Submesh* renderComponent = submission->submesh;
 
 		PassSharedData(shader, submission, projection, view);
 
@@ -137,7 +137,7 @@ void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vect
 
 	for (RenderSubmission* submission : animatedSubmissions)
 	{
-		RenderComponent* renderComponent = submission->renderComponent;
+		Submesh* renderComponent = submission->submesh;
 
 		PassSharedData(animatedShader, submission, projection, view);
 
@@ -165,16 +165,14 @@ void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vect
 
 void GeometryPass::PassSharedData(Shader* shader, RenderSubmission* submission, const glm::mat4& projection, const glm::mat4& view)
 {
-	RenderComponent* renderComponent = submission->renderComponent;
+	Submesh* renderComponent = submission->submesh;
 
 	glm::mat4 projViewModel = projection * view * submission->transform;
-	glm::mat4& prevProjViewModel = renderComponent->hasPrevProjViewModel ? renderComponent->projViewModel : projViewModel;
-	renderComponent->projViewModel = projViewModel;
 
 	shader->SetMat4("uMatModel", submission->transform);
 	shader->SetMat4("uMatModelInverseTranspose", glm::inverse(submission->transform));
 	shader->SetMat4("uMatProjViewModel", projViewModel);
-	shader->SetMat4("uMatPrevProjViewModel", prevProjViewModel);
+	shader->SetMat4("uMatPrevProjViewModel", projViewModel);
 
 	if (renderComponent->castShadowsOn)
 	{
@@ -240,31 +238,30 @@ void GeometryPass::PassSharedData(Shader* shader, RenderSubmission* submission, 
 		shader->SetFloat4("uMaterialOverrides", glm::vec4(renderComponent->roughness, renderComponent->metalness, renderComponent->ao, 1.0f));
 	}
 
-	ReflectRefractData& rrData = renderComponent->reflectRefractData;
-	float rrType = rrData.type == ReflectRefractType::Reflect ? 1.0f : rrData.type == ReflectRefractType::Refract ? 2.0f : 0.0f;
-	shader->SetFloat4("uRRInfo", glm::vec4(rrType, rrData.strength, renderComponent->reflectRefractData.refractRatio, 0.0f));
+	float rrType = renderComponent->reflectRefractType == ReflectRefractType::Reflect ? 1.0f : renderComponent->reflectRefractType == ReflectRefractType::Refract ? 2.0f : 0.0f;
+	shader->SetFloat4("uRRInfo", glm::vec4(rrType, renderComponent->reflectRefractStrength, renderComponent->refractRatio, 0.0f));
 
-	if (rrData.type != ReflectRefractType::None)
+	if (renderComponent->reflectRefractType != ReflectRefractType::None)
 	{
-		if (rrData.mapType == ReflectRefractMapType::Environment)
+		if (renderComponent->reflectRefractMapType == ReflectRefractMapType::Environment)
 		{
 			Renderer::GetEnvironmentMapCube()->BindToSlot(8);
 		}
-		else if (rrData.mapType == ReflectRefractMapType::DynamicMinimal)
+		else if (renderComponent->reflectRefractMapType == ReflectRefractMapType::DynamicMinimal)
 		{
 			Renderer::GenerateDynamicCubeMap(renderComponent->mesh->GetBoundingBox()->GetCenter(), ReflectRefractMapPriorityType::High, renderComponent)->BindToSlot(8);
 		}
-		else if (rrData.mapType == ReflectRefractMapType::DynamicMedium)
+		else if (renderComponent->reflectRefractMapType == ReflectRefractMapType::DynamicMedium)
 		{
 			Renderer::GenerateDynamicCubeMap(renderComponent->mesh->GetBoundingBox()->GetCenter(), ReflectRefractMapPriorityType::Medium, renderComponent)->BindToSlot(8);
 		}
-		else if (rrData.mapType == ReflectRefractMapType::DynamicFull)
+		else if (renderComponent->reflectRefractMapType == ReflectRefractMapType::DynamicFull)
 		{
 			Renderer::GenerateDynamicCubeMap(renderComponent->mesh->GetBoundingBox()->GetCenter(), ReflectRefractMapPriorityType::Low, renderComponent)->BindToSlot(8);
 		}
-		else if (rrData.mapType == ReflectRefractMapType::Custom)
+		else if (renderComponent->reflectRefractMapType == ReflectRefractMapType::Custom)
 		{
-			rrData.customMap->BindToSlot(8);
+			renderComponent->reflectRefractCustomMap->BindToSlot(8);
 		}
 	}
 

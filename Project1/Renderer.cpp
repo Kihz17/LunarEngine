@@ -2,6 +2,7 @@
 #include "ShaderLibrary.h"
 #include "EntityManager.h"
 #include "Utils.h"
+#include "Model.h"
 
 #include "FrameBuffer.h"
 #include "TextureManager.h"
@@ -154,7 +155,7 @@ void Renderer::DrawFrame()
 	// Cull deferred submissions
 	for (RenderSubmission& submission : submissions)
 	{
-		if (submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
+		if (submission.submesh->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
 		{
 			culledSubmissions.push_back(&submission);
 		}
@@ -168,7 +169,7 @@ void Renderer::DrawFrame()
 	// Cull animated submissions
 	for (RenderSubmission& submission : animatedSubmissions)
 	{
-		if (submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
+		if (submission.submesh->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
 		{
 			culledAnimatedSubmissions.push_back(&submission);
 		}
@@ -182,7 +183,7 @@ void Renderer::DrawFrame()
 	// Cull forward submissions
 	for (RenderSubmission& submission : forwardSubmissions)
 	{
-		if (!submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
+		if (!submission.submesh->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
 		{
 			culledForwardSubmissions.push_back(&submission);
 		}
@@ -203,8 +204,8 @@ void Renderer::DrawFrame()
 
 void Renderer::Submit(const RenderSubmission& submission)
 {
-	RenderComponent* renderComponent = submission.renderComponent;
-	if (renderComponent->alphaTransparency < 1.0f || renderComponent->isIgnoreLighting) // Needs alpha blending, use this in the forward pass
+	Submesh* submesh = submission.submesh;
+	if (submesh->alphaTransparency < 1.0f || submesh->isIgnoreLighting) // Needs alpha blending, use this in the forward pass
 	{
 		forwardSubmissions.push_back(submission);
 	}
@@ -233,7 +234,7 @@ void Renderer::SetShadowMappingDirectionalLight(Light* light)
 	shadowMappingPass->SetDirectionalLight(light);
 }
 
-CubeMap* Renderer::GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore, int viewportWidth, int viewportHeight)
+CubeMap* Renderer::GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, Submesh* ignore, int viewportWidth, int viewportHeight)
 {
 	constexpr float fov = glm::radians(90.0f);
 	constexpr float aspect = 1.0f; // Since we are making a cube map, our aspect ratio is 1:1
@@ -253,10 +254,10 @@ CubeMap* Renderer::GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefrac
 
 	for (RenderSubmission& submission : submissions)
 	{
-		if (submission.renderComponent->reflectRefractMapPriority > meshPriority || submission.renderComponent == ignore) continue; // This mesh shouldn't be considered in this dynamic cube map
+		if (submission.submesh->reflectRefractMapPriority > meshPriority || submission.submesh == ignore) continue; // This mesh shouldn't be considered in this dynamic cube map
 		
 		// Cull objects that aren't within their respective frustums
-		const AABB* aabb = submission.renderComponent->mesh->GetBoundingBox();
+		const AABB* aabb = submission.submesh->mesh->GetBoundingBox();
 		if (aabb->IsOnFrustum(frontFrustum, submission.transform))
 		{
 			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_NEGATIVE_Z].push_back(&submission);

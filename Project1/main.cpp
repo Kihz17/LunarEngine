@@ -1,6 +1,6 @@
 #include "GameEngine.h"
 #include "Window.h"
-#include "Mesh.h"
+#include "Model.h"
 
 #include "InputManager.h"
 #include "EntityManager.h"
@@ -22,21 +22,11 @@ glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
 float GetRandom(float low, float high);
 
-void ShaderBallTest(Mesh* shaderBall, ITexture* normalTexture, ITexture* albedo, GameEngine& gameEngine);
+void ShaderBallTest(Model* shaderBall, GameEngine& gameEngine);
 
 int main() 
 {
     WindowSpecs windowSpecs = GameEngine::InitializeGLFW(true);
-
-    // Load models
-    Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
-    Mesh* sphere = new Mesh("assets/models/sphere.obj");
-    Mesh* plane = new Mesh("assets/models/plane.obj");
-    Mesh* cube = new Mesh("assets/models/cube.obj");
-    Mesh* ship = new Mesh("assets/models/assault.ply");
-
-    Mesh* vampire = new Mesh("assets/models/Knight_Golden_Male.fbx");
-    //Animation anim("assets/models/BaseCharacter.fbx", vampire);
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -47,13 +37,43 @@ int main()
     Texture2D* blue = TextureManager::CreateTexture2D("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* grassTexture = TextureManager::CreateTexture2D("assets/textures/grass.png", TextureFilterType::Linear, TextureWrapType::Repeat);
 
+    // Load models
+    Model* shaderBall = new Model("assets/models/shaderball/shaderball.obj");
+    {
+        Submesh& shaderBallSub = shaderBall->GetSubmeshes()[0];
+        shaderBallSub.albedoTextures.push_back({ blue, 1.0f });
+        shaderBallSub.normalTexture = normalTexture;
+        //shaderBallSub.roughnessTexture = roughnessTexture;
+        //shaderBallSub.metalTexture = metalnessTexture;
+        //shaderBallSub.aoTexture = aoTexture;
+        shaderBallSub.reflectRefractType = ReflectRefractType::Reflect;
+        shaderBallSub.reflectRefractMapType = ReflectRefractMapType::Environment;
+        shaderBallSub.reflectRefractStrength = 0.5f;
+    }
+
+
+    Model* sphere = new Model("assets/models/sphere.obj");
+    Model* plane = new Model("assets/models/plane.obj");
+    Model* cube = new Model("assets/models/cube.obj");
+    Model* ship = new Model("assets/models/assault.ply");
+
+    Model* vampire = new Model("assets/models/Knight_Golden_Male.fbx");
+    {
+        for (Submesh& submesh : vampire->GetSubmeshes())
+        {
+            submesh.isColorOverride = true;
+            submesh.colorOverride = glm::vec3(0.8f, 0.0f, 0.0f);
+        }
+    }
+    //Animation anim("assets/models/BaseCharacter.fbx", vampire);
+
     GameEngine gameEngine(windowSpecs, true);
     gameEngine.AddLayer(new FreeCamController(gameEngine.camera, gameEngine.GetWindowSpecs()));
 
     Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
     gameEngine.camera.position = glm::vec3(0.0f, 10.0f, 30.0f);
-    gameEngine.debugMode = true;
+    //gameEngine.debugMode = true;
 
     // Setup some lights    
     LightInfo lightInfo;
@@ -73,7 +93,7 @@ int main()
     gameEngine.AddLayer(sal);
 
     // SHADER BALL TEST
-    //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
+    //ShaderBallTest(shaderBall, gameEngine);
 
     {
         Entity* ground = gameEngine.GetEntityManager().CreateEntity("ground");
@@ -102,14 +122,9 @@ int main()
     {
         Entity* animTest = gameEngine.GetEntityManager().CreateEntity("AnimTest");
         animTest->AddComponent<PositionComponent>();
-        animTest->AddComponent<ScaleComponent>();
+        animTest->AddComponent<ScaleComponent>(glm::vec3(0.1f, 0.1f, 0.1f));
         animTest->AddComponent<RotationComponent>();
-
-        RenderComponent::RenderInfo renderInfo;
-        renderInfo.mesh = vampire;
-        renderInfo.isColorOverride = true;
-        renderInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
-        animTest->AddComponent<RenderComponent>(renderInfo);
+        animTest->AddComponent<RenderComponent>(vampire);
 
         //SkeletalAnimationComponent* animComp = animTest->AddComponent<SkeletalAnimationComponent>();
         //animComp->SetAnimation(&anim);
@@ -138,22 +153,11 @@ float GetRandom(float low, float high)
     return low + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) / (high - low));
 }
 
-void ShaderBallTest(Mesh* shaderBall, ITexture* normalTexture, ITexture* albedo, GameEngine& gameEngine)
+void ShaderBallTest(Model* shaderBall, GameEngine& gameEngine)
 {
     Entity* testEntity = gameEngine.GetEntityManager().CreateEntity("shaderBall");
     testEntity->AddComponent<PositionComponent>(glm::vec3(0.0f, 10.0f, 0.0f));
     testEntity->AddComponent<RotationComponent>();
     testEntity->AddComponent<ScaleComponent>();
-
-    RenderComponent::RenderInfo testInfo;
-    testInfo.mesh = shaderBall;
-    testInfo.albedoTextures.push_back({ albedo, 1.0f });
-    testInfo.normalTexture = normalTexture;
-    //testInfo.roughnessTexture = roughnessTexture;
-    //testInfo.metalTexture = metalnessTexture;
-    //testInfo.aoTexture = aoTexture;
-    testInfo.reflectRefractType = ReflectRefractType::Reflect;
-    testInfo.reflectRefractMapType = ReflectRefractMapType::Environment;
-    testInfo.reflectRefractStrength = 0.5f;
-    testEntity->AddComponent<RenderComponent>(testInfo);
+    testEntity->AddComponent<RenderComponent>(shaderBall);
 }

@@ -199,32 +199,8 @@
     <ClCompile Include="AnimationLayer.cpp">
       <Filter>Layers</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerController.cpp">
-      <Filter>Layers</Filter>
-    </ClCompile>
-    <ClCompile Include="ApproachShootCondition.cpp">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="SeekCondition.cpp">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="FleeCondition.cpp">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClCompile>
     <ClCompile Include="IdleBehaviour.cpp">
       <Filter>AI\Steering\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="WanderCondition.cpp">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="IdleCondition.cpp">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="EvadeCondition.cpp">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="PursueCondition.cpp">
-      <Filter>AI\Steering\Conditions</Filter>
     </ClCompile>
     <ClCompile Include="UUID.cpp">
       <Filter>Utils</Filter>
@@ -234,9 +210,6 @@
     </ClCompile>
     <ClCompile Include="SteeringEntityRemoveListener.cpp">
       <Filter>AI\Steering</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemySpawner.cpp">
-      <Filter>Layers</Filter>
     </ClCompile>
     <ClCompile Include="FreeCamController.cpp">
       <Filter>Layers</Filter>
@@ -316,15 +289,6 @@
     <ClCompile Include="FormationBehaviour.cpp">
       <Filter>AI\Steering\Behaviours</Filter>
     </ClCompile>
-    <ClCompile Include="FormationCondition.cpp">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="FormationLayer.cpp">
-      <Filter>Layers</Filter>
-    </ClCompile>
-    <ClCompile Include="FlockingCondition.cpp">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClCompile>
     <ClCompile Include="PathFollowBehaviour.cpp">
       <Filter>AI\Steering\Behaviours</Filter>
     </ClCompile>
@@ -354,6 +318,12 @@
     </ClCompile>
     <ClCompile Include="SkeletalAnimationComponentListener.cpp">
       <Filter>Layers\SkeletalAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshManager.cpp">
+      <Filter>Graphics\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -493,35 +463,11 @@
     <ClInclude Include="AnimationLayer.h">
       <Filter>Layers</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerController.h">
-      <Filter>Layers</Filter>
-    </ClInclude>
     <ClInclude Include="ISteeringCondition.h">
       <Filter>AI\Steering</Filter>
     </ClInclude>
-    <ClInclude Include="ApproachShootCondition.h">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekCondition.h">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="FleeCondition.h">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClInclude>
     <ClInclude Include="IdleBehaviour.h">
       <Filter>AI\Steering\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="WanderCondition.h">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="IdleCondition.h">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="EvadeCondition.h">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="PursueCondition.h">
-      <Filter>AI\Steering\Conditions</Filter>
     </ClInclude>
     <ClInclude Include="UUID.h">
       <Filter>Utils</Filter>
@@ -558,9 +504,6 @@
     </ClInclude>
     <ClInclude Include="SteeringEntityRemoveListener.h">
       <Filter>AI\Steering</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemySpawner.h">
-      <Filter>Layers</Filter>
     </ClInclude>
     <ClInclude Include="FreeCamController.h">
       <Filter>Layers</Filter>
@@ -661,15 +604,6 @@
     <ClInclude Include="FormationBehaviour.h">
       <Filter>AI\Steering\Behaviours</Filter>
     </ClInclude>
-    <ClInclude Include="FormationCondition.h">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="FormationLayer.h">
-      <Filter>Layers</Filter>
-    </ClInclude>
-    <ClInclude Include="FlockingCondition.h">
-      <Filter>AI\Steering\Conditions</Filter>
-    </ClInclude>
     <ClInclude Include="PathFollowBehaviour.h">
       <Filter>AI\Steering\Behaviours</Filter>
     </ClInclude>
@@ -714,6 +648,12 @@
     </ClInclude>
     <ClInclude Include="SkeletalAnimationComponentListener.h">
       <Filter>Layers\SkeletalAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshManager.h">
+      <Filter>Graphics\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

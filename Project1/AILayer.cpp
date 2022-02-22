@@ -101,12 +101,6 @@ void AILayer::OnUpdate(float deltaTime)
         {
             behaviourComp->active->GetBehaviour()->Update(deltaTime); // Update the actual behaviour
             behaviourComp->active->Update(deltaTime); // Update the behaviour condition
-
-            RenderComponent* renderComp = entity->GetComponent<RenderComponent>();
-            if(renderComp)
-            {
-                renderComp->colorOverride = behaviourComp->active->GetBehaviour()->GetColor();
-            }
         }
     }
 }

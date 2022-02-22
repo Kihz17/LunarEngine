@@ -155,7 +155,6 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationLayer.cpp" />
     <ClCompile Include="ApplicationLayerManager.cpp" />
-    <ClCompile Include="ApproachShootCondition.cpp" />
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionHandler.cpp" />
@@ -164,19 +163,13 @@
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="DSP.cpp" />
     <ClCompile Include="DynamicCubeMapRenderer.cpp" />
-    <ClCompile Include="EnemySpawner.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="EnvironmentMapPass.cpp" />
     <ClCompile Include="EvadeBehaviour.cpp" />
-    <ClCompile Include="EvadeCondition.cpp" />
     <ClCompile Include="FleeBehaviour.cpp" />
-    <ClCompile Include="FleeCondition.cpp" />
     <ClCompile Include="FlockingBehaviour.cpp" />
-    <ClCompile Include="FlockingCondition.cpp" />
     <ClCompile Include="FormationBehaviour.cpp" />
-    <ClCompile Include="FormationCondition.cpp" />
-    <ClCompile Include="FormationLayer.cpp" />
     <ClCompile Include="ForwardRenderPass.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="FreeCamController.cpp" />
@@ -185,7 +178,6 @@
     <ClCompile Include="GeometryPass.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="IdleBehaviour.cpp" />
-    <ClCompile Include="IdleCondition.cpp" />
     <ClCompile Include="IFrameBuffer.cpp" />
     <ClCompile Include="IMesh.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
@@ -196,19 +188,18 @@
     <ClCompile Include="LightingPass.cpp" />
     <ClCompile Include="LinePass.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshManager.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="PathFollowBehaviour.cpp" />
     <ClCompile Include="PhysicsFactory.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
-    <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="PrimitiveShape.cpp" />
     <ClCompile Include="PursueBehaviour.cpp" />
-    <ClCompile Include="PursueCondition.cpp" />
     <ClCompile Include="RenderBuffer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="EntityPanel.cpp" />
     <ClCompile Include="SeekBehaviour.cpp" />
-    <ClCompile Include="SeekCondition.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderLibrary.cpp" />
     <ClCompile Include="CascadedShadowMapping.cpp" />
@@ -238,7 +229,6 @@
     <ClCompile Include="VertexArrayObject.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="WanderBehaviour.cpp" />
-    <ClCompile Include="WanderCondition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
@@ -249,14 +239,10 @@
     <ClInclude Include="AnimationLayer.h" />
     <ClInclude Include="ApplicationLayer.h" />
     <ClInclude Include="ApplicationLayerManager.h" />
-    <ClInclude Include="ApproachShootCondition.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="Coordinator.h" />
     <ClInclude Include="FlockingBehaviour.h" />
-    <ClInclude Include="FlockingCondition.h" />
     <ClInclude Include="FormationBehaviour.h" />
-    <ClInclude Include="FormationCondition.h" />
-    <ClInclude Include="FormationLayer.h" />
     <ClInclude Include="IBoundingVolume.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionHandler.h" />
@@ -266,14 +252,11 @@
     <ClInclude Include="CubeMap.h" />
     <ClInclude Include="DSP.h" />
     <ClInclude Include="DynamicCubeMapRenderer.h" />
-    <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="EnvironmentMapPass.h" />
     <ClInclude Include="EvadeBehaviour.h" />
-    <ClInclude Include="EvadeCondition.h" />
     <ClInclude Include="FleeBehaviour.h" />
-    <ClInclude Include="FleeCondition.h" />
     <ClInclude Include="ForwardRenderPass.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="FreeCamController.h" />
@@ -283,7 +266,6 @@
     <ClInclude Include="GLCommon.h" />
     <ClInclude Include="IComponentListener.h" />
     <ClInclude Include="IdleBehaviour.h" />
-    <ClInclude Include="IdleCondition.h" />
     <ClInclude Include="IEntityRemoveListener.h" />
     <ClInclude Include="IFrameBuffer.h" />
     <ClInclude Include="IMesh.h" />
@@ -304,15 +286,15 @@
     <ClInclude Include="LightingPass.h" />
     <ClInclude Include="LinePass.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshManager.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="PathFollowBehaviour.h" />
     <ClInclude Include="PhysicsFactory.h" />
     <ClInclude Include="PhysicsWorld.h" />
-    <ClInclude Include="PlayerController.h" />
     <ClInclude Include="PositionComponent.h" />
     <ClInclude Include="PrimitiveShape.h" />
     <ClInclude Include="PursueBehaviour.h" />
-    <ClInclude Include="PursueCondition.h" />
     <ClInclude Include="ReflectRefract.h" />
     <ClInclude Include="RenderBuffer.h" />
     <ClInclude Include="RenderComponent.h" />
@@ -324,7 +306,6 @@
     <ClInclude Include="RotationComponent.h" />
     <ClInclude Include="ScaleComponent.h" />
     <ClInclude Include="SeekBehaviour.h" />
-    <ClInclude Include="SeekCondition.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderLibrary.h" />
     <ClInclude Include="CascadedShadowMapping.h" />
@@ -359,7 +340,6 @@
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexInformation.h" />
     <ClInclude Include="WanderBehaviour.h" />
-    <ClInclude Include="WanderCondition.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

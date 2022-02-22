@@ -96,7 +96,7 @@ CubeMap* DynamicCubeMapRenderer::GenerateDynamicCubeMap(const glm::vec3& center,
 
 		for (RenderSubmission* submissions : submissions)
 		{
-			RenderComponent* renderComponent = submissions->renderComponent;
+			Submesh* renderComponent = submissions->submesh;
 
 			shader->SetMat4("uMatModel", submissions->transform);
 

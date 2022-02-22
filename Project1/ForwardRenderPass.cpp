@@ -87,7 +87,7 @@ void ForwardRenderPass::DoPass(std::vector<RenderSubmission*>& submissions, cons
 	// Draw geometry
 	for (RenderSubmission* submission : submissions)
 	{
-		RenderComponent* renderComponent = submission->renderComponent;
+		Submesh* renderComponent = submission->submesh;
 
 		shader->SetMat4("uMatModel", submission->transform);
 		shader->SetMat4("uMatModelInverseTranspose", glm::inverse(submission->transform));

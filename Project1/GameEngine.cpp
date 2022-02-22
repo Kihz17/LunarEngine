@@ -116,29 +116,32 @@ void GameEngine::SubmitEntitiesToRender()
             continue;
         }
 
-        // Tell the renderer to render this entity
-        RenderSubmission submission(renderComponent, posComponent->value, scaleComponent->value, rotComponent->value);
-
-        // Apply bone data to submission if the entity is animated
-        SkeletalAnimationComponent* animComp = entity->GetComponent<SkeletalAnimationComponent>();
-        if (animComp)
+        for (Submesh& submesh : renderComponent->model->GetSubmeshes()) // Submit all submeshes that belong to this model
         {
+            // Tell the renderer to render this entity
+            RenderSubmission submission(&submesh, posComponent->value, scaleComponent->value, rotComponent->value);
 
-            submission.boneMatrices = animComp->boneMatrices.data();
-            submission.boneMatricesLength = animComp->boneMatrices.size();
-        }
+            // Apply bone data to submission if the entity is animated
+            SkeletalAnimationComponent* animComp = entity->GetComponent<SkeletalAnimationComponent>();
+            if (animComp)
+            {
 
-        Renderer::Submit(submission);
+                submission.boneMatrices = animComp->boneMatrices.data();
+                submission.boneMatricesLength = animComp->boneMatrices.size();
+            }
 
-        if (debugMode)
-        {
-            const AABB* aabb = renderComponent->mesh->GetBoundingBox();
-            LineRenderSubmission lineSubmission;
-            lineSubmission.vao = aabb->GetVertexArray();
-            lineSubmission.indexCount = aabb->GetIndexCount();
-            lineSubmission.lineColor = glm::vec3(0.0f, 0.0f, 0.8f);
-            lineSubmission.transform = submission.transform;
-            Renderer::SubmitLines(lineSubmission);
+            Renderer::Submit(submission);
+
+            if (debugMode)
+            {
+                const AABB* aabb = submesh.mesh->GetBoundingBox();
+                LineRenderSubmission lineSubmission;
+                lineSubmission.vao = aabb->GetVertexArray();
+                lineSubmission.indexCount = aabb->GetIndexCount();
+                lineSubmission.lineColor = glm::vec3(0.0f, 0.0f, 0.8f);
+                lineSubmission.transform = submission.transform;
+                Renderer::SubmitLines(lineSubmission);
+            }
         }
     }
 }

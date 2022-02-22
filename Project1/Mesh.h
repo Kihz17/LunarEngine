@@ -15,10 +15,8 @@
 class Mesh : public IMesh
 {
 public:
-	Mesh(const std::string& filePath);
+	Mesh(const std::vector<IVertex*>& vertices, const std::vector<Face>& indices, AABB* boundingBox);
 	virtual ~Mesh();
-	
-	virtual const std::vector<Submesh>& GetSubmeshes() const override { return this->submeshes; }
 
 	virtual VertexArrayObject* GetVertexArray() override { return this->vertexArray; }
 	virtual VertexBuffer* GetVertexBuffer() override { return this->vertexBuffer; }
@@ -31,17 +29,7 @@ public:
 
 	virtual const AABB* GetBoundingBox() const override { return this->boundingBox; }
 
-	virtual const std::string& GetPath() const override { return this->filePath; }
-
 private:
-	void SetupMaterials();
-	void LoadNodes(aiNode* node, const glm::mat4& parentTransform = glm::mat4(1.0f));
-
-	Scope<Assimp::Importer> importer;
-
-	std::vector<Submesh> submeshes;
-	glm::mat4 inverseTransform;
-
 	VertexArrayObject* vertexArray;
 	VertexBuffer* vertexBuffer;
 	IndexBuffer* indexBuffer;
@@ -49,10 +37,5 @@ private:
 	std::vector<IVertex*> vertices;
 	std::vector<Face> faces;
 
-	std::unordered_map<aiNode*, std::vector<uint32_t>> nodeMap;
-	const aiScene* assimpScene;
-
 	AABB* boundingBox;
-
-	std::string filePath;
 };

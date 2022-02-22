@@ -114,7 +114,7 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, 
 
 	for (RenderSubmission* submission : submissions)
 	{
-		RenderComponent* renderComponent = submission->renderComponent;
+		Submesh* renderComponent = submission->submesh;
 		if (!renderComponent->castShadows) continue;
 
 		depthMappingShader->SetMat4("uMatModel", submission->transform);
