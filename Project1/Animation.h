@@ -1,35 +1,62 @@
 #pragma once
 
+#include "BoneInfo.h"
 #include "Bone.h"
 #include "AnimatedVertex.h"
-#include "AnimatedMesh.h"
 
-#include <map>
+#include <assimp/scene.h>
+#include <assimp/anim.h>
 
-struct NodeData
+#include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
+
+#include <unordered_map>
+
+struct KeyFramePosition
 {
-	std::string name;
-	glm::mat4 transform;
-	std::vector<NodeData> children;
+	glm::vec3 position;
+	float timeStamp;
 };
 
+struct KeyFrameRotation
+{
+	glm::quat rotation;
+	float timeStamp;
+};
+
+struct KeyFrameScale
+{
+	glm::vec3 scale;
+	float timeStamp;
+};
+
+struct KeyFrames
+{
+	std::vector<KeyFramePosition> positions;
+	std::vector<KeyFrameRotation> rotations;
+	std::vector<KeyFrameScale> scales;
+};
+
+class AnimatedMesh;
 class Animation
 {
 public:
 	Animation(const std::string& path, AnimatedMesh* mesh);
 
-	Bone* GetBone(const std::string& name);
+	const float& GetDuration() const { return duration; }
+	const int& GetTicksPerSecond() const { return ticksPerSecond; }
 
-	float duration;
-	int ticksPerSecond;
-	NodeData rootNode;
-	std::map<std::string, BoneInfo> boneInfos;
+	bool GetFrameData(const std::string& boneName, float time, glm::vec3& lerpedPos, glm::quat& lerpedRot, glm::vec3& lerpedScale);
 
 	static const unsigned int MAX_BONES;
 
 private:
-	void ParseHeirarchy(NodeData& loadTo, const aiNode* loadFrom);
-	void CheckMissingBones(const aiAnimation* assimpAnim, AnimatedMesh* mesh);
+	void ParseKeyFrames(const aiNode* assimpNode, const aiAnimation* assimpAnim, AnimatedMesh* mesh);
 
-	std::vector<Bone> bones;
+	std::unordered_map<std::string, KeyFrames> keyFrameMap;
+
+	float duration;
+	int ticksPerSecond;
+
+	std::string filePath;
 };

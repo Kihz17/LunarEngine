@@ -116,32 +116,29 @@ void GameEngine::SubmitEntitiesToRender()
             continue;
         }
 
-        for (Submesh& submesh : renderComponent->model->GetSubmeshes()) // Submit all submeshes that belong to this model
+        // Tell the renderer to render this entity
+        RenderSubmission submission(renderComponent, posComponent->value, scaleComponent->value, rotComponent->value);
+
+        // Apply bone data to submission if the entity is animated
+        SkeletalAnimationComponent* animComp = entity->GetComponent<SkeletalAnimationComponent>();
+        if (animComp)
         {
-            // Tell the renderer to render this entity
-            RenderSubmission submission(&submesh, posComponent->value, scaleComponent->value, rotComponent->value);
 
-            // Apply bone data to submission if the entity is animated
-            SkeletalAnimationComponent* animComp = entity->GetComponent<SkeletalAnimationComponent>();
-            if (animComp)
-            {
+            submission.boneMatrices = animComp->boneMatrices.data();
+            submission.boneMatricesLength = animComp->boneMatrices.size();
+        }
 
-                submission.boneMatrices = animComp->boneMatrices.data();
-                submission.boneMatricesLength = animComp->boneMatrices.size();
-            }
+        Renderer::Submit(submission);
 
-            Renderer::Submit(submission);
-
-            if (debugMode)
-            {
-                const AABB* aabb = submesh.mesh->GetBoundingBox();
-                LineRenderSubmission lineSubmission;
-                lineSubmission.vao = aabb->GetVertexArray();
-                lineSubmission.indexCount = aabb->GetIndexCount();
-                lineSubmission.lineColor = glm::vec3(0.0f, 0.0f, 0.8f);
-                lineSubmission.transform = submission.transform;
-                Renderer::SubmitLines(lineSubmission);
-            }
+        if (debugMode)
+        {
+            const AABB* aabb = renderComponent->mesh->GetBoundingBox();
+            LineRenderSubmission lineSubmission;
+            lineSubmission.vao = aabb->GetVertexArray();
+            lineSubmission.indexCount = aabb->GetIndexCount();
+            lineSubmission.lineColor = glm::vec3(0.0f, 0.0f, 0.8f);
+            lineSubmission.transform = submission.transform;
+            Renderer::SubmitLines(lineSubmission);
         }
     }
 }
@@ -226,7 +223,7 @@ WindowSpecs GameEngine::InitializeGLFW(bool initImGui)
     int HEIGHT = glfwMode->height;
 
     // Create window
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Lunar Engine", glfwMonitor, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Lunar Engine", nullptr, nullptr);
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glfwSwapInterval(1);

@@ -4,8 +4,8 @@
 layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec3 vNormal;
 layout (location = 2) in vec2 vTextureCoordinates;
-layout (location = 3) in ivec4 vBoneIDs;
-layout (location = 5) in vec4 vBoneWeights;
+layout (location = 3) in vec4 vBoneIDs;
+layout (location = 4) in vec4 vBoneWeights;
 
 const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
@@ -29,28 +29,28 @@ out vec3 mView;
 void main()
 {		
 	vec4 vertexPos = vec4(vPosition, 1.0f);
-	
-	vec4 transformedPos = vertexPos;
-	vec3 transformedNormal = vNormal;
+
+	vec4 transformedPos = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	vec3 transformedNormal = vec3(0.0f, 0.0f, 0.0f);
 	for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
 	{
-		int boneID = vBoneIDs[i];
-		float weight = vBoneWeights[i];
-		
-		if(boneID == -1) continue; // Bone ID was still non-existent, nothing to do here
+		int boneID = int(vBoneIDs[i]);
+		if(boneID == -1) break; // Bone ID was still non-existent, nothing to do here
 		
 		if(boneID >= MAX_BONES) // We have exceeded the max bone count, just set this vertex to the default vertex position
 		{
-			transformedPos = vertexPos;
+			transformedPos = vec4(1000.0, 1000.0f, 10000.0f, 1.0f);
 			transformedNormal = vNormal;
 			break;
 		}
 		
+		float weight = vBoneWeights[i];
+
 		vec4 localPos = uBoneMatrices[boneID] * vertexPos;
 		transformedPos += localPos * weight;
 		
 		vec3 localNormal = mat3(uBoneMatrices[boneID]) * vNormal;
-		transformedNormal  += localNormal * weight;
+		transformedNormal += localNormal * weight;
 	}
 
 	mWorldPosition = (uMatModel * transformedPos).xyz;
@@ -84,6 +84,8 @@ in vec3 mNormal;
 in vec4 mFragPosition;
 in vec4 mPrevFragPosition;
 in vec3 mView;
+flat in ivec4 mBoneIDs;
+in vec4 mWeights;
 
 uniform sampler2D uAlbedoTexture1;
 uniform sampler2D uAlbedoTexture2;

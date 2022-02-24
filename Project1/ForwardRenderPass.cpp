@@ -87,10 +87,10 @@ void ForwardRenderPass::DoPass(std::vector<RenderSubmission*>& submissions, cons
 	// Draw geometry
 	for (RenderSubmission* submission : submissions)
 	{
-		Submesh* renderComponent = submission->submesh;
+		RenderComponent* renderComponent = submission->renderComponent;
 
-		shader->SetMat4("uMatModel", submission->transform);
-		shader->SetMat4("uMatModelInverseTranspose", glm::inverse(submission->transform));
+		//shader->SetMat4("uMatModel", submission->transform);
+		//shader->SetMat4("uMatModelInverseTranspose", glm::inverse(submission->transform));
 
 		// Color
 		if (renderComponent->isColorOverride)
@@ -153,17 +153,6 @@ void ForwardRenderPass::DoPass(std::vector<RenderSubmission*>& submissions, cons
 
 		shader->SetFloat("uAlphaTransparency", renderComponent->alphaTransparency);
 
-		if (renderComponent->isWireframe)
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-		else
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-
-		renderComponent->mesh->GetVertexArray()->Bind();
-		glDrawElements(GL_TRIANGLES, renderComponent->mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-		renderComponent->mesh->GetVertexArray()->Unbind();
+		renderComponent->Draw(shader, submission->transform);
 	}
 }

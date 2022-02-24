@@ -1,6 +1,6 @@
 #include "GameEngine.h"
 #include "Window.h"
-#include "Model.h"
+#include "Mesh.h"
 
 #include "InputManager.h"
 #include "EntityManager.h"
@@ -22,11 +22,22 @@ glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
 float GetRandom(float low, float high);
 
-void ShaderBallTest(Model* shaderBall, GameEngine& gameEngine);
+void ShaderBallTest(Mesh* shaderBall, ITexture* normalTexture, ITexture* albedo, GameEngine& gameEngine);
 
-int main() 
+int main()
 {
     WindowSpecs windowSpecs = GameEngine::InitializeGLFW(true);
+
+    // Load models
+    Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
+    Mesh* sphere = new Mesh("assets/models/sphere.obj");
+    Mesh* plane = new Mesh("assets/models/plane.obj");
+    Mesh* cube = new Mesh("assets/models/cube.obj");
+    Mesh* ship = new Mesh("assets/models/assault.ply");
+    Mesh* cyl = new Mesh("assets/models/cylinder.obj");
+
+    AnimatedMesh* vampire = new AnimatedMesh("assets/models/Knight_Golden_Male.fbx");
+    Animation anim("assets/models/Knight_Golden_Male.fbx", vampire);
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -36,36 +47,8 @@ int main()
     Texture2D* aoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_ao.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* blue = TextureManager::CreateTexture2D("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* grassTexture = TextureManager::CreateTexture2D("assets/textures/grass.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-
-    // Load models
-    Model* shaderBall = new Model("assets/models/shaderball/shaderball.obj");
-    {
-        Submesh& shaderBallSub = shaderBall->GetSubmeshes()[0];
-        shaderBallSub.albedoTextures.push_back({ blue, 1.0f });
-        shaderBallSub.normalTexture = normalTexture;
-        //shaderBallSub.roughnessTexture = roughnessTexture;
-        //shaderBallSub.metalTexture = metalnessTexture;
-        //shaderBallSub.aoTexture = aoTexture;
-        shaderBallSub.reflectRefractType = ReflectRefractType::Reflect;
-        shaderBallSub.reflectRefractMapType = ReflectRefractMapType::Environment;
-        shaderBallSub.reflectRefractStrength = 0.5f;
-    }
-
-
-    Model* sphere = new Model("assets/models/sphere.obj");
-    Model* plane = new Model("assets/models/plane.obj");
-    Model* cube = new Model("assets/models/cube.obj");
-    Model* ship = new Model("assets/models/assault.ply");
-
-    Model* vampire = new Model("assets/models/Knight_Golden_Male.fbx");
-    {
-        for (Submesh& submesh : vampire->GetSubmeshes())
-        {
-            submesh.isColorOverride = true;
-            submesh.colorOverride = glm::vec3(0.8f, 0.0f, 0.0f);
-        }
-    }
-    //Animation anim("assets/models/BaseCharacter.fbx", vampire);
+    Texture2D* woodTexture = TextureManager::CreateTexture2D("assets/textures/wood.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* woodNormalTexture = TextureManager::CreateTexture2D("assets/textures/woodNormal.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
 
     GameEngine gameEngine(windowSpecs, true);
     gameEngine.AddLayer(new FreeCamController(gameEngine.camera, gameEngine.GetWindowSpecs()));
@@ -86,14 +69,15 @@ int main()
     lightEntity->AddComponent<LightComponent>(light);
 
     Renderer::SetShadowMappingDirectionalLight(light);
-    
+
     // Animation system setup
     SkeletalAnimationLayer* sal = new SkeletalAnimationLayer();
     SkeletalAnimationComponentListener* sacl = new SkeletalAnimationComponentListener(sal->animations);
+    Entity::AddComponentListener(sacl);
     gameEngine.AddLayer(sal);
 
     // SHADER BALL TEST
-    //ShaderBallTest(shaderBall, gameEngine);
+    ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
 
     {
         Entity* ground = gameEngine.GetEntityManager().CreateEntity("ground");
@@ -111,28 +95,87 @@ int main()
         RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine.physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
         gameEngine.physicsWorld->AddRigidBody(rigidComp->ptr, ground);
 
-        //// Render Info
-        //RenderComponent::RenderInfo groundInfo;
-        //groundInfo.mesh = cube;
-        //groundInfo.isColorOverride = true;
-        //groundInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
-        //ground->AddComponent<RenderComponent>(groundInfo);
+        // Render Info
+        RenderComponent::RenderInfo groundInfo;
+        groundInfo.mesh = cube;
+        groundInfo.albedoTextures.push_back(std::make_pair(woodTexture, 1.0f));
+        groundInfo.normalTexture = woodNormalTexture;
+        ground->AddComponent<RenderComponent>(groundInfo);
+    }
+
+    {
+        Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl0");
+        PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(30.0f, 5.0f, 3.0f));
+        RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
+        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(4.0f, 10.0f, 4.0f));
+
+        RenderComponent::RenderInfo renderInfo;
+        renderInfo.mesh = cyl;
+        renderInfo.isColorOverride = true;
+        renderInfo.colorOverride = glm::vec3(0.3f, 0.8f, 0.0f);
+        renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::Low;
+        ground->AddComponent<RenderComponent>(renderInfo);
+    }
+    {
+        Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl1");
+        PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(-22.0f, 9.0f, -22.0f));
+        RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
+        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(4.0f, 10.0f, 4.0f));
+
+        RenderComponent::RenderInfo renderInfo;
+        renderInfo.mesh = cyl;
+        renderInfo.isColorOverride = true;
+        renderInfo.colorOverride = glm::vec3(0.0f, 0.0f, 0.4f);
+        renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::Medium;
+        ground->AddComponent<RenderComponent>(renderInfo);
+    }
+    {
+        Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl2");
+        PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(15.0f, 18.0f, 37.0f));
+        RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
+        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(8.0f, 20.0f, 8.0f));
+
+        RenderComponent::RenderInfo renderInfo;
+        renderInfo.mesh = cyl;
+        renderInfo.isColorOverride = true;
+        renderInfo.colorOverride = glm::vec3(0.0f, 0.7f, 0.4f);
+        renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::High;
+        ground->AddComponent<RenderComponent>(renderInfo);
+    }
+    {
+        Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl3");
+        PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(-25.0f, 13.0f, 27.0f));
+        RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
+        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(6.0f, 15.0f, 6.0f));
+
+        RenderComponent::RenderInfo renderInfo;
+        renderInfo.mesh = cyl;
+        renderInfo.isColorOverride = true;
+        renderInfo.colorOverride = glm::vec3(0.0f, 0.7f, 0.4f);
+        renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::High;
+        ground->AddComponent<RenderComponent>(renderInfo);
     }
 
     {
         Entity* animTest = gameEngine.GetEntityManager().CreateEntity("AnimTest");
-        animTest->AddComponent<PositionComponent>();
-        animTest->AddComponent<ScaleComponent>(glm::vec3(0.1f, 0.1f, 0.1f));
+        animTest->AddComponent<PositionComponent>(glm::vec3(0.0f, 20.0f, 0.0f));
+        animTest->AddComponent<ScaleComponent>(glm::vec3(0.05f, 0.05f, 0.05f));
         animTest->AddComponent<RotationComponent>();
-        animTest->AddComponent<RenderComponent>(vampire);
 
-        //SkeletalAnimationComponent* animComp = animTest->AddComponent<SkeletalAnimationComponent>();
-        //animComp->SetAnimation(&anim);
+        RenderComponent::RenderInfo renderInfo;
+        renderInfo.mesh = vampire;
+        renderInfo.isColorOverride = true;
+        renderInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
+        animTest->AddComponent<RenderComponent>(renderInfo);
+
+        SkeletalAnimationComponent* animComp = animTest->AddComponent<SkeletalAnimationComponent>();
+        animComp->SetAnimation(&anim);
+        animComp->speed = 70.0f;
     }
 
     gameEngine.Run();
 
-	return 0;
+    return 0;
 }
 
 // TODO List
@@ -153,11 +196,22 @@ float GetRandom(float low, float high)
     return low + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) / (high - low));
 }
 
-void ShaderBallTest(Model* shaderBall, GameEngine& gameEngine)
+void ShaderBallTest(Mesh* shaderBall, ITexture* normalTexture, ITexture* albedo, GameEngine& gameEngine)
 {
     Entity* testEntity = gameEngine.GetEntityManager().CreateEntity("shaderBall");
-    testEntity->AddComponent<PositionComponent>(glm::vec3(0.0f, 10.0f, 0.0f));
+    testEntity->AddComponent<PositionComponent>(glm::vec3(0.0f, 8.0f, 0.0f));
     testEntity->AddComponent<RotationComponent>();
     testEntity->AddComponent<ScaleComponent>();
-    testEntity->AddComponent<RenderComponent>(shaderBall);
+
+    RenderComponent::RenderInfo testInfo;
+    testInfo.mesh = shaderBall;
+    testInfo.albedoTextures.push_back({ albedo, 1.0f });
+    testInfo.normalTexture = normalTexture;
+    //testInfo.roughnessTexture = roughnessTexture;
+    //testInfo.metalTexture = metalnessTexture;
+    //testInfo.aoTexture = aoTexture;
+    testInfo.reflectRefractType = ReflectRefractType::Reflect;
+    testInfo.reflectRefractMapType = ReflectRefractMapType::Environment;
+    testInfo.reflectRefractStrength = 0.5f;
+    testEntity->AddComponent<RenderComponent>(testInfo);
 }

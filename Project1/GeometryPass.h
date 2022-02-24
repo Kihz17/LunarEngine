@@ -10,7 +10,7 @@
 
 #include <string>
 
-class GeometryPass 
+class GeometryPass
 {
 public:
 	GeometryPass(const WindowSpecs* windowSpecs);
@@ -28,7 +28,7 @@ private:
 
 	IFrameBuffer* geometryBuffer;
 	IRenderBuffer* geometryRenderBuffer;
-	
+
 	Shader* shader;
 	Shader* animatedShader;
 

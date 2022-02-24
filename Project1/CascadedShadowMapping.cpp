@@ -22,7 +22,7 @@ int cascadeLayer = 0;
 
 CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& info)
 	: lightDepthBuffer(new FrameBuffer()),
-	lightMatricesUBO(new UniformBuffer(sizeof(glm::mat4x4) * MAX_CASCADE_LEVELS, GL_STATIC_DRAW, 0)),
+	lightMatricesUBO(new UniformBuffer(sizeof(glm::mat4x4)* MAX_CASCADE_LEVELS, GL_STATIC_DRAW, 0)),
 	lightDepthMaps(nullptr),
 	depthMappingShader(ShaderLibrary::Load(DEPTH_MAPPING_SHADER_KEY, "assets/shaders/CSMDepth.glsl")),
 	depthDebugShader(ShaderLibrary::Load(DEPTH_DEBUG_SHADER_KEY, "assets/shaders/CMSDepthDebug.glsl")),
@@ -114,10 +114,10 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, 
 
 	for (RenderSubmission* submission : submissions)
 	{
-		Submesh* renderComponent = submission->submesh;
+		RenderComponent* renderComponent = submission->renderComponent;
 		if (!renderComponent->castShadows) continue;
 
-		depthMappingShader->SetMat4("uMatModel", submission->transform);
+		//depthMappingShader->SetMat4("uMatModel", submission->transform);
 
 		// TODO: If object is semi-transparent, make a softer shadow
 		// To do this, we will need to change the texture array into a color attachment instead of a depth attachment
@@ -127,9 +127,7 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, 
 		// TODO: Another issue will arise with this ^^^. The "softness" value will be directly associated with the surface the shadow is being casted on, NOT the object casting the shadow.
 		// This is a problem that will need a solution
 
-		renderComponent->mesh->GetVertexArray()->Bind();
-		glDrawElements(GL_TRIANGLES, renderComponent->mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-		renderComponent->mesh->GetVertexArray()->Unbind();
+		renderComponent->Draw(depthMappingShader, submission->transform);
 	}
 
 	lightDepthBuffer->Unbind();
@@ -161,7 +159,7 @@ std::vector<glm::vec4> CascadedShadowMapping::GetFrustumCornersWorldSpace(const 
 			{
 				// Apply the inverse of the projection view matrix to the corner points of the NDC (normalized device coordinates -1.0 to 1.0) cube
 				// This will result in a frustum corner in world space
-				glm::vec4 point = inverse * glm::vec4(2.0f * x - 1.0f, 2.0f * y - 1.0f, 2.0f * z - 1.0f, 1.0f); 
+				glm::vec4 point = inverse * glm::vec4(2.0f * x - 1.0f, 2.0f * y - 1.0f, 2.0f * z - 1.0f, 1.0f);
 				frustumCorners.push_back(point / point.w);
 			}
 		}
@@ -172,7 +170,7 @@ std::vector<glm::vec4> CascadedShadowMapping::GetFrustumCornersWorldSpace(const 
 
 glm::mat4 CascadedShadowMapping::GetLightSpaceMatrix(const float nearPlane, const float farPlane)
 {
-	glm::mat4 projection = glm::perspective(cameraFOV, (float) windowSpecs->width / (float) windowSpecs->height, nearPlane, farPlane);
+	glm::mat4 projection = glm::perspective(cameraFOV, (float)windowSpecs->width / (float)windowSpecs->height, nearPlane, farPlane);
 	std::vector<glm::vec4> frustumCorners = GetFrustumCornersWorldSpace(projection);
 
 	// Get the center of the frustum, this is important because we know for sure that our light source is looking here, so we can construct our light view from this point
@@ -250,6 +248,6 @@ std::vector<glm::mat4> CascadedShadowMapping::GetLightSpaceMatrices()
 			matrices.push_back(GetLightSpaceMatrix(cascadeLevels[i - 1], projectionFarPlane));
 		}
 	}
-	 
+
 	return matrices;
 }

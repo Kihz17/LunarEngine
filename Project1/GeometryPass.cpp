@@ -110,22 +110,11 @@ void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vect
 	// Draw static meshes
 	for (RenderSubmission* submission : submissions)
 	{
-		Submesh* renderComponent = submission->submesh;
+		RenderComponent* renderComponent = submission->renderComponent;
 
 		PassSharedData(shader, submission, projection, view);
 
-		if (renderComponent->isWireframe)
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-		else
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-
-		renderComponent->mesh->GetVertexArray()->Bind();
-		glDrawElements(GL_TRIANGLES, renderComponent->mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-		renderComponent->mesh->GetVertexArray()->Unbind();
+		renderComponent->Draw(shader, submission->transform);
 	}
 
 	// Draw animated meshes
@@ -137,27 +126,17 @@ void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vect
 
 	for (RenderSubmission* submission : animatedSubmissions)
 	{
-		Submesh* renderComponent = submission->submesh;
+		RenderComponent* renderComponent = submission->renderComponent;
 
 		PassSharedData(animatedShader, submission, projection, view);
 
 		for (unsigned int i = 0; i < submission->boneMatricesLength; i++) // Pass bone matrices to shader
 		{
-			animatedShader->SetMat4("uBoneMatrices[" + std::to_string(i) + "]", submission->boneMatrices[i]);
+			glm::mat4& matrix = submission->boneMatrices[i];
+			animatedShader->SetMat4("uBoneMatrices[" + std::to_string(i) + "]", matrix);
 		}
 
-		if (renderComponent->isWireframe)
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-		else
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-
-		renderComponent->mesh->GetVertexArray()->Bind();
-		glDrawElements(GL_TRIANGLES, renderComponent->mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-		renderComponent->mesh->GetVertexArray()->Unbind();
+		renderComponent->Draw(animatedShader, submission->transform);
 	}
 
 	geometryBuffer->Unbind();
@@ -165,14 +144,16 @@ void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vect
 
 void GeometryPass::PassSharedData(Shader* shader, RenderSubmission* submission, const glm::mat4& projection, const glm::mat4& view)
 {
-	Submesh* renderComponent = submission->submesh;
+	RenderComponent* renderComponent = submission->renderComponent;
 
 	glm::mat4 projViewModel = projection * view * submission->transform;
+	glm::mat4& prevProjViewModel = renderComponent->hasPrevProjViewModel ? renderComponent->projViewModel : projViewModel;
+	renderComponent->projViewModel = projViewModel;
 
-	shader->SetMat4("uMatModel", submission->transform);
-	shader->SetMat4("uMatModelInverseTranspose", glm::inverse(submission->transform));
+	//shader->SetMat4("uMatModel", submission->transform);
+	//shader->SetMat4("uMatModelInverseTranspose", glm::inverse(submission->transform));
 	shader->SetMat4("uMatProjViewModel", projViewModel);
-	shader->SetMat4("uMatPrevProjViewModel", projViewModel);
+	shader->SetMat4("uMatPrevProjViewModel", prevProjViewModel);
 
 	if (renderComponent->castShadowsOn)
 	{
@@ -238,30 +219,19 @@ void GeometryPass::PassSharedData(Shader* shader, RenderSubmission* submission, 
 		shader->SetFloat4("uMaterialOverrides", glm::vec4(renderComponent->roughness, renderComponent->metalness, renderComponent->ao, 1.0f));
 	}
 
-	float rrType = renderComponent->reflectRefractType == ReflectRefractType::Reflect ? 1.0f : renderComponent->reflectRefractType == ReflectRefractType::Refract ? 2.0f : 0.0f;
-	shader->SetFloat4("uRRInfo", glm::vec4(rrType, renderComponent->reflectRefractStrength, renderComponent->refractRatio, 0.0f));
+	ReflectRefractData& rrData = renderComponent->reflectRefractData;
+	float rrType = rrData.type == ReflectRefractType::Reflect ? 1.0f : rrData.type == ReflectRefractType::Refract ? 2.0f : 0.0f;
+	shader->SetFloat4("uRRInfo", glm::vec4(rrType, rrData.strength, renderComponent->reflectRefractData.refractRatio, 0.0f));
 
-	if (renderComponent->reflectRefractType != ReflectRefractType::None)
+	if (rrData.type != ReflectRefractType::None)
 	{
-		if (renderComponent->reflectRefractMapType == ReflectRefractMapType::Environment)
+		if (rrData.mapType == ReflectRefractMapType::Environment)
 		{
 			Renderer::GetEnvironmentMapCube()->BindToSlot(8);
 		}
-		else if (renderComponent->reflectRefractMapType == ReflectRefractMapType::DynamicMinimal)
+		else
 		{
-			Renderer::GenerateDynamicCubeMap(renderComponent->mesh->GetBoundingBox()->GetCenter(), ReflectRefractMapPriorityType::High, renderComponent)->BindToSlot(8);
-		}
-		else if (renderComponent->reflectRefractMapType == ReflectRefractMapType::DynamicMedium)
-		{
-			Renderer::GenerateDynamicCubeMap(renderComponent->mesh->GetBoundingBox()->GetCenter(), ReflectRefractMapPriorityType::Medium, renderComponent)->BindToSlot(8);
-		}
-		else if (renderComponent->reflectRefractMapType == ReflectRefractMapType::DynamicFull)
-		{
-			Renderer::GenerateDynamicCubeMap(renderComponent->mesh->GetBoundingBox()->GetCenter(), ReflectRefractMapPriorityType::Low, renderComponent)->BindToSlot(8);
-		}
-		else if (renderComponent->reflectRefractMapType == ReflectRefractMapType::Custom)
-		{
-			renderComponent->reflectRefractCustomMap->BindToSlot(8);
+			rrData.customMap->BindToSlot(8);
 		}
 	}
 

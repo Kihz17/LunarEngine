@@ -2,7 +2,6 @@
 #include "ShaderLibrary.h"
 #include "EntityManager.h"
 #include "Utils.h"
-#include "Model.h"
 
 #include "FrameBuffer.h"
 #include "TextureManager.h"
@@ -140,7 +139,9 @@ void Renderer::BeginFrame(const Camera& camera)
 void Renderer::EndFrame()
 {
 	submissions.clear();
+	animatedSubmissions.clear();
 	forwardSubmissions.clear();
+	lineSubmissions.clear();
 
 	glfwSwapBuffers(windowDetails->window);
 }
@@ -152,10 +153,12 @@ void Renderer::DrawFrame()
 	std::vector<RenderSubmission*> culledAnimatedSubmissions;
 	std::vector<RenderSubmission*> culledForwardSubmissions;
 
+	std::vector<std::pair<RenderComponent*, CubeMap*>> dynamicCubeMaps;
+
 	// Cull deferred submissions
 	for (RenderSubmission& submission : submissions)
 	{
-		if (submission.submesh->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
+		if (submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
 		{
 			culledSubmissions.push_back(&submission);
 		}
@@ -164,12 +167,28 @@ void Renderer::DrawFrame()
 		{
 			culledShadowSubmissions.push_back(&submission);
 		}
+
+		// Generate dynamic cubemaps if we should
+		if (submission.renderComponent->reflectRefractData.type != ReflectRefractType::None)
+		{
+			ReflectRefractMapType mapType = submission.renderComponent->reflectRefractData.mapType;
+
+			if (mapType != ReflectRefractMapType::Custom && mapType != ReflectRefractMapType::Environment) // Custom maps aren't created on the fly
+			{
+				ReflectRefractMapPriorityType mesPriority = mapType == ReflectRefractMapType::DynamicFull ? ReflectRefractMapPriorityType::Low
+					: mapType == ReflectRefractMapType::DynamicMedium ? ReflectRefractMapPriorityType::Medium : ReflectRefractMapPriorityType::High;
+
+				CubeMap* cubeMap = GenerateDynamicCubeMap(submission.renderComponent->mesh->GetBoundingBox()->GetCenter(), mesPriority, submission.renderComponent);
+				dynamicCubeMaps.push_back(std::make_pair(submission.renderComponent, cubeMap)); // Store so we can delete after this frame is over
+				submission.renderComponent->reflectRefractData.customMap = cubeMap;
+			}
+		}
 	}
 
 	// Cull animated submissions
 	for (RenderSubmission& submission : animatedSubmissions)
 	{
-		if (submission.submesh->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
+		if (submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
 		{
 			culledAnimatedSubmissions.push_back(&submission);
 		}
@@ -183,7 +202,7 @@ void Renderer::DrawFrame()
 	// Cull forward submissions
 	for (RenderSubmission& submission : forwardSubmissions)
 	{
-		if (!submission.submesh->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
+		if (!submission.renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, submission.transform)) // In our view frustum, we should render
 		{
 			culledForwardSubmissions.push_back(&submission);
 		}
@@ -200,12 +219,19 @@ void Renderer::DrawFrame()
 	lightingPass->DoPass(projection, view, cameraPos);
 	forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
 	linePass->DoPass(lineSubmissions, projection, view, windowDetails);
+
+	// Free up dynamic cube map space
+	for (std::pair<RenderComponent*, CubeMap*>& pair : dynamicCubeMaps)
+	{
+		TextureManager::DeleteTexture(pair.second); // Free the cube map from memory
+		pair.first->reflectRefractData.customMap = nullptr; // Make sure we unset the custom cube map incase we aren't using a dynamic cube map next frame
+	}
 }
 
 void Renderer::Submit(const RenderSubmission& submission)
 {
-	Submesh* submesh = submission.submesh;
-	if (submesh->alphaTransparency < 1.0f || submesh->isIgnoreLighting) // Needs alpha blending, use this in the forward pass
+	RenderComponent* renderComponent = submission.renderComponent;
+	if (renderComponent->alphaTransparency < 1.0f || renderComponent->isIgnoreLighting) // Needs alpha blending, use this in the forward pass
 	{
 		forwardSubmissions.push_back(submission);
 	}
@@ -234,7 +260,7 @@ void Renderer::SetShadowMappingDirectionalLight(Light* light)
 	shadowMappingPass->SetDirectionalLight(light);
 }
 
-CubeMap* Renderer::GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, Submesh* ignore, int viewportWidth, int viewportHeight)
+CubeMap* Renderer::GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore, int viewportWidth, int viewportHeight)
 {
 	constexpr float fov = glm::radians(90.0f);
 	constexpr float aspect = 1.0f; // Since we are making a cube map, our aspect ratio is 1:1
@@ -254,10 +280,42 @@ CubeMap* Renderer::GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefrac
 
 	for (RenderSubmission& submission : submissions)
 	{
-		if (submission.submesh->reflectRefractMapPriority > meshPriority || submission.submesh == ignore) continue; // This mesh shouldn't be considered in this dynamic cube map
-		
+		if (submission.renderComponent->reflectRefractMapPriority > meshPriority || submission.renderComponent == ignore) continue; // This mesh shouldn't be considered in this dynamic cube map
+
 		// Cull objects that aren't within their respective frustums
-		const AABB* aabb = submission.submesh->mesh->GetBoundingBox();
+		const AABB* aabb = submission.renderComponent->mesh->GetBoundingBox();
+		if (aabb->IsOnFrustum(frontFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_NEGATIVE_Z].push_back(&submission);
+		}
+		if (aabb->IsOnFrustum(backFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_POSITIVE_Z].push_back(&submission);
+		}
+		if (aabb->IsOnFrustum(leftFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_NEGATIVE_X].push_back(&submission);
+		}
+		if (aabb->IsOnFrustum(rightFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_POSITIVE_X].push_back(&submission);
+		}
+		if (aabb->IsOnFrustum(upFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_POSITIVE_Y].push_back(&submission);
+		}
+		if (aabb->IsOnFrustum(downFrustum, submission.transform))
+		{
+			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_NEGATIVE_Y].push_back(&submission);
+		}
+	}
+
+	for (RenderSubmission& submission : animatedSubmissions)
+	{
+		if (submission.renderComponent->reflectRefractMapPriority > meshPriority || submission.renderComponent == ignore) continue; // This mesh shouldn't be considered in this dynamic cube map
+
+		// Cull objects that aren't within their respective frustums
+		const AABB* aabb = submission.renderComponent->mesh->GetBoundingBox();
 		if (aabb->IsOnFrustum(frontFrustum, submission.transform))
 		{
 			dynamicSubmissions[GL_TEXTURE_CUBE_MAP_NEGATIVE_Z].push_back(&submission);

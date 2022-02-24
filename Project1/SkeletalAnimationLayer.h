@@ -5,16 +5,23 @@
 
 #include <vector>
 
+class AnimatedMesh;
 class SkeletalAnimationLayer : public ApplicationLayer
 {
 public:
+	struct AnimationData
+	{
+		AnimatedMesh* animatedMesh;
+		SkeletalAnimationComponent* animationComp;
+	};
+
 	SkeletalAnimationLayer();
 	virtual ~SkeletalAnimationLayer();
 
 	virtual void OnUpdate(float deltaTime) override;
 
-	std::vector<SkeletalAnimationComponent*> animations;
+	std::vector<AnimationData> animations;
 
 private:
-	void ComputeBoneTransforms(SkeletalAnimationComponent* component, const NodeData* node, glm::mat4 parentTransform);
+	void ComputeBoneTransforms(SkeletalAnimationComponent* anim, const Bone& bone, const glm::mat4& inverseTransform, glm::mat4 parentTransform);
 };

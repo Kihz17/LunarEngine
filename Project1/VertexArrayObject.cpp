@@ -7,6 +7,14 @@ VertexArrayObject::VertexArrayObject()
 	glCreateVertexArrays(1, &this->ID);
 }
 
+VertexArrayObject::VertexArrayObject(GLuint ID)
+	: ID(ID),
+	VBOIndex(0),
+	indexBuffer(nullptr)
+{
+
+}
+
 VertexArrayObject::~VertexArrayObject()
 {
 	glDeleteVertexArrays(1, &this->ID);
@@ -62,10 +70,9 @@ void VertexArrayObject::AddVertexBuffer(VertexBuffer* vertexBuffer)
 		{
 			glEnableVertexAttribArray(this->VBOIndex); // Bind the current VBO
 			// Tell OpenGL about the layout of our data
-			glVertexAttribPointer(this->VBOIndex,
+			glVertexAttribIPointer(this->VBOIndex,
 				element.NumberOfComponents(), // How many components do we have. In most cases this will be 3 because we like to draw triangles
 				GL_INT, // The type of data we are passing
-				GL_FALSE, // We can't normalize integers
 				layout.GetStride(), // The offset between vertex attributes
 				(GLvoid*)element.offset); // The offset of the first component of the vertex attribute
 			this->VBOIndex++;

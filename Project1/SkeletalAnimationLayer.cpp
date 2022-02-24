@@ -1,5 +1,8 @@
 #include "SkeletalAnimationLayer.h"
 #include "Animation.h"
+#include "AnimatedMesh.h"
+
+#include <iostream>
 
 SkeletalAnimationLayer::SkeletalAnimationLayer()
 {
@@ -13,48 +16,42 @@ SkeletalAnimationLayer::~SkeletalAnimationLayer()
 
 void SkeletalAnimationLayer::OnUpdate(float deltaTime)
 {
-	for (SkeletalAnimationComponent* anim : animations)
+	for (AnimationData& animData : animations)
 	{
-		anim->deltaTime = deltaTime;
+		SkeletalAnimationComponent* animComp = animData.animationComp;
+		Animation* animation = animComp->anim;
+		AnimatedMesh* mesh = animData.animatedMesh;
 
-		Animation* animation = anim->anim;
 		if (!animation) continue; // No animation currently tied to the component
 
-		// Advance the animation by ticks per second
-		anim->currentTime += animation->ticksPerSecond * deltaTime;
-		anim->currentTime = fmod(anim->currentTime, animation->duration);
+		if (animComp->currentTime > animation->GetDuration() && !animComp->repeat) continue; // Not repeating
 
-		ComputeBoneTransforms(anim, &animation->rootNode, glm::mat4(1.0f)); 
+		// Advance the animation by ticks per second
+		animComp->currentTime += animation->GetTicksPerSecond() * animComp->speed * deltaTime;
+		animComp->currentTime = fmod(animComp->currentTime, animation->GetDuration());
+
+		ComputeBoneTransforms(animComp, mesh->GetRootBone(), mesh->GetInverseTransform(), glm::mat4(1.0f));
 	}
 }
 
-void SkeletalAnimationLayer::ComputeBoneTransforms(SkeletalAnimationComponent* component, const NodeData* node, glm::mat4 parentTransform)
+void SkeletalAnimationLayer::ComputeBoneTransforms(SkeletalAnimationComponent* anim, const Bone& bone, const glm::mat4& inverseTransform, glm::mat4 parentTransform)
 {
-	Animation* animation = component->anim;
-	std::string name = node->name;
-	glm::mat4 transform = node->transform;
+	Animation* animation = anim->anim;
 
-	Bone* bone = animation->GetBone(name); // Find bone for this node
+	glm::vec3 position;
+	glm::quat rotation;
+	glm::vec3 scale;
+ 	animation->GetFrameData(bone.name, anim->currentTime, position, rotation, scale);
 
-	if(bone) // Update bone transform
+	glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), scale);
+	glm::mat4 globalTransform = parentTransform * transform;
+
+	glm::mat4 transformResult = inverseTransform * globalTransform * bone.offsetTransform;
+
+	anim->boneMatrices[bone.ID] = transformResult; // Assign teh bone matrix at the bone's index
+
+	for (const Bone& bone : bone.children) // Go through the bone's children and do the same thing
 	{
-		bone->Update(component->currentTime);
-		transform = bone->GetLocalTransform();
-	}
-
-	glm::mat4 globalTransform = parentTransform * transform; // Transform bone by its parent
-
-	std::map<std::string, BoneInfo>& boneInfo = animation->boneInfos;
-	std::map<std::string, BoneInfo>::iterator it = boneInfo.find(name);
-	if (it != boneInfo.end())
-	{
-		int index = it->second.id;
-		glm::mat4 offset = it->second.offset;
-		component->boneMatrices[index] = globalTransform * offset; // Finally update the transformation that our shader will use
-	}
-
-	for (int i = 0; i < node->children.size(); i++) // Do the same for all child nodes
-	{
-		ComputeBoneTransforms(component, node, globalTransform);
+		ComputeBoneTransforms(anim, bone, inverseTransform, globalTransform);
 	}
 }

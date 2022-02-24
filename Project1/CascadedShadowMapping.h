@@ -21,8 +21,8 @@ public:
 
 	CascadedShadowMappingInfo(glm::mat4& cameraView, const float& fov, float& near, float& far)
 		: cameraView(cameraView),
-		cameraFOV(fov), 
-		projectionNearPlane(near), 
+		cameraFOV(fov),
+		projectionNearPlane(near),
 		projectionFarPlane(far),
 		windowSpecs(nullptr),
 		zMult(10.0f)

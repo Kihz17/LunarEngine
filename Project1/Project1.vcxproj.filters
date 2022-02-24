@@ -301,14 +301,8 @@
     <ClCompile Include="AnimatedVertex.cpp">
       <Filter>Graphics\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatedMesh.cpp">
-      <Filter>Graphics\Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="IMesh.cpp">
       <Filter>Graphics\Interfaces</Filter>
-    </ClCompile>
-    <ClCompile Include="Bone.cpp">
-      <Filter>Graphics\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp">
       <Filter>Graphics\Mesh</Filter>
@@ -319,10 +313,7 @@
     <ClCompile Include="SkeletalAnimationComponentListener.cpp">
       <Filter>Layers\SkeletalAnimation</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Graphics\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshManager.cpp">
+    <ClCompile Include="AnimatedMesh.cpp">
       <Filter>Graphics\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
@@ -628,9 +619,6 @@
     <ClInclude Include="IMesh.h">
       <Filter>Graphics\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatedMesh.h">
-      <Filter>Graphics\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Graphics\Mesh</Filter>
     </ClInclude>
@@ -649,10 +637,10 @@
     <ClInclude Include="SkeletalAnimationComponentListener.h">
       <Filter>Layers\SkeletalAnimation</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
+    <ClInclude Include="AnimatedMesh.h">
       <Filter>Graphics\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="MeshManager.h">
+    <ClInclude Include="BoneInfo.h">
       <Filter>Graphics\Mesh</Filter>
     </ClInclude>
   </ItemGroup>

@@ -8,8 +8,8 @@
 
 struct RenderSubmission
 {
-	RenderSubmission(Submesh* mesh, const glm::vec3& position, const glm::vec3& scale, const glm::quat& rotation)
-		: submesh(mesh),
+	RenderSubmission(RenderComponent* renderComponent, const glm::vec3& position, const glm::vec3& scale, const glm::quat& rotation)
+		: renderComponent(renderComponent),
 		position(position),
 		scale(scale),
 		rotation(rotation),
@@ -20,11 +20,9 @@ struct RenderSubmission
 		transform *= glm::translate(glm::mat4(1.0f), position);
 		transform *= glm::toMat4(rotation);
 		transform *= glm::scale(glm::mat4(1.0f), scale);
-
-		transform = transform * mesh->localTransform;
 	}
 
-	Submesh* submesh = nullptr;
+	RenderComponent* renderComponent;
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::vec3 scale = glm::vec3(1.0f);
 	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);

@@ -126,13 +126,13 @@ void main()
 	
 	if(uRRInfo.x == 1.0f) // This fragment is reflective, sample from the reflectivty map
 	{
-		vec3 reflectedRay = reflect(mView, mNormal); // Reflect view direction off of surface normal 
+		vec3 reflectedRay = reflect(mView, gNormal.rgb); // Reflect view direction off of surface normal 
 		vec3 reflectedColor = texture(uRRMap, reflectedRay).rgb; // Sample texel from cube map according to reflected ray
 		diffuseColor = mix(diffuseColor, reflectedColor, uRRInfo.y); // Mix between diffuse and reflective color based on our strength [0-1]
 	}
 	else if(uRRInfo.x == 2.0f) // This fragment is refractive, sample from the refractive map
 	{
-		vec3 refractedRay = refract(mView, mNormal, uRRInfo.z); // Refract view direction off of surface normal 
+		vec3 refractedRay = refract(mView, gNormal.rgb, uRRInfo.z); // Refract view direction off of surface normal 
 		vec3 refractedColor = texture(uRRMap, refractedRay).rgb; // Sample texel from cube map according to refracted ray
 		diffuseColor = mix(diffuseColor, refractedColor, uRRInfo.y); // Mix between diffuse and refracted color based on our strength [0-1]
 	}

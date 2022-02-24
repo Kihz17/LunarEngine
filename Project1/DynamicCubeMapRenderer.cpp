@@ -53,12 +53,14 @@ DynamicCubeMapRenderer::~DynamicCubeMapRenderer()
 	TextureManager::DeleteTexture(cubeMap);
 }
 
-CubeMap* DynamicCubeMapRenderer::GenerateDynamicCubeMap(const glm::vec3& center, std::unordered_map<int, std::vector<RenderSubmission*>>& allSubmissions, 
+CubeMap* DynamicCubeMapRenderer::GenerateDynamicCubeMap(const glm::vec3& center, std::unordered_map<int, std::vector<RenderSubmission*>>& allSubmissions,
 	const float fov, const float far, const float near, const WindowSpecs* windowSpecs)
 {
-	constexpr glm::vec3 directions[] = { 
-		glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), 
-		glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), 
+	CubeMap* cubeMap = TextureManager::CreateCubeMap(dynamicMapResolution, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT);
+
+	constexpr glm::vec3 directions[] = {
+		glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f),
 		glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, -1.0f) };
 
 	constexpr glm::vec3 upVectors[] = {
@@ -96,7 +98,7 @@ CubeMap* DynamicCubeMapRenderer::GenerateDynamicCubeMap(const glm::vec3& center,
 
 		for (RenderSubmission* submissions : submissions)
 		{
-			Submesh* renderComponent = submissions->submesh;
+			RenderComponent* renderComponent = submissions->renderComponent;
 
 			shader->SetMat4("uMatModel", submissions->transform);
 

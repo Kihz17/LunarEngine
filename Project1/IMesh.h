@@ -4,10 +4,31 @@
 #include "VertexArrayObject.h"
 #include "AABB.h"
 
+struct Submesh
+{
+	std::string nodeName;
+	std::string meshName;
+
+	unsigned int materialIndex;
+
+	unsigned int vertexStart;
+	unsigned int indexStart;
+
+	unsigned int vertexCount;
+	unsigned int indexCount;
+
+	glm::vec3 minVertex;
+	glm::vec3 maxVertex;
+
+	glm::mat4 localTransform;
+};
+
 class IMesh
 {
 public:
 	virtual ~IMesh() {}
+
+	virtual std::vector<Submesh>& GetSubmeshes() = 0;
 
 	virtual VertexArrayObject* GetVertexArray() = 0;
 	virtual VertexBuffer* GetVertexBuffer() = 0;

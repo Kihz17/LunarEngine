@@ -9,6 +9,7 @@ class VertexArrayObject
 {
 public:
 	VertexArrayObject();
+	VertexArrayObject(GLuint ID);
 	virtual ~VertexArrayObject();
 
 	void Bind() const;

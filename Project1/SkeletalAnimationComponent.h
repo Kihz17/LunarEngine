@@ -13,7 +13,8 @@ public:
 	SkeletalAnimationComponent()
 		: anim(nullptr),
 		currentTime(0.0f),
-		deltaTime(0.0f)
+		speed(1.0f),
+		repeat(true)
 	{
 		boneMatrices.reserve(Animation::MAX_BONES); // It's likely that the amount of bones is generally high, might as well avoid some re-allocations
 
@@ -26,8 +27,10 @@ public:
 	{
 		anim = animation;
 		currentTime = 0.0f;
-		deltaTime = 0.0f;
 	}
+
+	float speed;
+	bool repeat;
 
 private:
 	friend class SkeletalAnimationLayer;
@@ -35,6 +38,5 @@ private:
 
 	Animation* anim;
 	float currentTime;
-	float deltaTime;
 	std::vector<glm::mat4> boneMatrices;
 };
