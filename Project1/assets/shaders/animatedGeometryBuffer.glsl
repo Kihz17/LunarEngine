@@ -39,7 +39,7 @@ void main()
 		
 		if(boneID >= MAX_BONES) // We have exceeded the max bone count, just set this vertex to the default vertex position
 		{
-			transformedPos = vec4(1000.0, 1000.0f, 10000.0f, 1.0f);
+			transformedPos = vertexPos;
 			transformedNormal = vNormal;
 			break;
 		}

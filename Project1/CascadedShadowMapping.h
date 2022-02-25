@@ -42,7 +42,7 @@ public:
 	CascadedShadowMapping(const CascadedShadowMappingInfo& info);
 	virtual ~CascadedShadowMapping();
 
-	void DoPass(std::vector<RenderSubmission*>& submissions, const glm::mat4& projection, const glm::mat4& view);
+	void DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view);
 
 	void SetDirectionalLight(Light* directionalLight) { this->directionalLight = directionalLight; }
 
@@ -50,6 +50,7 @@ public:
 	ITexture* GetShadowMap() { return lightDepthMaps; }
 
 	static const std::string DEPTH_MAPPING_SHADER_KEY;
+	static const std::string DEPTH_MAPPING_ANIMATED_SHADER_KEY;
 	static const std::string DEPTH_DEBUG_SHADER_KEY;
 	static const int MAX_CASCADE_LEVELS;
 private:
@@ -63,6 +64,7 @@ private:
 	TextureArray* lightDepthMaps;
 
 	Shader* depthMappingShader;
+	Shader* depthMappingAnimatedShader;
 	Shader* depthDebugShader;
 
 	Light* directionalLight;

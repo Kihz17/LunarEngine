@@ -4,6 +4,7 @@
 #include "TextureArray.h"
 #include "TextureManager.h"
 #include "ShaderLibrary.h"
+#include "Animation.h"
 
 #include <iostream>
 #include <sstream>
@@ -12,6 +13,7 @@
 #include "InputManager.h"
 
 const std::string CascadedShadowMapping::DEPTH_MAPPING_SHADER_KEY = "shadowMappingDepthShader";
+const std::string CascadedShadowMapping::DEPTH_MAPPING_ANIMATED_SHADER_KEY = "animatedShadowMappingDepthShader";
 const std::string CascadedShadowMapping::DEPTH_DEBUG_SHADER_KEY = "debugDepthShader";
 const int CascadedShadowMapping::MAX_CASCADE_LEVELS = 16;
 
@@ -25,6 +27,7 @@ CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& in
 	lightMatricesUBO(new UniformBuffer(sizeof(glm::mat4x4)* MAX_CASCADE_LEVELS, GL_STATIC_DRAW, 0)),
 	lightDepthMaps(nullptr),
 	depthMappingShader(ShaderLibrary::Load(DEPTH_MAPPING_SHADER_KEY, "assets/shaders/CSMDepth.glsl")),
+	depthMappingAnimatedShader(ShaderLibrary::Load(DEPTH_MAPPING_ANIMATED_SHADER_KEY, "assets/shaders/CSMDepthAnimated.glsl")),
 	depthDebugShader(ShaderLibrary::Load(DEPTH_DEBUG_SHADER_KEY, "assets/shaders/CMSDepthDebug.glsl")),
 	directionalLight(nullptr),
 	cameraFOV(info.cameraFOV),
@@ -62,6 +65,14 @@ CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& in
 	depthMappingShader->InitializeUniform("uMatModel");
 	depthMappingShader->Unbind();
 
+	depthMappingAnimatedShader->Bind();
+	depthMappingAnimatedShader->InitializeUniform("uMatModel");
+	for (unsigned int i = 0; i < Animation::MAX_BONES; i++)
+	{
+		depthMappingAnimatedShader->InitializeUniform("uBoneMatrices[" + std::to_string(i) + "]");
+	}
+	depthMappingAnimatedShader->Unbind();
+
 	// FOR DEBUGGING
 	depthDebugShader->Bind();
 	depthDebugShader->InitializeUniform("uLayer");
@@ -77,7 +88,7 @@ CascadedShadowMapping::~CascadedShadowMapping()
 	delete lightMatricesUBO;
 }
 
-void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, const glm::mat4& projection, const glm::mat4& view)
+void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view)
 {
 	if (!directionalLight) return; // No directional light, don't map anything
 
@@ -117,8 +128,6 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, 
 		RenderComponent* renderComponent = submission->renderComponent;
 		if (!renderComponent->castShadows) continue;
 
-		//depthMappingShader->SetMat4("uMatModel", submission->transform);
-
 		// TODO: If object is semi-transparent, make a softer shadow
 		// To do this, we will need to change the texture array into a color attachment instead of a depth attachment
 		// The CMS fragment shader will now need to write the depth to a channel (geometry's z value from the light's perspective), and write
@@ -128,6 +137,21 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, 
 		// This is a problem that will need a solution
 
 		renderComponent->Draw(depthMappingShader, submission->transform);
+	}
+
+	depthMappingAnimatedShader->Bind();
+	for (RenderSubmission* submission : animatedSubmissions)
+	{
+		RenderComponent* renderComponent = submission->renderComponent;
+		if (!renderComponent->castShadows) continue;
+
+		for (unsigned int i = 0; i < submission->boneMatricesLength; i++) // Pass bone matrices to shader
+		{
+			glm::mat4& matrix = submission->boneMatrices[i];
+			depthMappingAnimatedShader->SetMat4("uBoneMatrices[" + std::to_string(i) + "]", matrix);
+		}
+
+		renderComponent->Draw(depthMappingAnimatedShader, submission->transform);
 	}
 
 	lightDepthBuffer->Unbind();

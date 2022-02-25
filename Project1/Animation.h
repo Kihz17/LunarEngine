@@ -51,8 +51,6 @@ public:
 	static const unsigned int MAX_BONES;
 
 private:
-	void ParseKeyFrames(const aiNode* assimpNode, const aiAnimation* assimpAnim, AnimatedMesh* mesh);
-
 	std::unordered_map<std::string, KeyFrames> keyFrameMap;
 
 	float duration;

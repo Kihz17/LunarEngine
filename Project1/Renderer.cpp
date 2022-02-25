@@ -151,6 +151,7 @@ void Renderer::DrawFrame()
 	std::vector<RenderSubmission*> culledShadowSubmissions;
 	std::vector<RenderSubmission*> culledSubmissions;
 	std::vector<RenderSubmission*> culledAnimatedSubmissions;
+	std::vector<RenderSubmission*> culledAnimatedShadowSubmissions;
 	std::vector<RenderSubmission*> culledForwardSubmissions;
 
 	std::vector<std::pair<RenderComponent*, CubeMap*>> dynamicCubeMaps;
@@ -195,7 +196,7 @@ void Renderer::DrawFrame()
 
 		if (glm::length(cameraPos - glm::vec3(submission.transform[3])) <= shadowCullRadius) // We are within shadow radius, show shadows
 		{
-			culledShadowSubmissions.push_back(&submission);
+			culledAnimatedShadowSubmissions.push_back(&submission);
 		}
 	}
 
@@ -214,7 +215,7 @@ void Renderer::DrawFrame()
 	}
 
 	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
-	shadowMappingPass->DoPass(culledShadowSubmissions, projection, view);
+	shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, projection, view);
 	envMapPass->DoPass(projection, view);
 	lightingPass->DoPass(projection, view, cameraPos);
 	forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
