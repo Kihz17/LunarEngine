@@ -142,7 +142,7 @@ void main()
 				continue;
 			}
 			
-			if(length(worldPos - light.position) > light.param1.y) // Outside of reach
+			if(length(worldPos - light.position) > light.param1.y && light.param1.x != 0.0f) // Outside of reach
 			{
 				continue;
 			}

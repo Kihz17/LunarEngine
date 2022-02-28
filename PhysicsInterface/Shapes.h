@@ -44,4 +44,43 @@ namespace Physics
 		float dotProduct;
 		glm::vec3 normal;
 	};
+
+	//class AABBShape : public IShape
+	//{
+	//public:
+	//	AABBShape();
+	//	virtual ~AABBShape();
+
+	//	static AABBShape* Cast(IShape* shape);
+
+	//private:
+	//	AABBShape(const AABBShape& other) : IShape(ShapeType::AABB) {}
+	//	AABBShape& operator=(const AABBShape& other) { return *this; }
+	//};
+
+	//class OBBShape : public IShape
+	//{
+	//public:
+	//	OBBShape();
+	//	virtual ~OBBShape();
+
+	//	static OBBShape* Cast(IShape* shape);
+
+	//private:
+	//	OBBShape(const OBBShape& other) : IShape(ShapeType::OBB) {}
+	//	OBBShape& operator=(const OBBShape& other) { return *this; }
+	//};
+
+	//class CapsuleShape : public IShape
+	//{
+	//public:
+	//	CapsuleShape();
+	//	virtual ~CapsuleShape();
+
+	//	static CapsuleShape* Cast(IShape* shape);
+
+	//private:
+	//	CapsuleShape(const CapsuleShape& other) : IShape(ShapeType::Capsule) {}
+	//	CapsuleShape& operator=(const CapsuleShape& other) { return *this; }
+	//};
 }

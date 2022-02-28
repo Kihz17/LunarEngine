@@ -32,6 +32,10 @@ void SkeletalAnimationLayer::OnUpdate(float deltaTime)
 
 		ComputeBoneTransforms(animComp, mesh->GetRootBone(), mesh->GetInverseTransform(), glm::mat4(1.0f));
 	}
+
+	// TODO: Blend between 2 animations changing. The first straight forward (and probably naive approach)
+	// Would be to take the current time in the animation being swapped, and slowly lerp between that point and the beginning of the new animation
+	// NOTE: Ease in and East out would be useful here
 }
 
 void SkeletalAnimationLayer::ComputeBoneTransforms(SkeletalAnimationComponent* anim, const Bone& bone, const glm::mat4& inverseTransform, glm::mat4 parentTransform)
@@ -44,11 +48,12 @@ void SkeletalAnimationLayer::ComputeBoneTransforms(SkeletalAnimationComponent* a
  	animation->GetFrameData(bone.name, anim->currentTime, position, rotation, scale);
 
 	glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), scale);
+
 	glm::mat4 globalTransform = parentTransform * transform;
 
 	glm::mat4 transformResult = inverseTransform * globalTransform * bone.offsetTransform;
 
-	anim->boneMatrices[bone.ID] = transformResult; // Assign teh bone matrix at the bone's index
+	anim->boneMatrices[bone.ID] = transformResult; // Assign the bone matrix at the bone's index
 
 	for (const Bone& bone : bone.children) // Go through the bone's children and do the same thing
 	{

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IEntityRemoveListener.h"
+#include "UUID.h"
 
 #include <unordered_map>
 #include <vector>
@@ -14,6 +15,10 @@ public:
 	const std::vector<Entity*>& GetEntities();
 	Entity* CreateEntity(const std::string& name);
 	Entity* CreateEntity();
+
+	Entity* PrepareEntity(const std::string& name = std::to_string(UUID()));
+
+	void ListenToEntity(Entity* e);
 
 	void AddEntityRemoveListener(IEntityRemoveListener* removeListener) { removeListeners.push_back(removeListener); }
 	void DeleteEntity(Entity* entity);

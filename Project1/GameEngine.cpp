@@ -15,6 +15,7 @@
 #include "RotationComponent.h"
 #include "RigidBodyComponent.h"
 #include "SkeletalAnimationComponent.h"
+#include "LineRenderComponent.h"
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
@@ -86,9 +87,11 @@ void GameEngine::Render()
     Renderer::EndFrame();
 }
 
-void GameEngine::SubmitEntitiesToRender()
+void GameEngine::SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer* lineVBO, IndexBuffer* lineEBO)
 {
     const std::vector<Entity*>& entities = entityManager.GetEntities();
+    std::vector<LineRenderComponent*> lines;
+
     for (Entity* entity : entities)
     {
         if (entity == nullptr) std::cout << "ge nullEnt\n";
@@ -97,6 +100,13 @@ void GameEngine::SubmitEntitiesToRender()
 
         RotationComponent* rotComponent = entity->GetComponent<RotationComponent>();
         if (!rotComponent) continue; // Can't be rendered
+
+        ScaleComponent* scaleComponent = entity->GetComponent<ScaleComponent>();
+        if (!scaleComponent) // Can't be rendered
+        {
+            std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a scale component!" << std::endl;
+            continue;
+        }
 
         // Sync position component with rigidbody
         RigidBodyComponent* rigidBodyComponent = entity->GetComponent<RigidBodyComponent>();
@@ -107,40 +117,80 @@ void GameEngine::SubmitEntitiesToRender()
         }
 
         RenderComponent* renderComponent = entity->GetComponent<RenderComponent>();
-        if (!renderComponent) continue; // Can't be rendered
-
-        ScaleComponent* scaleComponent = entity->GetComponent<ScaleComponent>();
-        if (!scaleComponent) // Can't be rendered
+        if (renderComponent)
         {
-            std::cout << "Entity '" << entity->name << "' cannot be rendered because it is missing a scale component!" << std::endl;
-            continue;
+            // Tell the renderer to render this entity
+            RenderSubmission submission(renderComponent, posComponent->value, scaleComponent->value, rotComponent->value);
+
+            // Apply bone data to submission if the entity is animated
+            SkeletalAnimationComponent* animComp = entity->GetComponent<SkeletalAnimationComponent>();
+            if (animComp)
+            {
+
+                submission.boneMatrices = animComp->boneMatrices.data();
+                submission.boneMatricesLength = animComp->boneMatrices.size();
+            }
+
+            Renderer::Submit(submission);
+
+            if (debugMode)
+            {
+                const AABB* aabb = renderComponent->mesh->GetBoundingBox();
+                LineRenderSubmission lineSubmission;
+                lineSubmission.vao = aabb->GetVertexArray();
+                lineSubmission.indexCount = aabb->GetIndexCount();
+                lineSubmission.lineColor = glm::vec3(0.0f, 0.0f, 0.8f);
+                lineSubmission.transform = submission.transform;
+                Renderer::SubmitLines(lineSubmission);
+            }
         }
 
-        // Tell the renderer to render this entity
-        RenderSubmission submission(renderComponent, posComponent->value, scaleComponent->value, rotComponent->value);
-
-        // Apply bone data to submission if the entity is animated
-        SkeletalAnimationComponent* animComp = entity->GetComponent<SkeletalAnimationComponent>();
-        if (animComp)
-        {
-
-            submission.boneMatrices = animComp->boneMatrices.data();
-            submission.boneMatricesLength = animComp->boneMatrices.size();
-        }
-
-        Renderer::Submit(submission);
-
-        if (debugMode)
-        {
-            const AABB* aabb = renderComponent->mesh->GetBoundingBox();
-            LineRenderSubmission lineSubmission;
-            lineSubmission.vao = aabb->GetVertexArray();
-            lineSubmission.indexCount = aabb->GetIndexCount();
-            lineSubmission.lineColor = glm::vec3(0.0f, 0.0f, 0.8f);
-            lineSubmission.transform = submission.transform;
-            Renderer::SubmitLines(lineSubmission);
-        }
+        LineRenderComponent* lineComp = entity->GetComponent<LineRenderComponent>();
+        if (lineComp) lines.push_back(lineComp);
     }
+
+    BufferLayout layout = {
+        { ShaderDataType::Float3, "vPosition" }
+    };
+
+    lineVAO = new VertexArrayObject();
+
+    float* lineVertices = new float[lines.size() * 2 * 3];
+    unsigned int vboSize = lines.size() * 2 * 3 * sizeof(float);
+
+    unsigned int vIndex = 0;
+    for (LineRenderComponent* line : lines)
+    {
+        lineVertices[vIndex] = line->p1.x;
+        lineVertices[vIndex + 1] = line->p1.y;
+        lineVertices[vIndex + 2] = line->p1.z;
+
+        lineVertices[vIndex + 3] = line->p2.x;
+        lineVertices[vIndex + 4] = line->p2.y;
+        lineVertices[vIndex + 5] = line->p2.z;
+
+        vIndex += 6;
+    }
+
+    lineVBO = new VertexBuffer(lineVertices, vboSize);
+    lineVBO->SetLayout(layout);
+
+    uint32_t* indices = new uint32_t[lines.size() * 2];
+    unsigned int eboSize = lines.size() * 2;
+    unsigned int eboIndex = 0;
+    for (unsigned int i = 0; i < eboSize; i++) indices[i] = i;
+    lineEBO = new IndexBuffer(indices, eboSize);
+
+    lineVAO->AddVertexBuffer(lineVBO);
+    lineVAO->SetIndexBuffer(lineEBO);
+
+    LineRenderSubmission lineSubmission;
+    lineSubmission.vao = lineVAO;
+    lineSubmission.indexCount = eboSize;
+    lineSubmission.lineColor = glm::vec3(0.0f, 0.8f, 0.0f);
+    lineSubmission.transform = glm::mat4(1.0f);
+
+    Renderer::SubmitLines(lineSubmission);
 }
 
 void GameEngine::Run()
@@ -178,9 +228,20 @@ void GameEngine::Run()
         InputManager::ClearState();
         entityManager.CleanEntities(); // Remove invalid entities
 
+        VertexArrayObject* lineVAO = nullptr;
+        VertexBuffer* lineVBO = nullptr;
+        IndexBuffer* lineEBO = nullptr;
+
         // Submit all renderable entities
-        SubmitEntitiesToRender();
+        SubmitEntitiesToRender(lineVAO, lineVBO, lineEBO);
         Render();
+
+        if (lineVAO)
+        {
+            delete lineVAO;
+            delete lineVBO;
+            delete lineEBO;
+        }
     }
 
     if (editorMode)

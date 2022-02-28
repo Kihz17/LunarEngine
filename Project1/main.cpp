@@ -17,6 +17,8 @@
 #include "SkeletalAnimationLayer.h"
 #include "AnimatedMesh.h"
 #include "Animation.h"
+#include "DungeonGenerator.h"
+#include "LineRenderComponent.h"
 
 glm::vec2 lastCursorPos = glm::vec2(0.0f);
 
@@ -36,8 +38,12 @@ int main()
     Mesh* ship = new Mesh("assets/models/assault.ply");
     Mesh* cyl = new Mesh("assets/models/cylinder.obj");
 
-    AnimatedMesh* vampire = new AnimatedMesh("assets/models/Knight_Golden_Male.fbx");
-    Animation anim("assets/models/Knight_Golden_Male.fbx", vampire);
+ /*   AnimatedMesh* vampire = new AnimatedMesh("assets/models/Combat_Model.fbx");
+    Animation combo1("assets/models/Combo_1.fbx", vampire);
+    Animation combo2("assets/models/Combo_2.fbx", vampire);
+    Animation combo3("assets/models/Combo_3.fbx", vampire);
+    Animation combo4("assets/models/Combo_4.fbx", vampire);
+    Animation combo7("assets/models/Combo_7_Anim.fbx", vampire);*/
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -76,102 +82,174 @@ int main()
     Entity::AddComponentListener(sacl);
     gameEngine.AddLayer(sal);
 
+    DungeonGenerator dg(30, glm::ivec3(8, 3, 8), glm::ivec3(100, 50, 100), gameEngine.GetEntityManager());
+    std::vector<Entity*> entities = dg.Generate();
+    for (Entity* e : entities) gameEngine.GetEntityManager().ListenToEntity(e);
+
     // SHADER BALL TEST
-    ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
+    //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
 
-    {
-        Entity* ground = gameEngine.GetEntityManager().CreateEntity("ground");
-        PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(20.0f));
-        RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(5.0f, 0.1f, 5.0f));
+    //{
+    //    Entity* ground = gameEngine.GetEntityManager().CreateEntity("ground");
+    //    PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(20.0f));
+    //    RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
+    //    ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(5.0f, 0.1f, 5.0f));
 
-        Physics::RigidBodyInfo rigidInfo;
-        rigidInfo.linearDamping = 0.0f;
-        rigidInfo.isStatic = true;
-        rigidInfo.mass = 1.0f;
-        rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
-        rigidInfo.linearVelocity = glm::vec3(0.0f);
-        rigidInfo.friction = 0.95f;
-        RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine.physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
-        gameEngine.physicsWorld->AddRigidBody(rigidComp->ptr, ground);
+    //    Physics::RigidBodyInfo rigidInfo;
+    //    rigidInfo.linearDamping = 0.0f;
+    //    rigidInfo.isStatic = true;
+    //    rigidInfo.mass = 1.0f;
+    //    rigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
+    //    rigidInfo.linearVelocity = glm::vec3(0.0f);
+    //    rigidInfo.friction = 0.95f;
+    //    RigidBodyComponent* rigidComp = ground->AddComponent<RigidBodyComponent>(gameEngine.physicsFactory->CreateRigidBody(rigidInfo, new Physics::PlaneShape(0.0f, glm::vec3(0.0f, 1.0f, 0.0f))));
+    //    gameEngine.physicsWorld->AddRigidBody(rigidComp->ptr, ground);
 
-        // Render Info
-        RenderComponent::RenderInfo groundInfo;
-        groundInfo.mesh = cube;
-        groundInfo.albedoTextures.push_back(std::make_pair(woodTexture, 1.0f));
-        groundInfo.normalTexture = woodNormalTexture;
-        ground->AddComponent<RenderComponent>(groundInfo);
-    }
+    //    // Render Info
+    //    RenderComponent::RenderInfo groundInfo;
+    //    groundInfo.mesh = cube;
+    //    groundInfo.albedoTextures.push_back(std::make_pair(woodTexture, 1.0f));
+    //    groundInfo.normalTexture = woodNormalTexture;
+    //    ground->AddComponent<RenderComponent>(groundInfo);
+    //}
 
-    {
-        Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl0");
-        PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(30.0f, 5.0f, 3.0f));
-        RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(4.0f, 10.0f, 4.0f));
+    //{
+    //    Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl0");
+    //    PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(30.0f, 5.0f, 3.0f));
+    //    RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
+    //    ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(4.0f, 10.0f, 4.0f));
 
-        RenderComponent::RenderInfo renderInfo;
-        renderInfo.mesh = cyl;
-        renderInfo.isColorOverride = true;
-        renderInfo.colorOverride = glm::vec3(0.3f, 0.8f, 0.0f);
-        renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::Low;
-        ground->AddComponent<RenderComponent>(renderInfo);
-    }
-    {
-        Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl1");
-        PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(-22.0f, 9.0f, -22.0f));
-        RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(4.0f, 10.0f, 4.0f));
+    //    RenderComponent::RenderInfo renderInfo;
+    //    renderInfo.mesh = cyl;
+    //    renderInfo.isColorOverride = true;
+    //    renderInfo.colorOverride = glm::vec3(0.3f, 0.8f, 0.0f);
+    //    renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::Low;
+    //    ground->AddComponent<RenderComponent>(renderInfo);
+    //}
+    //{
+    //    Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl1");
+    //    PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(-22.0f, 9.0f, -22.0f));
+    //    RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
+    //    ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(4.0f, 10.0f, 4.0f));
 
-        RenderComponent::RenderInfo renderInfo;
-        renderInfo.mesh = cyl;
-        renderInfo.isColorOverride = true;
-        renderInfo.colorOverride = glm::vec3(0.0f, 0.0f, 0.4f);
-        renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::Medium;
-        ground->AddComponent<RenderComponent>(renderInfo);
-    }
-    {
-        Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl2");
-        PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(15.0f, 18.0f, 37.0f));
-        RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(8.0f, 20.0f, 8.0f));
+    //    RenderComponent::RenderInfo renderInfo;
+    //    renderInfo.mesh = cyl;
+    //    renderInfo.isColorOverride = true;
+    //    renderInfo.colorOverride = glm::vec3(0.0f, 0.0f, 0.4f);
+    //    renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::Medium;
+    //    ground->AddComponent<RenderComponent>(renderInfo);
+    //}
+    //{
+    //    Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl2");
+    //    PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(15.0f, 18.0f, 37.0f));
+    //    RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
+    //    ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(8.0f, 20.0f, 8.0f));
 
-        RenderComponent::RenderInfo renderInfo;
-        renderInfo.mesh = cyl;
-        renderInfo.isColorOverride = true;
-        renderInfo.colorOverride = glm::vec3(0.0f, 0.7f, 0.4f);
-        renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::High;
-        ground->AddComponent<RenderComponent>(renderInfo);
-    }
-    {
-        Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl3");
-        PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(-25.0f, 13.0f, 27.0f));
-        RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
-        ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(6.0f, 15.0f, 6.0f));
+    //    RenderComponent::RenderInfo renderInfo;
+    //    renderInfo.mesh = cyl;
+    //    renderInfo.isColorOverride = true;
+    //    renderInfo.colorOverride = glm::vec3(0.0f, 0.7f, 0.4f);
+    //    renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::High;
+    //    ground->AddComponent<RenderComponent>(renderInfo);
+    //}
+    //{
+    //    Entity* ground = gameEngine.GetEntityManager().CreateEntity("cyl3");
+    //    PositionComponent* groundPos = ground->AddComponent<PositionComponent>(glm::vec3(-25.0f, 13.0f, 27.0f));
+    //    RotationComponent* rotComponent = ground->AddComponent<RotationComponent>();
+    //    ScaleComponent* scaleComponent = ground->AddComponent<ScaleComponent>(glm::vec3(6.0f, 15.0f, 6.0f));
 
-        RenderComponent::RenderInfo renderInfo;
-        renderInfo.mesh = cyl;
-        renderInfo.isColorOverride = true;
-        renderInfo.colorOverride = glm::vec3(0.0f, 0.7f, 0.4f);
-        renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::High;
-        ground->AddComponent<RenderComponent>(renderInfo);
-    }
+    //    RenderComponent::RenderInfo renderInfo;
+    //    renderInfo.mesh = cyl;
+    //    renderInfo.isColorOverride = true;
+    //    renderInfo.colorOverride = glm::vec3(0.0f, 0.7f, 0.4f);
+    //    renderInfo.reflectRefractMapPriority = ReflectRefractMapPriorityType::High;
+    //    ground->AddComponent<RenderComponent>(renderInfo);
+    //}
 
-    {
-        Entity* animTest = gameEngine.GetEntityManager().CreateEntity("AnimTest");
-        animTest->AddComponent<PositionComponent>(glm::vec3(0.0f, 20.0f, 0.0f));
-        animTest->AddComponent<ScaleComponent>(glm::vec3(0.05f, 0.05f, 0.05f));
-        animTest->AddComponent<RotationComponent>();
+    //{
+    //    Entity* animTest = gameEngine.GetEntityManager().CreateEntity("AnimTest");
+    //    animTest->AddComponent<PositionComponent>(glm::vec3(28.0f, 1.0f, -40.0f));
+    //    animTest->AddComponent<ScaleComponent>(glm::vec3(0.05f, 0.05f, 0.05f));
+    //    animTest->AddComponent<RotationComponent>();
 
-        RenderComponent::RenderInfo renderInfo;
-        renderInfo.mesh = vampire;
-        renderInfo.isColorOverride = true;
-        renderInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
-        animTest->AddComponent<RenderComponent>(renderInfo);
+    //    RenderComponent::RenderInfo renderInfo;
+    //    renderInfo.mesh = vampire;
+    //    renderInfo.isColorOverride = true;
+    //    renderInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
+    //    animTest->AddComponent<RenderComponent>(renderInfo);
 
-        SkeletalAnimationComponent* animComp = animTest->AddComponent<SkeletalAnimationComponent>();
-        animComp->SetAnimation(&anim);
-        animComp->speed = 70.0f;
-    }
+    //    SkeletalAnimationComponent* animComp = animTest->AddComponent<SkeletalAnimationComponent>();
+    //    animComp->SetAnimation(&combo7);
+    //    animComp->speed = 10.0f;
+    //}
+
+    //{
+    //    Entity* animTest = gameEngine.GetEntityManager().CreateEntity("AnimTest2");
+    //    animTest->AddComponent<PositionComponent>(glm::vec3(18.0f, 1.0f, -40.0f));
+    //    animTest->AddComponent<ScaleComponent>(glm::vec3(0.05f, 0.05f, 0.05f));
+    //    animTest->AddComponent<RotationComponent>();
+
+    //    RenderComponent::RenderInfo renderInfo;
+    //    renderInfo.mesh = vampire;
+    //    renderInfo.isColorOverride = true;
+    //    renderInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
+    //    animTest->AddComponent<RenderComponent>(renderInfo);
+
+    //    SkeletalAnimationComponent* animComp = animTest->AddComponent<SkeletalAnimationComponent>();
+    //    animComp->SetAnimation(&combo1);
+    //    animComp->speed = 10.0f;
+    //}
+
+    //{
+    //    Entity* animTest = gameEngine.GetEntityManager().CreateEntity("AnimTest3");
+    //    animTest->AddComponent<PositionComponent>(glm::vec3(8.0f, 1.0f, -40.0f));
+    //    animTest->AddComponent<ScaleComponent>(glm::vec3(0.05f, 0.05f, 0.05f));
+    //    animTest->AddComponent<RotationComponent>();
+
+    //    RenderComponent::RenderInfo renderInfo;
+    //    renderInfo.mesh = vampire;
+    //    renderInfo.isColorOverride = true;
+    //    renderInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
+    //    animTest->AddComponent<RenderComponent>(renderInfo);
+
+    //    SkeletalAnimationComponent* animComp = animTest->AddComponent<SkeletalAnimationComponent>();
+    //    animComp->SetAnimation(&combo2);
+    //    animComp->speed = 10.0f;
+    //}
+
+    //{
+    //    Entity* animTest = gameEngine.GetEntityManager().CreateEntity("AnimTest4");
+    //    animTest->AddComponent<PositionComponent>(glm::vec3(-8.0f, 1.0f, -40.0f));
+    //    animTest->AddComponent<ScaleComponent>(glm::vec3(0.05f, 0.05f, 0.05f));
+    //    animTest->AddComponent<RotationComponent>();
+
+    //    RenderComponent::RenderInfo renderInfo;
+    //    renderInfo.mesh = vampire;
+    //    renderInfo.isColorOverride = true;
+    //    renderInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
+    //    animTest->AddComponent<RenderComponent>(renderInfo);
+
+    //    SkeletalAnimationComponent* animComp = animTest->AddComponent<SkeletalAnimationComponent>();
+    //    animComp->SetAnimation(&combo3);
+    //    animComp->speed = 10.0f;
+    //}
+
+    //{
+    //    Entity* animTest = gameEngine.GetEntityManager().CreateEntity("AnimTest5");
+    //    animTest->AddComponent<PositionComponent>(glm::vec3(-18.0f, 1.0f, -40.0f));
+    //    animTest->AddComponent<ScaleComponent>(glm::vec3(0.05f, 0.05f, 0.05f));
+    //    animTest->AddComponent<RotationComponent>();
+
+    //    RenderComponent::RenderInfo renderInfo;
+    //    renderInfo.mesh = vampire;
+    //    renderInfo.isColorOverride = true;
+    //    renderInfo.colorOverride = glm::vec3(0.7f, 0.0f, 0.1f);
+    //    animTest->AddComponent<RenderComponent>(renderInfo);
+
+    //    SkeletalAnimationComponent* animComp = animTest->AddComponent<SkeletalAnimationComponent>();
+    //    animComp->SetAnimation(&combo4);
+    //    animComp->speed = 10.0f;
+    //}
 
     gameEngine.Run();
 

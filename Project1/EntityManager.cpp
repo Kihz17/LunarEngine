@@ -36,6 +36,18 @@ Entity* EntityManager::CreateEntity()
 	return CreateEntity(std::to_string(UUID()));
 }
 
+Entity* EntityManager::PrepareEntity(const std::string& name)
+{
+	unsigned int ID = currentEntityID++;
+	Entity* newEntity = new Entity(ID, name);
+	return newEntity;
+}
+
+void EntityManager::ListenToEntity(Entity* e)
+{
+	entities.push_back(e);
+}
+
 void EntityManager::DeleteEntity(Entity* entity)
 {
 	for (IEntityRemoveListener* removeListener : removeListeners) removeListener->OnEntityRemove(entity);

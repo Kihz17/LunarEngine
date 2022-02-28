@@ -42,7 +42,7 @@ public:
 	bool debugMode;
 
 private:
-	void SubmitEntitiesToRender();
+	void SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer* lineVBO, IndexBuffer* lineEBO);
 
 	ApplicationLayerManager layerManager;
 	EntityManager entityManager;

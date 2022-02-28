@@ -10,5 +10,7 @@
 #include "SteeringBehaviourComponent.h"
 #include "TagComponent.h"
 #include "VelocityComponent.h"
+#include "SkeletalAnimationComponent.h"
+#include "LineRenderComponent.h"
 
 

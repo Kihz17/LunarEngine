@@ -85,6 +85,9 @@
     <Filter Include="Layers\SkeletalAnimation">
       <UniqueIdentifier>{cbe9e9cf-2ae7-402f-afc8-204d75246c19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DungeonGenerator">
+      <UniqueIdentifier>{78f767de-b01f-462b-9a14-9b0d3c971117}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -315,6 +318,24 @@
     </ClCompile>
     <ClCompile Include="AnimatedMesh.cpp">
       <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionTesting.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenUtils.cpp">
+      <Filter>DungeonGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGeneratorTypes.cpp">
+      <Filter>DungeonGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Delaunay.cpp">
+      <Filter>DungeonGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGeneratorPathfinder.cpp">
+      <Filter>DungeonGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenerator.cpp">
+      <Filter>DungeonGenerator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -642,6 +663,33 @@
     </ClInclude>
     <ClInclude Include="BoneInfo.h">
       <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionTesting.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonGenUtils.h">
+      <Filter>DungeonGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="PriorityQueue.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonGeneratorTypes.h">
+      <Filter>DungeonGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonGrid.h">
+      <Filter>DungeonGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Delaunay.h">
+      <Filter>DungeonGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonGeneratorPathfinder.h">
+      <Filter>DungeonGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonGenerator.h">
+      <Filter>DungeonGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="LineRenderComponent.h">
+      <Filter>ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

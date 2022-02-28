@@ -5,7 +5,10 @@ namespace Physics
 	enum class ShapeType
 	{
 		Plane,
-		Sphere
+		Sphere,
+		AABB,
+		OBB,
+		Capsule
 	};
 
 	class IShape
