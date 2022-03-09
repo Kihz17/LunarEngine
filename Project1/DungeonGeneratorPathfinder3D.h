@@ -1,8 +1,7 @@
 #pragma once
 
 #include "pch.h"
-#include "DungeonGrid.h"
-#include "PriorityQueue.h"
+#include "Grid3D.h"
 #include "DungeonGeneratorTypes.h"
 
 #include <glm/glm.hpp>
@@ -25,7 +24,7 @@ struct NodePriorityFunction
 	}
 };
 
-class DungeonGeneratorPathfinder
+class DungeonGeneratorPathfinder3D
 {
 public:
 	struct Node
@@ -62,18 +61,18 @@ public:
 		bool isStairs = false;
 	};
 
-	DungeonGeneratorPathfinder(const glm::ivec3& size);
-	~DungeonGeneratorPathfinder();
+	DungeonGeneratorPathfinder3D(const glm::ivec3& size);
+	~DungeonGeneratorPathfinder3D();
 
-	std::vector<glm::ivec3> Pathfind(const glm::ivec3& start, const glm::ivec3& end, DungeonGrid<CellType>& dungeonGrid);
+	std::vector<glm::ivec3> Pathfind(const glm::ivec3& start, const glm::ivec3& end, Grid3D<CellType>& dungeonGrid);
 	void ResetNodes();
 	std::vector<glm::ivec3> ReconstructPath(Node* node);
 
 private:
-	PathCost CostFunction(Node* n1, Node* n2, DungeonGrid<CellType>& dungeonGrid, const glm::ivec3 startPos, const glm::ivec3& endPos);
+	PathCost CostFunction(Node* n1, Node* n2, Grid3D<CellType>& dungeonGrid, const glm::ivec3 startPos, const glm::ivec3& endPos);
 	Node* FindNextNode(std::priority_queue<Node*, std::vector<Node*>, NodeCompare>& queue, std::unordered_map<Node*, float>& map);
 
-	DungeonGrid<Node*> grid;
+	Grid3D<Node*> grid;
 
 	glm::ivec3 size;
 };

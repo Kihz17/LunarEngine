@@ -88,6 +88,12 @@
     <Filter Include="DungeonGenerator">
       <UniqueIdentifier>{78f767de-b01f-462b-9a14-9b0d3c971117}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DungeonGenerator\3D">
+      <UniqueIdentifier>{25fae24b-63a7-46b6-9289-63d52ab26a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DungeonGenerator\2D">
+      <UniqueIdentifier>{e8b4e8b0-fb5f-4161-857c-a95a8f706335}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -328,14 +334,26 @@
     <ClCompile Include="DungeonGeneratorTypes.cpp">
       <Filter>DungeonGenerator</Filter>
     </ClCompile>
-    <ClCompile Include="Delaunay.cpp">
-      <Filter>DungeonGenerator</Filter>
+    <ClCompile Include="Delaunay3D.cpp">
+      <Filter>DungeonGenerator\3D</Filter>
     </ClCompile>
-    <ClCompile Include="DungeonGeneratorPathfinder.cpp">
-      <Filter>DungeonGenerator</Filter>
+    <ClCompile Include="Delaunay2D.cpp">
+      <Filter>DungeonGenerator\2D</Filter>
     </ClCompile>
-    <ClCompile Include="DungeonGenerator.cpp">
-      <Filter>DungeonGenerator</Filter>
+    <ClCompile Include="DungeonGenerator3D.cpp">
+      <Filter>DungeonGenerator\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenerator2D.cpp">
+      <Filter>DungeonGenerator\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGeneratorPathfinder3D.cpp">
+      <Filter>DungeonGenerator\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGeneratorPathfinder2D.cpp">
+      <Filter>DungeonGenerator\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonConstructor.cpp">
+      <Filter>DungeonGenerator\2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -670,26 +688,38 @@
     <ClInclude Include="DungeonGenUtils.h">
       <Filter>DungeonGenerator</Filter>
     </ClInclude>
-    <ClInclude Include="PriorityQueue.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="DungeonGeneratorTypes.h">
-      <Filter>DungeonGenerator</Filter>
-    </ClInclude>
-    <ClInclude Include="DungeonGrid.h">
-      <Filter>DungeonGenerator</Filter>
-    </ClInclude>
-    <ClInclude Include="Delaunay.h">
-      <Filter>DungeonGenerator</Filter>
-    </ClInclude>
-    <ClInclude Include="DungeonGeneratorPathfinder.h">
-      <Filter>DungeonGenerator</Filter>
-    </ClInclude>
-    <ClInclude Include="DungeonGenerator.h">
       <Filter>DungeonGenerator</Filter>
     </ClInclude>
     <ClInclude Include="LineRenderComponent.h">
       <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid2D.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid3D.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Delaunay3D.h">
+      <Filter>DungeonGenerator\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Delaunay2D.h">
+      <Filter>DungeonGenerator\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonGenerator3D.h">
+      <Filter>DungeonGenerator\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonGenerator2D.h">
+      <Filter>DungeonGenerator\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonGeneratorPathfinder3D.h">
+      <Filter>DungeonGenerator\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonGeneratorPathfinder2D.h">
+      <Filter>DungeonGenerator\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonConstructor.h">
+      <Filter>DungeonGenerator\2D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

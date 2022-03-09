@@ -60,6 +60,7 @@ uniform sampler2D uAlbedoTexture2;
 uniform sampler2D uAlbedoTexture3;
 uniform sampler2D uAlbedoTexture4;
 uniform vec4 uAlbedoRatios;
+uniform vec2 uUVOffset;
 uniform vec4 uColorOverride;
 
 uniform bool uHasNormalTexture;
@@ -106,21 +107,22 @@ void main()
 	}
 	else // Sample albedo textures
 	{
-		diffuseColor = vec3(texture(uAlbedoTexture1, mTextureCoordinates)) * uAlbedoRatios.x;
+		vec2 texCoords = mTextureCoordinates * uUVOffset;
+		diffuseColor = vec3(texture(uAlbedoTexture1, texCoords)) * uAlbedoRatios.x;
 		
 		if(uAlbedoRatios.y > 0.0f)
 		{
-			diffuseColor += vec3(texture(uAlbedoTexture2, mTextureCoordinates)) * uAlbedoRatios.y;
+			diffuseColor += vec3(texture(uAlbedoTexture2, texCoords)) * uAlbedoRatios.y;
 		}
 		
 		if(uAlbedoRatios.z > 0.0f)
 		{
-			diffuseColor += vec3(texture(uAlbedoTexture3, mTextureCoordinates)) * uAlbedoRatios.z; 
+			diffuseColor += vec3(texture(uAlbedoTexture3, texCoords)) * uAlbedoRatios.z; 
 		}
 		
 		if(uAlbedoRatios.w > 0.0f)
 		{
-			diffuseColor += vec3(texture(uAlbedoTexture4, mTextureCoordinates)) * uAlbedoRatios.w; 
+			diffuseColor += vec3(texture(uAlbedoTexture4, texCoords)) * uAlbedoRatios.w; 
 		}
 	}
 	

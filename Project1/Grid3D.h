@@ -2,10 +2,10 @@
 
 #include <glm/glm.hpp>
 
-template <typename T> class DungeonGrid
+template <typename T> class Grid3D
 {
 public:
-	DungeonGrid(const glm::ivec3& size, const glm::ivec3& offset)
+	Grid3D(const glm::ivec3& size, const glm::ivec3& offset)
 		: size(size),
 		offset(offset)
 	{
@@ -20,7 +20,7 @@ public:
 		}
 	}
 
-	~DungeonGrid()
+	~Grid3D()
 	{
 		for (unsigned int x = 0; x < size.x; x++)
 		{

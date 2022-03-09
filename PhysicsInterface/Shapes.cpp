@@ -42,4 +42,48 @@ namespace Physics
 	{
 		return dynamic_cast<PlaneShape*>(shape);
 	}
+
+	/////////////////
+	// AABB
+	/////////////////
+	AABBShape::AABBShape(const glm::vec3& size)
+		: IShape(ShapeType::AABB),
+		size(size)
+	{
+
+	}
+
+	AABBShape::~AABBShape()
+	{
+
+	}
+
+	AABBShape* AABBShape::Cast(IShape* shape)
+	{
+		return dynamic_cast<AABBShape*>(shape);
+	}
+
+	/////////////////
+	// OBB
+	/////////////////
+	OBBShape::OBBShape(const glm::vec3& size)
+		: IShape(ShapeType::OBB),
+		size(size)
+	{
+
+	}
+
+	OBBShape::~OBBShape()
+	{
+
+	}
+
+	OBBShape* OBBShape::Cast(IShape* shape)
+	{
+		return dynamic_cast<OBBShape*>(shape);
+	}
+
+	/////////////////
+	// CAPSULE
+	/////////////////
 }

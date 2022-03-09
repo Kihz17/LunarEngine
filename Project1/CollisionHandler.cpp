@@ -15,8 +15,7 @@ glm::vec3 ClosestPointToPlane(const glm::vec3& point, const glm::vec3& normal, f
 
 glm::vec3 ProjectOn(glm::vec3 b, glm::vec3 a)
 {
-	float mult = ((a.x * b.x) + (a.y * b.y) + (a.z * b.z)) / ((b.x * b.x) + (b.y * b.y) + (b.z * b.z));
-	return glm::vec3(b.x * mult, b.y * mult, b.z * mult);
+	return (glm::dot(b, a) / glm::dot(a, a)) * a;
 }
 
 bool CollisionHandler::CollideSphereSphere(RigidBody* bodyA, Physics::SphereShape* sphereA, 
@@ -100,6 +99,8 @@ bool CollisionHandler::CollideSpherePlane(RigidBody* bodyA, Physics::SphereShape
 	RigidBody* bodyB, Physics::PlaneShape* plane, 
 	float deltaTime, std::vector<Physics::ICollisionListener<Entity>*>& listeners, PhysicsWorld* physicsWorld)
 {
+	if (bodyA->IsStatic() && bodyB->IsStatic()) return false;
+
 	if (!CollisionTesting::TestSpherePlane(bodyA->previousPosition, bodyA->position, sphere->GetRadius(), plane->GetNormal(), plane->GetDotProduct())) return false;
 
 	Physics::ICollisionListener<Entity>::CollisionEvent collisionEvent;
@@ -128,9 +129,28 @@ bool CollisionHandler::CollideSpherePlane(RigidBody* bodyA, Physics::SphereShape
 		glm::vec3 cachedVelocity = bodyA->linearVelocity;
 		bodyA->linearVelocity = reflect;
 
-		glm::vec3 impactComponent = ProjectOn(bodyA->linearVelocity, plane->GetNormal());
-		glm::vec3 impactTangent = cachedVelocity - impactComponent;
-		bodyA->ApplyForce(impactTangent * -1.0f * bodyA->mass * bodyB->friction);
+		glm::vec3 impactComponentX = ProjectOn(cachedVelocity, glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::vec3 impactComponentZ = ProjectOn(cachedVelocity, glm::vec3(0.0f, 0.0f, 1.0f));
+		glm::vec3 impactComponent = impactComponentX + impactComponentZ;
+		//glm::vec3 impactComponent = ProjectOn(bodyA->linearVelocity, plane->GetNormal());
+
+		glm::vec3 relativePoint = glm::normalize(closestPoint - bodyA->position) * sphere->GetRadius();
+		float surfaceVelocity = sphere->GetRadius() * glm::length(bodyA->angularVelocity);
+
+		glm::vec3 angularDirection = glm::cross(impactComponent, bodyA->angularVelocity);
+
+		if (glm::dot(impactComponent, plane->GetNormal()) >= 0.0f)
+		{
+			//bodyA->angularVelocity *= bodyB->friction;
+			bodyA->ApplyTorque(glm::cross(relativePoint , -2.0f * impactComponent * bodyA->mass));
+		}
+		else
+		{
+			bodyA->angularVelocity *= bodyB->friction;
+			bodyA->ApplyForceAtPoint(angularDirection, relativePoint);
+		}
+
+		bodyA->UpdateAcceleration();
 		bodyA->VerletStep1(partialDt);
 
 		closestPoint = ClosestPointToPlane(bodyA->position, plane->GetNormal(), plane->GetDotProduct());
@@ -149,6 +169,100 @@ bool CollisionHandler::CollideSpherePlane(RigidBody* bodyA, Physics::SphereShape
 		{
 			bodyA->linearVelocity *= bodyA->restitution;
 		}
+	}
+
+	return true;
+}
+
+bool CollisionHandler::CollideSphereAABB(RigidBody* bodyA, Physics::SphereShape* sphere, RigidBody* bodyB, Physics::AABBShape* aabb, float deltaTime,
+	std::vector<Physics::ICollisionListener<Entity>*>& listeners, PhysicsWorld* physicsWorld)
+{
+	if (bodyA->IsStatic() && bodyB->IsStatic()) return false;
+
+	glm::vec3 boundingBoxCenter = bodyB->GetPosition();// +aabb->GetExtents().y; // Since our rigibody's position is on the ground, to get the "true" center of the AABB, we need to add the extent's y to our center position
+	float dist2 = 0.0f;
+	if (!CollisionTesting::TestSphereAABB(bodyA->GetPosition(), sphere->GetRadius(), boundingBoxCenter, aabb->GetExtents(), dist2)) return false;
+
+	Physics::ICollisionListener<Entity>::CollisionEvent collisionEvent;
+	collisionEvent.type = Physics::CollisionType::SphereAABB;
+	collisionEvent.bodyA = bodyA;
+	collisionEvent.bodyB = bodyB;
+	collisionEvent.physicsWorld = physicsWorld;
+	for (Physics::ICollisionListener<Entity>* listener : listeners) listener->Collide(collisionEvent);
+
+	if (collisionEvent.isCancelled) return false;
+
+	glm::vec3 contactNormal = bodyA->GetPosition() - boundingBoxCenter;
+	if (std::abs(contactNormal.x) > std::abs(contactNormal.y) && std::abs(contactNormal.x) > std::abs(contactNormal.z)) // X axis
+	{
+		contactNormal.y = 0.0f;
+		contactNormal.z = 0.0f;
+	}
+	else if (std::abs(contactNormal.y) > std::abs(contactNormal.x) && std::abs(contactNormal.y) > std::abs(contactNormal.z)) // Y axis
+	{
+		contactNormal.x = 0.0f;
+		contactNormal.z = 0.0f;
+	}
+	else if (std::abs(contactNormal.z) > std::abs(contactNormal.y) && std::abs(contactNormal.z) > std::abs(contactNormal.x)) // Z axis
+	{
+		contactNormal.x = 0.0f;
+		contactNormal.y = 0.0f;
+	}
+
+	glm::normalize(contactNormal);
+
+	float totalMass = bodyA->mass + bodyB->mass;
+	float factorA = bodyB->mass / totalMass;
+	float factorB = bodyA->mass / totalMass;
+
+	float overlap = sphere->GetRadius() * sphere->GetRadius() - dist2;
+	if (!bodyA->isStatic) bodyB->position -= contactNormal * overlap * factorB;
+	if (!bodyB->isStatic) bodyA->position += contactNormal * overlap * factorA;
+
+	glm::vec3 momentumA = bodyA->linearVelocity * bodyA->mass;
+	glm::vec3 momentumB = bodyB->linearVelocity * bodyB->mass;
+	glm::vec3 momentumSum = momentumA + momentumB;
+
+	momentumA = momentumSum * factorA;
+	momentumB = momentumSum * factorB;
+
+	constexpr float elasticity = 0.4f; // Ranges from 0.0 - 1.0
+
+	glm::vec3 positionDiff = bodyB->position - bodyA->position;
+	glm::vec3 elasticMomentumB = positionDiff * (glm::length(momentumB) * elasticity) * -1.0f;
+	glm::vec3 inelasticMomentumB = positionDiff * glm::length(momentumB) * (1.0f - elasticity);
+
+	glm::vec3 elasticMomentumA = positionDiff * (glm::length(momentumA) * elasticity);
+	glm::vec3 inelasticMomentumA = positionDiff * glm::length(momentumA) * (1.0f - elasticity);
+
+	bodyA->linearVelocity -= (elasticMomentumA + inelasticMomentumA) * (bodyA->inverseMass * bodyA->restitution);
+	bodyB->linearVelocity += (elasticMomentumB + inelasticMomentumB) * (bodyB->inverseMass * bodyB->restitution);
+
+	glm::vec3 velocityA = bodyA->position - bodyA->previousPosition;
+	glm::vec3 velocityB = bodyB->position - bodyB->previousPosition;
+
+	bodyA->VerletStep1(deltaTime);
+	bodyB->VerletStep1(deltaTime);
+
+	return true;
+}
+
+bool CollisionHandler::CollidePlaneAABB(RigidBody* bodyA, Physics::PlaneShape* plane, RigidBody* bodyB, Physics::AABBShape* aabb, float deltaTime,
+std::vector<Physics::ICollisionListener<Entity>*>& listeners, PhysicsWorld* physicsWorld)
+{
+	if (bodyA->IsStatic() && bodyB->IsStatic()) return false;
+
+	glm::vec3 boundingBoxCenter = bodyB->GetPosition();// +glm::vec3(0.0f, aabb->GetExtents().y * 2.0f, 0.0f);
+	float r = 0.0f;
+	float dist = 0.0f;
+	if (!CollisionTesting::TestAABBPlane(boundingBoxCenter, aabb->GetExtents(), plane->GetNormal(), plane->GetDotProduct(), r, dist)) return false;
+	
+	bodyB->position += plane->GetNormal() * (r - dist);
+
+	float velDotNorm = glm::dot(bodyB->linearVelocity, plane->GetNormal());
+	if (velDotNorm < 0.0f)
+	{
+		bodyB->linearVelocity -= plane->GetNormal() * velDotNorm;
 	}
 
 	return true;
@@ -186,12 +300,43 @@ void CollisionHandler::Collide(float deltaTime, std::vector<RigidBody*>& rigidBo
 						collision = true;
 					}
 				}
+				else if (shapeB->GetShapeType() == Physics::ShapeType::AABB)
+				{
+					if (CollideSphereAABB(bodyA, Physics::SphereShape::Cast(shapeA), bodyB, Physics::AABBShape::Cast(shapeB), deltaTime, listeners, physicsWorld))
+					{
+						collision = true;
+					}
+				}
 			}
 			else if (shapeA->GetShapeType() == Physics::ShapeType::Plane)
 			{
 				if (shapeB->GetShapeType() == Physics::ShapeType::Sphere)
 				{
 					if (CollideSpherePlane(bodyB, Physics::SphereShape::Cast(shapeB), bodyA, Physics::PlaneShape::Cast(shapeA), deltaTime, listeners, physicsWorld))
+					{
+						collision = true;
+					}
+				}
+				else if (shapeB->GetShapeType() == Physics::ShapeType::AABB)
+				{
+					if (CollidePlaneAABB(bodyA, Physics::PlaneShape::Cast(shapeA), bodyB, Physics::AABBShape::Cast(shapeB), deltaTime, listeners, physicsWorld))
+					{
+						collision = true;
+					}
+				}
+			}
+			else if (shapeA->GetShapeType() == Physics::ShapeType::AABB)
+			{
+				if (shapeB->GetShapeType() == Physics::ShapeType::Sphere)
+				{
+					if (CollideSphereAABB(bodyB, Physics::SphereShape::Cast(shapeB), bodyA, Physics::AABBShape::Cast(shapeA), deltaTime, listeners, physicsWorld))
+					{
+						collision = true;
+					}
+				}
+				else if (shapeB->GetShapeType() == Physics::ShapeType::Plane)
+				{
+					if (CollidePlaneAABB(bodyB, Physics::PlaneShape::Cast(shapeB), bodyA, Physics::AABBShape::Cast(shapeA), deltaTime, listeners, physicsWorld))
 					{
 						collision = true;
 					}

@@ -84,8 +84,6 @@ in vec3 mNormal;
 in vec4 mFragPosition;
 in vec4 mPrevFragPosition;
 in vec3 mView;
-flat in ivec4 mBoneIDs;
-in vec4 mWeights;
 
 uniform sampler2D uAlbedoTexture1;
 uniform sampler2D uAlbedoTexture2;

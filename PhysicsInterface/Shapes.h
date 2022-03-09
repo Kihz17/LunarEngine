@@ -45,31 +45,37 @@ namespace Physics
 		glm::vec3 normal;
 	};
 
-	//class AABBShape : public IShape
-	//{
-	//public:
-	//	AABBShape();
-	//	virtual ~AABBShape();
+	class AABBShape : public IShape
+	{
+	public:
+		AABBShape(const glm::vec3& size);
+		virtual ~AABBShape();
 
-	//	static AABBShape* Cast(IShape* shape);
+		const glm::vec3& GetExtents() const { return size; }
 
-	//private:
-	//	AABBShape(const AABBShape& other) : IShape(ShapeType::AABB) {}
-	//	AABBShape& operator=(const AABBShape& other) { return *this; }
-	//};
+		static AABBShape* Cast(IShape* shape);
 
-	//class OBBShape : public IShape
-	//{
-	//public:
-	//	OBBShape();
-	//	virtual ~OBBShape();
+	private:
+		AABBShape(const AABBShape& other) : IShape(ShapeType::AABB) {}
+		AABBShape& operator=(const AABBShape& other) { return *this; }
 
-	//	static OBBShape* Cast(IShape* shape);
+		glm::vec3 size;
+	};
 
-	//private:
-	//	OBBShape(const OBBShape& other) : IShape(ShapeType::OBB) {}
-	//	OBBShape& operator=(const OBBShape& other) { return *this; }
-	//};
+	class OBBShape : public IShape
+	{
+	public:
+		OBBShape(const glm::vec3& size);
+		virtual ~OBBShape();
+
+		static OBBShape* Cast(IShape* shape);
+
+	private:
+		OBBShape(const OBBShape& other) : IShape(ShapeType::OBB) {}
+		OBBShape& operator=(const OBBShape& other) { return *this; }
+
+		glm::vec3 size;
+	};
 
 	//class CapsuleShape : public IShape
 	//{

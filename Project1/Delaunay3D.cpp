@@ -1,8 +1,8 @@
-#include "Delaunay.h"
+#include "Delaunay3D.h"
 
 #include <unordered_set>
 
-void Delaunay::Tetrahedralize()
+void Delaunay3D::Tetrahedralize()
 {
 	glm::vec3 min = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
 	glm::vec3 max = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);

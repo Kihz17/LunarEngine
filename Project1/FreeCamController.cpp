@@ -25,6 +25,7 @@ FreeCamController::FreeCamController(Camera& camera, const WindowSpecs& windowSp
 
     lastCursorPos.x = (float) windowSpecs.width / 2.0f;
     lastCursorPos.y = (float) windowSpecs.height / 2.0f;
+    camera.speed = 70.0f;
 }
 
 FreeCamController::~FreeCamController()
@@ -72,6 +73,26 @@ void FreeCamController::OnUpdate(float deltaTime)
             camera.Move(MoveDirection::Down, deltaTime);
         }
 	}
+
+    if (InputManager::GetKey(GLFW_KEY_P)->IsJustPressed())
+    {
+        glm::vec3 dir = camera.front;
+        if (glm::abs(dir.x) > glm::abs(dir.y) && glm::abs(dir.x) > glm::abs(dir.z)) // X axis
+        {
+            std::string s = dir.x < 0 ? "-X" : "X";
+            std::cout << "Looking down " << s << " axis.\n";
+        }
+        else if (glm::abs(dir.z) > glm::abs(dir.y) && glm::abs(dir.z) > glm::abs(dir.x)) // Z axis
+        {
+            std::string s = dir.z < 0 ? "-Z" : "Z";
+            std::cout << "Looking down " << s << " axis.\n";
+        }
+        else if (glm::abs(dir.y) > glm::abs(dir.x) && glm::abs(dir.y) > glm::abs(dir.z)) // Y axis
+        {
+            std::string s = dir.y < 0 ? "-Y" : "Y";
+            std::cout << "Looking down " << s << " axis.\n";
+        }
+    }
 
     if (escKey->IsJustPressed())
     {

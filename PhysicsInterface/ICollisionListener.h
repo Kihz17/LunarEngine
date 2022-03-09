@@ -8,7 +8,8 @@ namespace Physics
 	enum class CollisionType
 	{
 		SphereSphere,
-		SpherePlane
+		SpherePlane,
+		SphereAABB
 	};
 		
 	template<class RigidBodyOwner> class ICollisionListener

@@ -6,7 +6,7 @@
 
 #include <vector>
 
-struct Delaunay
+struct Delaunay3D
 {
 	void Tetrahedralize();
 
