@@ -26,6 +26,7 @@ private:
 	friend class TextureManager;
 
 	Texture2D(const std::string& path, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps = true, bool flip = true, bool hdr = false); // 2D constructor
+	Texture2D(void* data, GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps = true);
 	Texture2D(GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps = true); // Empty 2D constructor
 
 	void SetupHDR(float* data, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps);

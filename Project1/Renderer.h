@@ -5,6 +5,8 @@
 #include "Camera.h"
 #include "PrimitiveShape.h"
 #include "Frustum.h"
+#include "CubeMap.h"
+#include "Texture3D.h"
 
 #include "GeometryPass.h"
 #include "EnvironmentMapPass.h"
@@ -13,6 +15,7 @@
 #include "CascadedShadowMapping.h"
 #include "LinePass.h"
 #include "DynamicCubeMapRenderer.h"
+#include "CloudPass.h"
 
 #include <vector>
 #include <unordered_map>
@@ -27,8 +30,6 @@ public:
 
 	static void SetViewType(uint32_t type);
 
-	static void SetEnvironmentMapEquirectangular(const std::string& path);
-
 	static void DrawFrame();
 
 	static void BeginFrame(const Camera& camera);
@@ -41,10 +42,19 @@ public:
 
 	static CubeMap* GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore, int viewportWidth = windowDetails->width, int viewportHeight = windowDetails->height);
 
-	static CubeMap* GetEnvironmentMapCube() { return envMapPass->GetCubeMap(); }
+	static void SetEnvironmentMap(CubeMap* cm) { envMap = cm; }
+	static CubeMap* GetEnvironmentMap() { return envMap; }
+
+	static void SetCloudShape(Texture3D* t) { cloudPass->shapeNoise = t; }
+	static void SetCloudDetail(Texture3D* t) { cloudPass->detailNoise = t; }
+	static void SetCloudOffset(Texture2D* t) { cloudPass->offsetTexture = t; }
 
 	static const std::string LIGHTING_SHADER_KEY;
 	static const std::string FORWARD_SHADER_KEY;
+
+	static PrimitiveShape* quad;
+	static PrimitiveShape* cube;
+
 private:
 	const static WindowSpecs* windowDetails;
 
@@ -64,6 +74,8 @@ private:
 	static ForwardRenderPass* forwardPass;
 	static CascadedShadowMapping* shadowMappingPass;
 	static LinePass* linePass;
+	static CloudPass* cloudPass;
 
+	static CubeMap* envMap;
 	static DynamicCubeMapRenderer* dynamicCubeMapGenerator;
 };

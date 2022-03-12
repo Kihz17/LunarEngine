@@ -16,20 +16,16 @@
 class LightingPass
 {
 public:
-	LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, ITexture* shadowMaps, std::vector<float>& cascadeLevels);
+	LightingPass(const WindowSpecs* windowSpecs, ITexture* shadowMaps, std::vector<float>& cascadeLevels);
 	virtual ~LightingPass();
 
-	void DoPass(const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition);
+	void DoPass(ITexture* positionBuffer, ITexture* albedoBuffer, ITexture* normalBuffer, ITexture* effectsBuffer, ITexture* environmentBuffer, ITexture* cloudBuffer,
+		const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition, PrimitiveShape& quad);
 
 private:
-	IFrameBuffer* geometryBuffer;
-	IFrameBuffer* environmentBuffer;
-
 	Shader* shader;
 
 	// Shadow Mapping
 	ITexture* shadowMaps;
 	std::vector<float>& cascadeLevels;
-
-	PrimitiveShape quad;
 };

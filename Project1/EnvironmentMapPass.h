@@ -16,27 +16,17 @@ public:
 	EnvironmentMapPass(const WindowSpecs* windowSpecs);
 	virtual ~EnvironmentMapPass();
 
-	void DoPass(const glm::mat4& projection, const glm::mat4& view);
+	void DoPass(CubeMap* cubeMap, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& cube);
 
 	IFrameBuffer* GetEnvironmentBuffer() { return environmentBuffer; }
-
-	void SetEnvironmentMapEquirectangular(const std::string& path);
-
-	CubeMap* GetCubeMap() { return envMapCube; }
+	ITexture* GetEnvironmentTexture() { return envMapTexture; }
 
 	static const std::string CUBE_MAP_DRAW_SHADER_KEY;
-	static const std::string CUBE_MAP_CONVERT_SHADER_KEY;
 
 private:
 	IFrameBuffer* environmentBuffer;
 	Shader* shader;
-	PrimitiveShape cube;
-
-	Texture2D* envMapHDR;
-	CubeMap* envMapCube;
-
-	IFrameBuffer* cubeMapBuffer;
-	Shader* conversionShader;
+	ITexture* envMapTexture;
 
 	const WindowSpecs* windowSpecs;
 };

@@ -35,8 +35,7 @@ CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& in
 	windowSpecs(info.windowSpecs),
 	projectionNearPlane(info.projectionNearPlane),
 	projectionFarPlane(info.projectionFarPlane),
-	zMult(info.zMult),
-	quad(ShapeType::Quad)
+	zMult(info.zMult)
 {
 	// Setup shadow cascade levels
 	cascadeLevels.push_back(projectionFarPlane / 40.0f);
@@ -88,7 +87,7 @@ CascadedShadowMapping::~CascadedShadowMapping()
 	delete lightMatricesUBO;
 }
 
-void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view)
+void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& quad)
 {
 	if (!directionalLight) return; // No directional light, don't map anything
 

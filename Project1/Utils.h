@@ -3,6 +3,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include <string>
+
+class Texture2D;
+class Texture3D;
 class Utils
 {
 public:
@@ -14,4 +18,7 @@ public:
 	static constexpr glm::vec3 FrontVec() { return glm::vec3(0.0f, 0.0f, -1.0f); }
 	static constexpr glm::vec3 UpVec() { return glm::vec3(0.0f, 1.0f, 0.0f); }
 	static constexpr glm::vec3 RightVec() { return glm::vec3(1.0f, 0.0f, 0.0f); }
+
+	static void SaveTextureAsBMP(const std::string& savePath, Texture2D* texture);
+	static void SaveTexture3DAsBMP(const std::string& savePath, Texture3D* texture);
 };

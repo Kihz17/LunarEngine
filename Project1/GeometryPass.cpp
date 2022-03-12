@@ -13,16 +13,20 @@ const std::string GeometryPass::ANIM_SHADER_KEY = "animShader";
 GeometryPass::GeometryPass(const WindowSpecs* windowSpecs)
 	: geometryBuffer(new FrameBuffer()),
 	geometryRenderBuffer(new RenderBuffer(GL_DEPTH_COMPONENT, windowSpecs->width, windowSpecs->height)),
+	positionBuffer(TextureManager::CreateTexture2D(GL_RGBA16F, GL_RGBA, GL_FLOAT, windowSpecs->width, windowSpecs->height, TextureFilterType::Nearest, TextureWrapType::ClampToEdge)),
+	albedoBuffer(TextureManager::CreateTexture2D(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, windowSpecs->width, windowSpecs->height, TextureFilterType::Nearest, TextureWrapType::None)),
+	normalBuffer(TextureManager::CreateTexture2D(GL_RGBA16F, GL_RGBA, GL_FLOAT, windowSpecs->width, windowSpecs->height, TextureFilterType::Nearest, TextureWrapType::None)),
+	effectsBuffer(TextureManager::CreateTexture2D(GL_RGBA16F, GL_RGBA, GL_FLOAT, windowSpecs->width, windowSpecs->height, TextureFilterType::Nearest, TextureWrapType::None)),
 	shader(ShaderLibrary::Load(G_SHADER_KEY, "assets/shaders/geometryBuffer.glsl")),
 	animatedShader(ShaderLibrary::Load(ANIM_SHADER_KEY, "assets/shaders/animatedGeometryBuffer.glsl")),
 	windowSpecs(windowSpecs)
 {
 	// Setup frame buffer color attachments
 	geometryBuffer->Bind();
-	geometryBuffer->AddColorAttachment2D("position", TextureManager::CreateTexture2D(GL_RGBA16F, GL_RGBA, GL_FLOAT, windowSpecs->width, windowSpecs->height, TextureFilterType::Nearest, TextureWrapType::ClampToEdge), 0); // Position Buffer & Depth
-	geometryBuffer->AddColorAttachment2D("albedo", TextureManager::CreateTexture2D(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, windowSpecs->width, windowSpecs->height, TextureFilterType::Nearest, TextureWrapType::None), 1); // Albedo & Roughness
-	geometryBuffer->AddColorAttachment2D("normal", TextureManager::CreateTexture2D(GL_RGBA16F, GL_RGBA, GL_FLOAT, windowSpecs->width, windowSpecs->height, TextureFilterType::Nearest, TextureWrapType::None), 2); // Normal & Metalness
-	geometryBuffer->AddColorAttachment2D("effects", TextureManager::CreateTexture2D(GL_RGBA16F, GL_RGBA, GL_FLOAT, windowSpecs->width, windowSpecs->height, TextureFilterType::Nearest, TextureWrapType::None), 3); // Ambient Occulsion & Velocity
+	geometryBuffer->AddColorAttachment2D("position", positionBuffer, 0); // Position Buffer & Depth
+	geometryBuffer->AddColorAttachment2D("albedo", albedoBuffer, 1); // Albedo & Roughness
+	geometryBuffer->AddColorAttachment2D("normal", normalBuffer, 2); // Normal & Metalness
+	geometryBuffer->AddColorAttachment2D("effects", effectsBuffer, 3); // Ambient Occulsion & Velocity
 
 	// Attach a render buffer to our FBO
 	geometryBuffer->SetRenderBuffer(geometryRenderBuffer, GL_DEPTH_ATTACHMENT);
@@ -227,7 +231,7 @@ void GeometryPass::PassSharedData(Shader* shader, RenderSubmission* submission, 
 	{
 		if (rrData.mapType == ReflectRefractMapType::Environment)
 		{
-			Renderer::GetEnvironmentMapCube()->BindToSlot(8);
+			Renderer::GetEnvironmentMap()->BindToSlot(8);
 		}
 		else
 		{

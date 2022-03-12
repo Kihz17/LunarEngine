@@ -21,6 +21,7 @@ enum class TextureType
 {
 	TEXTURE_2D,
 	CUBE_MAP,
+	TEXTURE_2D_ARRAY,
 	TEXTURE_3D
 };
 

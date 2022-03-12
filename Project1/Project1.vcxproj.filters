@@ -355,6 +355,18 @@
     <ClCompile Include="DungeonConstructor.cpp">
       <Filter>DungeonGenerator\2D</Filter>
     </ClCompile>
+    <ClCompile Include="WorleyGenerator.cpp">
+      <Filter>Graphics\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="CloudPass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture3D.cpp">
+      <Filter>Graphics\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="EquirectangularToCubeMapConverter.cpp">
+      <Filter>Graphics\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -720,6 +732,18 @@
     </ClInclude>
     <ClInclude Include="DungeonConstructor.h">
       <Filter>DungeonGenerator\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="WorleyGenerator.h">
+      <Filter>Graphics\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CloudPass.h">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture3D.h">
+      <Filter>Graphics\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="EquirectangularToCubeMapConverter.h">
+      <Filter>Graphics\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

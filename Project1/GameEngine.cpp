@@ -296,6 +296,8 @@ WindowSpecs GameEngine::InitializeGLFW(bool initImGui)
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
+    glEnable(GL_TEXTURE_3D);
+
     // Assign callbacks
     glfwSetKeyCallback(window, InputManager::KeyCallback);
     glfwSetCursorPosCallback(window, InputManager::MousePosCallback);

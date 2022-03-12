@@ -18,7 +18,7 @@ public:
 	virtual int GetWidth() const override { return width; }
 	virtual int GetHeight() const override { return height; }
 
-	virtual TextureType GetType() const { return TextureType::TEXTURE_3D; }
+	virtual TextureType GetType() const { return TextureType::TEXTURE_2D_ARRAY; }
 
 private:
 	friend class TextureManager;

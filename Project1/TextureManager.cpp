@@ -2,6 +2,7 @@
 #include "Texture2D.h"
 #include "TextureArray.h"
 #include "CubeMap.h"
+#include "Texture3D.h"
 
 std::vector<ITexture*> TextureManager::textures;
 
@@ -23,9 +24,30 @@ Texture2D* TextureManager::CreateTexture2D(const std::string& path, TextureFilte
 	return texture;
 }
 
+Texture2D* TextureManager::CreateTexture2D(void* data, GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps)
+{
+	Texture2D* texture = new Texture2D(data, internalFormat, format, dataFormat, width, height, filter, wrap, genMipMaps);
+	textures.push_back(texture);
+	return texture;
+}
+
 Texture2D* TextureManager::CreateTexture2D(GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps)
 {
 	Texture2D* texture = new Texture2D(internalFormat, format, dataFormat, width, height, filter, wrap, genMipMaps);
+	textures.push_back(texture);
+	return texture;
+}
+
+Texture3D* TextureManager::CreateTexture3D(void* data, GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, int depth, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps)
+{
+	Texture3D* texture = new Texture3D(data, internalFormat, format, dataFormat, width, height, depth, filter, wrap, genMipMaps);
+	textures.push_back(texture);
+	return texture;
+}
+
+Texture3D* TextureManager::CreateTexture3D(GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, int depth, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps)
+{
+	Texture3D* texture = new Texture3D(internalFormat, format, dataFormat, width, height, depth, filter, wrap, genMipMaps);
 	textures.push_back(texture);
 	return texture;
 }

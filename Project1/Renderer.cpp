@@ -7,6 +7,8 @@
 #include "TextureManager.h"
 #include "Texture2D.h"
 #include "CubeMap.h"
+#include "EquirectangularToCubeMapConverter.h"
+#include "WorleyGenerator.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -18,6 +20,7 @@ const WindowSpecs* Renderer::windowDetails = nullptr;
 glm::mat4 Renderer::projection(1.0f);
 glm::mat4 Renderer::view(1.0f);
 glm::vec3 Renderer::cameraPos(0.0f);
+glm::vec3 cameraDir(0.0f);
 Frustum Renderer::viewFrustum;
 float Renderer::shadowCullRadius = 1000.0f;
 
@@ -35,11 +38,16 @@ LightingPass* Renderer::lightingPass = nullptr;
 ForwardRenderPass* Renderer::forwardPass = nullptr;
 CascadedShadowMapping* Renderer::shadowMappingPass = nullptr;
 LinePass* Renderer::linePass = nullptr;
+CloudPass* Renderer::cloudPass = nullptr;
 
+CubeMap* Renderer::envMap = nullptr;
 DynamicCubeMapRenderer* Renderer::dynamicCubeMapGenerator = nullptr;
 
 const std::string Renderer::LIGHTING_SHADER_KEY = "lShader";
 const std::string Renderer::FORWARD_SHADER_KEY = "fShader";
+
+PrimitiveShape* Renderer::quad = nullptr;
+PrimitiveShape* Renderer::cube = nullptr;
 
 static const uint32_t MAX_GRASS_BLADES = 2048;
 static VertexArrayObject* grassVAO = nullptr;
@@ -51,6 +59,9 @@ void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 {
 	windowDetails = window;
 
+	Renderer::quad = new PrimitiveShape(ShapeType::Quad);
+	Renderer::cube = new PrimitiveShape(ShapeType::Cube);
+
 	geometryPass = new GeometryPass(windowDetails);
 
 	CascadedShadowMappingInfo csmInfo(view, camera.fov, nearPlane, farPlane);
@@ -58,11 +69,15 @@ void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 	csmInfo.zMult = 10.0f;
 	shadowMappingPass = new CascadedShadowMapping(csmInfo);
 	envMapPass = new EnvironmentMapPass(windowDetails);
-	lightingPass = new LightingPass(geometryPass->GetGBuffer(), envMapPass->GetEnvironmentBuffer(), windowDetails, shadowMappingPass->GetShadowMap(), shadowMappingPass->GetCascadeLevels());
+	lightingPass = new LightingPass(windowDetails, shadowMappingPass->GetShadowMap(), shadowMappingPass->GetCascadeLevels());
 	forwardPass = new ForwardRenderPass(geometryPass->GetGBuffer());
 	linePass = new LinePass();
+	cloudPass = new CloudPass(windowDetails);
 
 	dynamicCubeMapGenerator = new DynamicCubeMapRenderer(windowDetails);
+
+	EquirectangularToCubeMapConverter::Initialize();
+	WorleyGenerator::Initialize();
 
 	// TEST SECITON FOR GRASS
 	//{
@@ -112,6 +127,13 @@ void Renderer::CleanUp()
 	delete shadowMappingPass;
 	delete linePass;
 	delete dynamicCubeMapGenerator;
+	delete cloudPass;
+
+	delete Renderer::quad;
+	delete Renderer::cube;
+
+	EquirectangularToCubeMapConverter::CleanUp();
+	WorleyGenerator::CleanUp();
 }
 
 void Renderer::SetViewType(uint32_t type)
@@ -133,6 +155,7 @@ void Renderer::BeginFrame(const Camera& camera)
 	projection = glm::perspective(camera.fov, aspect, nearPlane, farPlane);
 	view = camera.GetViewMatrix();
 	cameraPos = camera.position;
+	cameraDir = camera.front;
 	viewFrustum = FrustumUtils::CreateFrustumFromCamera(camera, aspect, farPlane, nearPlane);
 }
 
@@ -215,18 +238,27 @@ void Renderer::DrawFrame()
 	}
 
 	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
-	shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, projection, view);
-	envMapPass->DoPass(projection, view);
-	lightingPass->DoPass(projection, view, cameraPos);
-	forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
-	linePass->DoPass(lineSubmissions, projection, view, windowDetails);
+	cloudPass->DoPass(geometryPass->GetPositionBuffer(), projection, view, cameraPos, cameraDir, quad, windowDetails);
+	//shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, projection, view, *quad);
 
-	// Free up dynamic cube map space
-	for (std::pair<RenderComponent*, CubeMap*>& pair : dynamicCubeMaps)
-	{
-		TextureManager::DeleteTexture(pair.second); // Free the cube map from memory
-		pair.first->reflectRefractData.customMap = nullptr; // Make sure we unset the custom cube map incase we aren't using a dynamic cube map next frame
-	}
+	//if (envMap) // Only do env map pass if we have one
+	//{
+	//	envMapPass->DoPass(envMap, projection, view, *cube);
+	//}
+	//
+	//lightingPass->DoPass(geometryPass->GetPositionBuffer(), geometryPass->GetAlbedoBuffer(), 
+	//	geometryPass->GetNormalBuffer(), geometryPass->GetEffectsBuffer(), 
+	//	envMapPass->GetEnvironmentTexture(), cloudPass->GetCloudTexture(), projection, view, cameraPos, *quad);
+
+	//forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
+	//linePass->DoPass(lineSubmissions, projection, view, windowDetails);
+
+	//// Free up dynamic cube map space
+	//for (std::pair<RenderComponent*, CubeMap*>& pair : dynamicCubeMaps)
+	//{
+	//	TextureManager::DeleteTexture(pair.second); // Free the cube map from memory
+	//	pair.first->reflectRefractData.customMap = nullptr; // Make sure we unset the custom cube map incase we aren't using a dynamic cube map next frame
+	//}
 }
 
 void Renderer::Submit(const RenderSubmission& submission)
@@ -249,11 +281,6 @@ void Renderer::Submit(const RenderSubmission& submission)
 void Renderer::SubmitLines(const LineRenderSubmission& submission)
 {
 	lineSubmissions.push_back(submission);
-}
-
-void Renderer::SetEnvironmentMapEquirectangular(const std::string& path)
-{
-	envMapPass->SetEnvironmentMapEquirectangular(path);
 }
 
 void Renderer::SetShadowMappingDirectionalLight(Light* light)

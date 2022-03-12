@@ -3,7 +3,6 @@
 #include "DungeonGenUtils.h"
 #include "Components.h"
 #include "DungeonGeneratorPathfinder2D.h"
-#include "DungeonConstructor.h"
 
 DungeonGenerator2D::DungeonGenerator2D(const DungeonGeneratorInfo& info, EntityManager& entityManager)
 	: roomCount(info.roomCount),

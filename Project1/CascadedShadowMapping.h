@@ -42,7 +42,7 @@ public:
 	CascadedShadowMapping(const CascadedShadowMappingInfo& info);
 	virtual ~CascadedShadowMapping();
 
-	void DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view);
+	void DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& quad);
 
 	void SetDirectionalLight(Light* directionalLight) { this->directionalLight = directionalLight; }
 
@@ -68,7 +68,6 @@ private:
 	Shader* depthDebugShader;
 
 	Light* directionalLight;
-	PrimitiveShape quad;
 
 	// Pulled from Renderer.h, Renderer will always outlast this class so it's okay to hold references to these objects
 	glm::mat4& cameraView;

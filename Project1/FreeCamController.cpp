@@ -94,6 +94,8 @@ void FreeCamController::OnUpdate(float deltaTime)
         }
     }
 
+   // std::cout << "Cam Pos: " << camera.position.x << " " << camera.position.y << " " << camera.position.z << "\n";
+
     if (escKey->IsJustPressed())
     {
         CursorMode cursorMode = InputManager::GetCursorMode();

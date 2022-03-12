@@ -5,6 +5,7 @@
 #include "InputManager.h"
 #include "EntityManager.h"
 #include "TextureManager.h"
+#include "EquirectangularToCubeMapConverter.h"
 
 #include "Components.h"
 #include "PhysicsFactory.h"
@@ -19,6 +20,8 @@
 #include "Animation.h"
 #include "DungeonGenerator2D.h"
 #include "LineRenderComponent.h"
+#include "WorleyGenerator.h"
+#include "Utils.h"
 
 float GetRandom(float low, float high);
 
@@ -45,6 +48,7 @@ int main()
     Texture2D* grassTexture = TextureManager::CreateTexture2D("assets/textures/grass.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* woodTexture = TextureManager::CreateTexture2D("assets/textures/wood.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* woodNormalTexture = TextureManager::CreateTexture2D("assets/textures/woodNormal.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* blueNoiseTexture = TextureManager::CreateTexture2D("assets/textures/BlueNoise.png", TextureFilterType::Linear, TextureWrapType::Repeat);
 
     GameEngine gameEngine(windowSpecs, true);
 
@@ -55,8 +59,6 @@ int main()
     gameEngine.AddLayer(sal);
 
     gameEngine.AddLayer(new FreeCamController(gameEngine.camera, gameEngine.GetWindowSpecs()));
-
-    Renderer::SetEnvironmentMapEquirectangular("assets/textures/hdr/appart.hdr"); // Setup environment map
 
     gameEngine.camera.position = glm::vec3(0.0f, 10.0f, 30.0f);
     //gameEngine.debugMode = true;
@@ -88,10 +90,40 @@ int main()
     // SHADER BALL TEST
    // ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
 
+    // Set env map
+    {
+        CubeMap* envMap = TextureManager::CreateCubeMap(1024, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT);
+        Texture2D* equir = TextureManager::CreateTexture2D("assets/textures/hdr/appart.hdr", TextureFilterType::Linear, TextureWrapType::Repeat, true, true, true);
+        EquirectangularToCubeMapConverter::ConvertEquirectangularToCubeMap(equir, envMap, Renderer::cube, gameEngine.GetWindowSpecs().width, gameEngine.GetWindowSpecs().height); // Setup environment map
+        Renderer::SetEnvironmentMap(envMap);
+    }
+
+    Texture2D* test2 = WorleyGenerator::GenerateWorley2D(glm::ivec2(1024, 1024), true);
+    Utils::SaveTextureAsBMP("test16.bmp", test2);
+
+    Texture3D* shapeT = WorleyGenerator::GenerateWorley3D(glm::ivec3(132, 132, 132), true, 0.05f);
+
+    Utils::SaveTexture3DAsBMP("3ds/test", shapeT);
+
+    Texture3D* detailT = WorleyGenerator::GenerateWorley3D(glm::ivec3(64, 64, 64), true, 0.075f);
+
+    Renderer::SetCloudShape(shapeT);
+    Renderer::SetCloudDetail(detailT);
+    Renderer::SetCloudOffset(blueNoiseTexture);
+
     gameEngine.Run();
 
     return 0;
 }
+
+// 1. Volumetric clouds & god rays
+// 2. Water
+// 3. Procedural grass
+// 4. Anti-aliasing
+// 5. Instanced rendering
+
+// Look into improving detail of CSM
+// If we have time, globabl illumination using light probes
 
 // TODO List
 // 1. Bloom & Emission
@@ -102,9 +134,6 @@ int main()
 // 6. Clouds
 // 7. Procedural Grass
 
-// LATER
-// SSAO? Raytracing? Raymarching?
-// Post processing
 
 float GetRandom(float low, float high)
 {

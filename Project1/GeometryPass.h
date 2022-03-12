@@ -20,6 +20,11 @@ public:
 
 	IFrameBuffer* GetGBuffer() { return geometryBuffer; }
 
+	ITexture* GetPositionBuffer() { return positionBuffer; }
+	ITexture* GetAlbedoBuffer() { return albedoBuffer; }
+	ITexture* GetNormalBuffer() { return normalBuffer; }
+	ITexture* GetEffectsBuffer() { return effectsBuffer; }
+
 	static const std::string G_SHADER_KEY;
 	static const std::string ANIM_SHADER_KEY;
 
@@ -28,6 +33,11 @@ private:
 
 	IFrameBuffer* geometryBuffer;
 	IRenderBuffer* geometryRenderBuffer;
+
+	ITexture* positionBuffer;
+	ITexture* albedoBuffer;
+	ITexture* normalBuffer;
+	ITexture* effectsBuffer;
 
 	Shader* shader;
 	Shader* animatedShader;

@@ -9,13 +9,10 @@
 
 #include <sstream>
 
-LightingPass::LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const WindowSpecs* windowSpecs, ITexture* shadowMaps, std::vector<float>& cascadeLevels)
-	: geometryBuffer(gBuffer),
-	environmentBuffer(eBuffer),
-	shader(ShaderLibrary::Load(Renderer::LIGHTING_SHADER_KEY, "assets/shaders/brdfLighting.glsl")), 
+LightingPass::LightingPass(const WindowSpecs* windowSpecs, ITexture* shadowMaps, std::vector<float>& cascadeLevels)
+	: shader(ShaderLibrary::Load(Renderer::LIGHTING_SHADER_KEY, "assets/shaders/brdfLighting.glsl")), 
 	shadowMaps(shadowMaps),
-	cascadeLevels(cascadeLevels),
-	quad(ShapeType::Quad)
+	cascadeLevels(cascadeLevels)
 {
 	// Setup shader uniforms
 	shader->Bind();
@@ -62,7 +59,7 @@ LightingPass::LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const W
 		shader->InitializeUniform(std::string("uCascadePlaneDistances[" + std::to_string(i) + "]"));
 	}
 	shader->InitializeUniform("uCascadeCount");
-
+	shader->InitializeUniform("uCloudBuffer");
 	shader->SetInt("uViewType", 1); // Regular color view by default
 
 	// Set samplers for lighting
@@ -72,6 +69,7 @@ LightingPass::LightingPass(IFrameBuffer* gBuffer, IFrameBuffer* eBuffer, const W
 	shader->SetInt("gEffects", 3);
 	shader->SetInt("uEnvMap", 4);
 	shader->SetInt("uShadowMap", 5);
+	shader->SetInt("uCloudBuffer", 6);
 
 	shader->Unbind();
 }
@@ -81,7 +79,8 @@ LightingPass::~LightingPass()
 	
 }
 
-void LightingPass::DoPass(const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition)
+void LightingPass::DoPass(ITexture* positionBuffer, ITexture* albedoBuffer, ITexture* normalBuffer, ITexture* effectsBuffer, ITexture* environmentBuffer, ITexture* cloudBuffer,
+	const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition, PrimitiveShape& quad)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 	glDisable(GL_DEPTH_TEST); // Disable depth buffer so that the quad doesnt get discarded
@@ -89,16 +88,19 @@ void LightingPass::DoPass(const glm::mat4& projection, const glm::mat4& view, co
 	shader->Bind();
 
 	// Bind G-Buffer textures
-	geometryBuffer->GetColorAttachment("position")->BindToSlot(0);
-	geometryBuffer->GetColorAttachment("albedo")->BindToSlot(1);
-	geometryBuffer->GetColorAttachment("normal")->BindToSlot(2);
-	geometryBuffer->GetColorAttachment("effects")->BindToSlot(3);
+	positionBuffer->BindToSlot(0);
+	albedoBuffer->BindToSlot(1);
+	normalBuffer->BindToSlot(2);
+	effectsBuffer->BindToSlot(3);
 
 	// Bind environment map stuff
-	environmentBuffer->GetColorAttachment("environment")->BindToSlot(4);
+	environmentBuffer->BindToSlot(4);
 
 	// Bind shadow map
 	shadowMaps->BindToSlot(5);
+
+	// Bind cloud buffer
+	cloudBuffer->BindToSlot(6);
 
 	// Shadow mapping details
 	shader->SetInt("uCascadeCount", cascadeLevels.size());
@@ -116,6 +118,4 @@ void LightingPass::DoPass(const glm::mat4& projection, const glm::mat4& view, co
 	shader->SetFloat3("uReflectivity", glm::vec3(0.04f));
 
 	quad.Draw();
-
-	glEnable(GL_DEPTH_TEST);
 }
