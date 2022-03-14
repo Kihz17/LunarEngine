@@ -159,6 +159,7 @@
     <ClCompile Include="CollisionHandler.cpp" />
     <ClCompile Include="CollisionListener.cpp" />
     <ClCompile Include="CollisionTesting.cpp" />
+    <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="Coordinator.cpp" />
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="Delaunay2D.cpp" />
@@ -253,6 +254,7 @@
     <ClInclude Include="BoneInfo.h" />
     <ClInclude Include="CloudPass.h" />
     <ClInclude Include="CollisionTesting.h" />
+    <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="Coordinator.h" />
     <ClInclude Include="Delaunay2D.h" />
     <ClInclude Include="Delaunay3D.h" />
@@ -368,6 +370,29 @@
     <ClInclude Include="WanderBehaviour.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WorleyGenerator.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\animatedGeometryBuffer.glsl" />
+    <None Include="assets\shaders\brdfLighting.glsl" />
+    <None Include="assets\shaders\clouds.glsl" />
+    <None Include="assets\shaders\CMSDepthDebug.glsl" />
+    <None Include="assets\shaders\convoluteEnvMap.glsl" />
+    <None Include="assets\shaders\CSMDepth.glsl" />
+    <None Include="assets\shaders\CSMDepthAnimated.glsl" />
+    <None Include="assets\shaders\dynamicCubeMapConverter.glsl" />
+    <None Include="assets\shaders\dynamicCubeMapGeometry.glsl" />
+    <None Include="assets\shaders\environmentBuffer.glsl" />
+    <None Include="assets\shaders\envLUT.glsl" />
+    <None Include="assets\shaders\envPreFilter.glsl" />
+    <None Include="assets\shaders\equirectangularToCubeMap.glsl" />
+    <None Include="assets\shaders\forward.glsl" />
+    <None Include="assets\shaders\geometryBuffer.glsl" />
+    <None Include="assets\shaders\grass.glsl" />
+    <None Include="assets\shaders\lines.glsl" />
+    <None Include="assets\shaders\test.glsl" />
+    <None Include="assets\shaders\volumetricClouds.glsl" />
+    <None Include="assets\shaders\worleyTextureGenerator2D.glsl" />
+    <None Include="assets\shaders\worleyTextureGenerator3D.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -29,7 +29,7 @@ static std::vector<std::string> LoadSourceFromFile(const std::string& filepath)
 	return source;
 }
 
-static bool WasThereACompileError(const GLuint& shaderID, const std::string& filePath)
+bool Shader::WasThereACompileError(const GLuint& shaderID, const std::string& filePath)
 {
 	GLint isCompiled = 0;
 	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &isCompiled);
@@ -93,10 +93,10 @@ static bool CompileShaderFromSource(const GLuint& shaderID, const std::string& f
 
 	delete[] arraySource;
 
-	return !WasThereACompileError(shaderID, filePath);
+	return !Shader::WasThereACompileError(shaderID, filePath);
 }
 
-static bool WasThereALinkError(const GLuint& programID)
+bool Shader::WasThereALinkError(const GLuint& programID)
 {
 	GLint wasError = 0;
 	glGetProgramiv(programID, GL_LINK_STATUS, &wasError);

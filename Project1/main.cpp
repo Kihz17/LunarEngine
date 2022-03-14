@@ -22,6 +22,7 @@
 #include "LineRenderComponent.h"
 #include "WorleyGenerator.h"
 #include "Utils.h"
+#include "ShaderLibrary.h"
 
 float GetRandom(float low, float high);
 
@@ -90,6 +91,7 @@ int main()
     // SHADER BALL TEST
    // ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
 
+    ShaderLibrary::LoadCompute("testC", "assets/shaders/volumetricClouds.glsl");
     // Set env map
     {
         CubeMap* envMap = TextureManager::CreateCubeMap(1024, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT);
@@ -98,14 +100,10 @@ int main()
         Renderer::SetEnvironmentMap(envMap);
     }
 
-    Texture2D* test2 = WorleyGenerator::GenerateWorley2D(glm::ivec2(1024, 1024), true);
-    Utils::SaveTextureAsBMP("test16.bmp", test2);
-
-    Texture3D* shapeT = WorleyGenerator::GenerateWorley3D(glm::ivec3(132, 132, 132), true, 0.05f);
-
+  //  Texture3D* shapeT = WorleyGenerator::GenerateWorley3D(23, glm::ivec3(132, 132, 132), true, 1, 0.75f);
+    Texture3D* shapeT = WorleyGenerator::GenerateWorley3DFast(glm::ivec3(132, 132, 132), true, 0.04f, FastNoiseLite::FractalType::FractalType_FBm, 0.3f);
     Utils::SaveTexture3DAsBMP("3ds/test", shapeT);
-
-    Texture3D* detailT = WorleyGenerator::GenerateWorley3D(glm::ivec3(64, 64, 64), true, 0.075f);
+    Texture3D* detailT = WorleyGenerator::GenerateWorley3DFast(glm::ivec3(64, 64, 64), true, 0.075f);
 
     Renderer::SetCloudShape(shapeT);
     Renderer::SetCloudDetail(detailT);

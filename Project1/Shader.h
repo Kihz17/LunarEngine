@@ -11,7 +11,8 @@ enum class ShaderSourceType
 	None,
 	Vertex,
 	Geometry,
-	Fragment
+	Fragment,
+	Compute
 };
 
 class Shader
@@ -34,10 +35,14 @@ public:
 	void SetFloat4(const std::string& name, const glm::vec4& value) const;
 	void SetMat4(const std::string& name, const glm::mat4& value) const;
 
-private:
+	static bool WasThereACompileError(const GLuint& shaderID, const std::string& filePath);
+	static bool WasThereALinkError(const GLuint& programID);
+
+protected:
 	friend class ShaderLibrary;
 
 	Shader(const std::string& path);
+	Shader() = default;
 	virtual ~Shader();
 
 	GLuint GetUniformID(const std::string& name) const;

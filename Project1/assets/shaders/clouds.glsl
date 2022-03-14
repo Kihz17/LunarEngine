@@ -7,7 +7,6 @@ layout (location = 1) in vec2 vTextureCoordinates;
 out vec2 mTextureCoordinates;
 out vec3 mViewVector;
 out vec3 mWorldPosition;
-out vec3 mOrigin;
 
 uniform mat4 uMatView;
 uniform mat4 uMatProjection;
@@ -22,7 +21,9 @@ void main()
 	// Compute ray origin and direction (this will allow us to have a directional vector pointing from cameraPos -> fragment so that we can ray trace)
 	// Taken from https://stackoverflow.com/questions/2354821/raycasting-how-to-properly-apply-a-projection-matrix
 	mat4 inverseProjView = inverse(uMatProjection * uMatView);
-	mOrigin = (inverseProjView * vec4(vPosition.x, vPosition.y, -1.0f, 1.0f) * NEAR_PLANE).xyz;
+
+//	vec4 v = inverse(uMatProjection) * vec4(vPosition.xy * 2.0f - 1.0f, 0, -1);
+//	mViewVector = vec3(inverseProjView * v);
 	mViewVector = (inverseProjView * vec4(vPosition.xy * (FAR_PLANE - NEAR_PLANE), FAR_PLANE + NEAR_PLANE, FAR_PLANE - NEAR_PLANE)).xyz;
 	
 	gl_Position = vec4(vPosition, 1.0f);
@@ -35,12 +36,12 @@ void main()
 
 in vec2 mTextureCoordinates;
 in vec3 mViewVector;
-in vec3 mOrigin;
 
 out vec4 oColor;
 
 uniform vec3 uBoxCenter;
 uniform vec3 uBoxExtents;
+uniform vec3 uCameraPosition;
 
 uniform sampler2D uPositionBuffer;
 
@@ -104,7 +105,7 @@ void main()
 	}
 
 	// Create ray
-	vec3 rayOrigin = mOrigin;
+	vec3 rayOrigin = uCameraPosition;
 	vec3 rayDirection = normalize(mViewVector);
 	
 	const vec3 boundsMin = uBoxCenter - uBoxExtents;
@@ -118,53 +119,64 @@ void main()
 	bool rayHitBox = distInsideBox > 0.0f && distToBox < depth;
 	if (!rayHitBox) // This pixel's ray didn't even collide with out cloud box, no need to do anything else
 	{
-		oColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		oColor = vec4(1.0f, 1.0f, 1.0f, 0.0f);
 		return;
 	}
 
-	vec3 pointOfIntersection = rayOrigin + rayDirection * distToBox; // Represents the point where we first intersect with our cloud box
-
-	// Phase function (makes clouds brighter around the source of light)
-	vec3 lightWorldPos = -uLightDirection * (FAR_PLANE - NEAR_PLANE); // Push our light position to the edge of the view frustum
-	float cosAngle = dot(rayDirection, lightWorldPos);
-	const float blend = 0.5f;
-	float hgBlend = HenyeyGreenstein(cosAngle, uPhaseParams.x) * (1.0f - blend) + HenyeyGreenstein(cosAngle, -uPhaseParams.y) * blend;
-	float phaseValue = uPhaseParams.z + hgBlend * uPhaseParams.w;
-
-	// Begin ray marching
-	float distanceTravelled = textureLod(uOffsetTexture, SquareTextureCoords(mTextureCoordinates * 3.0f), 0).r * uRayOffsetStrength; // Generate a random starting offset
-	float distanceLimit = min(depth - distToBox, distInsideBox); // Only allow travelling WITHIN the cloud box
-
-	const float stepSize = 11;
-
-	float transmittance = 1.0f;
-	vec3 lightEnergy = vec3(0.0f, 0.0f, 0.0f);
-	while (distanceTravelled < distanceLimit)
+	float dstTravelled = 0.0f;
+	float stepSize = distInsideBox / uLightStepCount;
+	float distanceLimit = min(depth - distToBox, distInsideBox);
+	float totalDensity = 0.0f;
+	while(dstTravelled < distanceLimit)
 	{
-		rayOrigin = pointOfIntersection + rayDirection * distanceTravelled; // Move our ray origin along
-		float density = SampleDensityAtPoint(rayOrigin, boundsMin, boundsMax); // Sample density from this point within cloud
-
-		if (density > 0) // Have a bit of cloud here
-		{
-			oColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-			return;
-			float lightTransmittance = LightMarch(rayOrigin, boundsMin, boundsMax); // March along the ray to get the amount of light that seeps through from us -> the light source
-			lightEnergy += density * stepSize * transmittance * lightTransmittance * phaseValue;
-			transmittance *= exp(-density * stepSize * uLightAbsorptionThroughCloud);
-
-			if (transmittance < 0.01f) // Leave loop early if transmittence is low since continuing to sample won't affect the end result much.
-			{
-				break;
-			}
-		}
-		distanceTravelled += stepSize; // Make sure we progress our march forward
+		vec3 rayPos = rayOrigin + rayDirection * (distToBox + dstTravelled);
+		totalDensity += SampleDensityAtPoint(rayPos, boundsMin, boundsMax) * stepSize;
+		dstTravelled += stepSize;
 	}
 
-	const float baseScale = 1.0f / 1000.0;
-	const float offsetSpeed = 1.0f / 100.0;
+	float trans = exp(-totalDensity);
+	vec3 color = vec3(1.0f, 1.0f, 1.0f) * trans;
+	oColor = vec4(color, 1.0f);
+	return;
 
-	vec3 cloudColor = transmittance + (lightEnergy * uLightColor); // Our result!
-	oColor = vec4(cloudColor, 1.0f);
+//	vec3 pointOfIntersection = rayOrigin + rayDirection * distToBox; // Represents the point where we first intersect with our cloud box
+//
+//	// Phase function (makes clouds brighter around the source of light)
+//	vec3 lightWorldPos = -uLightDirection * (FAR_PLANE - NEAR_PLANE); // Push our light position to the edge of the view frustum
+//	float cosAngle = dot(rayDirection, lightWorldPos);
+//	const float blend = 0.5f;
+//	float hgBlend = HenyeyGreenstein(cosAngle, uPhaseParams.x) * (1.0f - blend) + HenyeyGreenstein(cosAngle, -uPhaseParams.y) * blend;
+//	float phaseValue = uPhaseParams.z + hgBlend * uPhaseParams.w;
+//
+//	// Begin ray marching
+//	float distanceTravelled = textureLod(uOffsetTexture, SquareTextureCoords(mTextureCoordinates * 3.0f), 0).r * uRayOffsetStrength; // Generate a random starting offset
+//	float distanceLimit = min(depth - distToBox, distInsideBox); // Only allow travelling WITHIN the cloud box
+//
+//	const float stepSize = 11;
+//
+//	float transmittance = 1.0f;
+//	vec3 lightEnergy = vec3(0.0f, 0.0f, 0.0f);
+//	while (distanceTravelled < distanceLimit)
+//	{
+//		rayOrigin = pointOfIntersection + rayDirection * distanceTravelled; // Move our ray origin along
+//		float density = SampleDensityAtPoint(rayOrigin, boundsMin, boundsMax); // Sample density from this point within cloud
+//
+//		if (density > 0) // Have a bit of cloud here
+//		{
+//			float lightTransmittance = LightMarch(rayOrigin, boundsMin, boundsMax); // March along the ray to get the amount of light that seeps through from us -> the light source
+//			lightEnergy += density * stepSize * transmittance * lightTransmittance * phaseValue;
+//			transmittance *= exp(-density * stepSize * uLightAbsorptionThroughCloud);
+//
+//			if (transmittance < 0.01f) // Leave loop early if transmittence is low since continuing to sample won't affect the end result much.
+//			{
+//				break;
+//			}
+//		}
+//		distanceTravelled += stepSize; // Make sure we progress our march forward
+//	}
+//
+//	vec3 cloudColor = transmittance + (lightEnergy * uLightColor); // Our result!
+//	oColor = vec4(cloudColor, 1.0f);
 }
 
 vec2 DistanceToBox(vec3 boundsMin, vec3 boundsMax, vec3 origin, vec3 invRay)
@@ -192,49 +204,56 @@ vec2 SquareTextureCoords(vec2 texCoords)
 
 float SampleDensityAtPoint(vec3 pos, vec3 boundsMin, vec3 boundsMax)
 {
-	const float baseScale = 1.0f / 1000.0;
-	const float offsetSpeed = 1.0f / 100.0;
 
-	// Compute texture coordinates
-	float time = uTime * uTimeScale;
-	vec3 uvw = (uBoxExtents * 0.5f + pos) * baseScale * uCloudScale;
-	vec3 shapeTexCoords = uvw + uShapeOffset * offsetSpeed + vec3(uTime, uTime * 0.1f, uTime * 0.2f) * uSpeed;
-
-	// Compute fallof at the edges of the cloud box
-	const float containerEdgeFade = 50.0f;
-	float distFromEdgeX = min(containerEdgeFade, min(pos.x - boundsMin.x, boundsMax.x - pos.x));
-	float distFromEdgeZ = min(containerEdgeFade, min(pos.z - boundsMin.z, boundsMax.z - pos.z));
-	float edgeWeight = min(distFromEdgeZ, distFromEdgeX) / containerEdgeFade;
-
-	const float gMin = 0.2f;
-	const float gMax = 0.7f;
-	float heightPercent = (pos.y - boundsMin.y) / uBoxExtents.y;
-	float heightGradient = clamp(Remap(heightPercent, 0.0, gMin, 0.0f, 1.0f), 0.0f, 1.0f) * clamp(Remap(heightPercent, 1, gMax, 0.0f, 1.0f), 0.0f, 1.0f);
-	heightGradient *= edgeWeight;
-
-	// Compute base shape density
-	vec4 sampledNoise = textureLod(uShapeNoise, shapeTexCoords, 0);
-	vec4 normalizedNoise = uShapeNoiseWeights / dot(uShapeNoiseWeights, vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	float shape = dot(sampledNoise, normalizedNoise) * heightGradient;
-	float baseDensity = shape + uDensityOffset * 0.1f;
-
-	if (baseDensity > 0.0f) // Only sample if we have some density here
-	{
-		// Sample from detail noise texture
-		vec3 detailTexCoords = uvw * uDetailNoiseScale * uDetailOffset * offsetSpeed + vec3(uTime * 0.4f, -uTime, uTime * 0.1f) * uDetailSpeed;
-		vec4 sampledDetailNoise = textureLod(uDetailNoise, detailTexCoords, 0);
-		vec3 normalizedDetailNoise = uDetailNoiseWeights / dot(uDetailNoiseWeights, vec3(1.0f, 1.0f, 1.0f));
-		float detail = dot(sampledDetailNoise.rgb, normalizedDetailNoise);
-
-		// Subtract detail noise from the "shape" (weighted by inverse density so that edges are more eroded than the center)
-		float shapeContrib = 1.0f - shape;
-		float shapeContrib3 = shapeContrib * shapeContrib * shapeContrib;
-		float cloudDensity = baseDensity - (1.0f - detail) * shapeContrib3 * uDetailNoiseWeight;
-
-		return cloudDensity * uDensityMultiplier * 0.1f;
-	}
-
-	return 0.0f; // No density
+	vec3 uvw = pos * uCloudScale * 0.001;
+	vec4 shape = textureLod(uShapeNoise, uvw, 0);
+	float density = max(0.0f, shape.r - uShapeNoiseWeights.x) * uDensityMultiplier;
+	return density;
+//	const float baseScale = 1.0f / 1000.0;
+//	const float offsetSpeed = 1.0f / 100.0;
+//
+//	// Compute texture coordinates
+//	float time = uTime * uTimeScale;
+//	vec3 uvw = (uBoxExtents + pos) * baseScale * uCloudScale;
+//	vec3 shapeTexCoords = uvw + uShapeOffset * offsetSpeed + vec3(time, time * 0.1f, time * 0.2f) * uSpeed;
+//
+//	// Compute fallof at the edges of the cloud box
+//	const float containerEdgeFade = 50.0f;
+//	float distFromEdgeX = min(containerEdgeFade, min(pos.x - boundsMin.x, boundsMax.x - pos.x));
+//	float distFromEdgeZ = min(containerEdgeFade, min(pos.z - boundsMin.z, boundsMax.z - pos.z));
+//	float edgeWeight = min(distFromEdgeZ, distFromEdgeX) / containerEdgeFade;
+//
+//	const float gMin = 0.2f;
+//	const float gMax = 0.7f;
+//	float heightPercent = (pos.y - boundsMin.y) / (uBoxExtents.y * 2.0f);
+//	float heightMin = Remap(heightPercent, 0.0f, gMin, 0.0f, 1.0f);
+//	float heightMax = Remap(heightPercent, 1, gMax, 0.0f, 1.0f);
+//	float heightGradient = clamp(heightMin, 0.0f, 1.0f) * clamp(heightMax, 0.0f, 1.0f);
+//	//heightGradient *= edgeWeight;
+//
+//	// Compute base shape density
+//	vec4 sampledNoise = textureLod(uShapeNoise, shapeTexCoords, 0);
+//	vec4 normalizedNoise = uShapeNoiseWeights / dot(uShapeNoiseWeights, vec4(1.0f, 1.0f, 1.0f, 1.0f));
+//	float shape = dot(sampledNoise, normalizedNoise) * heightGradient;
+//	float baseDensity = shape + uDensityOffset * 0.1f;
+//
+//	if (baseDensity > 0.0f) // Only sample if we have some density here
+//	{
+//		// Sample from detail noise texture
+//		vec3 detailTexCoords = uvw * uDetailNoiseScale * uDetailOffset * offsetSpeed + vec3(time * 0.4f, -time, time * 0.1f) * uDetailSpeed;
+//		vec4 sampledDetailNoise = textureLod(uDetailNoise, detailTexCoords, 0);
+//		vec3 normalizedDetailNoise = uDetailNoiseWeights / dot(uDetailNoiseWeights, vec3(1.0f, 1.0f, 1.0f));
+//		float detail = dot(sampledDetailNoise.rgb, normalizedDetailNoise);
+//
+//		// Subtract detail noise from the "shape" (weighted by inverse density so that edges are more eroded than the center)
+//		float shapeContrib = 1.0f - shape;
+//		float shapeContrib3 = shapeContrib * shapeContrib * shapeContrib;
+//		float cloudDensity = baseDensity - (1.0f - detail) * shapeContrib3 * uDetailNoiseWeight;
+//
+//		return cloudDensity * uDensityMultiplier * 0.1f;
+//	}
+//
+//	return 0.0f; // No density
 }
 
 float Remap(float v, float minOld, float maxOld, float minNew, float maxNew)
@@ -266,3 +285,5 @@ float LightMarch(vec3 pos, vec3 boundsMin, vec3 boundsMax)
 	float transmittance = exp(-density * uLightAbsorptionTowardsSun);
 	return uDarknessThreshold + transmittance * (1.0f - uDarknessThreshold);
 }
+
+// 15, 7, 15

@@ -94,6 +94,9 @@
     <Filter Include="DungeonGenerator\2D">
       <UniqueIdentifier>{e8b4e8b0-fb5f-4161-857c-a95a8f706335}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{bde721f4-444e-40a6-8a17-e49f4fd87ae3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -366,6 +369,9 @@
     </ClCompile>
     <ClCompile Include="EquirectangularToCubeMapConverter.cpp">
       <Filter>Graphics\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>Graphics\Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -745,5 +751,73 @@
     <ClInclude Include="EquirectangularToCubeMapConverter.h">
       <Filter>Graphics\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Graphics\Shader</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\animatedGeometryBuffer.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\brdfLighting.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\clouds.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\CMSDepthDebug.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\convoluteEnvMap.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\CSMDepth.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\CSMDepthAnimated.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\dynamicCubeMapConverter.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\dynamicCubeMapGeometry.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\environmentBuffer.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\envLUT.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\envPreFilter.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\equirectangularToCubeMap.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\forward.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\geometryBuffer.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\grass.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\lines.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\test.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\worleyTextureGenerator2D.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\worleyTextureGenerator3D.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\volumetricClouds.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

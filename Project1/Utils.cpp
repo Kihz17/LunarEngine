@@ -45,7 +45,7 @@ void Utils::SaveTexture3DAsBMP(const std::string& savePath, Texture3D* texture)
 
 	for (int z = 0; z < texture->GetDepth(); z++)
 	{
-		glGetTextureSubImage(texture->GetID(), 0, 0, 0, z, texture->GetWidth(), texture->GetHeight(), z + 1, GL_RGBA, GL_UNSIGNED_BYTE, size, data);
+		glGetTextureSubImage(texture->GetID(), 0, 0, 0, z, texture->GetWidth(), texture->GetHeight(), 1, GL_RGBA, GL_UNSIGNED_BYTE, size, data);
 		stbi_write_bmp((savePath + std::to_string(z) + ".bmp").c_str(), texture->GetWidth(), texture->GetHeight(), 4, data);
 	}
 
