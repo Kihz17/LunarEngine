@@ -100,15 +100,6 @@ int main()
         Renderer::SetEnvironmentMap(envMap);
     }
 
-  //  Texture3D* shapeT = WorleyGenerator::GenerateWorley3D(23, glm::ivec3(132, 132, 132), true, 1, 0.75f);
-    Texture3D* shapeT = WorleyGenerator::GenerateWorley3DFast(glm::ivec3(132, 132, 132), true, 0.04f, FastNoiseLite::FractalType::FractalType_FBm, 0.3f);
-    Utils::SaveTexture3DAsBMP("3ds/test", shapeT);
-    Texture3D* detailT = WorleyGenerator::GenerateWorley3DFast(glm::ivec3(64, 64, 64), true, 0.075f);
-
-    Renderer::SetCloudShape(shapeT);
-    Renderer::SetCloudDetail(detailT);
-    Renderer::SetCloudOffset(blueNoiseTexture);
-
     gameEngine.Run();
 
     return 0;

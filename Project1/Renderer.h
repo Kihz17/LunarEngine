@@ -45,10 +45,6 @@ public:
 	static void SetEnvironmentMap(CubeMap* cm) { envMap = cm; }
 	static CubeMap* GetEnvironmentMap() { return envMap; }
 
-	static void SetCloudShape(Texture3D* t) { cloudPass->shapeNoise = t; }
-	static void SetCloudDetail(Texture3D* t) { cloudPass->detailNoise = t; }
-	static void SetCloudOffset(Texture2D* t) { cloudPass->offsetTexture = t; }
-
 	static const std::string LIGHTING_SHADER_KEY;
 	static const std::string FORWARD_SHADER_KEY;
 

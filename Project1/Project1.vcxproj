@@ -389,10 +389,11 @@
     <None Include="assets\shaders\geometryBuffer.glsl" />
     <None Include="assets\shaders\grass.glsl" />
     <None Include="assets\shaders\lines.glsl" />
+    <None Include="assets\shaders\perlinWorleyGenerator.glsl" />
     <None Include="assets\shaders\test.glsl" />
     <None Include="assets\shaders\volumetricClouds.glsl" />
-    <None Include="assets\shaders\worleyTextureGenerator2D.glsl" />
-    <None Include="assets\shaders\worleyTextureGenerator3D.glsl" />
+    <None Include="assets\shaders\weatherGenerator.glsl" />
+    <None Include="assets\shaders\worleyGenerator.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -810,13 +810,16 @@
     <None Include="assets\shaders\test.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="assets\shaders\worleyTextureGenerator2D.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="assets\shaders\worleyTextureGenerator3D.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="assets\shaders\volumetricClouds.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\weatherGenerator.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\worleyGenerator.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\perlinWorleyGenerator.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

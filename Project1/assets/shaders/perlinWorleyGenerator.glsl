@@ -6,7 +6,27 @@ layout (rgba8, binding = 0) uniform image3D uWorleyTexture;
 
 // Adapted from https://github.com/sebh/TileableVolumeNoise
 
-uniform float frequenceMul[6u] = float[]( 2.0f, 8.0f, 14.0f, 20.0f, 26.0f, 32.0f);
+uniform float frequenceMul[6] = float[]( 2.0f, 8.0f, 14.0f, 20.0f, 26.0f, 32.0f);
+
+float Hash(int n);
+float Noise(vec3 x);
+float Cells(vec3 p, float cellCount);
+vec4 Mod289(vec4 x);
+vec4 Permute(vec4 x);
+vec4 TaylorInvSqrt(vec4 r);
+vec4 Fade(vec4 t);
+float GlmPerlin4D(vec4 Position, vec4 rep);
+float Remap(float originalValue, float originalMin, float originalMax, float newMin, float newMax);
+float WorleyNoise3D(vec3 p, float cellCount);
+float PerlinNoise3D(vec3 pIn, float frequency, int octaveCount);
+vec4 Stackable3DNoise(ivec3 pixel);
+
+void main()
+{
+    ivec3 fragPos = ivec3(gl_GlobalInvocationID.xyz);
+
+	imageStore (uWorleyTexture, fragPos, Stackable3DNoise(fragPos));
+}
 
 float Hash(int n)
 {
@@ -210,19 +230,17 @@ float GlmPerlin4D(vec4 Position, vec4 rep)
 		return float(2.2) * n_xyzw;
 }
 
-float remap(float originalValue, float originalMin, float originalMax, float newMin, float newMax)
+float Remap(float originalValue, float originalMin, float originalMax, float newMin, float newMax)
 {
 	return newMin + (((originalValue - originalMin) / (originalMax - originalMin)) * (newMax - newMin));
 }
 
-// ======================================================================
-
-float worleyNoise3D(vec3 p, float cellCount)
+float WorleyNoise3D(vec3 p, float cellCount)
 {
 	return Cells(p, cellCount);
 }
 
-float perlinNoise3D(vec3 pIn, float frequency, int octaveCount)
+float PerlinNoise3D(vec3 pIn, float frequency, int octaveCount)
 {
 	float octaveFrenquencyFactor = 2.0;			// noise frequency factor between octave, forced to 2
 
@@ -259,20 +277,13 @@ vec4 Stackable3DNoise(ivec3 pixel)
 
 	// 3 octaves
 	float cellCount = 2.0;
-	float worleyNoise0 = (1.0f - worleyNoise3D(coord, cellCount * 1.0));
-	float worleyNoise1 = (1.0f - worleyNoise3D(coord, cellCount * 2.0));
-	float worleyNoise2 = (1.0f - worleyNoise3D(coord, cellCount * 4.0));
-	float worleyNoise3 = (1.0f - worleyNoise3D(coord, cellCount * 8.0));
+	float worleyNoise0 = (1.0f - WorleyNoise3D(coord, cellCount * 1.0));
+	float worleyNoise1 = (1.0f - WorleyNoise3D(coord, cellCount * 2.0));
+	float worleyNoise2 = (1.0f - WorleyNoise3D(coord, cellCount * 4.0));
+	float worleyNoise3 = (1.0f - WorleyNoise3D(coord, cellCount * 8.0));
 	float worleyFBM0 = worleyNoise0*0.625f + worleyNoise1*0.25f + worleyNoise2*0.125f;
 	float worleyFBM1 = worleyNoise1*0.625f + worleyNoise2*0.25f + worleyNoise3*0.125f;
 	float worleyFBM2 = worleyNoise2*0.75f + worleyNoise3*0.25f; 
 
 	return vec4(worleyFBM0, worleyFBM1, worleyFBM2, 1.0);
-}
-
-void main()
-{
-    ivec3 fragPos = ivec3(gl_GlobalInvocationID.xyz);
-
-	imageStore (uWorleyTexture, fragPos, Stackable3DNoise(fragPos));
 }

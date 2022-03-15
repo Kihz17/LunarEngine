@@ -39,6 +39,12 @@ private:
 	ComputeShader* perlinWorleyShader;
 	ComputeShader* worleyShader;
 
+	// Written to by compute shader
+	Texture2D* colorTexture;
+	Texture2D* bloomTexture;
+	Texture2D* alphanessTexture;
+	Texture2D* cloudDistanceTexture;
+
 	float coverage;
 	float cloudSpeed;
 	float crispiness;

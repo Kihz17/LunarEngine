@@ -238,7 +238,7 @@ void Renderer::DrawFrame()
 	}
 
 	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
-	cloudPass->DoPass(geometryPass->GetPositionBuffer(), projection, view, cameraPos, cameraDir, quad, windowDetails);
+	cloudPass->DoPass(geometryPass->GetAlbedoBuffer(), projection, view, cameraPos, glm::vec3(0.0f, -0.9f, 0.1f), windowDetails);
 	//shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, projection, view, *quad);
 
 	//if (envMap) // Only do env map pass if we have one
