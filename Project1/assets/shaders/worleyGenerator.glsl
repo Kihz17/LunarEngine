@@ -4,16 +4,17 @@ layout (local_size_x = 4, local_size_y = 4, local_size_z = 4) in;
 
 layout (rgba8, binding = 0) uniform image3D uWorleyTexture;
 
+// Taken from https://github.com/NadirRoGue/RenderEngine/tree/master/RenderEngine/RenderEngine/shaders/clouds/generation
 // Adapted from https://github.com/sebh/TileableVolumeNoise
 
 uniform float frequenceMul[6u] = float[]( 2.0f, 8.0f, 14.0f, 20.0f, 26.0f, 32.0f);
 
-float Hash(int n)
+float hash(int n)
 {
 	return fract(sin(float(n) + 1.951) * 43758.5453123);
 }
 
-float Noise(vec3 x)
+float noise(vec3 x)
 {
 	vec3 p = floor(x);
 	vec3 f = fract(x);
@@ -22,17 +23,17 @@ float Noise(vec3 x)
 	float n = p.x + p.y*57.0 + 113.0*p.z;
 	return mix(
 		mix(
-			mix(Hash(int(n + 0.0)), Hash(int(n + 1.0)), f.x),
-			mix(Hash(int(n + 57.0)), Hash(int(n + 58.0)), f.x),
+			mix(hash(int(n + 0.0)), hash(int(n + 1.0)), f.x),
+			mix(hash(int(n + 57.0)), hash(int(n + 58.0)), f.x),
 			f.y),
 		mix(
-			mix(Hash(int(n + 113.0)), Hash(int(n + 114.0)), f.x),
-			mix(Hash(int(n + 170.0)), Hash(int(n + 171.0)), f.x),
+			mix(hash(int(n + 113.0)), hash(int(n + 114.0)), f.x),
+			mix(hash(int(n + 170.0)), hash(int(n + 171.0)), f.x),
 			f.y),
 		f.z);
 }
 
-float Cells(vec3 p, float cellCount)
+float cells(vec3 p, float cellCount)
 {
 	vec3 pCell = p * cellCount;
 	float d = 1.0e10;
@@ -44,7 +45,7 @@ float Cells(vec3 p, float cellCount)
 			{
 				vec3 tp = floor(pCell) + vec3(xo, yo, zo);
 
-				tp = pCell - tp - Noise(mod(tp, cellCount / 1.0));
+				tp = pCell - tp - noise(mod(tp, cellCount / 1.0));
 
 				d = min(d, dot(tp, tp));
 			}
@@ -58,30 +59,32 @@ float Cells(vec3 p, float cellCount)
 
 
 // From GLM (gtc/noise.hpp & detail/_noise.hpp)
-vec4 Mod289(vec4 x)
+vec4 mod289(vec4 x)
 {
 	return x - floor(x * vec4(1.0) / vec4(289.0)) * vec4(289.0);
 }
 
-vec4 Permute(vec4 x)
+vec4 permute(vec4 x)
 {
-	return Mod289(((x * 34.0) + 1.0) * x);
+	return mod289(((x * 34.0) + 1.0) * x);
 }
 
-vec4 TaylorInvSqrt(vec4 r)
+vec4 taylorInvSqrt(vec4 r)
 {
 	return vec4(1.79284291400159) - vec4(0.85373472095314) * r;
 }
 
-vec4 Fade(vec4 t)
+vec4 fade(vec4 t)
 {
 	return (t * t * t) * (t * (t * vec4(6) - vec4(15)) + vec4(10));
 }
 
-float GlmPerlin4D(vec4 Position, vec4 rep)
+float glmPerlin4D(vec4 Position, vec4 rep)
 {
 		vec4 Pi0 = mod(floor(Position), rep);	// Integer part for indexing
 		vec4 Pi1 = mod(Pi0 + vec4(1), rep);		// Integer part + 1
+		//Pi0 = mod(Pi0, vec4(289));
+		//Pi1 = mod(Pi1, vec4(289));
 		vec4 Pf0 = fract(Position);	// Fractional part for interpolation
 		vec4 Pf1 = Pf0 - vec4(1);		// Fractional part - 1.0
 		vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
@@ -91,13 +94,13 @@ float GlmPerlin4D(vec4 Position, vec4 rep)
 		vec4 iw0 = vec4(Pi0.w);
 		vec4 iw1 = vec4(Pi1.w);
 
-		vec4 ixy = Permute(Permute(ix) + iy);
-		vec4 ixy0 = Permute(ixy + iz0);
-		vec4 ixy1 = Permute(ixy + iz1);
-		vec4 ixy00 = Permute(ixy0 + iw0);
-		vec4 ixy01 = Permute(ixy0 + iw1);
-		vec4 ixy10 = Permute(ixy1 + iw0);
-		vec4 ixy11 = Permute(ixy1 + iw1);
+		vec4 ixy = permute(permute(ix) + iy);
+		vec4 ixy0 = permute(ixy + iz0);
+		vec4 ixy1 = permute(ixy + iz1);
+		vec4 ixy00 = permute(ixy0 + iw0);
+		vec4 ixy01 = permute(ixy0 + iw1);
+		vec4 ixy10 = permute(ixy1 + iw0);
+		vec4 ixy11 = permute(ixy1 + iw1);
 
 		vec4 gx00 = ixy00 / vec4(7);
 		vec4 gy00 = floor(gx00) / vec4(7);
@@ -160,25 +163,25 @@ float GlmPerlin4D(vec4 Position, vec4 rep)
 		vec4 g0111 = vec4(gx11.z, gy11.z, gz11.z, gw11.z);
 		vec4 g1111 = vec4(gx11.w, gy11.w, gz11.w, gw11.w);
 
-		vec4 norm00 = TaylorInvSqrt(vec4(dot(g0000, g0000), dot(g0100, g0100), dot(g1000, g1000), dot(g1100, g1100)));
+		vec4 norm00 = taylorInvSqrt(vec4(dot(g0000, g0000), dot(g0100, g0100), dot(g1000, g1000), dot(g1100, g1100)));
 		g0000 *= norm00.x;
 		g0100 *= norm00.y;
 		g1000 *= norm00.z;
 		g1100 *= norm00.w;
 
-		vec4 norm01 = TaylorInvSqrt(vec4(dot(g0001, g0001), dot(g0101, g0101), dot(g1001, g1001), dot(g1101, g1101)));
+		vec4 norm01 = taylorInvSqrt(vec4(dot(g0001, g0001), dot(g0101, g0101), dot(g1001, g1001), dot(g1101, g1101)));
 		g0001 *= norm01.x;
 		g0101 *= norm01.y;
 		g1001 *= norm01.z;
 		g1101 *= norm01.w;
 
-		vec4 norm10 = TaylorInvSqrt(vec4(dot(g0010, g0010), dot(g0110, g0110), dot(g1010, g1010), dot(g1110, g1110)));
+		vec4 norm10 = taylorInvSqrt(vec4(dot(g0010, g0010), dot(g0110, g0110), dot(g1010, g1010), dot(g1110, g1110)));
 		g0010 *= norm10.x;
 		g0110 *= norm10.y;
 		g1010 *= norm10.z;
 		g1110 *= norm10.w;
 
-		vec4 norm11 = TaylorInvSqrt(vec4(dot(g0011, g0011), dot(g0111, g0111), dot(g1011, g1011), dot(g1111, g1111)));
+		vec4 norm11 = taylorInvSqrt(vec4(dot(g0011, g0011), dot(g0111, g0111), dot(g1011, g1011), dot(g1111, g1111)));
 		g0011 *= norm11.x;
 		g0111 *= norm11.y;
 		g1011 *= norm11.z;
@@ -201,7 +204,7 @@ float GlmPerlin4D(vec4 Position, vec4 rep)
 		float n0111 = dot(g0111, vec4(Pf0.x, Pf1.y, Pf1.z, Pf1.w));
 		float n1111 = dot(g1111, Pf1);
 
-		vec4 fade_xyzw = Fade(Pf0);
+		vec4 fade_xyzw = fade(Pf0);
 		vec4 n_0w = mix(vec4(n0000, n1000, n0100, n1100), vec4(n0001, n1001, n0101, n1101), fade_xyzw.w);
 		vec4 n_1w = mix(vec4(n0010, n1010, n0110, n1110), vec4(n0011, n1011, n0111, n1111), fade_xyzw.w);
 		vec4 n_zw = mix(n_0w, n_1w, fade_xyzw.z);
@@ -219,7 +222,7 @@ float remap(float originalValue, float originalMin, float originalMax, float new
 
 float worleyNoise3D(vec3 p, float cellCount)
 {
-	return Cells(p, cellCount);
+	return cells(p, cellCount);
 }
 
 float perlinNoise3D(vec3 pIn, float frequency, int octaveCount)
@@ -238,7 +241,7 @@ float perlinNoise3D(vec3 pIn, float frequency, int octaveCount)
 		//float val = glm::perlin(p, glm::vec3(freq)) *0.5 + 0.5;
 
 		vec4 p = vec4(pIn.x, pIn.y, pIn.z, 0.0) * vec4(frequency);
-		float val = GlmPerlin4D(p, vec4(frequency));
+		float val = glmPerlin4D(p, vec4(frequency));
 
 		sum += val * weight;
 		weightSum += weight;
@@ -253,7 +256,7 @@ float perlinNoise3D(vec3 pIn, float frequency, int octaveCount)
 	return noise;
 }
 
-vec4 Stackable3DNoise(ivec3 pixel)
+vec4 stackable3DNoise(ivec3 pixel)
 {
 	vec3 coord = vec3(float(pixel.x) / 32.0, float(pixel.y) / 32.0, float(pixel.z) / 32.0);
 
@@ -266,6 +269,7 @@ vec4 Stackable3DNoise(ivec3 pixel)
 	float worleyFBM0 = worleyNoise0*0.625f + worleyNoise1*0.25f + worleyNoise2*0.125f;
 	float worleyFBM1 = worleyNoise1*0.625f + worleyNoise2*0.25f + worleyNoise3*0.125f;
 	float worleyFBM2 = worleyNoise2*0.75f + worleyNoise3*0.25f; 
+	// cellCount=4 -> worleyNoise4 is just noise due to sampling frequency=texel freque. So only take into account 2 frequencies for FBM
 
 	return vec4(worleyFBM0, worleyFBM1, worleyFBM2, 1.0);
 }
@@ -274,5 +278,5 @@ void main()
 {
     ivec3 fragPos = ivec3(gl_GlobalInvocationID.xyz);
 
-	imageStore (uWorleyTexture, fragPos, Stackable3DNoise(fragPos));
+	imageStore (uWorleyTexture, fragPos, stackable3DNoise(fragPos));
 }

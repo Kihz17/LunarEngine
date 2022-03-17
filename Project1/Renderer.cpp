@@ -238,14 +238,17 @@ void Renderer::DrawFrame()
 	}
 
 	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
-	cloudPass->DoPass(geometryPass->GetAlbedoBuffer(), projection, view, cameraPos, glm::vec3(0.0f, -0.9f, 0.1f), windowDetails);
+
+	if (envMap) // Only do env map pass if we have one
+	{
+		envMapPass->DoPass(envMap, projection, view, *cube);
+	}
+
+	glm::vec3 lightPos = -glm::vec3(0.0f, -0.9f, 0.1f) * (farPlane - nearPlane);
+	cloudPass->DoPass(envMapPass->GetEnvironmentTexture(), projection, view, cameraPos, lightPos, cameraDir, windowDetails, quad);
 	//shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, projection, view, *quad);
 
-	//if (envMap) // Only do env map pass if we have one
-	//{
-	//	envMapPass->DoPass(envMap, projection, view, *cube);
-	//}
-	//
+	
 	//lightingPass->DoPass(geometryPass->GetPositionBuffer(), geometryPass->GetAlbedoBuffer(), 
 	//	geometryPass->GetNormalBuffer(), geometryPass->GetEffectsBuffer(), 
 	//	envMapPass->GetEnvironmentTexture(), cloudPass->GetCloudTexture(), projection, view, cameraPos, *quad);

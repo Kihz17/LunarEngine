@@ -91,12 +91,15 @@ void main()
 	ivec2 fragCoord = ivec2(gl_GlobalInvocationID.xy);
 	vec4 rayClip = vec4(ComputeClipSpaceCoord(fragCoord), 1.0f);
 	vec4 rayView = uInvProj * rayClip;
-	rayView = vec4(rayView.xy, -1.0f, 1.0f);
+	rayView = vec4(rayView.xy, -1.0f, 0.0f);
 	vec3 rayDir = normalize((uInvView * rayView).xyz);
 
 	vec3 cubeMapEnd = RayIntersectSkySphere(rayDir, 0.5f); // The position where our ray intersects w/ skybox
 
 	vec4 background = texture(uSkyTexture, fragCoord / uResolution);
+
+	vec3 red = vec3(1.0f);
+	background = mix(mix(red.rgbr, vec4(1.0f), uLightDirection.y), background, pow(max(cubeMapEnd.y + 0.1f, 0.0f), 0.2f));
 
 	worldSphereCenter.xz = uCameraPosition.xz; // Make sure the "world center" follows the camera around
 
@@ -104,7 +107,6 @@ void main()
 	vec3 endPos; // Represents the end position for ray marching
 	vec3 fogRay;
 
-	int atmosphereType = 0; // 0 = within inner earth, 1 = between inner and outer, 2 = outside earth's atmosphere
 	if(uCameraPosition.y < SPHERE_INNER_RADIUS - EARTH_RADIUS) // We are within the earth's "inner radius"
 	{
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_INNER_RADIUS, startPos);
@@ -114,18 +116,17 @@ void main()
 	else if(uCameraPosition.y > SPHERE_INNER_RADIUS - EARTH_RADIUS && uCameraPosition.y < SPHERE_OUTER_RADIUS - EARTH_RADIUS) // Outside the "inner" bounds || outside of "earth"
 	{
 		startPos = uCameraPosition;
-		if(!RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_OUTER_RADIUS, fogRay))
+		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_OUTER_RADIUS, endPos);
+		if(!RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_INNER_RADIUS, fogRay))
 		{
 			fogRay = startPos;
 		}
-		atmosphereType = 1;
 	}
 	else
 	{
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_OUTER_RADIUS, startPos);
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_INNER_RADIUS, endPos);
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_OUTER_RADIUS, fogRay);
-		atmosphereType = 2;
 	}
 
 	float fogAmount = ComputeFog(fogRay, 0.00006f); // Compute fog
@@ -133,19 +134,14 @@ void main()
 	vec4 fragValue = background; // Set the color of this fragment to be the background
 	vec4 cloudDistance;
 	vec4 alphaness;
-	vec4 bloomValue;
-
-	
-	fragValue = background; // Frag color defaults to background
 
 	// Compute sun bloom
 	float bloomSun = clamp(dot(uLightDirection, rayDir), 0.0f, 1.0f);
 	vec3 bloomSunColor = 0.8f * vec3(1.0f, 0.6f, 0.1f) * pow(bloomSun, 128);
-	bloomValue = vec4(bloomSunColor, 1.0f);
+	vec4 bloomValue = vec4(bloomSunColor, 1.0f);
 
 	if(fogAmount > 0.965f) // Lots of fog, no point in going any further since fog is obstructing eveything
 	{
-		fragValue = background;
 		bloomValue = background;
 		imageStore(uColorBuffer, fragCoord, fragValue);
 		imageStore(uBloomBuffer, fragCoord, bloomValue);
@@ -157,7 +153,8 @@ void main()
 	vec4 rayMarchValue = RayMarchCloud(startPos, endPos, background.rgb, cloudDistance);
 	cloudDistance = vec4(distance(uCameraPosition, cloudDistance.xyz), 0.0f, 0.0f, 0.0f); // Encode distance from camera -> cloud in red channel
 
-	rayMarchValue.rgb = rayMarchValue.rgb * 1.8f - 0.1f; // Constrast-Illumination tuning
+	// Constrast-Illumination tuning
+	rayMarchValue.rgb = rayMarchValue.rgb * 1.8f - 0.1f; 
 
 	// User current position distance to center as action radius
 	rayMarchValue.rgb = mix(rayMarchValue.rgb, background.rgb * rayMarchValue.a, clamp(fogAmount, 0.0f, 1.0f));
@@ -175,7 +172,7 @@ void main()
 
 	float cloudAlphaness = rayMarchValue.a > 0.2f ? rayMarchValue.a : 0.0f;
 	alphaness = vec4(cloudAlphaness, 0.0f, 0.0f, 1.0f);
-	if(cloudAlphaness > 0.1f)
+	if(cloudAlphaness > 0.1f) // Apply fog to bloom buffer
 	{
 		float fogAmount = ComputeFog(startPos, 0.00003f);
 		vec3 cloud = mix(vec3(0.0f), bloomValue.rgb, clamp(fogAmount, 0.0f, 1.0f));
@@ -187,12 +184,12 @@ void main()
 	imageStore(uColorBuffer, fragCoord, fragValue);
 	imageStore(uBloomBuffer, fragCoord, bloomValue);
 	imageStore(uAlphanessBuffer, fragCoord, alphaness);
-	imageStore(uCloudDistanceBuffer, fragCoord, cloudDistance);
+	imageStore(uCloudDistanceBuffer, fragCoord, cloudDistance * 3.0f);
 }
 
 vec3 ComputeClipSpaceCoord(uvec2 fragCoord)
 {
-	vec2 rayNDC = 2.0f * vec2(fragCoord) / uResolution.xy - 1.0f;
+	vec2 rayNDC = 2.0f * vec2(fragCoord.xy) / uResolution.xy - 1.0f;
 	return vec3(rayNDC, 1.0f);
 }
 
@@ -258,7 +255,7 @@ vec4 RayMarchCloud(vec3 startPos, vec3 endPos, vec3 background, out vec4 cloudPo
 	const int numSteps = 64;
 
 	float dist = len / numSteps;
-	dir = dir / len;
+	dir = (dir / len) * dist;
 
 	uvec2 fragCoord = gl_GlobalInvocationID.xy;
 
@@ -295,10 +292,10 @@ vec4 RayMarchCloud(vec3 startPos, vec3 endPos, vec3 background, out vec4 cloudPo
 			float scattering = mix(HenyeyGreenstein(lightDotEye, -0.08f), HenyeyGreenstein(lightDotEye, 0.08f), clamp(lightDotEye * 0.5f + 0.5f, 0.0f, 1.0f));
 			scattering = max(scattering, 1.0f);
 
-			vec3 sunColor = uLightColor * vec3(1.1f, 1.1f, 0.95f);
+			const vec3 sunColor = uLightColor * vec3(1.1f, 1.1f, 0.95f);
 			vec3 S = 0.6f * (mix(mix(ambientLight * 1.8f, background, 0.2f), scattering * sunColor, lightDensity)) * densitySample;
 			float transmittence = exp(densitySample * sigmaDist);
-			vec3 Sint = (S -S * transmittence) * (1.0f / densitySample);
+			vec3 Sint = (S - S * transmittence) * (1.0f / densitySample);
 			color.rgb += T * Sint;
 			T *= transmittence;
 		}
@@ -359,9 +356,9 @@ float SampleDensityAtPoint(vec3 point, bool expensive, float lod)
 		return 0.0f;
 	}
 
-	vec3 anim = heightFraction * uWindDirection * CLOUD_TOP_OFFSET * uWindDirection * uTime * uCloudSpeed;
+	vec3 anim = heightFraction * uWindDirection * CLOUD_TOP_OFFSET + uWindDirection * uTime * uCloudSpeed;
 	vec2 uv = point.xz / SPHERE_INNER_RADIUS + 0.5f;
-	vec2 movingUV = (point + anim).xz / SPHERE_INNER_RADIUS + 0.5f;
+	vec2 movingUV = vec3(point + anim).xz / SPHERE_INNER_RADIUS + 0.5f;
 
 	vec4 noiseSample = textureLod(uCloudTexture, vec3(uv * uCrispiness, heightFraction), lod);
 	float lowFreqFBM = dot(noiseSample.gba, vec3(0.625f, 0.25f, 0.125f));
@@ -401,5 +398,5 @@ float SampleDensityAtPoint(vec3 point, bool expensive, float lod)
 float HenyeyGreenstein(float a, float g)
 {
 	float g2 = g * g;
-	return (1.0f - g2) / pow(1.0f + g2 - 2.0f * g * (a), 1.5f);
+	return (1.0f - g2) / pow(1.0f + g2 - 2.0f * g * a, 1.5f);
 }

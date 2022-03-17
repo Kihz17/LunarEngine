@@ -258,13 +258,14 @@ WindowSpecs GameEngine::InitializeGLFW(bool initImGui)
     windowSpecs.window = nullptr;
     windowSpecs.width = 0;
     windowSpecs.height = 0;
-    glfwSetErrorCallback(ErrorCallback);
 
     if (!glfwInit())
     {
         std::cout << "Error initializing GLFW!\n";
         return windowSpecs;
     }
+
+    glfwSetErrorCallback(ErrorCallback);
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -280,13 +281,17 @@ WindowSpecs GameEngine::InitializeGLFW(bool initImGui)
     glfwWindowHint(GLFW_BLUE_BITS, glfwMode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, glfwMode->refreshRate);
 
-    int WIDTH = glfwMode->width;
-    int HEIGHT = glfwMode->height;
+    int WIDTH = 1920; //glfwMode->width;
+    int HEIGHT = 1080;// glfwMode->height;
 
     // Create window
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Lunar Engine", nullptr, nullptr);
     glfwMakeContextCurrent(window);
-    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to load GL loader!\n";
+        return windowSpecs;
+    }
     glfwSwapInterval(1);
 
     glEnable(GL_DEPTH_TEST);
@@ -321,6 +326,10 @@ WindowSpecs GameEngine::InitializeGLFW(bool initImGui)
     windowSpecs.window = window;
     windowSpecs.width = WIDTH;
     windowSpecs.height = HEIGHT;
+
+    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << "\n";
+    std::cout << "NOTE: If the GL version is less than 4.5, this project will most likely not work.\n";
+
     return windowSpecs;
 }
 

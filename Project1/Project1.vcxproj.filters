@@ -181,9 +181,6 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="glad.c">
-      <Filter>Vendor</Filter>
-    </ClCompile>
     <ClCompile Include="stb_image.cpp">
       <Filter>Vendor</Filter>
     </ClCompile>
@@ -372,6 +369,9 @@
     </ClCompile>
     <ClCompile Include="ComputeShader.cpp">
       <Filter>Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Vendor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -820,6 +820,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="assets\shaders\perlinWorleyGenerator.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\cloudPost.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

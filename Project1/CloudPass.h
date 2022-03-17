@@ -18,12 +18,14 @@ public:
 	CloudPass(const WindowSpecs* windowSpecs);
 	~CloudPass();
 
-	void DoPass(ITexture* skyTexture, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos, const glm::vec3& lightPos, const WindowSpecs* windowSpecs);
+	void DoPass(ITexture* skyTexture, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos, const glm::vec3& lightPos, const glm::vec3& cameraDir, 
+		const WindowSpecs* windowSpecs, PrimitiveShape* quad);
 
 	static const std::string CLOUD_SHADER_KEY;
 	static const std::string WEATHER_SHADER_KEY;
 	static const std::string PERLIN_WORLEY_SHADER_KEY;
 	static const std::string WORLEY_SHADER_KEY;
+	static const std::string CLOUD_POST_SHADER_KEY;
 
 	Texture3D* cloudTexture;
 	Texture3D* worleyTexture;
@@ -31,6 +33,9 @@ public:
 
 	glm::vec3 weatherSeed;
 	float weatherPerlinFreq;
+
+	bool enableGodRays;
+
 private:
 	void GenerateTextures(const glm::ivec3& perlinWorleyDimensions, const glm::ivec3& worleyDimensions, const glm::ivec2& weatherDimensions);
 
@@ -45,6 +50,11 @@ private:
 	Texture2D* alphanessTexture;
 	Texture2D* cloudDistanceTexture;
 
+	Shader* postShader;
+	IFrameBuffer* postFramebuffer;
+	Texture2D* postDepthAttachment;
+	Texture2D* postColorAttachment;
+
 	float coverage;
 	float cloudSpeed;
 	float crispiness;
@@ -57,7 +67,6 @@ private:
 	float sphereOuterRadius;
 
 	float perlinFreq;
-	bool enableGodRays;
 
 	glm::vec3 cloudColorTop;
 	glm::vec3 cloudColorBottom;

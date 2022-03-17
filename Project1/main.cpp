@@ -75,7 +75,7 @@ int main()
     lightEntity->AddComponent<LightComponent>(light);
     Renderer::SetShadowMappingDirectionalLight(light);
 
-    {
+   /* {
         DungeonGenerator2D::DungeonGeneratorInfo dInfo;
         dInfo.roomCount = 30;
         dInfo.minRoomSize = glm::ivec3(3, 2, 3);
@@ -86,7 +86,7 @@ int main()
         DungeonGenerator2D dg(dInfo, gameEngine.GetEntityManager());
         std::vector<Entity*> entities = dg.Generate();
         for (Entity* e : entities) gameEngine.GetEntityManager().ListenToEntity(e);
-    }
+    }*/
 
     // SHADER BALL TEST
    // ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
