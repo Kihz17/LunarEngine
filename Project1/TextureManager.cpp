@@ -68,7 +68,7 @@ CubeMap* TextureManager::CreateCubeMap(const std::vector<std::string>& paths, Te
 
 CubeMap* TextureManager::CreateCubeMap(int width, GLenum minFilter, GLenum format, GLenum internalFormat, GLenum type)
 {
-	CubeMap* texture =  new CubeMap(width, minFilter, format, internalFormat, type);
+	CubeMap* texture = new CubeMap(width, minFilter, format, internalFormat, type);
 	textures.push_back(texture);
 	return texture;
 }

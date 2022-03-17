@@ -27,6 +27,7 @@ uniform float uDensityFactor = 0.02f;
 uniform float uCloudCoverageMult = 0.4f;
 uniform float uCurliness;
 uniform float uAbsorptionToLight = 0.0035f;
+uniform float uCloudDarknessMult = 1.5f;
 uniform vec3 uCloudColorTop = vec3(169.0f, 149.0f, 149.0f) * (1.5f / 255.0f);
 uniform vec3 uCloudColorBottom = vec3(65.0f, 70.0f, 80.0f)*(1.5f / 255.0f);
 
@@ -81,7 +82,6 @@ bool RaySphereIntersect(vec3 rayOrigin, vec3 rayDir, vec3 sphereCenter, float ra
 float ComputeFog(vec3 startPos, float factor); // Computes fog density at a given starting point
 float GetHeightFraction(vec3 pos);
 float Remap(float originalValue, float originalMin, float originalMax, float newMin, float newMax);
-vec4 RayMarchCloud(vec3 startPos, vec3 endPos, vec3 background, out vec4 cloudPos);
 float RaymarchToLight(vec3 origin, float stepSize, vec3 lightDir, float originalDensity, float lightDotEye); // Raymarch towards light
 float SampleDensityAtPoint(vec3 point, bool expensive, float lod); // Sample cloud density at a given point
 float HenyeyGreenstein(float a, float g); // Phase function by HenyeyGreenstein. Gives us the angular distribution of light intensity at a given wavelength
@@ -97,9 +97,6 @@ void main()
 	vec3 cubeMapEnd = RayIntersectSkySphere(rayDir, 0.5f); // The position where our ray intersects w/ skybox
 
 	vec4 background = texture(uSkyTexture, fragCoord / uResolution);
-
-	vec3 red = vec3(1.0f);
-	background = mix(mix(red.rgbr, vec4(1.0f), uLightDirection.y), background, pow(max(cubeMapEnd.y + 0.1f, 0.0f), 0.2f));
 
 	worldSphereCenter.xz = uCameraPosition.xz; // Make sure the "world center" follows the camera around
 
@@ -129,7 +126,7 @@ void main()
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_OUTER_RADIUS, fogRay);
 	}
 
-	float fogAmount = ComputeFog(fogRay, 0.00006f); // Compute fog
+	float fogAmount = ComputeFog(fogRay, 0.00009f); // Compute fog
 
 	vec4 fragValue = background; // Set the color of this fragment to be the background
 	vec4 cloudDistance;
@@ -150,41 +147,91 @@ void main()
 		return;
 	}
 
-	vec4 rayMarchValue = RayMarchCloud(startPos, endPos, background.rgb, cloudDistance);
-	cloudDistance = vec4(distance(uCameraPosition, cloudDistance.xyz), 0.0f, 0.0f, 0.0f); // Encode distance from camera -> cloud in red channel
+	const int numSteps = 64;
 
-	// Constrast-Illumination tuning
-	rayMarchValue.rgb = rayMarchValue.rgb * 1.8f - 0.1f; 
+	// Get direction to march in
+	vec3 dir = endPos - startPos;
+	float len = length(dir);
+	float dist = len / numSteps;
+	dir = (dir / len) * dist;
 
-	// User current position distance to center as action radius
+	// Start us off in a pseudo random spot
+	int a = int(fragCoord.x) % 4;
+	int b = int(fragCoord.y) % 4;
+	startPos += dir * uBayerFilter[a * 4 + b];
+
+	float lightDotEye = dot(normalize(uLightDirection), normalize(dir));
+
+	float T = 1.0f;
+	float sigmaDist = -dist * uDensityFactor;
+
+	bool expensive = true;
+	bool entered = false;
+
+	// Start ray marching towards cloud
+	vec4 rayMarchValue = vec4(0.0f);
+	vec3 marchPos = startPos;
+	for(int i = 0; i < numSteps; i++)
+	{
+		float densitySample = SampleDensityAtPoint(marchPos, true, i / 16); // Sample density at point
+		if(densitySample > 0.0f) // Some density here
+		{
+			if(!entered) // We haven't "entered" the cloud yet
+			{
+				cloudDistance = vec4(marchPos, 1.0f);
+				entered = true;
+			}
+
+			float height = GetHeightFraction(marchPos);
+			float lightDensity = RaymarchToLight(marchPos, dist * 0.1f, uLightDirection, densitySample, lightDotEye);
+			float scattering = mix(HenyeyGreenstein(lightDotEye, -0.08f), HenyeyGreenstein(lightDotEye, 0.08f), clamp(lightDotEye * 0.5f + 0.5f, 0.0f, 1.0f));
+			scattering = max(scattering, 1.0f);
+
+			const vec3 sunColor = uLightColor * vec3(1.1f, 1.1f, 0.95f);
+			vec3 S = 0.6f * (mix(mix(uCloudColorBottom * 1.8f, background.rgb, 0.2f), scattering * sunColor, lightDensity)) * densitySample;
+			float transmittence = exp(densitySample * sigmaDist);
+			vec3 Sint = (S - S * transmittence) * (1.0f / densitySample);
+			rayMarchValue.rgb += T * Sint;
+			T *= transmittence;
+		}
+
+		if(T <= CLOUDS_MIN_TRANSMITTANCE) break;
+
+		marchPos += dir; // Move forward in march
+	}
+
+	rayMarchValue.a = 1.0f - T;
+	rayMarchValue.rgb *= uCloudDarknessMult;
+
+	cloudDistance = vec4(distance(uCameraPosition, cloudDistance.xyz), 0.0f, 0.0f, 0.0f);
+
+	// Fade clouds in the distance
 	rayMarchValue.rgb = mix(rayMarchValue.rgb, background.rgb * rayMarchValue.a, clamp(fogAmount, 0.0f, 1.0f));
 
 	// Sun glare
 	float sun = clamp(dot(uLightDirection, normalize(endPos - startPos)), 0.0f, 1.0f);
-	vec3 s = 0.8f * vec3(1.0f, 0.4f, 0.2f) * pow(sun, 256.0f);
-	rayMarchValue.rgb += s * rayMarchValue.a;
+	vec3 sunColor = 0.5f * uLightColor * pow(sun, 256.0f);
+	rayMarchValue.rgb += sunColor * rayMarchValue.a;
 
 	// Blend clouds and background 
 	background.rgb = background.rgb * (1.0f - rayMarchValue.a) + rayMarchValue.rgb;
 	background.a = 1.0f;
-
-	fragValue = background;
+	fragValue = background; // Set final "background" color
 
 	float cloudAlphaness = rayMarchValue.a > 0.2f ? rayMarchValue.a : 0.0f;
 	alphaness = vec4(cloudAlphaness, 0.0f, 0.0f, 1.0f);
 	if(cloudAlphaness > 0.1f) // Apply fog to bloom buffer
 	{
-		float fogAmount = ComputeFog(startPos, 0.00003f);
+		float fogAmount = ComputeFog(startPos, 0.0003f);
 		vec3 cloud = mix(vec3(0.0f), bloomValue.rgb, clamp(fogAmount, 0.0f, 1.0f));
 		bloomValue.rgb = bloomValue.rgb * (1.0f - cloudAlphaness) + cloud.rgb;
 	}
-
 	fragValue.a = alphaness.r;
 
 	imageStore(uColorBuffer, fragCoord, fragValue);
 	imageStore(uBloomBuffer, fragCoord, bloomValue);
 	imageStore(uAlphanessBuffer, fragCoord, alphaness);
-	imageStore(uCloudDistanceBuffer, fragCoord, cloudDistance * 3.0f);
+	imageStore(uCloudDistanceBuffer, fragCoord, cloudDistance);
 }
 
 vec3 ComputeClipSpaceCoord(uvec2 fragCoord)
@@ -245,68 +292,6 @@ float GetHeightFraction(vec3 pos)
 float Remap(float originalValue, float originalMin, float originalMax, float newMin, float newMax)
 {
 	return newMin + (((originalValue - originalMin) / (originalMax - originalMin)) * (newMax - newMin));
-}
-
-vec4 RayMarchCloud(vec3 startPos, vec3 endPos, vec3 background, out vec4 cloudPos)
-{
-	vec3 dir = endPos - startPos;
-	float len = length(dir);
-
-	const int numSteps = 64;
-
-	float dist = len / numSteps;
-	dir = (dir / len) * dist;
-
-	uvec2 fragCoord = gl_GlobalInvocationID.xy;
-
-	vec4 color = vec4(0.0f);
-	int a = int(fragCoord.x) % 4;
-	int b = int(fragCoord.y) % 4;
-
-	startPos += dir * uBayerFilter[a * 4 + b];
-
-	float density = 0.0f;
-	float lightDotEye = dot(normalize(uLightDirection), normalize(dir));
-
-	float T = 1.0f;
-	float sigmaDist = -dist * uDensityFactor;
-
-	bool expensive = true;
-	bool entered = false;
-
-	vec3 marchPos = startPos;
-	for(int i = 0; i < numSteps; i++)
-	{
-		float densitySample = SampleDensityAtPoint(marchPos, true, i / 16); // Sample density at point
-		if(densitySample > 0.0f) // Some density here
-		{
-			if(!entered) // We haven't "entered" the cloud yet
-			{
-				cloudPos = vec4(marchPos, 1.0f);
-				entered = true;
-			}
-
-			float height = GetHeightFraction(marchPos);
-			vec3 ambientLight = uCloudColorBottom;
-			float lightDensity = RaymarchToLight(marchPos, dist * 0.1f, uLightDirection, densitySample, lightDotEye);
-			float scattering = mix(HenyeyGreenstein(lightDotEye, -0.08f), HenyeyGreenstein(lightDotEye, 0.08f), clamp(lightDotEye * 0.5f + 0.5f, 0.0f, 1.0f));
-			scattering = max(scattering, 1.0f);
-
-			const vec3 sunColor = uLightColor * vec3(1.1f, 1.1f, 0.95f);
-			vec3 S = 0.6f * (mix(mix(ambientLight * 1.8f, background, 0.2f), scattering * sunColor, lightDensity)) * densitySample;
-			float transmittence = exp(densitySample * sigmaDist);
-			vec3 Sint = (S - S * transmittence) * (1.0f / densitySample);
-			color.rgb += T * Sint;
-			T *= transmittence;
-		}
-
-		if(T <= CLOUDS_MIN_TRANSMITTANCE) break;
-
-		marchPos += dir; // Move forward in march
-	}
-
-	color.a = 1.0f - T;
-	return color;
 }
 
 float RaymarchToLight(vec3 origin, float stepSize, vec3 lightDir, float originalDensity, float lightDotEye)

@@ -19,7 +19,7 @@ public:
 	LightingPass(const WindowSpecs* windowSpecs, ITexture* shadowMaps, std::vector<float>& cascadeLevels);
 	virtual ~LightingPass();
 
-	void DoPass(ITexture* positionBuffer, ITexture* albedoBuffer, ITexture* normalBuffer, ITexture* effectsBuffer, ITexture* environmentBuffer, ITexture* cloudBuffer,
+	void DoPass(ITexture* positionBuffer, ITexture* albedoBuffer, ITexture* normalBuffer, ITexture* effectsBuffer, ITexture* environmentBuffer,
 		const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition, PrimitiveShape& quad);
 
 private:

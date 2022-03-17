@@ -240,7 +240,6 @@
     <ClCompile Include="VertexArrayObject.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="WanderBehaviour.cpp" />
-    <ClCompile Include="WorleyGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
@@ -369,13 +368,11 @@
     <ClInclude Include="VertexInformation.h" />
     <ClInclude Include="WanderBehaviour.h" />
     <ClInclude Include="Window.h" />
-    <ClInclude Include="WorleyGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl" />
     <None Include="assets\shaders\brdfLighting.glsl" />
     <None Include="assets\shaders\cloudPost.glsl" />
-    <None Include="assets\shaders\clouds.glsl" />
     <None Include="assets\shaders\CMSDepthDebug.glsl" />
     <None Include="assets\shaders\convoluteEnvMap.glsl" />
     <None Include="assets\shaders\CSMDepth.glsl" />

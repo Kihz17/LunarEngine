@@ -29,7 +29,6 @@ CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& in
 	depthMappingShader(ShaderLibrary::Load(DEPTH_MAPPING_SHADER_KEY, "assets/shaders/CSMDepth.glsl")),
 	depthMappingAnimatedShader(ShaderLibrary::Load(DEPTH_MAPPING_ANIMATED_SHADER_KEY, "assets/shaders/CSMDepthAnimated.glsl")),
 	depthDebugShader(ShaderLibrary::Load(DEPTH_DEBUG_SHADER_KEY, "assets/shaders/CMSDepthDebug.glsl")),
-	directionalLight(nullptr),
 	cameraFOV(info.cameraFOV),
 	cameraView(info.cameraView),
 	windowSpecs(info.windowSpecs),
@@ -87,10 +86,8 @@ CascadedShadowMapping::~CascadedShadowMapping()
 	delete lightMatricesUBO;
 }
 
-void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& quad)
+void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::vec3& lightDir, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& quad)
 {
-	if (!directionalLight) return; // No directional light, don't map anything
-
 	// Debugging
 	/*if (testKey->IsJustPressed())
 	{
@@ -106,7 +103,7 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, 
 
 	// Update the data in our light matrices UBO
 	lightMatricesUBO->Bind();
-	std::vector<glm::mat4> lightMatrices = GetLightSpaceMatrices();
+	std::vector<glm::mat4> lightMatrices = GetLightSpaceMatrices(lightDir);
 	for (size_t i = 0; i < lightMatrices.size(); i++)
 	{
 		lightMatricesUBO->SubData(i * sizeof(glm::mat4x4), sizeof(glm::mat4x4), &lightMatrices[i]);
@@ -191,7 +188,7 @@ std::vector<glm::vec4> CascadedShadowMapping::GetFrustumCornersWorldSpace(const 
 	return frustumCorners;
 }
 
-glm::mat4 CascadedShadowMapping::GetLightSpaceMatrix(const float nearPlane, const float farPlane)
+glm::mat4 CascadedShadowMapping::GetLightSpaceMatrix(const glm::vec3& lightDir, const float nearPlane, const float farPlane)
 {
 	glm::mat4 projection = glm::perspective(cameraFOV, (float)windowSpecs->width / (float)windowSpecs->height, nearPlane, farPlane);
 	std::vector<glm::vec4> frustumCorners = GetFrustumCornersWorldSpace(projection);
@@ -204,7 +201,7 @@ glm::mat4 CascadedShadowMapping::GetLightSpaceMatrix(const float nearPlane, cons
 	}
 	center /= frustumCorners.size(); // Average corners
 
-	glm::vec3 eye = center + -directionalLight->GetDirection() * (farPlane - nearPlane);
+	glm::vec3 eye = center + -lightDir * (farPlane - nearPlane);
 	glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// Generate an AABB that fits tightly onto the frustum. This will be used to construct our orthographic projection matrx later on
@@ -253,22 +250,22 @@ glm::mat4 CascadedShadowMapping::GetLightSpaceMatrix(const float nearPlane, cons
 	return lightProjection * lightView;
 }
 
-std::vector<glm::mat4> CascadedShadowMapping::GetLightSpaceMatrices()
+std::vector<glm::mat4> CascadedShadowMapping::GetLightSpaceMatrices(const glm::vec3& lightDir)
 {
 	std::vector<glm::mat4> matrices;
 	for (size_t i = 0; i < cascadeLevels.size() + 1; i++)
 	{
 		if (i == 0) // Get matrix for near plane
 		{
-			matrices.push_back(GetLightSpaceMatrix(projectionNearPlane, cascadeLevels[i]));
+			matrices.push_back(GetLightSpaceMatrix(lightDir, projectionNearPlane, cascadeLevels[i]));
 		}
 		else if (i < cascadeLevels.size()) // Get matrix for middle plane
 		{
-			matrices.push_back(GetLightSpaceMatrix(cascadeLevels[i - 1], cascadeLevels[i]));
+			matrices.push_back(GetLightSpaceMatrix(lightDir, cascadeLevels[i - 1], cascadeLevels[i]));
 		}
 		else // Get matrix for far plane
 		{
-			matrices.push_back(GetLightSpaceMatrix(cascadeLevels[i - 1], projectionFarPlane));
+			matrices.push_back(GetLightSpaceMatrix(lightDir, cascadeLevels[i - 1], projectionFarPlane));
 		}
 	}
 

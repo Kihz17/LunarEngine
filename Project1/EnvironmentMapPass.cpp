@@ -24,6 +24,11 @@ EnvironmentMapPass::EnvironmentMapPass(const WindowSpecs* windowSpecs)
 	shader->InitializeUniform("uProjection");
 	shader->InitializeUniform("uView");
 	shader->InitializeUniform("uEnvMap");
+	shader->InitializeUniform("uResolution");
+	shader->InitializeUniform("uLightDirection");
+	shader->InitializeUniform("uLightColor");
+	shader->InitializeUniform("uInvProj");
+	shader->InitializeUniform("uInvView");
 	shader->SetInt("uEnvMap", 0);
 	shader->Unbind();
 }
@@ -33,18 +38,37 @@ EnvironmentMapPass::~EnvironmentMapPass()
 	delete environmentBuffer;
 }
 
-void EnvironmentMapPass::DoPass(CubeMap* cubeMap, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& cube)
+void EnvironmentMapPass::DoPass(CubeMap* cubeMap, const glm::mat4& projection, const glm::mat4& view, bool sun, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& lightColor, PrimitiveShape* cube)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_CULL_FACE); // Make sure none of our cubes faces get culled
 
 	environmentBuffer->Bind();
 	shader->Bind();
+
 	shader->SetMat4("uProjection", projection);
 	shader->SetMat4("uView", view);
+	shader->SetMat4("uInvProj", glm::inverse(projection));
+	shader->SetMat4("uInvView", glm::inverse(view));
+
+	shader->SetFloat2("uResolution", glm::vec2(envMapTexture->GetWidth(), envMapTexture->GetHeight()));
+
+	if (sun)
+	{
+		glm::vec3 lightPos = -lightDir * 600000.0f;
+		shader->SetFloat3("uLightColor", lightColor);
+		shader->SetFloat4("uLightDirection", glm::vec4(glm::normalize(lightPos - cameraPos), 1.0f));
+	}
+	else
+	{
+		shader->SetFloat4("uLightDirection", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	}
+	
 	cubeMap->BindToSlot(0);
 	shader->SetInt("uEnvMap", 0);
-	cube.Draw();
+
+	cube->Draw();
+
 	environmentBuffer->Unbind();
 
 	glEnable(GL_CULL_FACE); // Re-enable face culling

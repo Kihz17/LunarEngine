@@ -18,8 +18,10 @@ public:
 	CloudPass(const WindowSpecs* windowSpecs);
 	~CloudPass();
 
-	void DoPass(ITexture* skyTexture, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos, const glm::vec3& lightPos, const glm::vec3& cameraDir, 
+	void DoPass(ITexture* skyTexture, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& lightColor, const glm::vec3& cameraDir,
 		const WindowSpecs* windowSpecs, PrimitiveShape* quad);
+
+	Texture2D* GetSkyTexture() { return postColorAttachment; }
 
 	static const std::string CLOUD_SHADER_KEY;
 	static const std::string WEATHER_SHADER_KEY;
@@ -61,10 +63,14 @@ private:
 	float curliness;
 	float density;
 	float absorptionToLight;
+	float cloudDarkness;
 
 	float earthRadius;
 	float sphereInnerRadius;
 	float sphereOuterRadius;
+
+	float cloudCloseThreshold;
+	float cloudMediumThreshold;
 
 	float perlinFreq;
 

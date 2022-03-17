@@ -38,12 +38,12 @@ public:
 	static void Submit(const RenderSubmission& submission);
 	static void SubmitLines(const LineRenderSubmission& submission);
 
-	static void SetShadowMappingDirectionalLight(Light* light);
-
 	static CubeMap* GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore, int viewportWidth = windowDetails->width, int viewportHeight = windowDetails->height);
 
 	static void SetEnvironmentMap(CubeMap* cm) { envMap = cm; }
 	static CubeMap* GetEnvironmentMap() { return envMap; }
+
+	static void SetMainLightSource(Light* light) { mainLight = light; };
 
 	static const std::string LIGHTING_SHADER_KEY;
 	static const std::string FORWARD_SHADER_KEY;
@@ -74,4 +74,6 @@ private:
 
 	static CubeMap* envMap;
 	static DynamicCubeMapRenderer* dynamicCubeMapGenerator;
+
+	static Light* mainLight;
 };

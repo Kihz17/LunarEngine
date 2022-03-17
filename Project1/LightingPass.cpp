@@ -59,7 +59,6 @@ LightingPass::LightingPass(const WindowSpecs* windowSpecs, ITexture* shadowMaps,
 		shader->InitializeUniform(std::string("uCascadePlaneDistances[" + std::to_string(i) + "]"));
 	}
 	shader->InitializeUniform("uCascadeCount");
-	shader->InitializeUniform("uCloudBuffer");
 	shader->SetInt("uViewType", 1); // Regular color view by default
 
 	// Set samplers for lighting
@@ -69,7 +68,6 @@ LightingPass::LightingPass(const WindowSpecs* windowSpecs, ITexture* shadowMaps,
 	shader->SetInt("gEffects", 3);
 	shader->SetInt("uEnvMap", 4);
 	shader->SetInt("uShadowMap", 5);
-	shader->SetInt("uCloudBuffer", 6);
 
 	shader->Unbind();
 }
@@ -79,7 +77,7 @@ LightingPass::~LightingPass()
 	
 }
 
-void LightingPass::DoPass(ITexture* positionBuffer, ITexture* albedoBuffer, ITexture* normalBuffer, ITexture* effectsBuffer, ITexture* environmentBuffer, ITexture* cloudBuffer,
+void LightingPass::DoPass(ITexture* positionBuffer, ITexture* albedoBuffer, ITexture* normalBuffer, ITexture* effectsBuffer, ITexture* environmentBuffer,
 	const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition, PrimitiveShape& quad)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
@@ -98,9 +96,6 @@ void LightingPass::DoPass(ITexture* positionBuffer, ITexture* albedoBuffer, ITex
 
 	// Bind shadow map
 	shadowMaps->BindToSlot(5);
-
-	// Bind cloud buffer
-	cloudBuffer->BindToSlot(6);
 
 	// Shadow mapping details
 	shader->SetInt("uCascadeCount", cascadeLevels.size());

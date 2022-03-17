@@ -60,9 +60,6 @@ uniform sampler2D gNormal;
 uniform sampler2D gEffects;
 uniform vec4 gMaterialOverrides;
 
-// Clouds
-uniform sampler2D uCloudBuffer;
-
 // Lighitng
 uniform int uLightAmount;
 uniform LightInfo uLightArray[MAX_LIGHTS];
@@ -107,8 +104,6 @@ void main()
 	vec4 gAlbedoSample = texture(gAlbedo, mTextureCoordinates).rgba;
 	vec4 gNormalSample = texture(gNormal, mTextureCoordinates).rgba;
 	vec4 gEffectsSample = texture(gEffects, mTextureCoordinates).rgba;
-		
-	vec4 cloudSample = texture(uCloudBuffer, mTextureCoordinates).rgba;
 
 	// Get geometry buffer data
 	vec3 worldPos = gPositionSample.rgb;
@@ -123,11 +118,7 @@ void main()
 	float shadowSoftness = gEffectsSample.a;
 	
 	vec3 color = vec3(0.0f);
-	if (cloudSample.w > 0.0f) // We have a cloud here, show it!
-	{
-		color = cloudSample.rgb;
-	}
-	else if(depth == 1.0f) // Nothing obstructing us here, just show the env map color
+	if(depth == 1.0f) // Nothing obstructing us here, just show the env map color
 	{
 		color = texture(uEnvMap, mTextureCoordinates).rgb; // Convert and sample from spherical environment map coords
 	}

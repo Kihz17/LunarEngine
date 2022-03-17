@@ -42,9 +42,7 @@ public:
 	CascadedShadowMapping(const CascadedShadowMappingInfo& info);
 	virtual ~CascadedShadowMapping();
 
-	void DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& quad);
-
-	void SetDirectionalLight(Light* directionalLight) { this->directionalLight = directionalLight; }
+	void DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::vec3& lightDir, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& quad);
 
 	std::vector<float>& GetCascadeLevels() { return cascadeLevels; }
 	ITexture* GetShadowMap() { return lightDepthMaps; }
@@ -55,8 +53,8 @@ public:
 	static const int MAX_CASCADE_LEVELS;
 private:
 	std::vector<glm::vec4> GetFrustumCornersWorldSpace(const glm::mat4& proj);
-	glm::mat4 GetLightSpaceMatrix(const float nearPlane, const float farPlane);
-	std::vector<glm::mat4> GetLightSpaceMatrices();
+	glm::mat4 GetLightSpaceMatrix(const glm::vec3& lightDir, const float nearPlane, const float farPlane);
+	std::vector<glm::mat4> GetLightSpaceMatrices(const glm::vec3& lightDir);
 
 	IFrameBuffer* lightDepthBuffer;
 	std::vector<float> cascadeLevels;
@@ -66,8 +64,6 @@ private:
 	Shader* depthMappingShader;
 	Shader* depthMappingAnimatedShader;
 	Shader* depthDebugShader;
-
-	Light* directionalLight;
 
 	// Pulled from Renderer.h, Renderer will always outlast this class so it's okay to hold references to these objects
 	glm::mat4& cameraView;

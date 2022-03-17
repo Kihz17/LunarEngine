@@ -20,7 +20,6 @@
 #include "Animation.h"
 #include "DungeonGenerator2D.h"
 #include "LineRenderComponent.h"
-#include "WorleyGenerator.h"
 #include "Utils.h"
 #include "ShaderLibrary.h"
 
@@ -70,10 +69,11 @@ int main()
     lightInfo.intensity = 10.0f;
     Light* light = new Light(lightInfo);
     light->UpdateLightType(LightType::Directional);
-    light->UpdateDirection(glm::vec3(0.0f, -0.99f, -0.27f));
+    light->UpdateDirection(glm::vec3(0.0f, -0.6f, -0.4f));
     Entity* lightEntity = gameEngine.GetEntityManager().CreateEntity("lightTest");
     lightEntity->AddComponent<LightComponent>(light);
-    Renderer::SetShadowMappingDirectionalLight(light);
+
+    Renderer::SetMainLightSource(light);
 
    /* {
         DungeonGenerator2D::DungeonGeneratorInfo dInfo;
@@ -89,14 +89,23 @@ int main()
     }*/
 
     // SHADER BALL TEST
-   // ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
+    ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
 
     ShaderLibrary::LoadCompute("testC", "assets/shaders/volumetricClouds.glsl");
     // Set env map
     {
-        CubeMap* envMap = TextureManager::CreateCubeMap(1024, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT);
-        Texture2D* equir = TextureManager::CreateTexture2D("assets/textures/hdr/appart.hdr", TextureFilterType::Linear, TextureWrapType::Repeat, true, true, true);
-        EquirectangularToCubeMapConverter::ConvertEquirectangularToCubeMap(equir, envMap, Renderer::cube, gameEngine.GetWindowSpecs().width, gameEngine.GetWindowSpecs().height); // Setup environment map
+        //CubeMap* envMap = TextureManager::CreateCubeMap(1024, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT);
+        //Texture2D* equir = TextureManager::CreateTexture2D("assets/textures/hdr/appart.hdr", TextureFilterType::Linear, TextureWrapType::Repeat, true, true, true);
+        //EquirectangularToCubeMapConverter::ConvertEquirectangularToCubeMap(equir, envMap, Renderer::cube, gameEngine.GetWindowSpecs().width, gameEngine.GetWindowSpecs().height); // Setup environment map
+
+        std::vector<std::string> paths;
+        paths.push_back("assets/textures/sky/right.jpg");
+        paths.push_back("assets/textures/sky/left.jpg");
+        paths.push_back("assets/textures/sky/top.jpg");
+        paths.push_back("assets/textures/sky/bottom.jpg");
+        paths.push_back("assets/textures/sky/front.jpg");
+        paths.push_back("assets/textures/sky/back.jpg");
+        CubeMap* envMap = TextureManager::CreateCubeMap(paths, TextureFilterType::Linear, TextureWrapType::Repeat, true, false);
         Renderer::SetEnvironmentMap(envMap);
     }
 

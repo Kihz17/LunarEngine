@@ -8,7 +8,6 @@
 #include "Texture2D.h"
 #include "CubeMap.h"
 #include "EquirectangularToCubeMapConverter.h"
-#include "WorleyGenerator.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -49,6 +48,8 @@ const std::string Renderer::FORWARD_SHADER_KEY = "fShader";
 PrimitiveShape* Renderer::quad = nullptr;
 PrimitiveShape* Renderer::cube = nullptr;
 
+Light* Renderer::mainLight = nullptr;
+
 static const uint32_t MAX_GRASS_BLADES = 2048;
 static VertexArrayObject* grassVAO = nullptr;
 static VertexBuffer* grassVBO = nullptr;
@@ -77,7 +78,6 @@ void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 	dynamicCubeMapGenerator = new DynamicCubeMapRenderer(windowDetails);
 
 	EquirectangularToCubeMapConverter::Initialize();
-	WorleyGenerator::Initialize();
 
 	// TEST SECITON FOR GRASS
 	//{
@@ -133,7 +133,6 @@ void Renderer::CleanUp()
 	delete Renderer::cube;
 
 	EquirectangularToCubeMapConverter::CleanUp();
-	WorleyGenerator::CleanUp();
 }
 
 void Renderer::SetViewType(uint32_t type)
@@ -239,29 +238,34 @@ void Renderer::DrawFrame()
 
 	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
 
+
 	if (envMap) // Only do env map pass if we have one
 	{
-		envMapPass->DoPass(envMap, projection, view, *cube);
+		glm::vec3 lightDir = mainLight ? mainLight->direction : glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 lightColor = mainLight ? mainLight->color : glm::vec3(0.0f, 0.0f, 0.0f);
+		envMapPass->DoPass(envMap, projection, view, mainLight, cameraPos, glm::normalize(lightDir), lightColor, cube);
 	}
 
-	glm::vec3 lightPos = -glm::vec3(0.0f, -0.9f, 0.1f) * (farPlane - nearPlane);
-	cloudPass->DoPass(envMapPass->GetEnvironmentTexture(), projection, view, cameraPos, lightPos, cameraDir, windowDetails, quad);
-	//shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, projection, view, *quad);
-
+	if (mainLight) // Can't do clouds & shadows without a light source
+	{
+		glm::vec3 lightDir = glm::normalize(mainLight->direction);
+		cloudPass->DoPass(envMapPass->GetEnvironmentTexture(), projection, view, cameraPos, lightDir, mainLight->color, cameraDir, windowDetails, quad);
+		shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, lightDir, projection, view, *quad);
+	}
 	
-	//lightingPass->DoPass(geometryPass->GetPositionBuffer(), geometryPass->GetAlbedoBuffer(), 
-	//	geometryPass->GetNormalBuffer(), geometryPass->GetEffectsBuffer(), 
-	//	envMapPass->GetEnvironmentTexture(), cloudPass->GetCloudTexture(), projection, view, cameraPos, *quad);
+	lightingPass->DoPass(geometryPass->GetPositionBuffer(), geometryPass->GetAlbedoBuffer(), 
+		geometryPass->GetNormalBuffer(), geometryPass->GetEffectsBuffer(), 
+		cloudPass->GetSkyTexture(), projection, view, cameraPos, *quad);
 
-	//forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
-	//linePass->DoPass(lineSubmissions, projection, view, windowDetails);
+	forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
+	linePass->DoPass(lineSubmissions, projection, view, windowDetails);
 
-	//// Free up dynamic cube map space
-	//for (std::pair<RenderComponent*, CubeMap*>& pair : dynamicCubeMaps)
-	//{
-	//	TextureManager::DeleteTexture(pair.second); // Free the cube map from memory
-	//	pair.first->reflectRefractData.customMap = nullptr; // Make sure we unset the custom cube map incase we aren't using a dynamic cube map next frame
-	//}
+	// Free up dynamic cube map space
+	for (std::pair<RenderComponent*, CubeMap*>& pair : dynamicCubeMaps)
+	{
+		TextureManager::DeleteTexture(pair.second); // Free the cube map from memory
+		pair.first->reflectRefractData.customMap = nullptr; // Make sure we unset the custom cube map incase we aren't using a dynamic cube map next frame
+	}
 }
 
 void Renderer::Submit(const RenderSubmission& submission)
@@ -284,11 +288,6 @@ void Renderer::Submit(const RenderSubmission& submission)
 void Renderer::SubmitLines(const LineRenderSubmission& submission)
 {
 	lineSubmissions.push_back(submission);
-}
-
-void Renderer::SetShadowMappingDirectionalLight(Light* light)
-{
-	shadowMappingPass->SetDirectionalLight(light);
 }
 
 CubeMap* Renderer::GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore, int viewportWidth, int viewportHeight)
