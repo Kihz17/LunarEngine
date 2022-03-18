@@ -67,9 +67,6 @@
     <Filter Include="Graphics\Shader">
       <UniqueIdentifier>{cd003429-dd94-40a2-817d-9af60e1f2230}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ECS\Components\Rendering">
-      <UniqueIdentifier>{e4f3335e-a75e-492a-be18-c2749b5ab74e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Graphics\GLWrappers">
       <UniqueIdentifier>{51361759-5f5a-413d-aa96-8d08603a39a6}</UniqueIdentifier>
     </Filter>
@@ -121,254 +118,251 @@
       <Filter>Vendor\imgui</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Camera.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="PrimitiveShape.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="EntityPanel.cpp">
-      <Filter>Panels</Filter>
-    </ClCompile>
-    <ClCompile Include="RigidBody.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionHandler.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsFactory.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsWorld.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionListener.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="EntityManager.cpp">
-      <Filter>ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="DSP.cpp">
-      <Filter>Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundManager.cpp">
-      <Filter>Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyFrameListener.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Key.cpp">
-      <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="SteeringBehaviour.cpp">
-      <Filter>AI\Steering</Filter>
-    </ClCompile>
-    <ClCompile Include="WanderBehaviour.cpp">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="stb_image.cpp">
       <Filter>Vendor</Filter>
     </ClCompile>
-    <ClCompile Include="SeekBehaviour.cpp">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="FleeBehaviour.cpp">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="EvadeBehaviour.cpp">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="PursueBehaviour.cpp">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="GameEngine.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplicationLayerManager.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="AILayer.cpp">
-      <Filter>Layers</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimationLayer.cpp">
-      <Filter>Layers</Filter>
-    </ClCompile>
-    <ClCompile Include="IdleBehaviour.cpp">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="UUID.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="SteeringBehaviourComponent.h">
-      <Filter>ECS\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="SteeringEntityRemoveListener.cpp">
-      <Filter>AI\Steering</Filter>
-    </ClCompile>
-    <ClCompile Include="FreeCamController.cpp">
-      <Filter>Layers</Filter>
-    </ClCompile>
-    <ClCompile Include="IFrameBuffer.cpp">
-      <Filter>Graphics\Interfaces</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture2D.cpp">
-      <Filter>Graphics\Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureArray.cpp">
-      <Filter>Graphics\Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="CubeMap.cpp">
-      <Filter>Graphics\Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>Graphics\Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="GeometryPass.cpp">
-      <Filter>Graphics\RenderPasses</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Graphics\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderLibrary.cpp">
-      <Filter>Graphics\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="EnvironmentMapPass.cpp">
-      <Filter>Graphics\RenderPasses</Filter>
-    </ClCompile>
-    <ClCompile Include="LightingPass.cpp">
-      <Filter>Graphics\RenderPasses</Filter>
-    </ClCompile>
-    <ClCompile Include="ForwardRenderPass.cpp">
-      <Filter>Graphics\RenderPasses</Filter>
-    </ClCompile>
-    <ClCompile Include="CascadedShadowMapping.cpp">
-      <Filter>Graphics\RenderPasses</Filter>
-    </ClCompile>
-    <ClCompile Include="Frustum.cpp">
-      <Filter>Graphics\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexArrayObject.cpp">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="UniformBuffer.cpp">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderBuffer.cpp">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="FrameBuffer.cpp">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="AABB.cpp">
-      <Filter>Graphics\BoundingVolumes</Filter>
-    </ClCompile>
-    <ClCompile Include="LinePass.cpp">
-      <Filter>Graphics\RenderPasses</Filter>
-    </ClCompile>
-    <ClCompile Include="DynamicCubeMapRenderer.cpp">
-      <Filter>Graphics\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="FlockingBehaviour.cpp">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="Coordinator.cpp">
-      <Filter>AI\Steering</Filter>
-    </ClCompile>
-    <ClCompile Include="FormationBehaviour.cpp">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="PathFollowBehaviour.cpp">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Graphics\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Graphics\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatedVertex.cpp">
-      <Filter>Graphics\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="IMesh.cpp">
-      <Filter>Graphics\Interfaces</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Graphics\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="SkeletalAnimationLayer.cpp">
-      <Filter>Layers\SkeletalAnimation</Filter>
-    </ClCompile>
-    <ClCompile Include="SkeletalAnimationComponentListener.cpp">
-      <Filter>Layers\SkeletalAnimation</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatedMesh.cpp">
-      <Filter>Graphics\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionTesting.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="DungeonGenUtils.cpp">
-      <Filter>DungeonGenerator</Filter>
-    </ClCompile>
-    <ClCompile Include="DungeonGeneratorTypes.cpp">
-      <Filter>DungeonGenerator</Filter>
-    </ClCompile>
-    <ClCompile Include="Delaunay3D.cpp">
-      <Filter>DungeonGenerator\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Delaunay2D.cpp">
-      <Filter>DungeonGenerator\2D</Filter>
-    </ClCompile>
-    <ClCompile Include="DungeonGenerator3D.cpp">
-      <Filter>DungeonGenerator\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="DungeonGenerator2D.cpp">
-      <Filter>DungeonGenerator\2D</Filter>
-    </ClCompile>
-    <ClCompile Include="DungeonGeneratorPathfinder3D.cpp">
-      <Filter>DungeonGenerator\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="DungeonGeneratorPathfinder2D.cpp">
-      <Filter>DungeonGenerator\2D</Filter>
-    </ClCompile>
-    <ClCompile Include="DungeonConstructor.cpp">
-      <Filter>DungeonGenerator\2D</Filter>
-    </ClCompile>
-    <ClCompile Include="CloudPass.cpp">
-      <Filter>Graphics\RenderPasses</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture3D.cpp">
-      <Filter>Graphics\Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="EquirectangularToCubeMapConverter.cpp">
-      <Filter>Graphics\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="ComputeShader.cpp">
-      <Filter>Graphics\Shader</Filter>
-    </ClCompile>
     <ClCompile Include="glad.c">
       <Filter>Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ApplicationLayerManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GameEngine.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenerator\DungeonGeneratorTypes.cpp">
+      <Filter>DungeonGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenerator\DungeonGenUtils.cpp">
+      <Filter>DungeonGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenerator\3D\Delaunay3D.cpp">
+      <Filter>DungeonGenerator\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenerator\3D\DungeonGenerator3D.cpp">
+      <Filter>DungeonGenerator\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenerator\3D\DungeonGeneratorPathfinder3D.cpp">
+      <Filter>DungeonGenerator\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenerator\2D\Delaunay2D.cpp">
+      <Filter>DungeonGenerator\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenerator\2D\DungeonConstructor.cpp">
+      <Filter>DungeonGenerator\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenerator\2D\DungeonGenerator2D.cpp">
+      <Filter>DungeonGenerator\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonGenerator\2D\DungeonGeneratorPathfinder2D.cpp">
+      <Filter>DungeonGenerator\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\Entity.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\EntityManager.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\Coordinator.cpp">
+      <Filter>AI\Steering</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\SteeringBehaviour.cpp">
+      <Filter>AI\Steering</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\SteeringEntityRemoveListener.cpp">
+      <Filter>AI\Steering</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\Behaviours\EvadeBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\Behaviours\FleeBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\Behaviours\FlockingBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\Behaviours\FormationBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\Behaviours\IdleBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\Behaviours\PathFollowBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\Behaviours\PursueBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\Behaviours\SeekBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Steering\Behaviours\WanderBehaviour.cpp">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\KeyFrameListener.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Camera.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Light.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\PrimitiveShape.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Renderer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\BoundingVolumes\AABB.cpp">
+      <Filter>Graphics\BoundingVolumes</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\GLWrappers\Framebuffer.cpp">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\GLWrappers\IndexBuffer.cpp">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\GLWrappers\RenderBuffer.cpp">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\GLWrappers\UniformBuffer.cpp">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\GLWrappers\VertexArrayObject.cpp">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\GLWrappers\VertexBuffer.cpp">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Interfaces\IFrameBuffer.cpp">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Interfaces\IMesh.cpp">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Mesh\AnimatedMesh.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Mesh\AnimatedVertex.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Mesh\Animation.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Mesh\Mesh.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Mesh\Vertex.cpp">
+      <Filter>Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\RenderPasses\CascadedShadowMapping.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\RenderPasses\CloudPass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\RenderPasses\EnvironmentMapPass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\RenderPasses\ForwardRenderPass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\RenderPasses\GeometryPass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\RenderPasses\LightingPass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\RenderPasses\LinePass.cpp">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Shader\ComputeShader.cpp">
+      <Filter>Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Shader\Shader.cpp">
+      <Filter>Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Shader\ShaderLibrary.cpp">
+      <Filter>Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Textures\CubeMap.cpp">
+      <Filter>Graphics\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Textures\Texture2D.cpp">
+      <Filter>Graphics\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Textures\Texture3D.cpp">
+      <Filter>Graphics\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Textures\TextureArray.cpp">
+      <Filter>Graphics\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Textures\TextureManager.cpp">
+      <Filter>Graphics\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Utils\DynamicCubeMapRenderer.cpp">
+      <Filter>Graphics\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Utils\EquirectangularToCubeMapConverter.cpp">
+      <Filter>Graphics\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Utils\Frustum.cpp">
+      <Filter>Graphics\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputManager.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\Key.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Layers\AILayer.cpp">
+      <Filter>Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="Layers\AnimationLayer.cpp">
+      <Filter>Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="Layers\FreeCamController.cpp">
+      <Filter>Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.cpp">
+      <Filter>Layers\SkeletalAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.cpp">
+      <Filter>Layers\SkeletalAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="Panels\EntityPanel.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\CollisionHandler.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\CollisionListener.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\CollisionTesting.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\PhysicsFactory.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\PhysicsWorld.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\RigidBody.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound\DSP.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound\SoundManager.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Utils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\UUID.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -400,353 +394,353 @@
       <Filter>Vendor\imgui</Filter>
     </ClInclude>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="VertexInformation.h">
-      <Filter>Graphics</Filter>
+    <ClInclude Include="Core\ApplicationLayer.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="GLCommon.h">
-      <Filter>Graphics</Filter>
+    <ClInclude Include="Core\ApplicationLayerManager.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Graphics</Filter>
+    <ClInclude Include="Core\GameEngine.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Graphics</Filter>
+    <ClInclude Include="DungeonGenerator\DungeonGeneratorTypes.h">
+      <Filter>DungeonGenerator</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Graphics</Filter>
+    <ClInclude Include="DungeonGenerator\DungeonGenUtils.h">
+      <Filter>DungeonGenerator</Filter>
     </ClInclude>
-    <ClInclude Include="PrimitiveShape.h">
-      <Filter>Graphics</Filter>
+    <ClInclude Include="DungeonGenerator\3D\Delaunay3D.h">
+      <Filter>DungeonGenerator\3D</Filter>
     </ClInclude>
-    <ClInclude Include="IPanel.h">
-      <Filter>Panels</Filter>
+    <ClInclude Include="DungeonGenerator\3D\DungeonGenerator3D.h">
+      <Filter>DungeonGenerator\3D</Filter>
     </ClInclude>
-    <ClInclude Include="EntityPanel.h">
-      <Filter>Panels</Filter>
+    <ClInclude Include="DungeonGenerator\3D\DungeonGeneratorPathfinder3D.h">
+      <Filter>DungeonGenerator\3D</Filter>
     </ClInclude>
-    <ClInclude Include="RigidBody.h">
-      <Filter>Physics</Filter>
+    <ClInclude Include="DungeonGenerator\2D\Delaunay2D.h">
+      <Filter>DungeonGenerator\2D</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionHandler.h">
-      <Filter>Physics</Filter>
+    <ClInclude Include="DungeonGenerator\2D\DungeonConstructor.h">
+      <Filter>DungeonGenerator\2D</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsFactory.h">
-      <Filter>Physics</Filter>
+    <ClInclude Include="DungeonGenerator\2D\DungeonGenerator2D.h">
+      <Filter>DungeonGenerator\2D</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsWorld.h">
-      <Filter>Physics</Filter>
+    <ClInclude Include="DungeonGenerator\2D\DungeonGeneratorPathfinder2D.h">
+      <Filter>DungeonGenerator\2D</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionListener.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Components.h">
+    <ClInclude Include="ECS\Entity.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
+    <ClInclude Include="ECS\EntityManager.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="EntityManager.h">
+    <ClInclude Include="ECS\IComponentListener.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="SoundManager.h">
-      <Filter>Sound</Filter>
+    <ClInclude Include="ECS\IEntityRemoveListener.h">
+      <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="DSP.h">
-      <Filter>Sound</Filter>
+    <ClInclude Include="ECS\Components\AnimationComponent.h">
+      <Filter>ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="IKeyFrameListener.h">
+    <ClInclude Include="ECS\Components\Component.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\LightComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\LineRenderComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\PositionComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\ReflectRefract.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\RenderComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\RigidBodyComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\RotationComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\ScaleComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\SkeletalAnimationComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\SteeringBehaviourComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\TagComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Components\VelocityComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Coordinator.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\ISteeringBehaviour.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\ISteeringCondition.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Path.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Steering.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\SteeringBehaviour.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\SteeringEntityRemoveListener.h">
+      <Filter>AI\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Behaviours\EvadeBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Behaviours\FleeBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Behaviours\FlockingBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Behaviours\FormationBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Behaviours\IdleBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Behaviours\PathFollowBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Behaviours\PursueBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Behaviours\SeekBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Steering\Behaviours\WanderBehaviour.h">
+      <Filter>AI\Steering\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\IKeyFrameListener.h">
       <Filter>Animation</Filter>
     </ClInclude>
-    <ClInclude Include="KeyFrameListener.h">
+    <ClInclude Include="Animation\KeyFrameListener.h">
       <Filter>Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Key.h">
-      <Filter>Input</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Input</Filter>
-    </ClInclude>
-    <ClInclude Include="SteeringBehaviour.h">
-      <Filter>AI\Steering</Filter>
-    </ClInclude>
-    <ClInclude Include="ISteeringBehaviour.h">
-      <Filter>AI\Steering</Filter>
-    </ClInclude>
-    <ClInclude Include="WanderBehaviour.h">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekBehaviour.h">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="Steering.h">
-      <Filter>AI\Steering</Filter>
-    </ClInclude>
-    <ClInclude Include="FleeBehaviour.h">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="EvadeBehaviour.h">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="PursueBehaviour.h">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="GameEngine.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationLayer.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationLayerManager.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="AILayer.h">
-      <Filter>Layers</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimationLayer.h">
-      <Filter>Layers</Filter>
-    </ClInclude>
-    <ClInclude Include="ISteeringCondition.h">
-      <Filter>AI\Steering</Filter>
-    </ClInclude>
-    <ClInclude Include="IdleBehaviour.h">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="UUID.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="PositionComponent.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="RotationComponent.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ScaleComponent.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="VelocityComponent.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="RigidBodyComponent.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="LightComponent.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimationComponent.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="TagComponent.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="IEntityRemoveListener.h">
-      <Filter>ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="SteeringEntityRemoveListener.h">
-      <Filter>AI\Steering</Filter>
-    </ClInclude>
-    <ClInclude Include="FreeCamController.h">
-      <Filter>Layers</Filter>
-    </ClInclude>
-    <ClInclude Include="IUniformBuffer.h">
-      <Filter>Graphics\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="IFrameBuffer.h">
-      <Filter>Graphics\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="ITexture.h">
-      <Filter>Graphics\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>Graphics\Textures</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture2D.h">
-      <Filter>Graphics\Textures</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureArray.h">
-      <Filter>Graphics\Textures</Filter>
-    </ClInclude>
-    <ClInclude Include="CubeMap.h">
-      <Filter>Graphics\Textures</Filter>
-    </ClInclude>
-    <ClInclude Include="IRenderBuffer.h">
-      <Filter>Graphics\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryPass.h">
-      <Filter>Graphics\RenderPasses</Filter>
-    </ClInclude>
-    <ClInclude Include="Window.h">
+    <ClInclude Include="Graphics\Camera.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Graphics\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderLibrary.h">
-      <Filter>Graphics\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderSubmission.h">
+    <ClInclude Include="Graphics\GLCommon.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="EnvironmentMapPass.h">
-      <Filter>Graphics\RenderPasses</Filter>
+    <ClInclude Include="Graphics\Light.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="LightingPass.h">
-      <Filter>Graphics\RenderPasses</Filter>
+    <ClInclude Include="Graphics\PrimitiveShape.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="ForwardRenderPass.h">
-      <Filter>Graphics\RenderPasses</Filter>
+    <ClInclude Include="Graphics\Renderer.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="CascadedShadowMapping.h">
-      <Filter>Graphics\RenderPasses</Filter>
+    <ClInclude Include="Graphics\RenderSubmission.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="RenderComponent.h">
-      <Filter>ECS\Components\Rendering</Filter>
+    <ClInclude Include="Graphics\VertexInformation.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="ReflectRefract.h">
-      <Filter>ECS\Components\Rendering</Filter>
+    <ClInclude Include="Graphics\Window.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Frustum.h">
-      <Filter>Graphics\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexArrayObject.h">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="UniformBuffer.h">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderBuffer.h">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexBuffer.h">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameBuffer.h">
-      <Filter>Graphics\GLWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="AABB.h">
+    <ClInclude Include="Graphics\BoundingVolumes\AABB.h">
       <Filter>Graphics\BoundingVolumes</Filter>
     </ClInclude>
-    <ClInclude Include="LinePass.h">
+    <ClInclude Include="Graphics\GLWrappers\Framebuffer.h">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\GLWrappers\IndexBuffer.h">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\GLWrappers\RenderBuffer.h">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\GLWrappers\UniformBuffer.h">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\GLWrappers\VertexArrayObject.h">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\GLWrappers\VertexBuffer.h">
+      <Filter>Graphics\GLWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Interfaces\IBoundingVolume.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Interfaces\IFrameBuffer.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Interfaces\IMesh.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Interfaces\IRenderBuffer.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Interfaces\ITexture.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Interfaces\IUniformBuffer.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Interfaces\IVertex.h">
+      <Filter>Graphics\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Mesh\AnimatedMesh.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Mesh\AnimatedVertex.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Mesh\Animation.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Mesh\Bone.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Mesh\BoneInfo.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Mesh\Mesh.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Mesh\Vertex.h">
+      <Filter>Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\RenderPasses\CascadedShadowMapping.h">
       <Filter>Graphics\RenderPasses</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicCubeMapRenderer.h">
-      <Filter>Graphics\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="FlockingBehaviour.h">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="Coordinator.h">
-      <Filter>AI\Steering</Filter>
-    </ClInclude>
-    <ClInclude Include="FormationBehaviour.h">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="PathFollowBehaviour.h">
-      <Filter>AI\Steering\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="Path.h">
-      <Filter>AI\Steering</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Graphics\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="IBoundingVolume.h">
-      <Filter>Graphics\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="IVertex.h">
-      <Filter>Graphics\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Graphics\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatedVertex.h">
-      <Filter>Graphics\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="IMesh.h">
-      <Filter>Graphics\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Graphics\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Bone.h">
-      <Filter>Graphics\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="SkeletalAnimationComponent.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="IComponentListener.h">
-      <Filter>ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="SkeletalAnimationLayer.h">
-      <Filter>Layers\SkeletalAnimation</Filter>
-    </ClInclude>
-    <ClInclude Include="SkeletalAnimationComponentListener.h">
-      <Filter>Layers\SkeletalAnimation</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatedMesh.h">
-      <Filter>Graphics\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="BoneInfo.h">
-      <Filter>Graphics\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionTesting.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="DungeonGenUtils.h">
-      <Filter>DungeonGenerator</Filter>
-    </ClInclude>
-    <ClInclude Include="DungeonGeneratorTypes.h">
-      <Filter>DungeonGenerator</Filter>
-    </ClInclude>
-    <ClInclude Include="LineRenderComponent.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Grid2D.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Grid3D.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Delaunay3D.h">
-      <Filter>DungeonGenerator\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Delaunay2D.h">
-      <Filter>DungeonGenerator\2D</Filter>
-    </ClInclude>
-    <ClInclude Include="DungeonGenerator3D.h">
-      <Filter>DungeonGenerator\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="DungeonGenerator2D.h">
-      <Filter>DungeonGenerator\2D</Filter>
-    </ClInclude>
-    <ClInclude Include="DungeonGeneratorPathfinder3D.h">
-      <Filter>DungeonGenerator\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="DungeonGeneratorPathfinder2D.h">
-      <Filter>DungeonGenerator\2D</Filter>
-    </ClInclude>
-    <ClInclude Include="DungeonConstructor.h">
-      <Filter>DungeonGenerator\2D</Filter>
-    </ClInclude>
-    <ClInclude Include="CloudPass.h">
+    <ClInclude Include="Graphics\RenderPasses\CloudPass.h">
       <Filter>Graphics\RenderPasses</Filter>
     </ClInclude>
-    <ClInclude Include="Texture3D.h">
+    <ClInclude Include="Graphics\RenderPasses\EnvironmentMapPass.h">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\RenderPasses\ForwardRenderPass.h">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\RenderPasses\GeometryPass.h">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\RenderPasses\LightingPass.h">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\RenderPasses\LinePass.h">
+      <Filter>Graphics\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Shader\ComputeShader.h">
+      <Filter>Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Shader\Shader.h">
+      <Filter>Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Shader\ShaderLibrary.h">
+      <Filter>Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Textures\CubeMap.h">
       <Filter>Graphics\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="EquirectangularToCubeMapConverter.h">
+    <ClInclude Include="Graphics\Textures\Texture2D.h">
+      <Filter>Graphics\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Textures\Texture3D.h">
+      <Filter>Graphics\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Textures\TextureArray.h">
+      <Filter>Graphics\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Textures\TextureManager.h">
+      <Filter>Graphics\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Utils\DynamicCubeMapRenderer.h">
       <Filter>Graphics\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ComputeShader.h">
-      <Filter>Graphics\Shader</Filter>
+    <ClInclude Include="Graphics\Utils\EquirectangularToCubeMapConverter.h">
+      <Filter>Graphics\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Utils\Frustum.h">
+      <Filter>Graphics\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputManager.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Key.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Layers\AILayer.h">
+      <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="Layers\AnimationLayer.h">
+      <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="Layers\FreeCamController.h">
+      <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.h">
+      <Filter>Layers\SkeletalAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.h">
+      <Filter>Layers\SkeletalAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="Panels\EntityPanel.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="Panels\IPanel.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\CollisionHandler.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\CollisionListener.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\CollisionTesting.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\PhysicsFactory.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\PhysicsWorld.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\RigidBody.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound\DSP.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound\SoundManager.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Grid2D.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Grid3D.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Utils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\UUID.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
