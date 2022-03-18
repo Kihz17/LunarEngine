@@ -7,6 +7,7 @@
 
 class Texture2D;
 class Texture3D;
+class TextureArray;
 class Utils
 {
 public:
@@ -21,4 +22,5 @@ public:
 
 	static void SaveTextureAsBMP(const std::string& savePath, Texture2D* texture);
 	static void SaveTexture3DAsBMP(const std::string& savePath, Texture3D* texture);
+	static void SaveTextureArrayAsBMP(const std::string& savePath, TextureArray* texture);
 };

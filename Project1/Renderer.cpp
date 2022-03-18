@@ -254,8 +254,8 @@ void Renderer::DrawFrame()
 	}
 	
 	lightingPass->DoPass(geometryPass->GetPositionBuffer(), geometryPass->GetAlbedoBuffer(), 
-		geometryPass->GetNormalBuffer(), geometryPass->GetEffectsBuffer(), 
-		cloudPass->GetSkyTexture(), projection, view, cameraPos, *quad);
+		geometryPass->GetNormalBuffer(), geometryPass->GetEffectsBuffer(),
+		cloudPass->GetSkyTexture(), shadowMappingPass->GetSoftnessTexture(), projection, view, cameraPos, *quad);
 
 	forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
 	linePass->DoPass(lineSubmissions, projection, view, windowDetails);

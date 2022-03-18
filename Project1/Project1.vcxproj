@@ -373,7 +373,6 @@
     <None Include="assets\shaders\animatedGeometryBuffer.glsl" />
     <None Include="assets\shaders\brdfLighting.glsl" />
     <None Include="assets\shaders\cloudPost.glsl" />
-    <None Include="assets\shaders\CMSDepthDebug.glsl" />
     <None Include="assets\shaders\convoluteEnvMap.glsl" />
     <None Include="assets\shaders\CSMDepth.glsl" />
     <None Include="assets\shaders\CSMDepthAnimated.glsl" />

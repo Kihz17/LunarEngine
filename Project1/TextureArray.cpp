@@ -5,6 +5,9 @@
 #include <iostream>
 
 TextureArray::TextureArray(GLenum internalFormat, GLenum format, GLenum dataFormat, int width, int height, int depth, TextureFilterType filter, TextureWrapType wrap, bool genMipMaps)
+	: width(width),
+	height(height),
+	depth(depth)
 {
 	glGenTextures(1, &ID);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, ID);

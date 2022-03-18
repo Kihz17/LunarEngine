@@ -39,7 +39,11 @@ void main()
 //type fragment
 #version 420 
 
+uniform float uShadowSoftness;
+
+out vec4 oColor;
+
 void main()
 {
-	// Pass through
+	oColor = vec4(uShadowSoftness, uShadowSoftness, uShadowSoftness, 1.0f);
 }

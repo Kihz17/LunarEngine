@@ -72,6 +72,7 @@ const int MAX_CASCADES = 16;
 const float NEAR_PLANE = 0.1f;
 const float FAR_PLANE = 1000.0f;
 uniform sampler2DArray uShadowMap;
+uniform sampler2DArray uShadowSoftnessTexture;
 uniform float uCascadePlaneDistances[MAX_CASCADES];
 uniform int uCascadeCount; // # of frusta - 1
 layout (std140, binding = 0) uniform uLightSpaceMatrices // Our UniformBuffer from our cpp code (found in CascadedShadowMapping.h)
@@ -366,7 +367,9 @@ float ComputeShadow(vec3 fragmentPositionWorldSpace, vec3 lightDir, vec3 normal)
 		}
 	}
 	shadowContrib /= 9.0f; // Average all of the neighbouring texels
-	
+	float softness = texture(uShadowSoftnessTexture, vec3(projectionCoords.xy, cascadeLayer)).r;
+	shadowContrib *= softness;
+
 	if(projectionCoords.z > 1.0f) // We are outside of the far plane of our light's frustum, we shouldn't have a shadow here
 	{
 		return 0.0f;

@@ -161,7 +161,7 @@ void GeometryPass::PassSharedData(Shader* shader, RenderSubmission* submission, 
 
 	if (renderComponent->castShadowsOn)
 	{
-		shader->SetFloat("uShadowSoftness", renderComponent->shadowSoftness);
+		shader->SetFloat("uShadowSoftness", renderComponent->surfaceShadowSoftness);
 	}
 	else // No shadows
 	{

@@ -46,6 +46,7 @@ public:
 
 	std::vector<float>& GetCascadeLevels() { return cascadeLevels; }
 	ITexture* GetShadowMap() { return lightDepthMaps; }
+	ITexture* GetSoftnessTexture() { return softnessTextures; }
 
 	static const std::string DEPTH_MAPPING_SHADER_KEY;
 	static const std::string DEPTH_MAPPING_ANIMATED_SHADER_KEY;
@@ -60,10 +61,10 @@ private:
 	std::vector<float> cascadeLevels;
 	UniformBuffer* lightMatricesUBO;
 	TextureArray* lightDepthMaps;
+	TextureArray* softnessTextures;
 
 	Shader* depthMappingShader;
 	Shader* depthMappingAnimatedShader;
-	Shader* depthDebugShader;
 
 	// Pulled from Renderer.h, Renderer will always outlast this class so it's okay to hold references to these objects
 	glm::mat4& cameraView;
@@ -71,8 +72,6 @@ private:
 	const float& cameraFOV;
 	const float& projectionNearPlane;
 	const float& projectionFarPlane;
-
-	Key* testKey;
 
 	float zMult;
 };

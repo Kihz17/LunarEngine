@@ -34,7 +34,8 @@ struct RenderComponent : public Component
 
 		bool castShadows = true;
 		bool castShadowsOn = true;
-		float shadowSoftness = 1.0f;
+		float surfaceShadowSoftness = 1.0f;
+		float castingShadownSoftness = 0.9f;
 
 		ReflectRefractType reflectRefractType = ReflectRefractType::None;
 		ReflectRefractMapType reflectRefractMapType = ReflectRefractMapType::Environment;
@@ -62,7 +63,8 @@ struct RenderComponent : public Component
 		projViewModel(glm::mat4(1.0f)),
 		castShadows(true),
 		castShadowsOn(true),
-		shadowSoftness(1.0f),
+		surfaceShadowSoftness(1.0f),
+		castingShadownSoftness(0.75f),
 		reflectRefractMapPriority(ReflectRefractMapPriorityType::High)
 	{}
 
@@ -85,7 +87,8 @@ struct RenderComponent : public Component
 		projViewModel(glm::mat4(1.0f)),
 		castShadows(renderInfo.castShadows),
 		castShadowsOn(renderInfo.castShadowsOn),
-		shadowSoftness(renderInfo.shadowSoftness),
+		surfaceShadowSoftness(renderInfo.surfaceShadowSoftness),
+		castingShadownSoftness(renderInfo.castingShadownSoftness),
 		reflectRefractData(renderInfo.reflectRefractType, renderInfo.reflectRefractMapType, renderInfo.reflectRefractCustomMap, renderInfo.reflectRefractStrength, renderInfo.refractRatio),
 		reflectRefractMapPriority(renderInfo.reflectRefractMapPriority)
 	{}
@@ -124,7 +127,8 @@ struct RenderComponent : public Component
 			ImGui::Checkbox("Ignore Lighting", &isIgnoreLighting);
 			ImGui::Checkbox("Cast Shadows", &castShadows);
 			ImGui::Checkbox("Cast Shadows On", &castShadowsOn);
-			ImGui::DragFloat("Shadow Softness", &shadowSoftness, 0.001f, 0.0f, 1.0f);
+			ImGui::DragFloat("Surface Shadow Softness", &surfaceShadowSoftness, 0.001f, 0.0f, 1.0f);
+			ImGui::DragFloat("Casting Shadow Softness", &castingShadownSoftness, 0.001f, 0.0f, 1.0f);
 
 			ImGui::NewLine();
 			ImGui::DragFloat("Reflect/Refract Strength", &reflectRefractData.strength, 0.001f, 0.0f, 1.0f);
@@ -213,7 +217,8 @@ struct RenderComponent : public Component
 
 	bool castShadows;
 	bool castShadowsOn;
-	float shadowSoftness;
+	float surfaceShadowSoftness;
+	float castingShadownSoftness;
 
 	ReflectRefractData reflectRefractData;
 	ReflectRefractMapPriorityType reflectRefractMapPriority;

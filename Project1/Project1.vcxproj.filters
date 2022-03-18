@@ -756,9 +756,6 @@
     <None Include="assets\shaders\brdfLighting.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="assets\shaders\CMSDepthDebug.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="assets\shaders\convoluteEnvMap.glsl">
       <Filter>Shaders</Filter>
     </None>

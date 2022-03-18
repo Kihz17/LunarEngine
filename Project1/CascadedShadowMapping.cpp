@@ -5,6 +5,7 @@
 #include "TextureManager.h"
 #include "ShaderLibrary.h"
 #include "Animation.h"
+#include "Utils.h"
 
 #include <iostream>
 #include <sstream>
@@ -17,18 +18,16 @@ const std::string CascadedShadowMapping::DEPTH_MAPPING_ANIMATED_SHADER_KEY = "an
 const std::string CascadedShadowMapping::DEPTH_DEBUG_SHADER_KEY = "debugDepthShader";
 const int CascadedShadowMapping::MAX_CASCADE_LEVELS = 16;
 
-constexpr unsigned int depthMapResolution = 4096;
+constexpr unsigned int depthMapResolution = 2048;
 constexpr float lightMapColorBorder[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-int cascadeLayer = 0;
 
 CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& info)
 	: lightDepthBuffer(new FrameBuffer()),
 	lightMatricesUBO(new UniformBuffer(sizeof(glm::mat4x4)* MAX_CASCADE_LEVELS, GL_STATIC_DRAW, 0)),
 	lightDepthMaps(nullptr),
+	softnessTextures(nullptr),
 	depthMappingShader(ShaderLibrary::Load(DEPTH_MAPPING_SHADER_KEY, "assets/shaders/CSMDepth.glsl")),
 	depthMappingAnimatedShader(ShaderLibrary::Load(DEPTH_MAPPING_ANIMATED_SHADER_KEY, "assets/shaders/CSMDepthAnimated.glsl")),
-	depthDebugShader(ShaderLibrary::Load(DEPTH_DEBUG_SHADER_KEY, "assets/shaders/CMSDepthDebug.glsl")),
 	cameraFOV(info.cameraFOV),
 	cameraView(info.cameraView),
 	windowSpecs(info.windowSpecs),
@@ -49,35 +48,30 @@ CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& in
 		int(cascadeLevels.size()) + 1, TextureFilterType::Nearest, TextureWrapType::ClampToBorder, false);
 	lightDepthMaps->TextureParameterFloatArray(GL_TEXTURE_BORDER_COLOR, lightMapColorBorder);
 
+	softnessTextures = TextureManager::CreateTextureArray(GL_RGBA16F, GL_RGBA, GL_FLOAT, depthMapResolution, depthMapResolution,
+		int(cascadeLevels.size()) + 1, TextureFilterType::Linear, TextureWrapType::Repeat, true);
+
 	lightDepthBuffer->Bind();
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, softnessTextures->GetID(), 0);
 	lightDepthBuffer->SetDepthAttachment(lightDepthMaps); // Assign the depth map texture array to our depth buffer fbo
 
 	// Strictly using depth map only, don't waste time writing and reading to color buffer
-	lightDepthBuffer->SetColorBufferWrite(ColorBufferType::None);
-	lightDepthBuffer->SetColorBufferRead(ColorBufferType::None);
+	//lightDepthBuffer->SetColorBufferWrite(ColorBufferType::None);
+	//lightDepthBuffer->SetColorBufferRead(ColorBufferType::None);
 	if (!lightDepthBuffer->CheckComplete()) std::cout << "Light Depth Buffer not complete!\n";
 	lightDepthBuffer->Unbind();
 
 	// Setup shader uniforms
-	depthMappingShader->Bind();
 	depthMappingShader->InitializeUniform("uMatModel");
-	depthMappingShader->Unbind();
+	depthMappingShader->InitializeUniform("uShadowSoftness");
 
-	depthMappingAnimatedShader->Bind();
+	// Setup animated shader uniforms
 	depthMappingAnimatedShader->InitializeUniform("uMatModel");
+	depthMappingAnimatedShader->InitializeUniform("uShadowSoftness");
 	for (unsigned int i = 0; i < Animation::MAX_BONES; i++)
 	{
 		depthMappingAnimatedShader->InitializeUniform("uBoneMatrices[" + std::to_string(i) + "]");
 	}
-	depthMappingAnimatedShader->Unbind();
-
-	// FOR DEBUGGING
-	depthDebugShader->Bind();
-	depthDebugShader->InitializeUniform("uLayer");
-	depthDebugShader->InitializeUniform("uDepthTexture");
-	depthDebugShader->Unbind();
-
-	testKey = InputManager::GetKey(GLFW_KEY_L);
 }
 
 CascadedShadowMapping::~CascadedShadowMapping()
@@ -88,18 +82,9 @@ CascadedShadowMapping::~CascadedShadowMapping()
 
 void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::vec3& lightDir, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& quad)
 {
-	// Debugging
-	/*if (testKey->IsJustPressed())
-	{
-		cascadeLayer++;
-		if (cascadeLayer > cascadeLevels.size())
-		{
-			cascadeLayer = 0;
-		}
-	}*/
-
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT); // Fixes peter panning (shadow offsets)
 
 	// Update the data in our light matrices UBO
 	lightMatricesUBO->Bind();
@@ -110,14 +95,15 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, 
 	}
 	lightMatricesUBO->Unbind();
 
-	// Generate depth maps by rendering the scene from the light's POV
+
 	lightDepthBuffer->Bind();
 	depthMappingShader->Bind();
 
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_TEXTURE_2D_ARRAY, lightDepthMaps->GetID(), 0);
+	// Attach texture array to FBO
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, softnessTextures->GetID(), 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	glViewport(0, 0, depthMapResolution, depthMapResolution); // Set viewport to size of the depth map
-	glClear(GL_DEPTH_BUFFER_BIT); // Re-clear depth buffer
-	glCullFace(GL_FRONT); // Fixes peter panning (shadow offsets)
 
 	for (RenderSubmission* submission : submissions)
 	{
@@ -131,6 +117,8 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, 
 
 		// TODO: Another issue will arise with this ^^^. The "softness" value will be directly associated with the surface the shadow is being casted on, NOT the object casting the shadow.
 		// This is a problem that will need a solution
+
+		depthMappingShader->SetFloat("uShadowSoftness", submission->renderComponent->castingShadownSoftness);
 
 		renderComponent->Draw(depthMappingShader, submission->transform);
 	}
@@ -147,21 +135,15 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, 
 			depthMappingAnimatedShader->SetMat4("uBoneMatrices[" + std::to_string(i) + "]", matrix);
 		}
 
+		depthMappingShader->SetFloat("uShadowSoftness", submission->renderComponent->castingShadownSoftness);
+
 		renderComponent->Draw(depthMappingAnimatedShader, submission->transform);
 	}
 
 	lightDepthBuffer->Unbind();
 
-	glCullFace(GL_BACK); // Set face culling back to normal
+	//Utils::SaveTextureArrayAsBMP("test", softnessTextures);
 	glViewport(0, 0, windowSpecs->width, windowSpecs->height); 	// Set viewport back to source
-
-	// FOR DEBUGGING
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//depthDebugShader->Bind();
-	//depthDebugShader->SetInt("uLayer", cascadeLayer);
-	//lightDepthMaps->BindToSlot(0);
-	//depthDebugShader->SetInt("uDepthTexture", 0);
-	//quad.Draw();
 }
 
 std::vector<glm::vec4> CascadedShadowMapping::GetFrustumCornersWorldSpace(const glm::mat4& projection)

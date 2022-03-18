@@ -1,6 +1,7 @@
 #include "Utils.h"
 #include "Texture2D.h"
 #include "Texture3D.h"
+#include "TextureArray.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb/stb_image_write.h>
@@ -34,11 +35,25 @@ void Utils::SaveTextureAsBMP(const std::string& savePath, Texture2D* texture)
 	unsigned int size = texture->GetWidth() * texture->GetHeight() * 4;
 	uint8_t* data = new uint8_t[size];
 	glGetTextureImage(texture->GetID(), 0, GL_RGBA, GL_UNSIGNED_BYTE, size, data);
-	stbi_write_bmp(savePath.c_str(), texture->GetWidth(), texture->GetHeight(), 4, data);
+	stbi_write_bmp((savePath + ".bmp").c_str(), texture->GetWidth(), texture->GetHeight(), 4, data);
 	delete[] data;
 }
 
 void Utils::SaveTexture3DAsBMP(const std::string& savePath, Texture3D* texture)
+{
+	unsigned int size = texture->GetWidth() * texture->GetHeight() * 4;
+	uint8_t* data = new uint8_t[size];
+
+	for (int z = 0; z < texture->GetDepth(); z++)
+	{
+		glGetTextureSubImage(texture->GetID(), 0, 0, 0, z, texture->GetWidth(), texture->GetHeight(), 1, GL_RGBA, GL_UNSIGNED_BYTE, size, data);
+		stbi_write_bmp((savePath + std::to_string(z) + ".bmp").c_str(), texture->GetWidth(), texture->GetHeight(), 4, data);
+	}
+
+	delete[] data;
+}
+
+void Utils::SaveTextureArrayAsBMP(const std::string& savePath, TextureArray* texture)
 {
 	unsigned int size = texture->GetWidth() * texture->GetHeight() * 4;
 	uint8_t* data = new uint8_t[size];

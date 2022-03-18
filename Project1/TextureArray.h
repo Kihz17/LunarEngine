@@ -17,6 +17,7 @@ public:
 
 	virtual int GetWidth() const override { return width; }
 	virtual int GetHeight() const override { return height; }
+	int GetDepth() const { return depth; }
 
 	virtual TextureType GetType() const { return TextureType::TEXTURE_2D_ARRAY; }
 
@@ -27,5 +28,5 @@ private:
 	virtual ~TextureArray();
 
 	GLuint ID;
-	int width, height, channels;
+	int width, height, depth, channels;
 };
