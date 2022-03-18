@@ -72,6 +72,11 @@ private:
 	float cloudCloseThreshold;
 	float cloudMediumThreshold;
 
+	float godRayDecay;
+	float godRayDensity;
+	float godRayWeight;
+	float godRayExposure;
+
 	float perlinFreq;
 
 	glm::vec3 cloudColorTop;

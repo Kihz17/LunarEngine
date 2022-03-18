@@ -4,8 +4,6 @@ layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 
 layout(rgba32f, binding = 0) uniform image2D uColorBuffer;
 layout(rgba32f, binding = 1) uniform image2D uBloomBuffer;
-layout(rgba32f, binding = 2) uniform image2D uAlphanessBuffer;
-layout(rgba32f, binding = 3) uniform image2D uCloudDistanceBuffer;
 
 // Cloud textures
 uniform sampler3D uCloudTexture;
@@ -110,7 +108,7 @@ void main()
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_OUTER_RADIUS, endPos);
 		fogRay = startPos;
 	}
-	else if(uCameraPosition.y > SPHERE_INNER_RADIUS - EARTH_RADIUS && uCameraPosition.y < SPHERE_OUTER_RADIUS - EARTH_RADIUS) // Outside the "inner" bounds || outside of "earth"
+	else if(uCameraPosition.y > SPHERE_INNER_RADIUS - EARTH_RADIUS && uCameraPosition.y < SPHERE_OUTER_RADIUS - EARTH_RADIUS) // Outside the "inner" bounds but within outer bounds
 	{
 		startPos = uCameraPosition;
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_OUTER_RADIUS, endPos);
@@ -129,21 +127,17 @@ void main()
 	float fogAmount = ComputeFog(fogRay, 0.00009f); // Compute fog
 
 	vec4 fragValue = background; // Set the color of this fragment to be the background
-	vec4 cloudDistance;
-	vec4 alphaness;
 
 	// Compute sun bloom
 	float bloomSun = clamp(dot(uLightDirection, rayDir), 0.0f, 1.0f);
-	vec3 bloomSunColor = 0.8f * vec3(1.0f, 0.6f, 0.1f) * pow(bloomSun, 128);
-	vec4 bloomValue = vec4(bloomSunColor, 1.0f);
+	vec3 bloomSunColor = 0.8f * uLightColor * pow(bloomSun, 128);
+	vec4 bloomValue = vec4(bloomSunColor * 1.3f, 1.0f);
 
 	if(fogAmount > 0.965f) // Lots of fog, no point in going any further since fog is obstructing eveything
 	{
 		bloomValue = background;
 		imageStore(uColorBuffer, fragCoord, fragValue);
 		imageStore(uBloomBuffer, fragCoord, bloomValue);
-		imageStore(uAlphanessBuffer, fragCoord, vec4(0.0f));
-		imageStore(uCloudDistanceBuffer, fragCoord, vec4(-1.0f));
 		return;
 	}
 
@@ -176,12 +170,6 @@ void main()
 		float densitySample = SampleDensityAtPoint(marchPos, true, i / 16); // Sample density at point
 		if(densitySample > 0.0f) // Some density here
 		{
-			if(!entered) // We haven't "entered" the cloud yet
-			{
-				cloudDistance = vec4(marchPos, 1.0f);
-				entered = true;
-			}
-
 			float height = GetHeightFraction(marchPos);
 			float lightDensity = RaymarchToLight(marchPos, dist * 0.1f, uLightDirection, densitySample, lightDotEye);
 			float scattering = mix(HenyeyGreenstein(lightDotEye, -0.08f), HenyeyGreenstein(lightDotEye, 0.08f), clamp(lightDotEye * 0.5f + 0.5f, 0.0f, 1.0f));
@@ -203,8 +191,6 @@ void main()
 	rayMarchValue.a = 1.0f - T;
 	rayMarchValue.rgb *= uCloudDarknessMult;
 
-	cloudDistance = vec4(distance(uCameraPosition, cloudDistance.xyz), 0.0f, 0.0f, 0.0f);
-
 	// Fade clouds in the distance
 	rayMarchValue.rgb = mix(rayMarchValue.rgb, background.rgb * rayMarchValue.a, clamp(fogAmount, 0.0f, 1.0f));
 
@@ -219,19 +205,16 @@ void main()
 	fragValue = background; // Set final "background" color
 
 	float cloudAlphaness = rayMarchValue.a > 0.2f ? rayMarchValue.a : 0.0f;
-	alphaness = vec4(cloudAlphaness, 0.0f, 0.0f, 1.0f);
 	if(cloudAlphaness > 0.1f) // Apply fog to bloom buffer
 	{
 		float fogAmount = ComputeFog(startPos, 0.0003f);
 		vec3 cloud = mix(vec3(0.0f), bloomValue.rgb, clamp(fogAmount, 0.0f, 1.0f));
 		bloomValue.rgb = bloomValue.rgb * (1.0f - cloudAlphaness) + cloud.rgb;
 	}
-	fragValue.a = alphaness.r;
+	fragValue.a = cloudAlphaness;
 
 	imageStore(uColorBuffer, fragCoord, fragValue);
 	imageStore(uBloomBuffer, fragCoord, bloomValue);
-	imageStore(uAlphanessBuffer, fragCoord, alphaness);
-	imageStore(uCloudDistanceBuffer, fragCoord, cloudDistance);
 }
 
 vec3 ComputeClipSpaceCoord(uvec2 fragCoord)

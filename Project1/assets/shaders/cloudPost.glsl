@@ -27,6 +27,8 @@ uniform bool uEnableGodRays;
 uniform vec3 uLightPosition;
 uniform float uLightDotCameraDir;
 
+uniform vec4 uRadialBlurParams; // x = decay, y = density, z = weight, w = exposure
+
 uniform vec2 uResolution;
 uniform vec2 uCloudResolution;
 
@@ -150,28 +152,48 @@ const float kernel3[27] = float[]
 	1.0 / 16, 2.0 / 16, 1.0 / 16
 );
 
-vec4 SmoothCloudLow();
+vec4 GaussianBlur(sampler2D t, vec2 uv);
 vec4 SmoothCloudMedium();
 vec4 SmoothCloudHigh();
 
 void main()
 {
-	oColor = SmoothCloudLow();
+	oColor = GaussianBlur(uCloudsTexture, mTextureCoordinates);
 
 	// God rays
 	if(uLightDotCameraDir > 0.0f && uEnableGodRays)
 	{
+		vec2 uv = mTextureCoordinates;
 
+		const int numSamples = 64;
+
+		vec2 deltaUV = uv - uLightPosition.xy;
+		deltaUV *= uRadialBlurParams.y / float(numSamples);
+
+		float illuminationDecay = 1.0f;
+
+		vec3 rayColor = GaussianBlur(uEmissionTexture, mTextureCoordinates).rgb * 0.4f;
+
+		for(int i = 0; i < numSamples; i++)
+		{
+			uv -= deltaUV;
+			rayColor += texture(uEmissionTexture, uv).rgb * illuminationDecay * uRadialBlurParams.z;
+			illuminationDecay *= uRadialBlurParams.x;
+		}
+
+		// Mix ray color with sky
+		vec3 colorWithRay = oColor.rgb + (smoothstep(0.0f, 1.0f, rayColor) * uRadialBlurParams.w);
+		oColor.rgb = mix(oColor.rgb, colorWithRay * 0.9f, uLightDotCameraDir * uLightDotCameraDir);
 	}
 }
 
-vec4 SmoothCloudLow()
+vec4 GaussianBlur(sampler2D t, vec2 uv)
 {
 	// Sample neighbouring 9 pixels
 	vec4 sampledValues[9];
 	for(int i = 0; i < 9; i++)
 	{
-		sampledValues[i] = texture(uCloudsTexture, mTextureCoordinates + offsets1[i]);
+		sampledValues[i] = texture(t, uv + offsets1[i]);
 	}
 
 	// Blur between all sampled values
@@ -205,7 +227,7 @@ vec4 SmoothCloudMedium()
 
 vec4 SmoothCloudHigh()
 {
-// Sample neighbouring 27 pixels
+	// Sample neighbouring 27 pixels
 	vec4 sampledValues[27];
 	for(int i = 0; i < 27; i++)
 	{

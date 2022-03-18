@@ -46,7 +46,11 @@ CloudPass::CloudPass(const WindowSpecs* windowSpecs)
 	cloudCloseThreshold(earthRadius / 40.0f),
 	cloudMediumThreshold(earthRadius / 15.0f),
 	perlinFreq(0.8f),
-	enableGodRays(false),
+	godRayDecay(0.98f),
+	godRayDensity(0.9f),
+	godRayWeight(0.07f),
+	godRayExposure(0.45f),
+	enableGodRays(true),
 	cloudColorTop(glm::vec3(169.0f, 149.0f, 149.0f) * (1.5f / 255.0f)),
 	cloudColorBottom(glm::vec3(65.0f, 70.0f, 80.0f) * (1.5f / 255.0f)),
 	weatherSeed(Utils::RandFloat(0.0f, 1000.0f), Utils::RandFloat(0.0f, 1000.0f), Utils::RandFloat(0.0f, 1000.0f)),
@@ -92,6 +96,7 @@ CloudPass::CloudPass(const WindowSpecs* windowSpecs)
 	postShader->InitializeUniform("uLightDotCameraDir");
 	postShader->InitializeUniform("uResolution");
 	postShader->InitializeUniform("uCloudResolution");
+	postShader->InitializeUniform("uRadialBlurParams");
 
 	// Setup post processing fbo
 	postFramebuffer->Bind();
@@ -126,6 +131,11 @@ void CloudPass::DoPass(ITexture* skyTexture, const glm::mat4& projection, const 
 		ImGui::DragFloat("Perlin Freq", &perlinFreq, 0.01f);
 		ImGui::DragFloat("Cloud Close", &cloudCloseThreshold, 1.0f);
 		ImGui::DragFloat("Cloud Med", &cloudMediumThreshold, 1.0f);
+		ImGui::Checkbox("Enable Godrays", &enableGodRays);
+		ImGui::DragFloat("God Ray Decay", &godRayDecay, 0.01f);
+		ImGui::DragFloat("God Ray Density", &godRayDensity, 0.01f);
+		ImGui::DragFloat("God Ray Weight", &godRayWeight, 0.01f);
+		ImGui::DragFloat("God Ray Exposure", &godRayExposure, 0.01f);
 		ImGui::TreePop();
 	}
 	ImGui::End();
@@ -180,8 +190,6 @@ void CloudPass::DoPass(ITexture* skyTexture, const glm::mat4& projection, const 
 	glDispatchCompute((int)ceil((float)windowSpecs->width / 16), (int)ceil((float)windowSpecs->height / 16), 1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); // Ensures that anything after this line will get the updated data from the compute shader
 
-	//Utils::SaveTextureAsBMP("clouds.bmp", colorTexture);
-
 	// Cloud post processing (helps make clouds less pixelated by using gaussian blur and godrays)
 	glDisable(GL_DEPTH_TEST);
 
@@ -195,13 +203,20 @@ void CloudPass::DoPass(ITexture* skyTexture, const glm::mat4& projection, const 
 	postShader->SetInt("uEmissionTexture", 1);
 
 	postShader->SetInt("uEnableGodRays", (GLboolean) enableGodRays);
-	postShader->SetFloat3("uLightPosition", lightPos);
+	
+	// Convert light position to screen space
+	glm::mat4 lightMat = glm::translate(glm::mat4(1.0f), lightPos);
+	glm::vec4 lightScreenPos = (projection * view) * lightMat * glm::vec4(0.0f, 60.0f, 0.0f, 1.0f);
+	lightScreenPos /= lightScreenPos.w;
+	lightScreenPos = lightScreenPos * 0.5f + 0.5f;
+	postShader->SetFloat3("uLightPosition", glm::vec3(lightScreenPos));
 
-	float lightDotCameraFront = glm::dot(cameraToLightDir, cameraDir);
+	float lightDotCameraFront = glm::dot(cameraToLightDir, glm::normalize(cameraDir));
 	postShader->SetFloat("uLightDotCameraDir", lightDotCameraFront);
 
 	postShader->SetFloat2("uResolution", windowResolution);
 	postShader->SetFloat2("uCloudResolution", windowResolution);
+	postShader->SetFloat4("uRadialBlurParams", glm::vec4(godRayDecay, godRayDensity, godRayWeight, godRayExposure));
 
 	quad->Draw();
 

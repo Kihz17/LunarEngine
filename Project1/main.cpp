@@ -114,7 +114,7 @@ int main()
     return 0;
 }
 
-// 1. Volumetric clouds & god rays
+// 1. God rays
 // 2. Water
 // 3. Procedural grass
 // 4. Anti-aliasing
@@ -122,15 +122,6 @@ int main()
 
 // Look into improving detail of CSM
 // If we have time, globabl illumination using light probes
-
-// TODO List
-// 1. Bloom & Emission
-// 2. Instanced rendering
-// 3. Anti-Aliasing
-// 4. Light Probes/Global Illumination
-// 5. Water
-// 6. Clouds
-// 7. Procedural Grass
 
 
 float GetRandom(float low, float high)
