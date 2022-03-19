@@ -73,7 +73,7 @@ void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 	lightingPass = new LightingPass(windowDetails, shadowMappingPass->GetShadowMap(), shadowMappingPass->GetCascadeLevels());
 	forwardPass = new ForwardRenderPass(geometryPass->GetGBuffer());
 	linePass = new LinePass();
-	cloudPass = new CloudPass(windowDetails);
+	cloudPass = new CloudPass(100000.0f, 1000.0f, 3000.0f, 0.0004f, windowDetails);
 
 	dynamicCubeMapGenerator = new DynamicCubeMapRenderer(windowDetails);
 
@@ -249,7 +249,7 @@ void Renderer::DrawFrame()
 	if (mainLight) // Can't do clouds & shadows without a light source
 	{
 		glm::vec3 lightDir = glm::normalize(mainLight->direction);
-		cloudPass->DoPass(envMapPass->GetEnvironmentTexture(), projection, view, cameraPos, lightDir, mainLight->color, cameraDir, windowDetails, quad);
+		cloudPass->DoPass(envMapPass->GetEnvironmentTexture(), geometryPass->GetPositionBuffer(), projection, view, cameraPos, lightDir, mainLight->color, cameraDir, windowDetails, quad);
 		shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, lightDir, projection, view, *quad);
 	}
 	

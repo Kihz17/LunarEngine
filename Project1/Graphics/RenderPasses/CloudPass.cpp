@@ -16,9 +16,10 @@ const std::string CloudPass::CLOUD_POST_SHADER_KEY = "cloudPost";
 constexpr unsigned int perlinWorleyGenWorkerSize = 4;
 constexpr unsigned int worleyGenWorkerSize = 4;
 constexpr unsigned int weatherGenWorkerSize = 8;
-constexpr unsigned int cloudResolution = 3072;
+constexpr unsigned int cloudWorkGroupSize = 16;
+constexpr unsigned int cloudResolution = 2048;
 
-CloudPass::CloudPass(const WindowSpecs* windowSpecs)
+CloudPass::CloudPass(float earthRadius, float innerRadius, float outerRadius, float cutoffFactor, const WindowSpecs* windowSpecs)
 	: cloudShader(ShaderLibrary::LoadCompute(CLOUD_SHADER_KEY, "assets/shaders/volumetricClouds.glsl")),
 	weatherShader(ShaderLibrary::LoadCompute(WEATHER_SHADER_KEY, "assets/shaders/weatherGenerator.glsl")),
 	perlinWorleyShader(ShaderLibrary::LoadCompute(PERLIN_WORLEY_SHADER_KEY, "assets/shaders/perlinWorleyGenerator.glsl")),
@@ -33,17 +34,16 @@ CloudPass::CloudPass(const WindowSpecs* windowSpecs)
 	postDepthAttachment(TextureManager::CreateTexture2D(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_FLOAT, windowSpecs->width, windowSpecs->height, TextureFilterType::Linear, TextureWrapType::None, false)),
 	postColorAttachment(TextureManager::CreateTexture2D(GL_RGBA32F, GL_RGBA, GL_FLOAT, windowSpecs->width, windowSpecs->height, TextureFilterType::Linear, TextureWrapType::None)),
 	coverage(0.45f),
-	cloudSpeed(450.0f),
+	cloudSpeed(earthRadius / 2000.0f),
 	crispiness(40.0f),
 	detail(0.1f),
 	density(0.02f),
 	absorptionToLight(0.35f),
 	cloudDarkness(1.5f),
-	earthRadius(600000.0f),
-	sphereInnerRadius(5000.0f),
-	sphereOuterRadius(17000.0f),
-	cloudCloseThreshold(earthRadius / 40.0f),
-	cloudMediumThreshold(earthRadius / 15.0f),
+	cloudCutoffFactor(cutoffFactor),
+	earthRadius(earthRadius),
+	sphereInnerRadius(innerRadius),
+	sphereOuterRadius(outerRadius),
 	perlinFreq(0.8f),
 	godRayDecay(0.98f),
 	godRayDensity(0.9f),
@@ -81,6 +81,8 @@ CloudPass::CloudPass(const WindowSpecs* windowSpecs)
 	cloudShader->InitializeUniform("uSphereInnerRadius");
 	cloudShader->InitializeUniform("uSphereOuterRadius");
 	cloudShader->InitializeUniform("uCloudDarknessMult");
+	cloudShader->InitializeUniform("uCloudCutoffFactor");
+	cloudShader->InitializeUniform("uPositionBuffer");
 
 	weatherShader->InitializeUniform("uResolution");
 	weatherShader->InitializeUniform("uSeed");
@@ -110,7 +112,7 @@ CloudPass::~CloudPass()
 	delete postFramebuffer;
 }
 
-void CloudPass::DoPass(ITexture* skyTexture, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& lightColor, const glm::vec3& cameraDir,
+void CloudPass::DoPass(ITexture* skyTexture, ITexture* positionBuffer, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& lightColor, const glm::vec3& cameraDir,
 	const WindowSpecs* windowSpecs, PrimitiveShape* quad)
 {
 	ImGui::Begin("Clouds");
@@ -123,11 +125,10 @@ void CloudPass::DoPass(ITexture* skyTexture, const glm::mat4& projection, const 
 		ImGui::DragFloat("Density", &density, 0.00001f, 0.0f, 1.0f, "%.4f");
 		ImGui::DragFloat("Absorp", &absorptionToLight, 0.01f);
 		ImGui::DragFloat("Darkness", &cloudDarkness, 0.001f);
+		ImGui::DragFloat("Cloud Cutoff", &cloudCutoffFactor, 0.00001f, 0.0f, 1.0f, "%.5f");
 		ImGui::DragFloat("Earth R", &earthRadius, 0.01f);
 		ImGui::DragFloat("Inner R", &sphereInnerRadius, 0.01f);
 		ImGui::DragFloat("Outer R", &sphereOuterRadius, 0.01f);
-		ImGui::DragFloat("Cloud Close", &cloudCloseThreshold, 1.0f);
-		ImGui::DragFloat("Cloud Med", &cloudMediumThreshold, 1.0f);
 		ImGui::Checkbox("Enable Godrays", &enableGodRays);
 		ImGui::DragFloat("God Ray Decay", &godRayDecay, 0.01f);
 		ImGui::DragFloat("God Ray Density", &godRayDensity, 0.01f);
@@ -162,6 +163,7 @@ void CloudPass::DoPass(ITexture* skyTexture, const glm::mat4& projection, const 
 	cloudShader->SetFloat("uAbsorptionToLight", absorptionToLight * 0.01f);
 	cloudShader->SetFloat("uDensityFactor", density);
 	cloudShader->SetFloat("uCloudDarknessMult", cloudDarkness);
+	cloudShader->SetFloat("uCloudCutoffFactor", cloudCutoffFactor);
 
 	cloudShader->SetFloat("uEarthRadius", earthRadius);
 	cloudShader->SetFloat("uSphereInnerRadius", sphereInnerRadius);
@@ -182,7 +184,10 @@ void CloudPass::DoPass(ITexture* skyTexture, const glm::mat4& projection, const 
 	skyTexture->BindToSlot(3);
 	cloudShader->SetInt("uSkyTexture", 3);
 
-	glDispatchCompute((int)ceil((float)cloudResolution / 16), (int)ceil((float)cloudResolution / 16), 1);
+	positionBuffer->BindToSlot(4);
+	cloudShader->SetInt("uPositionBuffer", 4);
+
+	glDispatchCompute((int)ceil((float)cloudResolution / (float)cloudWorkGroupSize), (int)ceil((float)cloudResolution / (float)cloudWorkGroupSize), 1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); // Ensures that anything after this line will get the updated data from the compute shader
 
 	// Cloud post processing (helps make clouds less pixelated by using gaussian blur and godrays)

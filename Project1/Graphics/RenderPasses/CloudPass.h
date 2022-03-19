@@ -15,10 +15,10 @@
 class CloudPass
 {
 public:
-	CloudPass(const WindowSpecs* windowSpecs);
+	CloudPass(float earthRadius, float innerRadius, float outerRadius, float cutoffFactor, const WindowSpecs* windowSpecs);
 	~CloudPass();
 
-	void DoPass(ITexture* skyTexture, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& lightColor, const glm::vec3& cameraDir,
+	void DoPass(ITexture* skyTexture, ITexture* positionBuffer, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& lightColor, const glm::vec3& cameraDir,
 		const WindowSpecs* windowSpecs, PrimitiveShape* quad);
 
 	Texture2D* GetSkyTexture() { return postColorAttachment; }
@@ -62,13 +62,11 @@ private:
 	float density;
 	float absorptionToLight;
 	float cloudDarkness;
+	float cloudCutoffFactor;
 
 	float earthRadius;
 	float sphereInnerRadius;
 	float sphereOuterRadius;
-
-	float cloudCloseThreshold;
-	float cloudMediumThreshold;
 
 	float godRayDecay;
 	float godRayDensity;

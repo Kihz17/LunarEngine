@@ -10,8 +10,10 @@ uniform sampler3D uCloudTexture;
 uniform sampler3D uWorleyTexture;
 uniform sampler2D uWeatherTexture;
 uniform sampler2D uSkyTexture;
+uniform sampler2D uPositionBuffer;
 
 uniform vec2 uResolution;
+uniform vec2 uPositionBufferResolution;
 uniform mat4 uInvProj;
 uniform mat4 uInvView;
 uniform vec3 uCameraPosition;
@@ -28,14 +30,15 @@ uniform float uAbsorptionToLight = 0.0035f;
 uniform float uCloudDarknessMult = 1.5f;
 uniform vec3 uCloudColorTop = vec3(169.0f, 149.0f, 149.0f) * (1.5f / 255.0f);
 uniform vec3 uCloudColorBottom = vec3(65.0f, 70.0f, 80.0f)*(1.5f / 255.0f);
+uniform float uCloudCutoffFactor;
 
 uniform float uTime;
 uniform float uCloudSpeed;
 uniform vec3 uWindDirection = normalize(vec3(0.5f, 0.0f, 0.1f));
 
-uniform float uEarthRadius = 600000.0f;
-uniform float uSphereInnerRadius = 5000.0;
-uniform float uSphereOuterRadius = 17000.0;
+uniform float uEarthRadius;
+uniform float uSphereInnerRadius;
+uniform float uSphereOuterRadius;
 
 // Offsets for cone sampling
 uniform vec3 uNoiseKernel[6] = vec3[]
@@ -60,8 +63,7 @@ uniform float uBayerFilter[16] = float[]
 const float CLOUD_TOP_OFFSET = 750.0f;
 
 // Earth atmosphere ranges
-#define EARTH_RADIUS uEarthRadius
-#define SPHERE_INNER_RADIUS (EARTH_RADIUS + uSphereInnerRadius)
+#define SPHERE_INNER_RADIUS (uEarthRadius + uSphereInnerRadius)
 #define SPHERE_OUTER_RADIUS (SPHERE_INNER_RADIUS + uSphereOuterRadius)
 #define SPHERE_DELTA float(SPHERE_OUTER_RADIUS - SPHERE_INNER_RADIUS)
 
@@ -72,7 +74,7 @@ const float CLOUD_TOP_OFFSET = 750.0f;
 
 #define CLOUDS_MIN_TRANSMITTANCE 1e-1
 
-vec3 worldSphereCenter = vec3(0.0f, -EARTH_RADIUS, 0.0f);
+vec3 worldSphereCenter = vec3(0.0f, -uEarthRadius, 0.0f);
 
 vec3 ComputeClipSpaceCoord(uvec2 fragCoord);
 vec3 RayIntersectSkySphere(vec3 rayDir, float radius); // Get the position where a given ray intersects with the sky sphere
@@ -87,6 +89,15 @@ float HenyeyGreenstein(float a, float g); // Phase function by HenyeyGreenstein.
 void main()
 {
 	ivec2 fragCoord = ivec2(gl_GlobalInvocationID.xy);
+
+	vec4 positionSample = texture(uPositionBuffer, fragCoord / uResolution);
+	if(positionSample.a != 1.0f) 
+	{
+		imageStore(uColorBuffer, fragCoord, vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		imageStore(uBloomBuffer, fragCoord, vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		return;
+	}
+
 	vec4 rayClip = vec4(ComputeClipSpaceCoord(fragCoord), 1.0f);
 	vec4 rayView = uInvProj * rayClip;
 	rayView = vec4(rayView.xy, -1.0f, 0.0f);
@@ -102,13 +113,13 @@ void main()
 	vec3 endPos; // Represents the end position for ray marching
 	vec3 fogRay;
 
-	if(uCameraPosition.y < SPHERE_INNER_RADIUS - EARTH_RADIUS) // We are within the earth's "inner radius"
+	if(uCameraPosition.y < SPHERE_INNER_RADIUS - uEarthRadius) // We are within the earth's "inner radius"
 	{
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_INNER_RADIUS, startPos);
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_OUTER_RADIUS, endPos);
 		fogRay = startPos;
 	}
-	else if(uCameraPosition.y > SPHERE_INNER_RADIUS - EARTH_RADIUS && uCameraPosition.y < SPHERE_OUTER_RADIUS - EARTH_RADIUS) // Outside the "inner" bounds but within outer bounds
+	else if(uCameraPosition.y > SPHERE_INNER_RADIUS - uEarthRadius && uCameraPosition.y < SPHERE_OUTER_RADIUS - uEarthRadius) // Outside the "inner" bounds but within outer bounds
 	{
 		startPos = uCameraPosition;
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_OUTER_RADIUS, endPos);
@@ -124,7 +135,7 @@ void main()
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_OUTER_RADIUS, fogRay);
 	}
 
-	float fogAmount = ComputeFog(fogRay, 0.00008f); // Compute fog
+	float fogAmount = ComputeFog(fogRay, uCloudCutoffFactor); // Compute fog
 
 	vec4 fragValue = background; // Set the color of this fragment to be the background
 
@@ -192,8 +203,8 @@ void main()
 	rayMarchValue.rgb *= uCloudDarknessMult;
 
 	// Fade clouds in the distance
-	//rayMarchValue.rgb = mix(rayMarchValue.rgb, background.rgb * rayMarchValue.a, clamp(fogAmount, 0.0f, 1.0f));
-
+	rayMarchValue.rgb = mix(rayMarchValue.rgb, background.rgb * rayMarchValue.a, clamp(pow(fogAmount, 10), 0.0f, 1.0f));
+	
 	// Sun glare
 	float sun = clamp(dot(uLightDirection, normalize(endPos - startPos)), 0.0f, 1.0f);
 	vec3 sunColor = 0.5f * uLightColor * pow(sun, 256.0f);
