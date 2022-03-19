@@ -23,7 +23,7 @@ uniform vec3 uLightColor;
 uniform float uCrispiness = 0.4f;
 uniform float uDensityFactor = 0.02f;
 uniform float uCloudCoverageMult = 0.4f;
-uniform float uCurliness;
+uniform float uDetail;
 uniform float uAbsorptionToLight = 0.0035f;
 uniform float uCloudDarknessMult = 1.5f;
 uniform vec3 uCloudColorTop = vec3(169.0f, 149.0f, 149.0f) * (1.5f / 255.0f);
@@ -124,7 +124,7 @@ void main()
 		RaySphereIntersect(uCameraPosition, rayDir, worldSphereCenter, SPHERE_OUTER_RADIUS, fogRay);
 	}
 
-	float fogAmount = ComputeFog(fogRay, 0.00009f); // Compute fog
+	float fogAmount = ComputeFog(fogRay, 0.00008f); // Compute fog
 
 	vec4 fragValue = background; // Set the color of this fragment to be the background
 
@@ -192,7 +192,7 @@ void main()
 	rayMarchValue.rgb *= uCloudDarknessMult;
 
 	// Fade clouds in the distance
-	rayMarchValue.rgb = mix(rayMarchValue.rgb, background.rgb * rayMarchValue.a, clamp(fogAmount, 0.0f, 1.0f));
+	//rayMarchValue.rgb = mix(rayMarchValue.rgb, background.rgb * rayMarchValue.a, clamp(fogAmount, 0.0f, 1.0f));
 
 	// Sun glare
 	float sun = clamp(dot(uLightDirection, normalize(endPos - startPos)), 0.0f, 1.0f);
@@ -352,7 +352,7 @@ float SampleDensityAtPoint(vec3 point, bool expensive, float lod)
 
 	if(expensive) // "expensive" flag is enabled. This will give the clouds more detail from sampling from another noise texture
 	{
-		vec3 erosionSample = textureLod(uWorleyTexture, vec3(movingUV * uCrispiness, heightFraction) * uCurliness, lod).rgb;
+		vec3 erosionSample = textureLod(uWorleyTexture, vec3(movingUV * uCrispiness, heightFraction) * uDetail, lod).rgb;
 		float highFreqFBM = dot(erosionSample, vec3(0.625f, 0.25f, 0.125f));
 		float highFreqNoiseModifier = mix(highFreqFBM, 1.0f - highFreqFBM, clamp(heightFraction * 10.0f, 0.0f, 1.0f));
 

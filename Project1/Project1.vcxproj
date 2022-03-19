@@ -123,7 +123,7 @@
       <LanguageStandard>Default</LanguageStandard>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalIncludeDirectories>Core/;DungeonGenerator/;DungeonGenerator/3D/;DungeonGenerator/2D/;$(SolutionDir)Project1/;ECS/;ECS/Components/;AI/;AI/Steering/;AI/Steering/Behaviours/;AI/Steering/Conditions/;Animation/;Graphics/;Graphics/BoundingVolumes/;Graphics/GLWrappers/;Graphics/Interfaces/;Graphics/Mesh/;Graphics/RenderPasses/;Graphics/Shader/;Graphics/Textures/;Graphics/Utils/;Input/;Layers/;Layers/SkeletalAnimation/;Panels/;Physics/;Sound/;Utils/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Core/;DungeonGenerator/;DungeonGenerator/3D/;DungeonGenerator/2D/;$(SolutionDir)Project1/;ECS/;ECS/Components/;AI/;AI/Steering/;AI/Steering/Behaviours/;AI/Steering/Conditions/;Animation/;Graphics/;Graphics/BoundingVolumes/;Graphics/GLWrappers/;Graphics/Interfaces/;Graphics/Mesh/;Graphics/RenderPasses/;Graphics/Shader/;Graphics/Textures/;Graphics/Utils/;Input/;Layers/;Layers/SkeletalAnimation/;Panels/;Physics/;Sound/;Utils/;AI/Pathfinding/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,7 +140,7 @@
       <PreprocessorDefinitions>SOLUTION_DIR=R"($(SolutionDir))";NORMAL_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\vertShader_01.glsl)";NORMAL_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\fragShader_01.glsl)";OUTLINE_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineVert.glsl)";OUTLINE_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineFrag.glsl)";NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>Default</LanguageStandard>
-      <AdditionalIncludeDirectories>Core/;DungeonGenerator/;DungeonGenerator/3D/;DungeonGenerator/2D/;$(SolutionDir)Project1/;ECS/;ECS/Components/;AI/;AI/Steering/;AI/Steering/Behaviours/;AI/Steering/Conditions/;Animation/;Graphics/;Graphics/BoundingVolumes/;Graphics/GLWrappers/;Graphics/Interfaces/;Graphics/Mesh/;Graphics/RenderPasses/;Graphics/Shader/;Graphics/Textures/;Graphics/Utils/;Input/;Layers/;Layers/SkeletalAnimation/;Panels/;Physics/;Sound/;Utils/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Core/;DungeonGenerator/;DungeonGenerator/3D/;DungeonGenerator/2D/;$(SolutionDir)Project1/;ECS/;ECS/Components/;AI/;AI/Steering/;AI/Steering/Behaviours/;AI/Steering/Conditions/;Animation/;Graphics/;Graphics/BoundingVolumes/;Graphics/GLWrappers/;Graphics/Interfaces/;Graphics/Mesh/;Graphics/RenderPasses/;Graphics/Shader/;Graphics/Textures/;Graphics/Utils/;Input/;Layers/;Layers/SkeletalAnimation/;Panels/;Physics/;Sound/;Utils/;AI/Pathfinding/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,6 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AI\Pathfinding\Graph.cpp" />
+    <ClCompile Include="AI\Pathfinding\GraphSearch.cpp" />
     <ClCompile Include="AI\Steering\Behaviours\EvadeBehaviour.cpp" />
     <ClCompile Include="AI\Steering\Behaviours\FleeBehaviour.cpp" />
     <ClCompile Include="AI\Steering\Behaviours\FlockingBehaviour.cpp" />
@@ -243,6 +245,8 @@
     <ClCompile Include="vendor\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AI\Pathfinding\GraphSearch.h" />
+    <ClInclude Include="AI\Pathfinding\Graph.h" />
     <ClInclude Include="AI\Steering\Behaviours\EvadeBehaviour.h" />
     <ClInclude Include="AI\Steering\Behaviours\FleeBehaviour.h" />
     <ClInclude Include="AI\Steering\Behaviours\FlockingBehaviour.h" />

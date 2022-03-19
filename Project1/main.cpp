@@ -104,7 +104,6 @@ int main()
         e->AddComponent<RenderComponent>(testInfo);
     }
 
-    ShaderLibrary::LoadCompute("testC", "assets/shaders/volumetricClouds.glsl");
     // Set env map
     {
         //CubeMap* envMap = TextureManager::CreateCubeMap(1024, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT);
@@ -127,13 +126,11 @@ int main()
     return 0;
 }
 
-// 1. God rays
 // 2. Water
 // 3. Procedural grass
 // 4. Anti-aliasing
 // 5. Instanced rendering
 
-// Look into improving detail of CSM
 // If we have time, globabl illumination using light probes
 
 

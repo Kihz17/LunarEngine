@@ -364,6 +364,8 @@
     <ClCompile Include="Utils\UUID.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="AI\Pathfinding\Graph.cpp" />
+    <ClCompile Include="AI\Pathfinding\GraphSearch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -742,6 +744,8 @@
     <ClInclude Include="Utils\UUID.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="AI\Pathfinding\Graph.h" />
+    <ClInclude Include="AI\Pathfinding\GraphSearch.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl">

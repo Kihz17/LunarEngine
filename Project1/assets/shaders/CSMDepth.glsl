@@ -16,7 +16,7 @@ void main()
 //type geometry
 #version 420
 
-layout(triangles, invocations = 5) in;
+layout(triangles, invocations = 6) in; // NOTE: NUMBER OF INVOCATIONS MUST MATCH THE NUMBER OF CASCADE LAYERS
 layout(triangle_strip, max_vertices = 3) out;
 
 layout (std140, binding = 0) uniform uLightSpaceMatrices // Our UniformBuffer from our cpp code (found in CascadedShadowMapping.h)

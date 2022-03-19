@@ -49,8 +49,6 @@ private:
 	// Written to by compute shader
 	Texture2D* colorTexture;
 	Texture2D* bloomTexture;
-	Texture2D* alphanessTexture;
-	Texture2D* cloudDistanceTexture;
 
 	Shader* postShader;
 	IFrameBuffer* postFramebuffer;
@@ -60,7 +58,7 @@ private:
 	float coverage;
 	float cloudSpeed;
 	float crispiness;
-	float curliness;
+	float detail;
 	float density;
 	float absorptionToLight;
 	float cloudDarkness;

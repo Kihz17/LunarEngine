@@ -18,7 +18,7 @@ const std::string CascadedShadowMapping::DEPTH_MAPPING_ANIMATED_SHADER_KEY = "an
 const std::string CascadedShadowMapping::DEPTH_DEBUG_SHADER_KEY = "debugDepthShader";
 const int CascadedShadowMapping::MAX_CASCADE_LEVELS = 16;
 
-constexpr unsigned int depthMapResolution = 2048;
+constexpr unsigned int depthMapResolution = 6144;
 constexpr float lightMapColorBorder[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& info)
@@ -37,7 +37,7 @@ CascadedShadowMapping::CascadedShadowMapping(const CascadedShadowMappingInfo& in
 {
 	// Setup shadow cascade levels
 	cascadeLevels.push_back(projectionFarPlane / 40.0f);
-	cascadeLevels.push_back(projectionFarPlane / 25.0f);
+	cascadeLevels.push_back(projectionFarPlane / 20.0f);
 	cascadeLevels.push_back(projectionFarPlane / 10.0f);
 	cascadeLevels.push_back(projectionFarPlane / 5.0f);
 	cascadeLevels.push_back(projectionFarPlane / 2.0f);

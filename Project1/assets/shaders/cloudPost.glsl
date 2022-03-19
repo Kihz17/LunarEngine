@@ -29,7 +29,6 @@ uniform float uLightDotCameraDir;
 
 uniform vec4 uRadialBlurParams; // x = decay, y = density, z = weight, w = exposure
 
-uniform vec2 uResolution;
 uniform vec2 uCloudResolution;
 
 const float FAR_PLANE = 1000.0f;
