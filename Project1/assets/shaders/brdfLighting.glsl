@@ -342,14 +342,14 @@ float ComputeShadow(vec3 fragmentPositionWorldSpace, vec3 lightDir, vec3 normal)
 	
 	// Calculate the bias to prevent shadow acne https://gyazo.com/6ad033769041f184b7b5edae9cecd50b
 	// bias is scaled inversely proportionally to the far plane
-	float bias = max(0.05f * (1.0f - dot(normal, -lightDir * (FAR_PLANE - NEAR_PLANE))), 0.005f); // TODO: Un-hardcode light dir
+	float bias = max(0.05f * (1.0f - dot(normal, -lightDir * (FAR_PLANE - NEAR_PLANE))), 0.005f); 
 	if(cascadeLayer == uCascadeCount)
 	{
-		bias *= 1.0f / (FAR_PLANE * 0.5f);
+		bias *= 1.0f / (FAR_PLANE * 2.0f);
 	}
 	else
 	{
-		bias *= 1.0f / (uCascadePlaneDistances[cascadeLayer] * 0.5f);
+		bias *= 1.0f / (uCascadePlaneDistances[cascadeLayer] * 2.0f);
 	}
 	
 	// Percentage Closer Filtering "PCF" (AKA: Anti-aliasing for shadows/Smoothing edges)
@@ -363,7 +363,8 @@ float ComputeShadow(vec3 fragmentPositionWorldSpace, vec3 lightDir, vec3 normal)
 		{
 			vec2 textureCoords = projectionCoords.xy + vec2(x, y) * texelSize; // Get a neighbouring texel
 			float pcfDepth = texture(uShadowMap, vec3(textureCoords, cascadeLayer)).r; // Sample from that texel
-			shadowContrib += (lightDepth - bias) > pcfDepth ? 1.0f : 0.0f; // Test if we are in the shadow, if we are, add it to our shadow contribution
+			shadowContrib += lightDepth > pcfDepth ? 1.0f : 0.0f; // Test if we are in the shadow, if we are, add it to our shadow contribution
+			//shadowContrib += (lightDepth - bias) > pcfDepth ? 1.0f : 0.0f; // Test if we are in the shadow, if we are, add it to our shadow contribution
 		}
 	}
 	shadowContrib /= 9.0f; // Average all of the neighbouring texels

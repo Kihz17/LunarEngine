@@ -22,6 +22,7 @@
 #include "LineRenderComponent.h"
 #include "Utils.h"
 #include "ShaderLibrary.h"
+#include "PathfindingLayer.h"
 
 float GetRandom(float low, float high);
 
@@ -89,20 +90,33 @@ int main()
     }*/
 
     // SHADER BALL TEST
-    ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
-    {
-        Entity* e = gameEngine.GetEntityManager().CreateEntity();
-        e->AddComponent<PositionComponent>();
-        e->AddComponent<RotationComponent>();
-        e->AddComponent<ScaleComponent>(glm::vec3(10.0f, 0.5f, 10.0f));
+    //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
+    //{
+    //    Entity* e = gameEngine.GetEntityManager().CreateEntity();
+    //    e->AddComponent<PositionComponent>();
+    //    e->AddComponent<RotationComponent>();
+    //    e->AddComponent<ScaleComponent>(glm::vec3(10.0f, 0.5f, 10.0f));
 
-        RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = cube;
-        testInfo.isColorOverride = true;
-        testInfo.colorOverride = glm::vec3(0.6f, 0.0f, 0.0f);
-        testInfo.normalTexture = normalTexture;
-        e->AddComponent<RenderComponent>(testInfo);
-    }
+    //    RenderComponent::RenderInfo testInfo;
+    //    testInfo.mesh = cube;
+    //    testInfo.isColorOverride = true;
+    //    testInfo.colorOverride = glm::vec3(0.6f, 0.0f, 0.0f);
+    //    testInfo.normalTexture = normalTexture;
+    //    e->AddComponent<RenderComponent>(testInfo);
+    //}
+    //{
+    //    Entity* e = gameEngine.GetEntityManager().CreateEntity("Rect");
+    //    e->AddComponent<PositionComponent>();
+    //    e->AddComponent<RotationComponent>();
+    //    e->AddComponent<ScaleComponent>(glm::vec3(2.0f, 3.0f, 2.0f));
+
+    //    RenderComponent::RenderInfo testInfo;
+    //    testInfo.mesh = cube;
+    //    testInfo.isColorOverride = true;
+    //    testInfo.colorOverride = glm::vec3(0.6f, 0.0f, 0.0f);
+    //    testInfo.normalTexture = normalTexture;
+    //    e->AddComponent<RenderComponent>(testInfo);
+    //}
 
     // Set env map
     {
@@ -121,18 +135,18 @@ int main()
         Renderer::SetEnvironmentMap(envMap);
     }
 
+    gameEngine.AddLayer(new PathfindingLayer("resourceMap3.bmp", cube, sphere, gameEngine.GetEntityManager()));
+
     gameEngine.Run();
 
     return 0;
 }
 
-// 2. Water
-// 3. Procedural grass
-// 4. Anti-aliasing
-// 5. Instanced rendering
+// 1. Water
+// 2. Procedural grass
+// 3. Instanced rendering
 
 // If we have time, globabl illumination using light probes
-
 
 float GetRandom(float low, float high)
 {

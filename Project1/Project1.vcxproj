@@ -221,6 +221,7 @@
     <ClCompile Include="Layers\AILayer.cpp" />
     <ClCompile Include="Layers\AnimationLayer.cpp" />
     <ClCompile Include="Layers\FreeCamController.cpp" />
+    <ClCompile Include="Layers\PathfindingLayer.cpp" />
     <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.cpp" />
     <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.cpp" />
     <ClCompile Include="Panels\EntityPanel.cpp" />
@@ -347,6 +348,7 @@
     <ClInclude Include="Layers\AILayer.h" />
     <ClInclude Include="Layers\AnimationLayer.h" />
     <ClInclude Include="Layers\FreeCamController.h" />
+    <ClInclude Include="Layers\PathfindingLayer.h" />
     <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.h" />
     <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.h" />
     <ClInclude Include="Panels\EntityPanel.h" />

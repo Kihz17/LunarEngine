@@ -280,6 +280,7 @@ WindowSpecs GameEngine::InitializeGLFW(bool initImGui)
     glfwWindowHint(GLFW_GREEN_BITS, glfwMode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS, glfwMode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, glfwMode->refreshRate);
+    glfwWindowHint(GLFW_SAMPLES, 4); // 4X MSAA
 
     int WIDTH = 1920; //glfwMode->width;
     int HEIGHT = 1080;// glfwMode->height;

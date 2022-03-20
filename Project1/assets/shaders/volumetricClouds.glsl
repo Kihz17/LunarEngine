@@ -90,10 +90,11 @@ void main()
 {
 	ivec2 fragCoord = ivec2(gl_GlobalInvocationID.xy);
 
+	vec4 background = texture(uSkyTexture, fragCoord / uResolution);
 	vec4 positionSample = texture(uPositionBuffer, fragCoord / uResolution);
 	if(positionSample.a != 1.0f) 
 	{
-		imageStore(uColorBuffer, fragCoord, vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		imageStore(uColorBuffer, fragCoord, background);
 		imageStore(uBloomBuffer, fragCoord, vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		return;
 	}
@@ -104,8 +105,6 @@ void main()
 	vec3 rayDir = normalize((uInvView * rayView).xyz);
 
 	vec3 cubeMapEnd = RayIntersectSkySphere(rayDir, 0.5f); // The position where our ray intersects w/ skybox
-
-	vec4 background = texture(uSkyTexture, fragCoord / uResolution);
 
 	worldSphereCenter.xz = uCameraPosition.xz; // Make sure the "world center" follows the camera around
 

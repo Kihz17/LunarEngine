@@ -31,35 +31,41 @@ Graph::Graph(const std::string& path)
 			{
 				Node* node = new Node();
 				node->type = NodeType::Wall;
+				node->pos = glm::ivec2(x, z);
 				grid->Set(glm::ivec2(x, z), node);
 			}
 			else if (r == 255 && g == 255 && b == 0)
 			{
 				Node* node = new Node();
 				node->type = NodeType::Difficult;
+				node->pos = glm::ivec2(x, z);
 				grid->Set(glm::ivec2(x, z), node);
 			}
 			else if (r == 0 && g == 255 && b == 0)
 			{
 				Node* node = new Node();
 				node->type = NodeType::StartPosition;
+				node->pos = glm::ivec2(x, z);
 				grid->Set(glm::ivec2(x, z), node);
 			}
 			else if (r == 255 && g == 0 && b == 0)
 			{
 				Node* node = new Node();
 				node->type = NodeType::Resource;
+				node->pos = glm::ivec2(x, z);
 				grid->Set(glm::ivec2(x, z), node);
 			}
 			else if (r == 0 && g == 0 && b == 255)
 			{
 				Node* node = new Node();
 				node->type = NodeType::Home;
+				node->pos = glm::ivec2(x, z);
 				grid->Set(glm::ivec2(x, z), node);
 			}
 			else
 			{
 				Node* node = new Node();
+				node->pos = glm::ivec2(x, z);
 				grid->Set(glm::ivec2(x, z), node);
 			}
 		}
@@ -104,7 +110,7 @@ Graph::Graph(const std::string& path)
 			}
 			if (grid->InBounds(glm::ivec2(x - 1, z - 1)) && canMoveDown && canMoveLeft)
 			{
-				SetupEdge(currentPos, glm::ivec2(x - 1, z + 1), true);
+				SetupEdge(currentPos, glm::ivec2(x - 1, z - 1), true);
 			}
 			if (grid->InBounds(glm::ivec2(x - 1, z + 1)) && canMoveUp && canMoveLeft)
 			{

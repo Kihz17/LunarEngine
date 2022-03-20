@@ -101,6 +101,7 @@ void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vect
 	glEnable(GL_DEPTH_TEST); // Enable depth testing for scene render
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	glEnable(GL_MULTISAMPLE); // AA
 
 	geometryBuffer->Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -144,6 +145,8 @@ void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vect
 	}
 
 	geometryBuffer->Unbind();
+
+	glDisable(GL_MULTISAMPLE);
 }
 
 void GeometryPass::PassSharedData(Shader* shader, RenderSubmission* submission, const glm::mat4& projection, const glm::mat4& view)
