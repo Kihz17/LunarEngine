@@ -16,7 +16,7 @@ public:
 	GeometryPass(const WindowSpecs* windowSpecs);
 	virtual ~GeometryPass();
 
-	void DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition);
+	void DoPass(std::vector<RenderSubmission>& submissions, std::vector<RenderSubmission>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition);
 
 	IFrameBuffer* GetGBuffer() { return geometryBuffer; }
 
@@ -29,7 +29,7 @@ public:
 	static const std::string ANIM_SHADER_KEY;
 
 private:
-	void PassSharedData(Shader* shader, RenderSubmission* submission, const glm::mat4& projection, const glm::mat4& view);
+	void PassSharedData(Shader* shader, RenderSubmission& submission, const glm::mat4& projection, const glm::mat4& view);
 
 	IFrameBuffer* geometryBuffer;
 	IRenderBuffer* geometryRenderBuffer;

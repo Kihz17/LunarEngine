@@ -22,6 +22,18 @@ struct RenderSubmission
 		transform *= glm::scale(glm::mat4(1.0f), scale);
 	}
 
+	RenderSubmission(RenderComponent* renderComponent, const glm::vec3& position, const glm::vec3& scale, const glm::quat& rotation, const glm::mat4& transform)
+		: renderComponent(renderComponent),
+		position(position),
+		scale(scale),
+		rotation(rotation),
+		transform(transform),
+		boneMatrices(nullptr),
+		boneMatricesLength(0)
+	{
+
+	}
+
 	RenderComponent* renderComponent;
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::vec3 scale = glm::vec3(1.0f);

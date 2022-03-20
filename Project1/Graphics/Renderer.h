@@ -16,6 +16,7 @@
 #include "LinePass.h"
 #include "DynamicCubeMapRenderer.h"
 #include "CloudPass.h"
+#include "Frustum.h"
 
 #include <vector>
 #include <unordered_map>
@@ -35,15 +36,14 @@ public:
 	static void BeginFrame(const Camera& camera);
 	static void EndFrame();
 
-	static void Submit(const RenderSubmission& submission);
-	static void SubmitLines(const LineRenderSubmission& submission);
-
 	static CubeMap* GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore, int viewportWidth = windowDetails->width, int viewportHeight = windowDetails->height);
 
 	static void SetEnvironmentMap(CubeMap* cm) { envMap = cm; }
 	static CubeMap* GetEnvironmentMap() { return envMap; }
 
 	static void SetMainLightSource(Light* light) { mainLight = light; };
+
+	static const Frustum& GetViewFrustum() { return viewFrustum; }
 
 	static const std::string LIGHTING_SHADER_KEY;
 	static const std::string FORWARD_SHADER_KEY;
@@ -52,7 +52,16 @@ public:
 	static PrimitiveShape* cube;
 
 private:
+	friend class GameEngine;
+
 	const static WindowSpecs* windowDetails;
+
+	static std::vector<RenderSubmission> culledShadowSubmissions;
+	static std::vector<RenderSubmission> culledSubmissions;
+	static std::vector<RenderSubmission> culledAnimatedSubmissions;
+	static std::vector<RenderSubmission> culledAnimatedShadowSubmissions;
+	static std::vector<RenderSubmission> culledForwardSubmissions;
+	static std::vector<LineRenderSubmission> lineSubmissions;
 
 	static glm::mat4 projection;
 	static glm::mat4 view;

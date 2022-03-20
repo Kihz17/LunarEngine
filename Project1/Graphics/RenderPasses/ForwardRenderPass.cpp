@@ -69,7 +69,7 @@ ForwardRenderPass::~ForwardRenderPass()
 
 }
 
-void ForwardRenderPass::DoPass(std::vector<RenderSubmission*>& submissions, const glm::mat4& projection, const glm::mat4& view, const WindowSpecs* windowSpecs)
+void ForwardRenderPass::DoPass(std::vector<RenderSubmission>& submissions, const glm::mat4& projection, const glm::mat4& view, const WindowSpecs* windowSpecs)
 {
 	geometryBuffer->BindRead(); // Bind for read only
 	geometryBuffer->UnbindWrite();
@@ -85,9 +85,9 @@ void ForwardRenderPass::DoPass(std::vector<RenderSubmission*>& submissions, cons
 	shader->SetMat4("uMatProjection", projection);
 
 	// Draw geometry
-	for (RenderSubmission* submission : submissions)
+	for (RenderSubmission& submission : submissions)
 	{
-		RenderComponent* renderComponent = submission->renderComponent;
+		RenderComponent* renderComponent = submission.renderComponent;
 
 		//shader->SetMat4("uMatModel", submission->transform);
 		//shader->SetMat4("uMatModelInverseTranspose", glm::inverse(submission->transform));
@@ -153,6 +153,6 @@ void ForwardRenderPass::DoPass(std::vector<RenderSubmission*>& submissions, cons
 
 		shader->SetFloat("uAlphaTransparency", renderComponent->alphaTransparency);
 
-		renderComponent->Draw(shader, submission->transform);
+		renderComponent->Draw(shader, submission.transform);
 	}
 }

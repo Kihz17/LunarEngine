@@ -12,8 +12,8 @@ class AABB : public IBoundingVolume
 {
 public:
 	AABB();
-	AABB(const glm::vec3& min, const glm::vec3 max);
-	AABB(const glm::vec3& center, float sizeX, float sizeY, float sizeZ);
+	AABB(const glm::vec3& min, const glm::vec3 max, bool setupVertices);
+	AABB(const glm::vec3& center, float sizeX, float sizeY, float sizeZ, bool setupVertices);
 	virtual ~AABB();
 
 	virtual bool IsOnFrustum(const Frustum& frustum, const glm::mat4& transform) const override;

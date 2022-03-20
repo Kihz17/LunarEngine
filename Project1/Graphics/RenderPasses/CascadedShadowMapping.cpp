@@ -80,7 +80,7 @@ CascadedShadowMapping::~CascadedShadowMapping()
 	delete lightMatricesUBO;
 }
 
-void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::vec3& lightDir, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& quad)
+void CascadedShadowMapping::DoPass(std::vector<RenderSubmission>& submissions, std::vector<RenderSubmission>& animatedSubmissions, const glm::vec3& lightDir, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& quad)
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -105,10 +105,9 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, 
 
 	glViewport(0, 0, depthMapResolution, depthMapResolution); // Set viewport to size of the depth map
 
-	for (RenderSubmission* submission : submissions)
+	for (RenderSubmission& submission : submissions)
 	{
-		RenderComponent* renderComponent = submission->renderComponent;
-		if (!renderComponent->castShadows) continue;
+		RenderComponent* renderComponent = submission.renderComponent;
 
 		// TODO: If object is semi-transparent, make a softer shadow
 		// To do this, we will need to change the texture array into a color attachment instead of a depth attachment
@@ -118,26 +117,25 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission*>& submissions, 
 		// TODO: Another issue will arise with this ^^^. The "softness" value will be directly associated with the surface the shadow is being casted on, NOT the object casting the shadow.
 		// This is a problem that will need a solution
 
-		depthMappingShader->SetFloat("uShadowSoftness", submission->renderComponent->castingShadownSoftness);
+		depthMappingShader->SetFloat("uShadowSoftness", submission.renderComponent->castingShadownSoftness);
 
-		renderComponent->Draw(depthMappingShader, submission->transform);
+		renderComponent->Draw(depthMappingShader, submission.transform);
 	}
 
 	depthMappingAnimatedShader->Bind();
-	for (RenderSubmission* submission : animatedSubmissions)
+	for (RenderSubmission& submission : animatedSubmissions)
 	{
-		RenderComponent* renderComponent = submission->renderComponent;
-		if (!renderComponent->castShadows) continue;
+		RenderComponent* renderComponent = submission.renderComponent;
 
-		for (unsigned int i = 0; i < submission->boneMatricesLength; i++) // Pass bone matrices to shader
+		for (unsigned int i = 0; i < submission.boneMatricesLength; i++) // Pass bone matrices to shader
 		{
-			glm::mat4& matrix = submission->boneMatrices[i];
+			glm::mat4& matrix = submission.boneMatrices[i];
 			depthMappingAnimatedShader->SetMat4("uBoneMatrices[" + std::to_string(i) + "]", matrix);
 		}
 
-		depthMappingShader->SetFloat("uShadowSoftness", submission->renderComponent->castingShadownSoftness);
+		depthMappingShader->SetFloat("uShadowSoftness", submission.renderComponent->castingShadownSoftness);
 
-		renderComponent->Draw(depthMappingAnimatedShader, submission->transform);
+		renderComponent->Draw(depthMappingAnimatedShader, submission.transform);
 	}
 
 	lightDepthBuffer->Unbind();

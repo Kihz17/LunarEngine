@@ -42,7 +42,7 @@ public:
 	CascadedShadowMapping(const CascadedShadowMappingInfo& info);
 	virtual ~CascadedShadowMapping();
 
-	void DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::vec3& lightDir, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& quad);
+	void DoPass(std::vector<RenderSubmission>& submissions, std::vector<RenderSubmission>& animatedSubmissions, const glm::vec3& lightDir, const glm::mat4& projection, const glm::mat4& view, PrimitiveShape& quad);
 
 	std::vector<float>& GetCascadeLevels() { return cascadeLevels; }
 	ITexture* GetShadowMap() { return lightDepthMaps; }

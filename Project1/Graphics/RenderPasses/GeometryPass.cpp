@@ -95,7 +95,7 @@ GeometryPass::~GeometryPass()
 	delete geometryRenderBuffer;
 }
 
-void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vector<RenderSubmission*>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition)
+void GeometryPass::DoPass(std::vector<RenderSubmission>& submissions, std::vector<RenderSubmission>& animatedSubmissions, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition)
 {
 	glDisable(GL_BLEND); // No blend for deffered rendering
 	glEnable(GL_DEPTH_TEST); // Enable depth testing for scene render
@@ -113,13 +113,13 @@ void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vect
 	shader->SetFloat3("uCameraPosition", cameraPosition);
 
 	// Draw static meshes
-	for (RenderSubmission* submission : submissions)
+	for (RenderSubmission& submission : submissions)
 	{
-		RenderComponent* renderComponent = submission->renderComponent;
+		RenderComponent* renderComponent = submission.renderComponent;
 
 		PassSharedData(shader, submission, projection, view);
 
-		renderComponent->Draw(shader, submission->transform);
+		renderComponent->Draw(shader, submission.transform);
 	}
 
 	// Draw animated meshes
@@ -129,19 +129,19 @@ void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vect
 	animatedShader->SetMat4("uMatView", view);
 	animatedShader->SetFloat3("uCameraPosition", cameraPosition);
 
-	for (RenderSubmission* submission : animatedSubmissions)
+	for (RenderSubmission& submission : animatedSubmissions)
 	{
-		RenderComponent* renderComponent = submission->renderComponent;
+		RenderComponent* renderComponent = submission.renderComponent;
 
 		PassSharedData(animatedShader, submission, projection, view);
 
-		for (unsigned int i = 0; i < submission->boneMatricesLength; i++) // Pass bone matrices to shader
+		for (unsigned int i = 0; i < submission.boneMatricesLength; i++) // Pass bone matrices to shader
 		{
-			glm::mat4& matrix = submission->boneMatrices[i];
+			glm::mat4& matrix = submission.boneMatrices[i];
 			animatedShader->SetMat4("uBoneMatrices[" + std::to_string(i) + "]", matrix);
 		}
 
-		renderComponent->Draw(animatedShader, submission->transform);
+		renderComponent->Draw(animatedShader, submission.transform);
 	}
 
 	geometryBuffer->Unbind();
@@ -149,11 +149,11 @@ void GeometryPass::DoPass(std::vector<RenderSubmission*>& submissions, std::vect
 	glDisable(GL_MULTISAMPLE);
 }
 
-void GeometryPass::PassSharedData(Shader* shader, RenderSubmission* submission, const glm::mat4& projection, const glm::mat4& view)
+void GeometryPass::PassSharedData(Shader* shader, RenderSubmission& submission, const glm::mat4& projection, const glm::mat4& view)
 {
-	RenderComponent* renderComponent = submission->renderComponent;
+	RenderComponent* renderComponent = submission.renderComponent;
 
-	glm::mat4 projViewModel = projection * view * submission->transform;
+	glm::mat4 projViewModel = projection * view * submission.transform;
 	glm::mat4& prevProjViewModel = renderComponent->hasPrevProjViewModel ? renderComponent->projViewModel : projViewModel;
 	renderComponent->projViewModel = projViewModel;
 

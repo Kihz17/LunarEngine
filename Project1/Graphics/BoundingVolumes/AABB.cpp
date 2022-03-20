@@ -2,7 +2,7 @@
 #include "VertexInformation.h"
 #include "VertexArrayObject.h"
 #include "IndexBuffer.h"
-
+#include "Profiler.h"
 #include "GLCommon.h"
 
 constexpr int numCubeVertices = 36;
@@ -19,24 +19,24 @@ AABB::AABB()
 	
 }
 
-AABB::AABB(const glm::vec3& min, const glm::vec3 max) 
+AABB::AABB(const glm::vec3& min, const glm::vec3 max, bool setupVertices)
 	: center((max + min) * 0.5f),
 	size(glm::vec3(max.x - center.x, max.y - center.y, max.z - center.z)),
 	vao(nullptr),
 	vbo(nullptr),
 	ebo(nullptr)
 {
-	SetupVertices();
+	if(setupVertices) SetupVertices();
 }
 
-AABB::AABB(const glm::vec3& center, float sizeX, float sizeY, float sizeZ)
+AABB::AABB(const glm::vec3& center, float sizeX, float sizeY, float sizeZ, bool setupVertices)
 	: center(center),
 	size(glm::vec3(sizeX, sizeY, sizeZ)),
 	vao(nullptr),
 	vbo(nullptr),
 	ebo(nullptr)
 {
-	SetupVertices();
+	if(setupVertices) SetupVertices();
 }
 
 AABB::~AABB()
@@ -48,6 +48,7 @@ AABB::~AABB()
 
 bool AABB::IsOnFrustum(const Frustum& frustum, const glm::mat4& transform) const
 {
+	Profiler::BeginProfile("OnFrustum");
 	const glm::vec3 transformedCenter = transform * glm::vec4(center, 1.0f);
 
 	// Scaled orientation
@@ -67,14 +68,17 @@ bool AABB::IsOnFrustum(const Frustum& frustum, const glm::mat4& transform) const
 		std::abs(glm::dot(glm::vec3(0.0f, 0.0f, 1.0f), up)) +
 		std::abs(glm::dot(glm::vec3(0.0f, 0.0f, 1.0f), forward));
 
-	const AABB transformedBoundingBox(transformedCenter, newSizeX, newSizeY, newSizeZ);
+	const AABB transformedBoundingBox(transformedCenter, newSizeX, newSizeY, newSizeZ, false);
 
-	return transformedBoundingBox.IsOnOrForwardPlan(frustum.left) &&
+	bool v = transformedBoundingBox.IsOnOrForwardPlan(frustum.left) &&
 		transformedBoundingBox.IsOnOrForwardPlan(frustum.right) &&
 		transformedBoundingBox.IsOnOrForwardPlan(frustum.top) &&
 		transformedBoundingBox.IsOnOrForwardPlan(frustum.bottom) &&
 		transformedBoundingBox.IsOnOrForwardPlan(frustum.near) &&
 		transformedBoundingBox.IsOnOrForwardPlan(frustum.far);
+
+	Profiler::EndProfile("OnFrustum");
+	return v;
 }
 
 bool AABB::IsOnOrForwardPlan(const Plane& plane) const // Taken from https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html

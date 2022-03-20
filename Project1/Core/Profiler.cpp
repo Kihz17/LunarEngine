@@ -15,6 +15,7 @@ void Profiler::BeginProfile(const std::string& key)
 void Profiler::EndProfile(const std::string& key)
 {
 	float currentTime = glfwGetTime();
+	if (results.find(key) != results.end()) return;
 	if (startTimes.find(key) == startTimes.end()) return;
 
 	float timePassed = currentTime - startTimes.at(key);
@@ -28,7 +29,7 @@ std::unordered_map<std::string, float> Profiler::Results()
 
 void Profiler::DrawResults()
 {
-	ImGui::Begin("Profiler");
+	ImGui::Begin("CPU Profiler");
 
 	std::unordered_map<std::string, float>::iterator it = results.begin();
 	while (it != results.end())

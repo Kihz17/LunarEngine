@@ -93,7 +93,7 @@ Mesh::Mesh(const std::string& filePath)
 		parentMax.z = glm::max(parentMax.z, max.z);
 	}
 
-	this->boundingBox = new AABB(parentMin, parentMax);
+	this->boundingBox = new AABB(parentMin, parentMax, true);
 
 	BufferLayout bufferLayout = {
 		{ ShaderDataType::Float3, "vPosition" },

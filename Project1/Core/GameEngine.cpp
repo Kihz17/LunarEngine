@@ -57,16 +57,6 @@ GameEngine::~GameEngine()
 
 void GameEngine::Render()
 {
-    // Start ImGui frame
-    if (editorMode)
-    {
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-    }
-
-    Renderer::BeginFrame(camera);
-
     if (editorMode)
     {
         for (IPanel* panel : panels)
@@ -89,8 +79,6 @@ void GameEngine::Render()
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
-
-    Renderer::EndFrame();
 }
 
 void GameEngine::SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer* lineVBO, IndexBuffer* lineEBO)
@@ -100,9 +88,10 @@ void GameEngine::SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer
     const std::vector<Entity*>& entities = entityManager.GetEntities();
     std::vector<LineRenderComponent*> lines;
 
+    const Frustum& viewFrustum = Renderer::GetViewFrustum();
+
     for (Entity* entity : entities)
     {
-        if (entity == nullptr) std::cout << "ge nullEnt\n";
         PositionComponent* posComponent = entity->GetComponent<PositionComponent>();
         if (!posComponent)  continue; // Can't be rendered
 
@@ -125,31 +114,65 @@ void GameEngine::SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer
         }
 
         RenderComponent* renderComponent = entity->GetComponent<RenderComponent>();
+
+        glm::mat4 transform(1.0f);
+        transform *= glm::translate(glm::mat4(1.0f), posComponent->value);
+        transform *= glm::toMat4(rotComponent->value);
+        transform *= glm::scale(glm::mat4(1.0f), scaleComponent->value);
+
         if (renderComponent)
         {
-            // Tell the renderer to render this entity
-            RenderSubmission submission(renderComponent, posComponent->value, scaleComponent->value, rotComponent->value);
-
-            // Apply bone data to submission if the entity is animated
             SkeletalAnimationComponent* animComp = entity->GetComponent<SkeletalAnimationComponent>();
-            if (animComp)
-            {
 
-                submission.boneMatrices = animComp->boneMatrices.data();
-                submission.boneMatricesLength = animComp->boneMatrices.size();
+            if (renderComponent->mesh->GetBoundingBox()->IsOnFrustum(viewFrustum, transform)) // Can we see this mesh?
+            {
+                // Tell the renderer to render this entity
+                RenderSubmission submission(renderComponent, posComponent->value, scaleComponent->value, rotComponent->value, transform);
+
+                // Submit the entity to be rendered!
+                if (animComp) // We are animated
+                {
+                    // Apply bone data to submission if the entity is animated
+                    submission.boneMatrices = animComp->boneMatrices.data();
+                    submission.boneMatricesLength = animComp->boneMatrices.size();
+
+                    Renderer::culledAnimatedSubmissions.push_back(submission);
+                }
+                else if (renderComponent->alphaTransparency < 1.0f)
+                {
+                    Renderer::culledForwardSubmissions.push_back(submission);
+                }
+                else
+                {
+                    Renderer::culledSubmissions.push_back(submission);
+                }
+
+                // Draw bounding box
+                if (debugMode)
+                {
+                    const AABB* aabb = renderComponent->mesh->GetBoundingBox();
+                    LineRenderSubmission lineSubmission;
+                    lineSubmission.vao = aabb->GetVertexArray();
+                    lineSubmission.indexCount = aabb->GetIndexCount();
+                    lineSubmission.lineColor = glm::vec3(0.0f, 0.0f, 0.8f);
+                    lineSubmission.transform = submission.transform;
+                    Renderer::lineSubmissions.push_back(lineSubmission);
+                }
             }
 
-            Renderer::Submit(submission);
-
-            if (debugMode)
+            // Add to shadow submission
+            if (renderComponent->castShadows && glm::length(Renderer::cameraPos - posComponent->value) <= Renderer::shadowCullRadius) // We should cast shadows!
             {
-                const AABB* aabb = renderComponent->mesh->GetBoundingBox();
-                LineRenderSubmission lineSubmission;
-                lineSubmission.vao = aabb->GetVertexArray();
-                lineSubmission.indexCount = aabb->GetIndexCount();
-                lineSubmission.lineColor = glm::vec3(0.0f, 0.0f, 0.8f);
-                lineSubmission.transform = submission.transform;
-                Renderer::SubmitLines(lineSubmission);
+                RenderSubmission submission(renderComponent, posComponent->value, scaleComponent->value, rotComponent->value, transform);
+
+                if (animComp)
+                {
+                    Renderer::culledAnimatedShadowSubmissions.push_back(submission);
+                }
+                else
+                {
+                    Renderer::culledShadowSubmissions.push_back(submission);
+                }
             }
         }
 
@@ -198,7 +221,7 @@ void GameEngine::SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer
     lineSubmission.lineColor = glm::vec3(0.0f, 0.8f, 0.0f);
     lineSubmission.transform = glm::mat4(1.0f);
 
-    Renderer::SubmitLines(lineSubmission);
+    Renderer::lineSubmissions.push_back(lineSubmission);
 
     Profiler::EndProfile("EntitySubmission");
 }
@@ -242,9 +265,22 @@ void GameEngine::Run()
         VertexBuffer* lineVBO = nullptr;
         IndexBuffer* lineEBO = nullptr;
 
+        // Start ImGui frame
+        if (editorMode)
+        {
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+        }
+
+        Renderer::BeginFrame(camera);
+
         // Submit all renderable entities
         SubmitEntitiesToRender(lineVAO, lineVBO, lineEBO);
+
         Render();
+
+        Renderer::EndFrame();
 
         if (lineVAO)
         {
