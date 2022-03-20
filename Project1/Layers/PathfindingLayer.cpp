@@ -210,7 +210,7 @@ void PathfindingLayer::OnUpdate(float deltaTime)
 
 	if (InputManager::GetKey(GLFW_KEY_EQUAL)->IsPressed())
 	{
-		agentSpeed = glm::min(1000.0f, agentSpeed + 0.1f);
+		agentSpeed = glm::min(500.0f, agentSpeed + 0.1f);
 	}
 	else if (InputManager::GetKey(GLFW_KEY_MINUS)->IsPressed())
 	{

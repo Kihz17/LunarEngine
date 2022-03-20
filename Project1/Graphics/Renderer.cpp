@@ -2,6 +2,7 @@
 #include "ShaderLibrary.h"
 #include "EntityManager.h"
 #include "Utils.h"
+#include "Profiler.h"
 
 #include "FrameBuffer.h"
 #include "TextureManager.h"
@@ -147,6 +148,8 @@ void Renderer::SetViewType(uint32_t type)
 
 void Renderer::BeginFrame(const Camera& camera)
 {
+	Profiler::BeginProfile("BeginFrame");
+
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -156,20 +159,30 @@ void Renderer::BeginFrame(const Camera& camera)
 	cameraPos = camera.position;
 	cameraDir = camera.front;
 	viewFrustum = FrustumUtils::CreateFrustumFromCamera(camera, aspect, farPlane, nearPlane);
+
+	Profiler::EndProfile("BeginFrame");
 }
 
 void Renderer::EndFrame()
 {
+	Profiler::BeginProfile("EndFrame");
+
 	submissions.clear();
 	animatedSubmissions.clear();
 	forwardSubmissions.clear();
 	lineSubmissions.clear();
 
 	glfwSwapBuffers(windowDetails->window);
+
+	Profiler::EndProfile("EndFrame");
 }
 
 void Renderer::DrawFrame()
 {
+	Profiler::BeginProfile("DrawFrame");
+
+	Profiler::BeginProfile("Culling");
+
 	std::vector<RenderSubmission*> culledShadowSubmissions;
 	std::vector<RenderSubmission*> culledSubmissions;
 	std::vector<RenderSubmission*> culledAnimatedSubmissions;
@@ -236,26 +249,39 @@ void Renderer::DrawFrame()
 		}
 	}
 
-	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
+	Profiler::EndProfile("Culling");
 
+	Profiler::BeginProfile("GeometryPass");
+	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
+	Profiler::EndProfile("GeometryPass");
 
 	if (envMap) // Only do env map pass if we have one
 	{
 		glm::vec3 lightDir = mainLight ? mainLight->direction : glm::vec3(0.0f, 0.0f, 0.0f);
 		glm::vec3 lightColor = mainLight ? mainLight->color : glm::vec3(0.0f, 0.0f, 0.0f);
+		Profiler::BeginProfile("EnvMapPass");
 		envMapPass->DoPass(envMap, projection, view, mainLight, cameraPos, glm::normalize(lightDir), lightColor, cube);
+		Profiler::EndProfile("EnvMapPass");
 	}
 
 	if (mainLight) // Can't do clouds & shadows without a light source
 	{
 		glm::vec3 lightDir = glm::normalize(mainLight->direction);
+
+		Profiler::BeginProfile("CloudPass");
 		cloudPass->DoPass(envMapPass->GetEnvironmentTexture(), geometryPass->GetPositionBuffer(), projection, view, cameraPos, lightDir, mainLight->color, cameraDir, windowDetails, quad);
+		Profiler::EndProfile("CloudPass");
+
+		Profiler::BeginProfile("ShadowPass");
 		shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, lightDir, projection, view, *quad);
+		Profiler::EndProfile("ShadowPass");
 	}
 	
+	Profiler::BeginProfile("LightingPass");
 	lightingPass->DoPass(geometryPass->GetPositionBuffer(), geometryPass->GetAlbedoBuffer(), 
 		geometryPass->GetNormalBuffer(), geometryPass->GetEffectsBuffer(),
 		cloudPass->GetSkyTexture(), shadowMappingPass->GetSoftnessTexture(), projection, view, cameraPos, *quad);
+	Profiler::EndProfile("LightingPass");
 
 	forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
 	linePass->DoPass(lineSubmissions, projection, view, windowDetails);
@@ -266,6 +292,8 @@ void Renderer::DrawFrame()
 		TextureManager::DeleteTexture(pair.second); // Free the cube map from memory
 		pair.first->reflectRefractData.customMap = nullptr; // Make sure we unset the custom cube map incase we aren't using a dynamic cube map next frame
 	}
+
+	Profiler::EndProfile("DrawFrame");
 }
 
 void Renderer::Submit(const RenderSubmission& submission)

@@ -9,6 +9,7 @@
 #include "InputManager.h"
 #include "TextureManager.h"
 #include "Renderer.h"
+#include "Profiler.h"
 
 #include "PositionComponent.h"
 #include "ScaleComponent.h"
@@ -77,6 +78,11 @@ void GameEngine::Render()
 
     Renderer::DrawFrame();
 
+    if (editorMode)
+    {
+        Profiler::DrawResults();
+    }
+
     // Render ImGui
     if (editorMode)
     {
@@ -89,6 +95,8 @@ void GameEngine::Render()
 
 void GameEngine::SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer* lineVBO, IndexBuffer* lineEBO)
 {
+    Profiler::BeginProfile("EntitySubmission");
+
     const std::vector<Entity*>& entities = entityManager.GetEntities();
     std::vector<LineRenderComponent*> lines;
 
@@ -191,6 +199,8 @@ void GameEngine::SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer
     lineSubmission.transform = glm::mat4(1.0f);
 
     Renderer::SubmitLines(lineSubmission);
+
+    Profiler::EndProfile("EntitySubmission");
 }
 
 void GameEngine::Run()

@@ -367,6 +367,7 @@
     <ClCompile Include="AI\Pathfinding\Graph.cpp" />
     <ClCompile Include="AI\Pathfinding\GraphSearch.cpp" />
     <ClCompile Include="Layers\PathfindingLayer.cpp" />
+    <ClCompile Include="Core\Profiler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -748,6 +749,7 @@
     <ClInclude Include="AI\Pathfinding\Graph.h" />
     <ClInclude Include="AI\Pathfinding\GraphSearch.h" />
     <ClInclude Include="Layers\PathfindingLayer.h" />
+    <ClInclude Include="Core\Profiler.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl">
