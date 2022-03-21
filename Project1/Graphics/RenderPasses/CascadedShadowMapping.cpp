@@ -109,14 +109,6 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission>& submissions, s
 	{
 		RenderComponent* renderComponent = submission.renderComponent;
 
-		// TODO: If object is semi-transparent, make a softer shadow
-		// To do this, we will need to change the texture array into a color attachment instead of a depth attachment
-		// The CMS fragment shader will now need to write the depth to a channel (geometry's z value from the light's perspective), and write
-		// the "softness" value to another channel
-
-		// TODO: Another issue will arise with this ^^^. The "softness" value will be directly associated with the surface the shadow is being casted on, NOT the object casting the shadow.
-		// This is a problem that will need a solution
-
 		depthMappingShader->SetFloat("uShadowSoftness", submission.renderComponent->castingShadownSoftness);
 
 		renderComponent->Draw(depthMappingShader, submission.transform);
@@ -140,7 +132,6 @@ void CascadedShadowMapping::DoPass(std::vector<RenderSubmission>& submissions, s
 
 	lightDepthBuffer->Unbind();
 
-	//Utils::SaveTextureArrayAsBMP("test", softnessTextures);
 	glViewport(0, 0, windowSpecs->width, windowSpecs->height); 	// Set viewport back to source
 }
 

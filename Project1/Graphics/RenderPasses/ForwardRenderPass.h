@@ -4,6 +4,7 @@
 #include "IFrameBuffer.h"
 #include "Shader.h"
 #include "Window.h"
+#include "SimpleFastVector.h"
 
 class ForwardRenderPass
 {

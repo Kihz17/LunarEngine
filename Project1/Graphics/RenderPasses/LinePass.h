@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "IFrameBuffer.h"
 #include "Shader.h"
+#include "SimpleFastVector.h"
 
 class LinePass
 {

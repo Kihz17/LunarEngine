@@ -7,6 +7,7 @@
 #include "Frustum.h"
 #include "CubeMap.h"
 #include "Texture3D.h"
+#include "SimpleFastVector.h"
 
 #include "GeometryPass.h"
 #include "EnvironmentMapPass.h"
@@ -17,6 +18,7 @@
 #include "DynamicCubeMapRenderer.h"
 #include "CloudPass.h"
 #include "Frustum.h"
+#include "GrassPass.h"
 
 #include <vector>
 #include <unordered_map>
@@ -80,6 +82,7 @@ private:
 	static CascadedShadowMapping* shadowMappingPass;
 	static LinePass* linePass;
 	static CloudPass* cloudPass;
+	static GrassPass* grassPass;
 
 	static CubeMap* envMap;
 	static DynamicCubeMapRenderer* dynamicCubeMapGenerator;

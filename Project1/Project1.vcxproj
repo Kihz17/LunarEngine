@@ -204,8 +204,10 @@
     <ClCompile Include="Graphics\RenderPasses\EnvironmentMapPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\ForwardRenderPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\GeometryPass.cpp" />
+    <ClCompile Include="Graphics\RenderPasses\GrassPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\LightingPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\LinePass.cpp" />
+    <ClCompile Include="Graphics\RenderPasses\WaterPass.cpp" />
     <ClCompile Include="Graphics\Shader\ComputeShader.cpp" />
     <ClCompile Include="Graphics\Shader\Shader.cpp" />
     <ClCompile Include="Graphics\Shader\ShaderLibrary.cpp" />
@@ -222,7 +224,6 @@
     <ClCompile Include="Layers\AILayer.cpp" />
     <ClCompile Include="Layers\AnimationLayer.cpp" />
     <ClCompile Include="Layers\FreeCamController.cpp" />
-    <ClCompile Include="Layers\PathfindingLayer.cpp" />
     <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.cpp" />
     <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.cpp" />
     <ClCompile Include="Panels\EntityPanel.cpp" />
@@ -329,8 +330,10 @@
     <ClInclude Include="Graphics\RenderPasses\EnvironmentMapPass.h" />
     <ClInclude Include="Graphics\RenderPasses\ForwardRenderPass.h" />
     <ClInclude Include="Graphics\RenderPasses\GeometryPass.h" />
+    <ClInclude Include="Graphics\RenderPasses\GrassPass.h" />
     <ClInclude Include="Graphics\RenderPasses\LightingPass.h" />
     <ClInclude Include="Graphics\RenderPasses\LinePass.h" />
+    <ClInclude Include="Graphics\RenderPasses\WaterPass.h" />
     <ClInclude Include="Graphics\RenderSubmission.h" />
     <ClInclude Include="Graphics\Shader\ComputeShader.h" />
     <ClInclude Include="Graphics\Shader\Shader.h" />
@@ -350,7 +353,6 @@
     <ClInclude Include="Layers\AILayer.h" />
     <ClInclude Include="Layers\AnimationLayer.h" />
     <ClInclude Include="Layers\FreeCamController.h" />
-    <ClInclude Include="Layers\PathfindingLayer.h" />
     <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.h" />
     <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.h" />
     <ClInclude Include="Panels\EntityPanel.h" />
@@ -366,6 +368,7 @@
     <ClInclude Include="Sound\SoundManager.h" />
     <ClInclude Include="Utils\Grid2D.h" />
     <ClInclude Include="Utils\Grid3D.h" />
+    <ClInclude Include="Utils\SimpleFastVector.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Utils\UUID.h" />
     <ClInclude Include="vendor\imgui\imconfig.h" />

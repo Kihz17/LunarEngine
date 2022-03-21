@@ -22,7 +22,8 @@
 #include "LineRenderComponent.h"
 #include "Utils.h"
 #include "ShaderLibrary.h"
-#include "PathfindingLayer.h"
+
+#include "WaterPass.h"
 
 float GetRandom(float low, float high);
 
@@ -76,7 +77,7 @@ int main()
 
     Renderer::SetMainLightSource(light);
 
-   /* {
+    {
         DungeonGenerator2D::DungeonGeneratorInfo dInfo;
         dInfo.roomCount = 30;
         dInfo.minRoomSize = glm::ivec3(3, 2, 3);
@@ -87,7 +88,7 @@ int main()
         DungeonGenerator2D dg(dInfo, gameEngine.GetEntityManager());
         std::vector<Entity*> entities = dg.Generate();
         for (Entity* e : entities) gameEngine.GetEntityManager().ListenToEntity(e);
-    }*/
+    }
 
     // SHADER BALL TEST
     //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
@@ -104,19 +105,19 @@ int main()
     //    testInfo.normalTexture = normalTexture;
     //    e->AddComponent<RenderComponent>(testInfo);
     //}
-    //{
-    //    Entity* e = gameEngine.GetEntityManager().CreateEntity("Rect");
-    //    e->AddComponent<PositionComponent>();
-    //    e->AddComponent<RotationComponent>();
-    //    e->AddComponent<ScaleComponent>(glm::vec3(2.0f, 3.0f, 2.0f));
+ /*   {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("Rect");
+        e->AddComponent<PositionComponent>();
+        e->AddComponent<RotationComponent>();
+        e->AddComponent<ScaleComponent>(glm::vec3(2.0f, 3.0f, 2.0f));
 
-    //    RenderComponent::RenderInfo testInfo;
-    //    testInfo.mesh = cube;
-    //    testInfo.isColorOverride = true;
-    //    testInfo.colorOverride = glm::vec3(0.6f, 0.0f, 0.0f);
-    //    testInfo.normalTexture = normalTexture;
-    //    e->AddComponent<RenderComponent>(testInfo);
-    //}
+        RenderComponent::RenderInfo testInfo;
+        testInfo.mesh = cube;
+        testInfo.isColorOverride = true;
+        testInfo.colorOverride = glm::vec3(0.6f, 0.0f, 0.0f);
+        testInfo.normalTexture = normalTexture;
+        e->AddComponent<RenderComponent>(testInfo);
+    }*/
 
     // Set env map
     {
@@ -134,8 +135,6 @@ int main()
         CubeMap* envMap = TextureManager::CreateCubeMap(paths, TextureFilterType::Linear, TextureWrapType::Repeat, true, false);
         Renderer::SetEnvironmentMap(envMap);
     }
-
-    gameEngine.AddLayer(new PathfindingLayer("resourceMap3.bmp", cube, sphere, gameEngine.GetEntityManager()));
 
     gameEngine.Run();
 

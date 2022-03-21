@@ -10,6 +10,7 @@
 #include "PrimitiveShape.h"
 #include "Light.h"
 #include "Key.h"
+#include "SimpleFastVector.h"
 
 #include <glm/glm.hpp>
 #include <vector>

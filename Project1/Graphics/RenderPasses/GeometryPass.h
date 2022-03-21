@@ -5,6 +5,7 @@
 #include "IRenderBuffer.h"
 #include "Window.h"
 #include "Shader.h"
+#include "SimpleFastVector.h"
 
 #include <glm/glm.hpp>
 

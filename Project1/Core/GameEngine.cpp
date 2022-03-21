@@ -88,7 +88,7 @@ void GameEngine::SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer
     const std::vector<Entity*>& entities = entityManager.GetEntities();
     std::vector<LineRenderComponent*> lines;
 
-    const Frustum& viewFrustum = Renderer::GetViewFrustum();
+    const Frustum& viewFrustum = Renderer::viewFrustum;
 
     for (Entity* entity : entities)
     {
@@ -376,6 +376,7 @@ WindowSpecs GameEngine::InitializeGLFW(bool initImGui)
 
     std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << "\n";
     std::cout << "NOTE: If the GL version is less than 4.5, this project will most likely not work.\n";
+    std::cout << "=================================================================================\n\n";
 
     return windowSpecs;
 }

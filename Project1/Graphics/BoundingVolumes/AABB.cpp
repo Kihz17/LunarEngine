@@ -48,7 +48,6 @@ AABB::~AABB()
 
 bool AABB::IsOnFrustum(const Frustum& frustum, const glm::mat4& transform) const
 {
-	Profiler::BeginProfile("OnFrustum");
 	const glm::vec3 transformedCenter = transform * glm::vec4(center, 1.0f);
 
 	// Scaled orientation
@@ -70,15 +69,12 @@ bool AABB::IsOnFrustum(const Frustum& frustum, const glm::mat4& transform) const
 
 	const AABB transformedBoundingBox(transformedCenter, newSizeX, newSizeY, newSizeZ, false);
 
-	bool v = transformedBoundingBox.IsOnOrForwardPlan(frustum.left) &&
+	return transformedBoundingBox.IsOnOrForwardPlan(frustum.left) &&
 		transformedBoundingBox.IsOnOrForwardPlan(frustum.right) &&
 		transformedBoundingBox.IsOnOrForwardPlan(frustum.top) &&
 		transformedBoundingBox.IsOnOrForwardPlan(frustum.bottom) &&
 		transformedBoundingBox.IsOnOrForwardPlan(frustum.near) &&
 		transformedBoundingBox.IsOnOrForwardPlan(frustum.far);
-
-	Profiler::EndProfile("OnFrustum");
-	return v;
 }
 
 bool AABB::IsOnOrForwardPlan(const Plane& plane) const // Taken from https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html

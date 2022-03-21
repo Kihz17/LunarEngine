@@ -366,8 +366,9 @@
     </ClCompile>
     <ClCompile Include="AI\Pathfinding\Graph.cpp" />
     <ClCompile Include="AI\Pathfinding\GraphSearch.cpp" />
-    <ClCompile Include="Layers\PathfindingLayer.cpp" />
     <ClCompile Include="Core\Profiler.cpp" />
+    <ClCompile Include="Graphics\RenderPasses\WaterPass.cpp" />
+    <ClCompile Include="Graphics\RenderPasses\GrassPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -748,8 +749,10 @@
     </ClInclude>
     <ClInclude Include="AI\Pathfinding\Graph.h" />
     <ClInclude Include="AI\Pathfinding\GraphSearch.h" />
-    <ClInclude Include="Layers\PathfindingLayer.h" />
     <ClInclude Include="Core\Profiler.h" />
+    <ClInclude Include="Utils\SimpleFastVector.h" />
+    <ClInclude Include="Graphics\RenderPasses\WaterPass.h" />
+    <ClInclude Include="Graphics\RenderPasses\GrassPass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl">

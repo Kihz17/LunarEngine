@@ -30,6 +30,12 @@ bool Utils::RandBool()
 	return distr(rng);
 }
 
+float Utils::Gaussian(float min, float max)
+{
+	std::normal_distribution<> distr(min, max);
+	return distr(rng);
+}
+
 void Utils::SaveTextureAsBMP(const std::string& savePath, Texture2D* texture)
 {
 	unsigned int size = texture->GetWidth() * texture->GetHeight() * 4;
