@@ -1,11 +1,13 @@
 //type vertex
 #version 420
 
-layout (location = 0) in vec3 vWorldPosition;
+layout (location = 0) in vec4 vWorldPosition; // w represents rotation around y axis
+
+out mat4 mRotationMatrix;
 
 void main()
 {	
-	gl_Position = vec4(vWorldPosition, 1.0f);
+	gl_Position = vWorldPosition;
 };
 
 //type geometry
@@ -25,7 +27,7 @@ uniform mat4 uView;
 uniform vec2 uWidthHeight; // x = width, y = height
 
 // Wind
-uniform vec2 uWindParams; // x = oscillationStength, y = force factor
+uniform vec3 uWindParams; // x = oscillationStength, y = force factor, z = stiffness
 uniform vec2 uWindDirection;
 uniform float uTime;
 
@@ -34,24 +36,26 @@ const float HALF_PI = 1.57079632679f;
 const vec3 NORMAL = vec3(0.0f, 0.0f, 1.0f);
 const float OSCILLATE_DELTA = 0.05f;
 
-int fmod(int x, int y); // Returns the remainder of x divided by y with the same sign as x. If y is zero, the result is implementation-defined because of division by zero.
+mat4 RotationMatrix(vec3 axis, float angle);
 
 void main()
 {
     mat4 viewProj = uProjection * uView;
-    vec4 worldPos = gl_in[0].gl_Position;
+    vec3 worldPos = gl_in[0].gl_Position.xyz;
+    mat4 rotationMat = RotationMatrix(vec3(0.0f, 1.0f, 0.0f), gl_in[0].gl_Position.w);
+    vec4 normal = vec4(0.0f, 0.0f, 1.0f, 1.0f);
 
     int vertexCount;
     float heightFactor;
 
     // LOD
-    float dist = length(uCameraPosition - worldPos.xyz);
-    if(dist < 100.0f)
+    float dist = length(uCameraPosition - worldPos);
+    if(dist < 300.0f)
     {
         vertexCount = 12;
         heightFactor = 1.0f;
     }
-    else if(dist < 500.0f)
+    else if(dist < 700.0f)
     {
         vertexCount = 8;
         heightFactor = 1.7f;
@@ -65,20 +69,19 @@ void main()
     // Generate a random number per-blade to vary width and height
 	float random = sin(HALF_PI * fract(worldPos.x) + HALF_PI * fract(worldPos.z)); 
 
-    float width = uWidthHeight.x;
-    float height = uWidthHeight.y * heightFactor;
+    // Grass dimensions
+    const float width = uWidthHeight.x;
+    const float height = uWidthHeight.y * heightFactor;
+    const float texYIncrement = 1.0f / (vertexCount / 2);
 
-    float currentWidth = 0.0f;
-    float currentHeight = 0.0f;
     vec4 vertexPos;
 
-    // Emit start vertex
-    gl_Position = viewProj * worldPos;
-    EmitVertex();
-
+    float currentHeight = 0.0f;
     float windCoEff = 0.0f;
+    int stiffnessFactor = 1;
+    float texY = 0.0f;
 
-    for(int i = 0; i < vertexCount - 1; i++)
+    for(int i = 0; i < vertexCount; i++)
     {
         // Wind
         vec2 wind = vec2(sin(uTime * PI), sin(uTime * PI));
@@ -92,36 +95,62 @@ void main()
         vec2 rightWindBound = wind * (1.0f + OSCILLATE_DELTA);
         wind = mix(leftWindBound, rightWindBound, lerpCoeff);
 
-        // Determin wind direction and force
+        // Determine wind direction and force
         float randomMagnitude = mix(0.0f, 1.0f, random);
         wind += uWindDirection * randomMagnitude;
         wind *= uWindParams.y;
         float windForce = length(wind);
 
-        if(i % 2 == 0) // Moving horizontal
-        {
-            vertexPos = vec4(worldPos.x + width, worldPos.y + currentHeight, worldPos.z, 1.0f);
-        }
-        else // Moving up
+        if(i % 2 == 0) // Moving up
         {
             currentHeight += height;
             windCoEff += height;
-            vertexPos = vec4(worldPos.x, worldPos.y + currentHeight, worldPos.z, 1.0f);
+            stiffnessFactor++;
+            //vertexPos = vec4(worldPos.x, worldPos.y + currentHeight, worldPos.z, 1.0f);
+            vertexPos = vec4(0.0f, currentHeight, 0.0f, 1.0f);
+            texY += texYIncrement;
+            mTextureCoordinates = vec2(0.0f, texY);
+        }
+        else  // Moving horizontal
+        {
+            //vertexPos = vec4(worldPos.x + width, worldPos.y + currentHeight, worldPos.z, 1.0f);   
+            vertexPos = vec4(width, currentHeight, 0.0f, 1.0f);   
+            mTextureCoordinates = vec2(1.0f, texY);
         }    
 
-        vertexPos.xz += wind * windCoEff;
-        //vertexPos.y -= windForce * windCoEff * 0.8f;
+        float stiffnessMult = pow(uWindParams.z, vertexCount - stiffnessFactor); // Multiplier to "curve" the grass blades
 
+        // Apply wind to vertex
+        vec3 windTransformation = vec3(wind.x, 0.0f, wind.y) * windCoEff * stiffnessMult;
+        vertexPos.xyz = (rotationMat * vertexPos).xyz; // Rotate by angle
+        vertexPos.xyz += windTransformation; // Transform by wind
+        vertexPos.xyz += worldPos; // Move from origin -> position in world
+
+//        vec3 x = normalize(transformation);
+//        vec3 z = normalize(cross(x, vec3(0.0f, 1.0f, 0.0f)));
+//        vec3 y = normalize(cross(x, z));
+//        mat4 transformMat = mat4(vec4(x, 1.0f), vec4(y, 1.0f), vec4(z, 1.0f), vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+        mNormal = normal.xyz;
+        mWorldPosition = vertexPos.xyz;//R(vertexPos.xyz, vec3(0.0f, 1.0f, 0.0f), gl_in[0].gl_Position.w);//(rotationMat * vertexPos).xyz;
         gl_Position = viewProj * vertexPos;
         EmitVertex();
     }
     EndPrimitive();
 }
 
-int fmod(int x, int y)
+// https://www.neilmendoza.com/glsl-rotation-about-an-arbitrary-axis/
+mat4 RotationMatrix(vec3 axis, float angle)
 {
-	float remainder = fract(abs(x / y)) * abs(y);
-	return int(x < 0.0f ? -remainder : remainder);
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                0.0,                                0.0,                                0.0,                                1.0);
 }
 
 //type fragment
@@ -130,13 +159,13 @@ int fmod(int x, int y)
 layout (location = 0) out vec4 gPosition;
 layout (location = 1) out vec4 gAlbedo;
 layout (location = 2) out vec4 gNormal;
-layout (location = 3) out vec3 gEffects;
+layout (location = 3) out vec4 gEffects;
 
 in vec3 mWorldPosition;
 in vec3 mNormal;
 in vec2 mTextureCoordinates;
 
-out vec4 oColor;
+//out vec4 oColor;
 
 uniform sampler2D uAlbedoTexture;
 
@@ -146,7 +175,6 @@ uniform sampler2D uNormalTexture;
 // Material
 uniform sampler2D uRoughnessTexture;
 uniform sampler2D uMetalnessTexture;
-uniform sampler2D uAmbientOcculsionTexture;
 uniform vec4 uMaterialOverrides; // r = roughness, g = metalness, b = ao, w = isMaterialOverride
 
 uniform sampler2D uDiscardTexture;
@@ -154,31 +182,30 @@ uniform sampler2D uDiscardTexture;
 const float nearPlane = 0.1f;
 const float farPlane = 1000.0f;
 
-vec3 LinearizeColor(vec3 color); // Converts to linear color space (sRGB to RGB). In other words, gamma correction https://lettier.github.io/3d-game-shaders-for-beginners/gamma-correction.html
 float LinearizeDepth(float depth);
 vec3 ComputeTextureNormal();
 
 void main()
 {
-//	if(texture(uDiscardTexture, mTextureCoordinates).r <= 0.0f) // Shouldn't draw pixel here
-//	{
-//		discard;
-//		return;
-//	}
-//	
-//	if(uHasNormalTexture)
-//	{		
-//		gNormal.rgb = ComputeTextureNormal(); // Assign normal
-//	}
-//	else
-//	{
-//		gNormal.rgb = mNormal;
-//	}
-//	
-//	gPosition = vec4(mWorldPosition, LinearizeDepth(gl_FragCoord.z)); // Set position with adjusted depth
-//	gAlbedo.rgb = texture(uAlbedoTexture, mTextureCoordinates).rgb;
-//	gEffects.gb = vec2(0.0f, 0.0f);
-//	
+	if(texture(uDiscardTexture, mTextureCoordinates).r <= 0.1f) // Shouldn't draw pixel here
+	{
+		discard;
+		return;
+	}
+	
+	if(uHasNormalTexture)
+	{		
+		gNormal.rgb = ComputeTextureNormal(); // Assign normal
+	}
+	else
+	{
+		gNormal.rgb = mNormal;
+	}
+	
+	gPosition = vec4(mWorldPosition, LinearizeDepth(gl_FragCoord.z)); // Set position with adjusted depth
+	gAlbedo.rgb = texture(uAlbedoTexture, mTextureCoordinates).rgb;
+	gEffects.gb = vec2(0.0f, 0.0f);
+	
 //	if(uMaterialOverrides.w == 1.0f) // No texture to sample from, use flat value
 //	{
 //		gAlbedo.a = uMaterialOverrides.r; // Roughness
@@ -189,15 +216,10 @@ void main()
 //	{
 //		gAlbedo.a = vec3(texture(uRoughnessTexture, mTextureCoordinates)).r; // Sample and assign roughness value
 //		gNormal.a = vec3(texture(uMetalnessTexture, mTextureCoordinates)).r; // Sample and assign metalness value
-//		gEffects.r = vec3(texture(uAmbientOcculsionTexture, mTextureCoordinates)).r;
+//		gEffects.r = 1.0f;
 //	}
-
-    oColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-}
-
-vec3 LinearizeColor(vec3 color)
-{
-	return pow(color.rgb, vec3(2.2f));
+//
+    //oColor = vec4(texture(uAlbedoTexture, mTextureCoordinates).rgb, 1.0f);
 }
 
 float LinearizeDepth(float depth)

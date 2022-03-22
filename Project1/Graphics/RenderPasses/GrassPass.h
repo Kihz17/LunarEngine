@@ -2,6 +2,8 @@
 
 #include "Shader.h"
 #include "VertexArrayObject.h"
+#include "Texture2D.h"
+#include "IFrameBuffer.h"
 
 class GrassPass
 {
@@ -9,9 +11,9 @@ public:
 	GrassPass(int maxGrassBlades);
 	~GrassPass();
 
-	void DoPass(const glm::vec3& cameraPos, const glm::mat4& proj, const glm::mat4& view);
+	void DoPass(IFrameBuffer* geometryBuffer, const glm::vec3& cameraPos, const glm::mat4& proj, const glm::mat4& view);
 
-	void AddGrass(const std::vector<glm::vec3>& v);
+	void AddGrass(const std::vector<glm::vec4>& v);
 
 	static const std::string GRASS_SHADER_KEY;
 
@@ -21,9 +23,13 @@ private:
 	VertexBuffer* grassVBO;
 
 	int maxGrassBlades;
-	std::vector<glm::vec3> grassPositions;
+	std::vector<glm::vec4> grassPositions;
 
 	float oscillationStrength;
 	float windForceMult;
+	float stiffness;
 	glm::vec2 windDirection;
+
+	Texture2D* grassDiscard;
+	Texture2D* grassColor;
 };

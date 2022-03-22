@@ -77,7 +77,7 @@ int main()
 
     Renderer::SetMainLightSource(light);
 
-    {
+    /*{
         DungeonGenerator2D::DungeonGeneratorInfo dInfo;
         dInfo.roomCount = 30;
         dInfo.minRoomSize = glm::ivec3(3, 2, 3);
@@ -88,23 +88,23 @@ int main()
         DungeonGenerator2D dg(dInfo, gameEngine.GetEntityManager());
         std::vector<Entity*> entities = dg.Generate();
         for (Entity* e : entities) gameEngine.GetEntityManager().ListenToEntity(e);
-    }
+    }*/
 
     // SHADER BALL TEST
-    //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
-    //{
-    //    Entity* e = gameEngine.GetEntityManager().CreateEntity();
-    //    e->AddComponent<PositionComponent>();
-    //    e->AddComponent<RotationComponent>();
-    //    e->AddComponent<ScaleComponent>(glm::vec3(10.0f, 0.5f, 10.0f));
+    ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
+ /*   {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity();
+        e->AddComponent<PositionComponent>();
+        e->AddComponent<RotationComponent>();
+        e->AddComponent<ScaleComponent>(glm::vec3(10.0f, 0.5f, 10.0f));
 
-    //    RenderComponent::RenderInfo testInfo;
-    //    testInfo.mesh = cube;
-    //    testInfo.isColorOverride = true;
-    //    testInfo.colorOverride = glm::vec3(0.6f, 0.0f, 0.0f);
-    //    testInfo.normalTexture = normalTexture;
-    //    e->AddComponent<RenderComponent>(testInfo);
-    //}
+        RenderComponent::RenderInfo testInfo;
+        testInfo.mesh = cube;
+        testInfo.isColorOverride = true;
+        testInfo.colorOverride = glm::vec3(0.6f, 0.0f, 0.0f);
+        testInfo.normalTexture = normalTexture;
+        e->AddComponent<RenderComponent>(testInfo);
+    }*/
  /*   {
         Entity* e = gameEngine.GetEntityManager().CreateEntity("Rect");
         e->AddComponent<PositionComponent>();

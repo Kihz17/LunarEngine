@@ -27,6 +27,8 @@ GeometryPass::GeometryPass(const WindowSpecs* windowSpecs)
 	geometryBuffer->AddColorAttachment2D("albedo", albedoBuffer, 1); // Albedo & Roughness
 	geometryBuffer->AddColorAttachment2D("normal", normalBuffer, 2); // Normal & Metalness
 	geometryBuffer->AddColorAttachment2D("effects", effectsBuffer, 3); // Ambient Occulsion & Velocity
+	//geometryBuffer->SetDepthAttachment(TextureManager::CreateTexture2D(GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_FLOAT,
+	//	windowSpecs->width, windowSpecs->height, TextureFilterType::Nearest, TextureWrapType::ClampToBorder));
 
 	// Attach a render buffer to our FBO
 	geometryBuffer->SetRenderBuffer(geometryRenderBuffer, GL_DEPTH_ATTACHMENT);

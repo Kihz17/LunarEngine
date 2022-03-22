@@ -242,3 +242,7 @@ std::vector<glm::mat4> CascadedShadowMapping::GetLightSpaceMatrices(const glm::v
 
 	return matrices;
 }
+
+// Dir = 0.1, 0.0, 0.9
+// Start Pos = 1, 2, 5
+// Result = 1.1, 2, 5.9

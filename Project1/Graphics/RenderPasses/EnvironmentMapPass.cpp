@@ -40,10 +40,11 @@ EnvironmentMapPass::~EnvironmentMapPass()
 
 void EnvironmentMapPass::DoPass(CubeMap* cubeMap, const glm::mat4& projection, const glm::mat4& view, bool sun, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& lightColor, PrimitiveShape* cube)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_CULL_FACE); // Make sure none of our cubes faces get culled
 
 	environmentBuffer->Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	shader->Bind();
 
 	shader->SetMat4("uProjection", projection);

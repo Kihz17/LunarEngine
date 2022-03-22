@@ -78,16 +78,16 @@ void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 	forwardPass = new ForwardRenderPass(geometryPass->GetGBuffer());
 	linePass = new LinePass();
 	cloudPass = new CloudPass(100000.0f, 1000.0f, 3000.0f, 0.0004f, windowDetails);
-	grassPass = new GrassPass(1000);
+	grassPass = new GrassPass(100000);
 
 	dynamicCubeMapGenerator = new DynamicCubeMapRenderer(windowDetails);
 
 	EquirectangularToCubeMapConverter::Initialize();
 
-	std::vector<glm::vec3> gp;
-	for (int i = 0; i < 100; i++)
+	std::vector<glm::vec4> gp;
+	for (int i = 0; i < 100000; i++)
 	{
-		gp.push_back(glm::vec3(Utils::RandFloat(-100.0f, 100.0f), Utils::RandFloat(-2.0f, 2.0f), Utils::RandFloat(-100.0f, 100.0f)));
+		gp.push_back(glm::vec4(Utils::RandFloat(-50.0f, 50.0f), Utils::RandFloat(-2.0f, 2.0f), Utils::RandFloat(-50.0f, 50.0f), glm::radians(Utils::RandFloat(0.0f, 360.0f))));
 	}
 	grassPass->AddGrass(gp);
 }
@@ -158,43 +158,47 @@ void Renderer::DrawFrame()
 {
 	Profiler::BeginProfile("DrawFrame");
 
-	//Profiler::BeginProfile("GeometryPass");
-	//geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
-	//Profiler::EndProfile("GeometryPass");
+	Profiler::BeginProfile("GeometryPass");
+	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
+	Profiler::EndProfile("GeometryPass");
 
-	grassPass->DoPass(cameraPos, projection, view);
+	grassPass->DoPass(geometryPass->GetGBuffer(), cameraPos, projection, view);
 
-	//if (envMap) // Only do env map pass if we have one
-	//{
-	//	glm::vec3 lightDir = mainLight ? mainLight->direction : glm::vec3(0.0f, 0.0f, 0.0f);
-	//	glm::vec3 lightColor = mainLight ? mainLight->color : glm::vec3(0.0f, 0.0f, 0.0f);
+	if (envMap) // Only do env map pass if we have one
+	{
+		glm::vec3 lightDir = mainLight ? mainLight->direction : glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 lightColor = mainLight ? mainLight->color : glm::vec3(0.0f, 0.0f, 0.0f);
 
-	//	Profiler::BeginProfile("EnvMapPass");
-	//	envMapPass->DoPass(envMap, projection, view, mainLight, cameraPos, glm::normalize(lightDir), lightColor, cube);
-	//	Profiler::EndProfile("EnvMapPass");
-	//}
+		Profiler::BeginProfile("EnvMapPass");
+		envMapPass->DoPass(envMap, projection, view, mainLight, cameraPos, glm::normalize(lightDir), lightColor, cube);
+		Profiler::EndProfile("EnvMapPass");
+	}
 
-	//if (mainLight) // Can't do clouds & shadows without a light source
-	//{
-	//	glm::vec3 lightDir = glm::normalize(mainLight->direction);
+	//Utils::SaveTextureAsBMP("pos", dynamic_cast<Texture2D*>(geometryPass->GetPositionBuffer()));
+	//Utils::SaveTextureAsBMP("color", dynamic_cast<Texture2D*>(geometryPass->GetAlbedoBuffer()));
+	//Utils::SaveTextureAsBMP("norm", dynamic_cast<Texture2D*>(geometryPass->GetNormalBuffer()));
 
-	//	Profiler::BeginProfile("CloudPass");
-	//	cloudPass->DoPass(envMapPass->GetEnvironmentTexture(), geometryPass->GetPositionBuffer(), projection, view, cameraPos, lightDir, mainLight->color, cameraDir, windowDetails, quad);
-	//	Profiler::EndProfile("CloudPass");
+	if (mainLight) // Can't do clouds & shadows without a light source
+	{
+		glm::vec3 lightDir = glm::normalize(mainLight->direction);
 
-	//	Profiler::BeginProfile("ShadowPass");
-	//	shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, lightDir, projection, view, *quad);
-	//	Profiler::EndProfile("ShadowPass");
-	//}
-	//
-	//Profiler::BeginProfile("LightingPass");
-	//lightingPass->DoPass(geometryPass->GetPositionBuffer(), geometryPass->GetAlbedoBuffer(), 
-	//	geometryPass->GetNormalBuffer(), geometryPass->GetEffectsBuffer(),
-	//	cloudPass->GetSkyTexture(), shadowMappingPass->GetSoftnessTexture(), projection, view, cameraPos, *quad);
-	//Profiler::EndProfile("LightingPass");
+		Profiler::BeginProfile("CloudPass");
+		cloudPass->DoPass(envMapPass->GetEnvironmentTexture(), geometryPass->GetPositionBuffer(), projection, view, cameraPos, lightDir, mainLight->color, cameraDir, windowDetails, quad);
+		Profiler::EndProfile("CloudPass");
 
-	//forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
-	//linePass->DoPass(lineSubmissions, projection, view, windowDetails);
+		Profiler::BeginProfile("ShadowPass");
+		shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, lightDir, projection, view, *quad);
+		Profiler::EndProfile("ShadowPass");
+	}
+	
+	Profiler::BeginProfile("LightingPass");
+	lightingPass->DoPass(geometryPass->GetPositionBuffer(), geometryPass->GetAlbedoBuffer(), 
+		geometryPass->GetNormalBuffer(), geometryPass->GetEffectsBuffer(),
+		cloudPass->GetSkyTexture(), shadowMappingPass->GetSoftnessTexture(), projection, view, cameraPos, *quad);
+	Profiler::EndProfile("LightingPass");
+
+	forwardPass->DoPass(culledForwardSubmissions, projection, view, windowDetails);
+	linePass->DoPass(lineSubmissions, projection, view, windowDetails);
 
 	Profiler::EndProfile("DrawFrame");
 }

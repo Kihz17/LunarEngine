@@ -1,5 +1,7 @@
 #include "GrassPass.h"
 #include "ShaderLibrary.h"
+#include "TextureManager.h"
+#include "Utils.h"
 
 #include <vendor/imgui/imgui.h>
 
@@ -8,14 +10,17 @@ const std::string GrassPass::GRASS_SHADER_KEY = "grassShader";
 GrassPass::GrassPass(int maxGrassBlades)
 	: shader(ShaderLibrary::Load(GRASS_SHADER_KEY, "assets/shaders/grass.glsl")),
 	grassVAO(new VertexArrayObject()),
-	grassVBO(new VertexBuffer(maxGrassBlades * sizeof(glm::vec3))),
+	grassVBO(new VertexBuffer(maxGrassBlades * sizeof(glm::vec4))),
 	maxGrassBlades(maxGrassBlades),
 	oscillationStrength(2.5f),
 	windForceMult(1.0f),
-	windDirection(glm::vec2(0.1f, 0.9f))
+	stiffness(0.8f),
+	windDirection(glm::vec2(0.1f, 0.9f)),
+	grassDiscard(TextureManager::CreateTexture2D("assets/textures/grassBladeAlpha.png", TextureFilterType::Linear, TextureWrapType::ClampToEdge)),
+	grassColor(TextureManager::CreateTexture2D("assets/textures/grassColor.png", TextureFilterType::Linear, TextureWrapType::Repeat))
 {
 	BufferLayout bufferLayout = {
-		{ ShaderDataType::Float3, "vWorldPosition" }
+		{ ShaderDataType::Float4, "vWorldPosition" }
 	};
 
 	grassVBO->SetLayout(bufferLayout);
@@ -44,7 +49,7 @@ GrassPass::~GrassPass()
 	delete grassVAO;
 }
 
-void GrassPass::DoPass(const glm::vec3& cameraPos, const glm::mat4& proj, const glm::mat4& view)
+void GrassPass::DoPass(IFrameBuffer* geometryBuffer, const glm::vec3& cameraPos, const glm::mat4& proj, const glm::mat4& view)
 {
 	ImGui::Begin("Grass");
 	if (ImGui::TreeNode("Grass Stuff"))
@@ -52,32 +57,48 @@ void GrassPass::DoPass(const glm::vec3& cameraPos, const glm::mat4& proj, const 
 		ImGui::DragFloat2("Wind Direction", (float*)&windDirection, 0.01f);
 		ImGui::DragFloat("Wind Force", &windForceMult, 0.01f);
 		ImGui::DragFloat("Oscillation Strength", &oscillationStrength, 0.01f);
+		ImGui::DragFloat("Grass Stiffness", &stiffness, 0.01f);
 		ImGui::TreePop();
 	}
 	ImGui::End();
 
 	glDisable(GL_CULL_FACE); // Don't face cull, we want to render both sides of grass blades
+	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_DEPTH_TEST);
+
+	geometryBuffer->Bind();
 
 	shader->Bind();
 	shader->SetFloat3("uCameraPosition", cameraPos);
 	shader->SetMat4("uProjection", proj);
 	shader->SetMat4("uView", view);
 	shader->SetFloat("uTime", glfwGetTime());
-	shader->SetFloat2("uWindParams", glm::vec2(oscillationStrength, windForceMult));
+	shader->SetFloat3("uWindParams", glm::vec3(oscillationStrength, windForceMult, stiffness));
 	shader->SetFloat2("uWindDirection", glm::normalize(windDirection));
-	shader->SetFloat2("uWidthHeight", glm::vec2(0.5f, 0.5f));
+	shader->SetFloat2("uWidthHeight", glm::vec2(0.1f, 0.3f));
+	shader->SetInt("uHasNormalTexture", false);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	grassDiscard->BindToSlot(0);
+	shader->SetInt("uDiscardTexture", 0);
+
+	grassColor->BindToSlot(1);
+	shader->SetInt("uAlbedoTexture", 1);
+
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	grassVAO->Bind();
 	glDrawArrays(GL_POINTS, 0, grassPositions.size());
 	grassVAO->Unbind();
+
+	geometryBuffer->Bind();
+
+	glDisable(GL_MULTISAMPLE);
 }
 
-void GrassPass::AddGrass(const std::vector<glm::vec3>& v)
+void GrassPass::AddGrass(const std::vector<glm::vec4>& v)
 {
 	grassPositions.insert(grassPositions.end(), v.begin(), v.end());
-	grassVBO->SetData(grassPositions.data(), maxGrassBlades * sizeof(glm::vec3));
+	grassVBO->SetData(grassPositions.data(), maxGrassBlades * sizeof(glm::vec4));
 }
 
 // TODO: Grass "curves"
