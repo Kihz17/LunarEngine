@@ -73,6 +73,8 @@ void GrassPass::DoPass(IFrameBuffer* geometryBuffer, const glm::vec3& cameraPos,
 	shader->SetMat4("uProjection", proj);
 	shader->SetMat4("uView", view);
 	shader->SetFloat("uTime", glfwGetTime());
+
+
 	shader->SetFloat3("uWindParams", glm::vec3(oscillationStrength, windForceMult, stiffness));
 	shader->SetFloat2("uWindDirection", glm::normalize(windDirection));
 	shader->SetFloat2("uWidthHeight", glm::vec2(0.1f, 0.3f));

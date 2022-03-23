@@ -123,10 +123,14 @@ bool Shader::WasThereALinkError(const GLuint& programID)
 Shader::Shader(const std::string& path)
 {
 	GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint tcShaderID = 0;
+	GLuint teShaderID = 0;
 	GLuint geometryShaderID = 0;
 	GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	std::vector<std::string> vertexSource;
+	std::vector<std::string> tcsSource;
+	std::vector<std::string> tesSource;
 	std::vector<std::string> geometrySource;
 	std::vector<std::string> fragmentSource;
 
@@ -145,6 +149,14 @@ Shader::Shader(const std::string& path)
 		{
 			currentSourceType = ShaderSourceType::Geometry;
 		}
+		else if (line == "//type tcs")
+		{
+			currentSourceType = ShaderSourceType::TessellationControl;
+		}
+		else if (line == "//type tes")
+		{
+			currentSourceType = ShaderSourceType::TessellationEvaluation;
+		}
 
 		if (currentSourceType == ShaderSourceType::Vertex)
 		{
@@ -157,6 +169,14 @@ Shader::Shader(const std::string& path)
 		else if (currentSourceType == ShaderSourceType::Geometry)
 		{
 			geometrySource.push_back(line);
+		}
+		else if (currentSourceType == ShaderSourceType::TessellationControl)
+		{
+			tcsSource.push_back(line);
+		}
+		else if (currentSourceType == ShaderSourceType::TessellationEvaluation)
+		{
+			tesSource.push_back(line);
 		}
 	}
 
@@ -171,6 +191,30 @@ Shader::Shader(const std::string& path)
 	{
 		std::cout << "[ERROR] Failed to compile Vertex Shader! Check log for details." << std::endl;
 		return;
+	}
+
+	bool hasTCShader = !tcsSource.empty();
+	if (hasTCShader)
+	{
+		tcShaderID = glCreateShader(GL_TESS_CONTROL_SHADER);
+		compiled = CompileShaderFromSource(tcShaderID, path, tcsSource);
+		if (!compiled)
+		{
+			std::cout << "[ERROR] Failed to compile Tessellation Control Shader! Check log for details." << std::endl;
+			return;
+		}
+	}
+
+	bool hasTEShader = !tesSource.empty();
+	if (hasTEShader)
+	{
+		teShaderID = glCreateShader(GL_TESS_EVALUATION_SHADER);
+		compiled = CompileShaderFromSource(teShaderID, path, tesSource);
+		if (!compiled)
+		{
+			std::cout << "[ERROR] Failed to compile Tessellation Evaluation Shader! Check log for details." << std::endl;
+			return;
+		}
 	}
 
 	bool hasGeometryShader = !geometrySource.empty();
@@ -194,6 +238,16 @@ Shader::Shader(const std::string& path)
 
 	this->ID = glCreateProgram();
 	glAttachShader(ID, vertexShaderID);
+
+	if (hasTCShader)
+	{
+		glAttachShader(ID, tcShaderID);
+	}
+
+	if (hasTEShader)
+	{
+		glAttachShader(ID, teShaderID);
+	}
 
 	if (hasGeometryShader)
 	{

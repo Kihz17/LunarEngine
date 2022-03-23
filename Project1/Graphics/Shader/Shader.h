@@ -12,7 +12,9 @@ enum class ShaderSourceType
 	Vertex,
 	Geometry,
 	Fragment,
-	Compute
+	Compute,
+	TessellationControl,
+	TessellationEvaluation
 };
 
 class Shader

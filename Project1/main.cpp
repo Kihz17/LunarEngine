@@ -126,14 +126,60 @@ int main()
         //EquirectangularToCubeMapConverter::ConvertEquirectangularToCubeMap(equir, envMap, Renderer::cube, gameEngine.GetWindowSpecs().width, gameEngine.GetWindowSpecs().height); // Setup environment map
 
         std::vector<std::string> paths;
-        paths.push_back("assets/textures/sky/right.jpg");
-        paths.push_back("assets/textures/sky/left.jpg");
-        paths.push_back("assets/textures/sky/top.jpg");
-        paths.push_back("assets/textures/sky/bottom.jpg");
-        paths.push_back("assets/textures/sky/front.jpg");
-        paths.push_back("assets/textures/sky/back.jpg");
+        paths.push_back("assets/textures/simpleSky.png");
+        paths.push_back("assets/textures/simpleSky.png");
+        paths.push_back("assets/textures/simpleSky.png");
+        paths.push_back("assets/textures/simpleSky.png");
+        paths.push_back("assets/textures/simpleSky.png");
+        paths.push_back("assets/textures/simpleSky.png");
         CubeMap* envMap = TextureManager::CreateCubeMap(paths, TextureFilterType::Linear, TextureWrapType::Repeat, true, false);
         Renderer::SetEnvironmentMap(envMap);
+    }
+
+    {
+        Texture2D* heightmap = TextureManager::CreateTexture2D("assets/textures/heightmap.png", TextureFilterType::Linear, TextureWrapType::ClampToEdge);
+        std::vector<float> vertices;
+        int width = heightmap->GetWidth();
+        int height = heightmap->GetHeight();
+        unsigned int res = 20;
+        for (unsigned int i = 0; i <= res - 1; i++)
+        {
+            for (unsigned int j = 0; j <= res - 1; j++)
+            {
+                vertices.push_back(-width / 2.0f + width * i / (float)res);
+                vertices.push_back(0);
+                vertices.push_back(-height / 2.0f + height * j / (float)res);
+                vertices.push_back(i / (float) res);
+                vertices.push_back(j / (float) res);
+
+                vertices.push_back(-width / 2.0f + width * (i + 1) / (float)res);
+                vertices.push_back(0);
+                vertices.push_back(-height / 2.0f + height * j / (float)res);
+                vertices.push_back((i + 1) / (float)res);
+                vertices.push_back(j / (float)res);
+
+                vertices.push_back(-width / 2.0f + width * i / (float)res);
+                vertices.push_back(0);
+                vertices.push_back(-height / 2.0f + height * (j + 1) / (float)res);
+                vertices.push_back(i / (float)res);
+                vertices.push_back((j + 1) / (float)res);
+
+                vertices.push_back(-width / 2.0f + width * (i + 1) / (float)res);
+                vertices.push_back(0);
+                vertices.push_back(-height / 2.0f + height * (j + 1) / (float)res);
+                vertices.push_back((i + 1) / (float)res);
+                vertices.push_back((j + 1) / (float)res);
+            }
+        }
+
+        VertexArrayObject* vao = new VertexArrayObject();
+        VertexBuffer* vbo = new VertexBuffer(&vertices[0], vertices.size() * sizeof(float));
+        BufferLayout layout = {
+            {ShaderDataType::Float3, "vPosition"},
+            {ShaderDataType::Float2, "vTextureCoordinates"}
+        };
+        vbo->SetLayout(layout);
+        vao->AddVertexBuffer(vbo);
     }
 
     gameEngine.Run();
@@ -141,9 +187,9 @@ int main()
     return 0;
 }
 
-// 1. Water
-// 2. Procedural grass
-// 3. Instanced rendering
+// Procedural terrain with the ability to have "holes" in them for entrances to dungeon ]
+// Fix godrays
+// Maybe Water??
 
 // If we have time, globabl illumination using light probes
 
