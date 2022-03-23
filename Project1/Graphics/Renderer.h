@@ -19,6 +19,7 @@
 #include "CloudPass.h"
 #include "Frustum.h"
 #include "GrassPass.h"
+#include "TerrainPass.h"
 
 #include <vector>
 #include <unordered_map>
@@ -83,6 +84,7 @@ private:
 	static LinePass* linePass;
 	static CloudPass* cloudPass;
 	static GrassPass* grassPass;
+	static TerrainPass* terrainPass;
 
 	static CubeMap* envMap;
 	static DynamicCubeMapRenderer* dynamicCubeMapGenerator;

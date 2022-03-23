@@ -207,6 +207,7 @@
     <ClCompile Include="Graphics\RenderPasses\GrassPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\LightingPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\LinePass.cpp" />
+    <ClCompile Include="Graphics\RenderPasses\TerrainPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\WaterPass.cpp" />
     <ClCompile Include="Graphics\Shader\ComputeShader.cpp" />
     <ClCompile Include="Graphics\Shader\Shader.cpp" />
@@ -333,6 +334,7 @@
     <ClInclude Include="Graphics\RenderPasses\GrassPass.h" />
     <ClInclude Include="Graphics\RenderPasses\LightingPass.h" />
     <ClInclude Include="Graphics\RenderPasses\LinePass.h" />
+    <ClInclude Include="Graphics\RenderPasses\TerrainPass.h" />
     <ClInclude Include="Graphics\RenderPasses\WaterPass.h" />
     <ClInclude Include="Graphics\RenderSubmission.h" />
     <ClInclude Include="Graphics\Shader\ComputeShader.h" />

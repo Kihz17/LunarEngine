@@ -42,6 +42,7 @@ CascadedShadowMapping* Renderer::shadowMappingPass = nullptr;
 LinePass* Renderer::linePass = nullptr;
 CloudPass* Renderer::cloudPass = nullptr;
 GrassPass* Renderer::grassPass = nullptr;
+TerrainPass* Renderer::terrainPass = nullptr;
 
 CubeMap* Renderer::envMap = nullptr;
 DynamicCubeMapRenderer* Renderer::dynamicCubeMapGenerator = nullptr;
@@ -77,6 +78,7 @@ void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 	lightingPass = new LightingPass(windowDetails, shadowMappingPass->GetShadowMap(), shadowMappingPass->GetCascadeLevels());
 	forwardPass = new ForwardRenderPass(geometryPass->GetGBuffer());
 	linePass = new LinePass();
+	terrainPass = new TerrainPass();
 	cloudPass = new CloudPass(100000.0f, 1000.0f, 3000.0f, 0.0004f, windowDetails);
 	grassPass = new GrassPass(100000);
 
@@ -100,6 +102,7 @@ void Renderer::CleanUp()
 	delete forwardPass;
 	delete shadowMappingPass;
 	delete linePass;
+	delete terrainPass;
 	delete dynamicCubeMapGenerator;
 	delete cloudPass;
 	delete grassPass;
@@ -162,6 +165,8 @@ void Renderer::DrawFrame()
 	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
 	Profiler::EndProfile("GeometryPass");
 
+	terrainPass->DoPass(geometryPass->GetGBuffer(), projection, view, cameraPos);
+
 	grassPass->DoPass(geometryPass->GetGBuffer(), cameraPos, projection, view);
 
 	if (envMap) // Only do env map pass if we have one
@@ -173,10 +178,6 @@ void Renderer::DrawFrame()
 		envMapPass->DoPass(envMap, projection, view, mainLight, cameraPos, glm::normalize(lightDir), lightColor, cube);
 		Profiler::EndProfile("EnvMapPass");
 	}
-
-	//Utils::SaveTextureAsBMP("pos", dynamic_cast<Texture2D*>(geometryPass->GetPositionBuffer()));
-	//Utils::SaveTextureAsBMP("color", dynamic_cast<Texture2D*>(geometryPass->GetAlbedoBuffer()));
-	//Utils::SaveTextureAsBMP("norm", dynamic_cast<Texture2D*>(geometryPass->GetNormalBuffer()));
 
 	if (mainLight) // Can't do clouds & shadows without a light source
 	{

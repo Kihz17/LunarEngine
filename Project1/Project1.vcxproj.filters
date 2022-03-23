@@ -369,6 +369,7 @@
     <ClCompile Include="Core\Profiler.cpp" />
     <ClCompile Include="Graphics\RenderPasses\WaterPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\GrassPass.cpp" />
+    <ClCompile Include="Graphics\RenderPasses\TerrainPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -753,6 +754,7 @@
     <ClInclude Include="Utils\SimpleFastVector.h" />
     <ClInclude Include="Graphics\RenderPasses\WaterPass.h" />
     <ClInclude Include="Graphics\RenderPasses\GrassPass.h" />
+    <ClInclude Include="Graphics\RenderPasses\TerrainPass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl">

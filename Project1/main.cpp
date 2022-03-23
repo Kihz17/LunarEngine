@@ -137,49 +137,7 @@ int main()
     }
 
     {
-        Texture2D* heightmap = TextureManager::CreateTexture2D("assets/textures/heightmap.png", TextureFilterType::Linear, TextureWrapType::ClampToEdge);
-        std::vector<float> vertices;
-        int width = heightmap->GetWidth();
-        int height = heightmap->GetHeight();
-        unsigned int res = 20;
-        for (unsigned int i = 0; i <= res - 1; i++)
-        {
-            for (unsigned int j = 0; j <= res - 1; j++)
-            {
-                vertices.push_back(-width / 2.0f + width * i / (float)res);
-                vertices.push_back(0);
-                vertices.push_back(-height / 2.0f + height * j / (float)res);
-                vertices.push_back(i / (float) res);
-                vertices.push_back(j / (float) res);
-
-                vertices.push_back(-width / 2.0f + width * (i + 1) / (float)res);
-                vertices.push_back(0);
-                vertices.push_back(-height / 2.0f + height * j / (float)res);
-                vertices.push_back((i + 1) / (float)res);
-                vertices.push_back(j / (float)res);
-
-                vertices.push_back(-width / 2.0f + width * i / (float)res);
-                vertices.push_back(0);
-                vertices.push_back(-height / 2.0f + height * (j + 1) / (float)res);
-                vertices.push_back(i / (float)res);
-                vertices.push_back((j + 1) / (float)res);
-
-                vertices.push_back(-width / 2.0f + width * (i + 1) / (float)res);
-                vertices.push_back(0);
-                vertices.push_back(-height / 2.0f + height * (j + 1) / (float)res);
-                vertices.push_back((i + 1) / (float)res);
-                vertices.push_back((j + 1) / (float)res);
-            }
-        }
-
-        VertexArrayObject* vao = new VertexArrayObject();
-        VertexBuffer* vbo = new VertexBuffer(&vertices[0], vertices.size() * sizeof(float));
-        BufferLayout layout = {
-            {ShaderDataType::Float3, "vPosition"},
-            {ShaderDataType::Float2, "vTextureCoordinates"}
-        };
-        vbo->SetLayout(layout);
-        vao->AddVertexBuffer(vbo);
+      
     }
 
     gameEngine.Run();
