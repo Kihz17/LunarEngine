@@ -40,6 +40,9 @@ int main()
     Mesh* cube = new Mesh("assets/models/cube.obj");
     Mesh* cyl = new Mesh("assets/models/cylinder.obj");
 
+    // Load tree
+    Mesh* stairs = new Mesh("assets/models/test.fbx");
+
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* normalTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_normal.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -50,6 +53,10 @@ int main()
     Texture2D* woodTexture = TextureManager::CreateTexture2D("assets/textures/wood.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* woodNormalTexture = TextureManager::CreateTexture2D("assets/textures/woodNormal.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* blueNoiseTexture = TextureManager::CreateTexture2D("assets/textures/BlueNoise.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+
+    Texture2D* wood = TextureManager::CreateTexture2D("assets/textures/T_WoodDetails_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* woodN = TextureManager::CreateTexture2D("assets/textures/T_WoodDetails_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* woodORM = TextureManager::CreateTexture2D("assets/textures/T_WoodDetails_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
 
     GameEngine gameEngine(windowSpecs, true);
 
@@ -62,7 +69,7 @@ int main()
     gameEngine.AddLayer(new FreeCamController(gameEngine.camera, gameEngine.GetWindowSpecs()));
 
     gameEngine.camera.position = glm::vec3(0.0f, 10.0f, 30.0f);
-    //gameEngine.debugMode = true;
+    gameEngine.debugMode = true;
 
     // Setup some lights    
     LightInfo lightInfo;
@@ -106,26 +113,24 @@ int main()
         testInfo.normalTexture = normalTexture;
         e->AddComponent<RenderComponent>(testInfo);
     }*/
- /*   {
-        Entity* e = gameEngine.GetEntityManager().CreateEntity("Rect");
+
+    // Box
+    {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity();
         e->AddComponent<PositionComponent>();
         e->AddComponent<RotationComponent>();
-        e->AddComponent<ScaleComponent>(glm::vec3(2.0f, 3.0f, 2.0f));
+        e->AddComponent<ScaleComponent>(glm::vec3(1.0f, 1.0f, 1.0f));
 
         RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = cube;
-        testInfo.isColorOverride = true;
-        testInfo.colorOverride = glm::vec3(0.6f, 0.0f, 0.0f);
-        testInfo.normalTexture = normalTexture;
+        testInfo.mesh = stairs;
+        testInfo.albedoTextures.push_back({ wood , 1.0f });
+        testInfo.normalTexture = woodN;
+        testInfo.ormTexture = woodORM;
         e->AddComponent<RenderComponent>(testInfo);
-    }*/
+    }
 
     // Set env map
     {
-        //CubeMap* envMap = TextureManager::CreateCubeMap(1024, GL_LINEAR_MIPMAP_LINEAR, GL_RGB, GL_RGB16F, GL_FLOAT);
-        //Texture2D* equir = TextureManager::CreateTexture2D("assets/textures/hdr/appart.hdr", TextureFilterType::Linear, TextureWrapType::Repeat, true, true, true);
-        //EquirectangularToCubeMapConverter::ConvertEquirectangularToCubeMap(equir, envMap, Renderer::cube, gameEngine.GetWindowSpecs().width, gameEngine.GetWindowSpecs().height); // Setup environment map
-
         std::vector<std::string> paths;
         paths.push_back("assets/textures/simpleSky.png");
         paths.push_back("assets/textures/simpleSky.png");
@@ -135,10 +140,6 @@ int main()
         paths.push_back("assets/textures/simpleSky.png");
         CubeMap* envMap = TextureManager::CreateCubeMap(paths, TextureFilterType::Linear, TextureWrapType::Repeat, true, false);
         Renderer::SetEnvironmentMap(envMap);
-    }
-
-    {
-      
     }
 
     gameEngine.Run();

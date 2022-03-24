@@ -27,6 +27,8 @@ public:
 	glm::vec3 GetMin() const;
 	glm::vec3 GetMax() const;
 
+	void UpdateSize(const glm::vec3& newSize);
+
 	VertexArrayObject* GetVertexArray() const { return vao; }
 	unsigned int GetIndexCount() const { return 24; }
 	

@@ -14,8 +14,8 @@ TerrainPass::TerrainPass()
     shader(ShaderLibrary::Load(TERRAIN_SHADER_KEY, "assets/shaders/terrain.glsl")),
     patchCount(20), // Represents the number of patches we will divide the terrain into
     numPatchPrimitives(4),
-    terrainTexture(TextureManager::CreateTexture2D("assets/textures/terrain.jpg", TextureFilterType::Linear, TextureWrapType::Repeat)),
-    terrainTextureScale(500.0f)
+    terrainTexture(TextureManager::CreateTexture2D("assets/textures/terrain.png", TextureFilterType::Linear, TextureWrapType::Repeat)),
+    terrainTextureScale(10.0f)
 {
     std::vector<float> vertices;
 
@@ -78,6 +78,7 @@ void TerrainPass::DoPass(IFrameBuffer* geometryBuffer, TerrainGenerationInfo& te
     ImGui::Begin("Terrain");
     if (ImGui::TreeNode("Terrain Stuff"))
     {
+        ImGui::DragFloat2("Seed", (float*)&terrainInfo.seed, 0.01f);
         ImGui::DragFloat("Amplitude", &terrainInfo.amplitude, 0.01f);
         ImGui::DragFloat("Roughness", &terrainInfo.roughness, 0.001f);
         ImGui::DragFloat("Frequency", &terrainInfo.frequency, 0.0001f, 0.0f, 5.0f, "%.4f");
@@ -116,6 +117,7 @@ void TerrainPass::DoPass(IFrameBuffer* geometryBuffer, TerrainGenerationInfo& te
 
     vao->Bind();
     glDrawArrays(GL_PATCHES, 0, numPatchPrimitives * patchCount * patchCount);
+    vao->Unbind();
 
     geometryBuffer->Unbind();
 }

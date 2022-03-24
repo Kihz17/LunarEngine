@@ -22,9 +22,7 @@ ForwardRenderPass::ForwardRenderPass(IFrameBuffer* geometryBuffer)
 	shader->InitializeUniform("uAlbedoRatios");
 	shader->InitializeUniform("uHasNormalTexture");
 	shader->InitializeUniform("uNormalTexture");
-	shader->InitializeUniform("uRoughnessTexture");
-	shader->InitializeUniform("uMetalnessTexture");
-	shader->InitializeUniform("uAmbientOcculsionTexture");
+	shader->InitializeUniform("uORMTexture");
 	shader->InitializeUniform("uMaterialOverrides");
 	shader->InitializeUniform("uAlphaTransparency");
 	shader->InitializeUniform("uIgnoreLighting");
@@ -135,14 +133,8 @@ void ForwardRenderPass::DoPass(std::vector<RenderSubmission>& submissions, const
 		{
 			shader->SetFloat4("uMaterialOverrides", glm::vec4(0.0f));
 
-			renderComponent->roughnessTexture->BindToSlot(5);
-			shader->SetInt("uRoughnessTexture", 5);
-
-			renderComponent->metalTexture->BindToSlot(6);
-			shader->SetInt("uMetalnessTexture", 6);
-
-			renderComponent->aoTexture->BindToSlot(7);
-			shader->SetInt("uAmbientOcculsionTexture", 7);
+			renderComponent->ormTexture->BindToSlot(5);
+			shader->SetInt("uORMTexture", 5);
 		}
 		else // We have no material textures
 		{

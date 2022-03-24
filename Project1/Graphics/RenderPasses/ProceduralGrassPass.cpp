@@ -41,6 +41,7 @@ void ProceduralGrassPass::DoPass(IFrameBuffer* geometryBuffer, GrassCluster& clu
 	ImGui::Begin("Grass");
 	if (ImGui::TreeNode("Grass Stuff"))
 	{
+		ImGui::DragFloat2("Grass Dimensions", (float*)&cluster.dimensions, 0.01f);
 		ImGui::DragFloat2("Wind Direction", (float*)&cluster.windDirection, 0.01f);
 		ImGui::DragFloat("Wind Force", &cluster.windForceMult, 0.01f);
 		ImGui::DragFloat("Oscillation Strength", &cluster.oscillationStrength, 0.01f);

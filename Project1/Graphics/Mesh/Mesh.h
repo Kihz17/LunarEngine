@@ -29,7 +29,7 @@ public:
 	virtual const std::vector<IVertex*>& GetVertices() const override { return this->vertices; }
 	virtual const std::vector<Face>& GetFaces() const override { return this->indices; }
 
-	virtual const AABB* GetBoundingBox() const override { return this->boundingBox; }
+	virtual AABB* GetBoundingBox() const override { return this->boundingBox; }
 
 private:
 	void ParseMesh(unsigned int meshIndex, const aiMesh* assimpMesh);

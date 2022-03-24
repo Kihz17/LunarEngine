@@ -50,14 +50,13 @@ GeometryPass::GeometryPass(const WindowSpecs* windowSpecs)
 	shader->InitializeUniform("uColorOverride");
 	shader->InitializeUniform("uHasNormalTexture");
 	shader->InitializeUniform("uNormalTexture");
-	shader->InitializeUniform("uRoughnessTexture");
-	shader->InitializeUniform("uMetalnessTexture");
-	shader->InitializeUniform("uAmbientOcculsionTexture");
+	shader->InitializeUniform("uORMTexture");
 	shader->InitializeUniform("uMaterialOverrides");
 	shader->InitializeUniform("uShadowSoftness");
 	shader->InitializeUniform("uRRMap");
 	shader->InitializeUniform("uRRInfo");
 	shader->InitializeUniform("uCameraPosition");
+	shader->InitializeUniform("uUVOffset");
 	shader->Unbind();
 
 	// Initialize animated shader uniforms
@@ -76,14 +75,13 @@ GeometryPass::GeometryPass(const WindowSpecs* windowSpecs)
 	animatedShader->InitializeUniform("uColorOverride");
 	animatedShader->InitializeUniform("uHasNormalTexture");
 	animatedShader->InitializeUniform("uNormalTexture");
-	animatedShader->InitializeUniform("uRoughnessTexture");
-	animatedShader->InitializeUniform("uMetalnessTexture");
-	animatedShader->InitializeUniform("uAmbientOcculsionTexture");
+	animatedShader->InitializeUniform("uORMTexture");
 	animatedShader->InitializeUniform("uMaterialOverrides");
 	animatedShader->InitializeUniform("uShadowSoftness");
 	animatedShader->InitializeUniform("uRRMap");
 	animatedShader->InitializeUniform("uRRInfo");
 	animatedShader->InitializeUniform("uCameraPosition");
+	animatedShader->InitializeUniform("uUVOffset");
 	for (unsigned int i = 0; i < Animation::MAX_BONES; i++)
 	{
 		animatedShader->InitializeUniform("uBoneMatrices[" + std::to_string(i) + "]");
@@ -164,6 +162,8 @@ void GeometryPass::PassSharedData(Shader* shader, RenderSubmission& submission, 
 	shader->SetMat4("uMatProjViewModel", projViewModel);
 	shader->SetMat4("uMatPrevProjViewModel", prevProjViewModel);
 
+	shader->SetFloat2("uUVOffset", renderComponent->uvOffset);
+
 	if (renderComponent->castShadowsOn)
 	{
 		shader->SetFloat("uShadowSoftness", renderComponent->surfaceShadowSoftness);
@@ -214,14 +214,8 @@ void GeometryPass::PassSharedData(Shader* shader, RenderSubmission& submission, 
 	{
 		shader->SetFloat4("uMaterialOverrides", glm::vec4(0.0f));
 
-		renderComponent->roughnessTexture->BindToSlot(5);
-		shader->SetInt("uRoughnessTexture", 5);
-
-		renderComponent->metalTexture->BindToSlot(6);
-		shader->SetInt("uMetalnessTexture", 6);
-
-		renderComponent->aoTexture->BindToSlot(7);
-		shader->SetInt("uAmbientOcculsionTexture", 7);
+		renderComponent->ormTexture->BindToSlot(5);
+		shader->SetInt("uORMTexture", 5);
 	}
 	else // We have no material textures
 	{

@@ -19,9 +19,9 @@ struct RenderComponent : public Component
 		std::vector<std::pair<ITexture*, float>> albedoTextures;
 
 		ITexture* normalTexture = nullptr;
-		ITexture* roughnessTexture = nullptr;
-		ITexture* metalTexture = nullptr;
-		ITexture* aoTexture = nullptr;
+		ITexture* ormTexture = nullptr;
+
+		glm::vec2 uvOffset = glm::vec2(1.0f, 1.0f);
 
 		float roughness = 0.01f;
 		float metalness = 0.02f;
@@ -50,12 +50,11 @@ struct RenderComponent : public Component
 		isColorOverride(false),
 		colorOverride(glm::vec3(0.0f)),
 		normalTexture(nullptr),
-		roughnessTexture(nullptr),
-		metalTexture(nullptr),
-		aoTexture(nullptr),
+		ormTexture(nullptr),
 		roughness(0.01f),
 		metalness(0.02f),
 		ao(1.0f),
+		uvOffset(glm::vec2(1.0f, 1.0f)),
 		isWireframe(false),
 		isIgnoreLighting(false),
 		alphaTransparency(1.0f),
@@ -74,12 +73,11 @@ struct RenderComponent : public Component
 		colorOverride(renderInfo.colorOverride),
 		albedoTextures(renderInfo.albedoTextures),
 		normalTexture(renderInfo.normalTexture),
-		roughnessTexture(renderInfo.roughnessTexture),
-		metalTexture(renderInfo.metalTexture),
-		aoTexture(renderInfo.aoTexture),
+		ormTexture(renderInfo.ormTexture),
 		roughness(renderInfo.roughness),
 		metalness(renderInfo.metalness),
 		ao(renderInfo.ao),
+		uvOffset(renderInfo.uvOffset),
 		isWireframe(renderInfo.isWireframe),
 		isIgnoreLighting(renderInfo.isIgnoreLighting),
 		alphaTransparency(renderInfo.alphaTransparency),
@@ -165,7 +163,7 @@ struct RenderComponent : public Component
 
 	bool HasMaterialTextures() const
 	{
-		return roughnessTexture && metalTexture && aoTexture;
+		return ormTexture;
 	}
 
 	void Draw(const Shader* shader, const glm::mat4& transform)
@@ -182,7 +180,7 @@ struct RenderComponent : public Component
 		mesh->GetVertexArray()->Bind();
 		for (Submesh& submesh : mesh->GetSubmeshes())
 		{
-			shader->SetMat4("uMatModel", transform * submesh.localTransform);
+			shader->SetMat4("uMatModel", transform);
 			glDrawElementsBaseVertex(GL_TRIANGLES, submesh.indexCount, GL_UNSIGNED_INT, (void*)(sizeof(int) * submesh.indexStart), submesh.vertexStart);
 		}
 	
@@ -198,9 +196,9 @@ struct RenderComponent : public Component
 
 	// Materials Textures
 	ITexture* normalTexture;
-	ITexture* roughnessTexture;
-	ITexture* metalTexture;
-	ITexture* aoTexture;
+	ITexture* ormTexture;
+
+	glm::vec2 uvOffset;
 
 	// Material values (should only be used if material textures are not present)
 	float roughness;

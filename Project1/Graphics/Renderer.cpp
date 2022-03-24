@@ -180,9 +180,13 @@ void Renderer::DrawFrame()
 	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
 	Profiler::EndProfile("GeometryPass");
 
-	terrainPass->DoPass(geometryPass->GetGBuffer(), terrainInfo, projection, view, cameraPos);
+	Profiler::BeginProfile("TerrainPass");
+	//terrainPass->DoPass(geometryPass->GetGBuffer(), terrainInfo, projection, view, cameraPos);
+	Profiler::EndProfile("TerrainPass");
 
-	grassPass->DoPass(geometryPass->GetGBuffer(), grassCluster, terrainInfo, cameraPos, projection, view);
+	Profiler::BeginProfile("GrassPass");
+	//grassPass->DoPass(geometryPass->GetGBuffer(), grassCluster, terrainInfo, cameraPos, projection, view);
+	Profiler::EndProfile("GrassPass");
 
 	if (envMap) // Only do env map pass if we have one
 	{

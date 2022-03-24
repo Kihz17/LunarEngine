@@ -90,6 +90,7 @@ uniform sampler2D uAlbedoTexture2;
 uniform sampler2D uAlbedoTexture3;
 uniform sampler2D uAlbedoTexture4;
 uniform vec4 uAlbedoRatios;
+uniform vec2 uUVOffset;
 uniform vec4 uColorOverride;
 
 uniform bool uHasNormalTexture;
@@ -102,9 +103,7 @@ uniform samplerCube uRRMap;
 uniform vec4 uRRInfo; // x =  1.0f = reflect, 2.0f = refract), y = reflectivity/refraction strength, z = refractive ratio
 
 // Material
-uniform sampler2D uRoughnessTexture;
-uniform sampler2D uMetalnessTexture;
-uniform sampler2D uAmbientOcculsionTexture;
+uniform sampler2D uORMTexture;
 uniform vec4 uMaterialOverrides; // r = roughness, g = metalness, b = ao, w = isMaterialOverride
 
 const float NEAR_PLANE = 0.1f;
@@ -129,6 +128,7 @@ void main()
 	
 	gPosition = vec4(mWorldPosition, LinearizeDepth(gl_FragCoord.z)); // Set position with adjusted depth
 	
+	vec2 texCoords = mTextureCoordinates * uUVOffset;
 	vec3 diffuseColor = vec3(0.0f);
 	if(uColorOverride.w == 1.0f) // Override color
 	{
@@ -136,21 +136,21 @@ void main()
 	}
 	else // Sample albedo textures
 	{
-		diffuseColor = vec3(texture(uAlbedoTexture1, mTextureCoordinates)) * uAlbedoRatios.x;
+		diffuseColor = vec3(texture(uAlbedoTexture1, texCoords)) * uAlbedoRatios.x;
 		
 		if(uAlbedoRatios.y > 0.0f)
 		{
-			diffuseColor += vec3(texture(uAlbedoTexture2, mTextureCoordinates)) * uAlbedoRatios.y;
+			diffuseColor += vec3(texture(uAlbedoTexture2, texCoords)) * uAlbedoRatios.y;
 		}
 		
 		if(uAlbedoRatios.z > 0.0f)
 		{
-			diffuseColor += vec3(texture(uAlbedoTexture3, mTextureCoordinates)) * uAlbedoRatios.z; 
+			diffuseColor += vec3(texture(uAlbedoTexture3, texCoords)) * uAlbedoRatios.z; 
 		}
 		
 		if(uAlbedoRatios.w > 0.0f)
 		{
-			diffuseColor += vec3(texture(uAlbedoTexture4, mTextureCoordinates)) * uAlbedoRatios.w; 
+			diffuseColor += vec3(texture(uAlbedoTexture4, texCoords)) * uAlbedoRatios.w; 
 		}
 	}
 	
@@ -179,9 +179,10 @@ void main()
 	}
 	else
 	{
-		gAlbedo.a = vec3(texture(uRoughnessTexture, mTextureCoordinates)).r; // Sample and assign roughness value
-		gNormal.a = vec3(texture(uMetalnessTexture, mTextureCoordinates)).r; // Sample and assign metalness value
-		gEffects.r = vec3(texture(uAmbientOcculsionTexture, mTextureCoordinates)).r;
+		vec4 ormSample = texture(uORMTexture, texCoords);
+		gAlbedo.a = ormSample.g; // Sample and assign roughness value
+		gNormal.a = ormSample.b; // Sample and assign metalness value
+		gEffects.r = ormSample.r;
 	}
 	
 	gEffects.a = uShadowSoftness;

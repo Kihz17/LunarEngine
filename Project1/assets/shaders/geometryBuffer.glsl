@@ -73,9 +73,7 @@ uniform samplerCube uRRMap;
 uniform vec4 uRRInfo; // x =  1.0f = reflect, 2.0f = refract), y = reflectivity/refraction strength, z = refractive ratio
 
 // Material
-uniform sampler2D uRoughnessTexture;
-uniform sampler2D uMetalnessTexture;
-uniform sampler2D uAmbientOcculsionTexture;
+uniform sampler2D uORMTexture;
 uniform vec4 uMaterialOverrides; // r = roughness, g = metalness, b = ao, w = isMaterialOverride
 
 const float NEAR_PLANE = 0.1f;
@@ -100,6 +98,8 @@ void main()
 	
 	gPosition = vec4(mWorldPosition, LinearizeDepth(gl_FragCoord.z)); // Set position with adjusted depth
 	
+	vec2 texCoords = mTextureCoordinates * uUVOffset;
+
 	vec3 diffuseColor = vec3(0.0f);
 	if(uColorOverride.w == 1.0f) // Override color
 	{
@@ -107,7 +107,6 @@ void main()
 	}
 	else // Sample albedo textures
 	{
-		vec2 texCoords = mTextureCoordinates * uUVOffset;
 		diffuseColor = vec3(texture(uAlbedoTexture1, texCoords)) * uAlbedoRatios.x;
 		
 		if(uAlbedoRatios.y > 0.0f)
@@ -151,9 +150,10 @@ void main()
 	}
 	else
 	{
-		gAlbedo.a = vec3(texture(uRoughnessTexture, mTextureCoordinates)).r; // Sample and assign roughness value
-		gNormal.a = vec3(texture(uMetalnessTexture, mTextureCoordinates)).r; // Sample and assign metalness value
-		gEffects.r = vec3(texture(uAmbientOcculsionTexture, mTextureCoordinates)).r;
+		vec4 ormSample = texture(uORMTexture, texCoords);
+		gAlbedo.a = ormSample.g; // Sample and assign roughness value
+		gNormal.a = ormSample.b; // Sample and assign metalness value
+		gEffects.r = ormSample.r;
 	}
 	
 	gEffects.a = uShadowSoftness;

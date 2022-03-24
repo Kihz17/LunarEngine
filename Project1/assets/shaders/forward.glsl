@@ -70,9 +70,7 @@ uniform vec4 uColorOverride;
 uniform bool uHasNormalTexture;
 uniform sampler2D uNormalTexture;
 
-uniform sampler2D uRoughnessTexture;
-uniform sampler2D uMetalnessTexture;
-uniform sampler2D uAmbientOcculsionTexture;
+uniform sampler2D uORMTexture;
 uniform vec4 uMaterialOverrides; // r = roughness, g = metalness, b = ao, w = isMaterialOverride
 
 uniform float uAlphaTransparency;
@@ -137,9 +135,10 @@ void main()
 	}
 	else
 	{
-		roughness = vec3(texture(uRoughnessTexture, mTextureCoordinates)).r; // Sample and assign roughness value
-		metalness = vec3(texture(uMetalnessTexture, mTextureCoordinates)).r; // Sample and assign metalness value
-		ambientOcculsion = vec3(texture(uAmbientOcculsionTexture, mTextureCoordinates)).r;
+		vec4 ormSample = texture(uORMTexture, mTextureCoordinates);
+		roughness = ormSample.g; // Sample and assign roughness value
+		metalness = ormSample.b; // Sample and assign metalness value
+		ambientOcculsion = ormSample.r;
 	}
 	
 	vec3 color = vec3(0.0f);

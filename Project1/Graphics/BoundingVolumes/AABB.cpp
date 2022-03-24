@@ -106,6 +106,17 @@ glm::vec3 AABB::GetMax() const
 	return center + size;
 }
 
+void AABB::UpdateSize(const glm::vec3& newSize)
+{
+	size = newSize;
+
+	if (vao) delete vao;
+	if (vbo) delete vbo;
+	if (ebo) delete ebo;
+
+	SetupVertices();
+}
+
 void AABB::SetupVertices()
 {
 	const glm::vec3 min = GetMin();

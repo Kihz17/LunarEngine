@@ -72,7 +72,10 @@ Mesh::Mesh(const std::string& filePath)
 		ParseMesh(i, assimpMesh);
 	}
 
-	ParseMaterials(scene);
+	if (scene->HasMaterials())
+	{
+		ParseMaterials(scene);
+	}
 
 	ParseNodes(scene->mRootNode);
 
@@ -198,7 +201,32 @@ void Mesh::ParseMesh(unsigned int meshIndex, const aiMesh* assimpMesh)
 
 void Mesh::ParseMaterials(const aiScene* assimpScene)
 {
-	// TODO
+	for (unsigned int i = 0; i < assimpScene->mNumMaterials; i++)
+	{
+		aiMaterial* assimpMat = assimpScene->mMaterials[i];
+
+		/*assimpMat->
+		if (assimpMat->GetTextureCount(aiTextureType_BASE_COLOR) > 0 || assimpMat->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+		{
+			std::cout << "Normal\n";
+		}
+		else if (assimpMat->GetTextureCount(aiTextureType_NORMALS) > 0)
+		{
+			std::cout << "Normal\n";
+		}
+		else if (assimpMat->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS) > 0)
+		{
+			std::cout << "Roughness\n";
+		}
+		else if (assimpMat->GetTextureCount(aiTextureType_METALNESS) > 0)
+		{
+			std::cout << "Metal\n";
+		}
+		else if (assimpMat->GetTextureCount(aiTextureType_AMBIENT_OCCLUSION) > 0)
+		{
+			std::cout << "AO\n";
+		}*/
+	}
 }
 
 void Mesh::ParseNodes(aiNode* node, const glm::mat4& parentTransform)
