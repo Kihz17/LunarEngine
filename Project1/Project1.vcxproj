@@ -207,6 +207,7 @@
     <ClCompile Include="Graphics\RenderPasses\GrassPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\LightingPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\LinePass.cpp" />
+    <ClCompile Include="Graphics\RenderPasses\ProceduralGrassPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\TerrainPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\WaterPass.cpp" />
     <ClCompile Include="Graphics\Shader\ComputeShader.cpp" />
@@ -334,6 +335,7 @@
     <ClInclude Include="Graphics\RenderPasses\GrassPass.h" />
     <ClInclude Include="Graphics\RenderPasses\LightingPass.h" />
     <ClInclude Include="Graphics\RenderPasses\LinePass.h" />
+    <ClInclude Include="Graphics\RenderPasses\ProceduralGrassPass.h" />
     <ClInclude Include="Graphics\RenderPasses\TerrainPass.h" />
     <ClInclude Include="Graphics\RenderPasses\WaterPass.h" />
     <ClInclude Include="Graphics\RenderSubmission.h" />
@@ -348,6 +350,8 @@
     <ClInclude Include="Graphics\Utils\DynamicCubeMapRenderer.h" />
     <ClInclude Include="Graphics\Utils\EquirectangularToCubeMapConverter.h" />
     <ClInclude Include="Graphics\Utils\Frustum.h" />
+    <ClInclude Include="Graphics\Utils\GrassCluster.h" />
+    <ClInclude Include="Graphics\Utils\TerrainGenerationInfo.h" />
     <ClInclude Include="Graphics\VertexInformation.h" />
     <ClInclude Include="Graphics\Window.h" />
     <ClInclude Include="Input\InputManager.h" />

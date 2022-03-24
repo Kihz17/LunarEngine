@@ -49,7 +49,7 @@ GrassPass::~GrassPass()
 	delete grassVAO;
 }
 
-void GrassPass::DoPass(IFrameBuffer* geometryBuffer, const glm::vec3& cameraPos, const glm::mat4& proj, const glm::mat4& view)
+void GrassPass::DoPass(IFrameBuffer* geometryBuffer, GrassCluster& grassCluster, const glm::vec3& cameraPos, const glm::mat4& proj, const glm::mat4& view)
 {
 	ImGui::Begin("Grass");
 	if (ImGui::TreeNode("Grass Stuff"))
@@ -75,22 +75,22 @@ void GrassPass::DoPass(IFrameBuffer* geometryBuffer, const glm::vec3& cameraPos,
 	shader->SetFloat("uTime", glfwGetTime());
 
 
-	shader->SetFloat3("uWindParams", glm::vec3(oscillationStrength, windForceMult, stiffness));
-	shader->SetFloat2("uWindDirection", glm::normalize(windDirection));
-	shader->SetFloat2("uWidthHeight", glm::vec2(0.1f, 0.3f));
+	shader->SetFloat3("uWindParams", glm::vec3(grassCluster.oscillationStrength, grassCluster.windForceMult, grassCluster.stiffness));
+	shader->SetFloat2("uWindDirection", glm::normalize(grassCluster.windDirection));
+	shader->SetFloat2("uWidthHeight", grassCluster.dimensions);
 	shader->SetInt("uHasNormalTexture", false);
 
-	grassDiscard->BindToSlot(0);
+	grassCluster.discardTexture->BindToSlot(0);
 	shader->SetInt("uDiscardTexture", 0);
 
-	grassColor->BindToSlot(1);
+	grassCluster.albedoTexture->BindToSlot(1);
 	shader->SetInt("uAlbedoTexture", 1);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	grassVAO->Bind();
-	glDrawArrays(GL_POINTS, 0, grassPositions.size());
-	grassVAO->Unbind();
+	grassCluster.VAO->Bind();
+	glDrawArrays(GL_POINTS, 0, grassCluster.grassData.size());
+	grassCluster.VAO->Unbind();
 
 	geometryBuffer->Bind();
 
@@ -102,7 +102,3 @@ void GrassPass::AddGrass(const std::vector<glm::vec4>& v)
 	grassPositions.insert(grassPositions.end(), v.begin(), v.end());
 	grassVBO->SetData(grassPositions.data(), maxGrassBlades * sizeof(glm::vec4));
 }
-
-// TODO: Grass "curves"
-// TODO: Add "grass submissions". Will basically server as grass clusters where we can vary things light grass thickness/height, wind strength, textures, etc
-// TODO: Add rotation around Y axis to grass vertex data

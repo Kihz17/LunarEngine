@@ -41,8 +41,11 @@ ForwardRenderPass* Renderer::forwardPass = nullptr;
 CascadedShadowMapping* Renderer::shadowMappingPass = nullptr;
 LinePass* Renderer::linePass = nullptr;
 CloudPass* Renderer::cloudPass = nullptr;
-GrassPass* Renderer::grassPass = nullptr;
+ProceduralGrassPass* Renderer::grassPass = nullptr;
 TerrainPass* Renderer::terrainPass = nullptr;
+
+TerrainGenerationInfo Renderer::terrainInfo;
+GrassCluster Renderer::grassCluster;
 
 CubeMap* Renderer::envMap = nullptr;
 DynamicCubeMapRenderer* Renderer::dynamicCubeMapGenerator = nullptr;
@@ -80,18 +83,30 @@ void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 	linePass = new LinePass();
 	terrainPass = new TerrainPass();
 	cloudPass = new CloudPass(100000.0f, 1000.0f, 3000.0f, 0.0004f, windowDetails);
-	grassPass = new GrassPass(100000);
+	grassPass = new ProceduralGrassPass();
 
 	dynamicCubeMapGenerator = new DynamicCubeMapRenderer(windowDetails);
 
 	EquirectangularToCubeMapConverter::Initialize();
 
-	std::vector<glm::vec4> gp;
-	for (int i = 0; i < 100000; i++)
+	// Create grass blades
+	unsigned int numGrassBlades = 3000000;
+	grassCluster.grassData.resize(numGrassBlades);
+	for (int i = 0; i < numGrassBlades; i++)
 	{
-		gp.push_back(glm::vec4(Utils::RandFloat(-50.0f, 50.0f), Utils::RandFloat(-2.0f, 2.0f), Utils::RandFloat(-50.0f, 50.0f), glm::radians(Utils::RandFloat(0.0f, 360.0f))));
+		grassCluster.grassData[i] = glm::vec4(Utils::RandFloat(-300.0f, 300.0f), 0.0f, Utils::RandFloat(-300.0f, 300.0f), glm::radians(Utils::RandFloat(0.0f, 360.0f)));
 	}
-	grassPass->AddGrass(gp);
+
+
+	BufferLayout bufferLayout = {
+		{ ShaderDataType::Float4, "vWorldPosition" }
+	};
+
+	grassCluster.VAO = new VertexArrayObject();
+	grassCluster.VBO = new VertexBuffer(numGrassBlades * sizeof(glm::vec4));
+	grassCluster.VBO->SetData(grassCluster.grassData.data(), numGrassBlades * sizeof(glm::vec4));
+	grassCluster.VBO->SetLayout(bufferLayout);
+	grassCluster.VAO->AddVertexBuffer(grassCluster.VBO);
 }
 
 void Renderer::CleanUp()
@@ -165,9 +180,9 @@ void Renderer::DrawFrame()
 	geometryPass->DoPass(culledSubmissions, culledAnimatedSubmissions, projection, view, cameraPos);
 	Profiler::EndProfile("GeometryPass");
 
-	terrainPass->DoPass(geometryPass->GetGBuffer(), projection, view, cameraPos);
+	terrainPass->DoPass(geometryPass->GetGBuffer(), terrainInfo, projection, view, cameraPos);
 
-	grassPass->DoPass(geometryPass->GetGBuffer(), cameraPos, projection, view);
+	grassPass->DoPass(geometryPass->GetGBuffer(), grassCluster, terrainInfo, cameraPos, projection, view);
 
 	if (envMap) // Only do env map pass if we have one
 	{

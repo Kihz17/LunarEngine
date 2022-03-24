@@ -4,13 +4,14 @@
 #include "VertexArrayObject.h"
 #include "Texture2D.h"
 #include "IFrameBuffer.h"
+#include "TerrainGenerationInfo.h"
 
 class TerrainPass
 {
 public:
 	TerrainPass();
 
-	void DoPass(IFrameBuffer* geometryBuffer, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos);
+	void DoPass(IFrameBuffer* geometryBuffer, TerrainGenerationInfo& terrainInfo, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos);
 
 	static const std::string TERRAIN_SHADER_KEY;
 
@@ -25,11 +26,4 @@ private:
 
 	Texture2D* terrainTexture;
 	float terrainTextureScale;
-
-	glm::vec2 seed;
-	float amplitude;
-	float roughness;
-	float persitence;
-	float frequency;
-	int octaves;
 };

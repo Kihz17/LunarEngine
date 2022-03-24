@@ -31,17 +31,34 @@ uniform vec3 uWindParams; // x = oscillationStength, y = force factor, z = stiff
 uniform vec2 uWindDirection;
 uniform float uTime;
 
+// Terrain
+uniform vec2 uSeed;
+uniform vec4 uTerrainParams; // x = amplitude, y = roughness, z = persistence, w = freq
+uniform int uOctaves;
+
 const float PI = 3.141592f;
 const float HALF_PI = 1.57079632679f;
 const vec3 NORMAL = vec3(0.0f, 0.0f, 1.0f);
 const float OSCILLATE_DELTA = 0.05f;
 
 mat4 RotationMatrix(vec3 axis, float angle);
+float Rand(vec2 co); // Generates a pseudo random number https://stackoverflow.com/questions/4200224/random-noise-functions-for-glsl
+float SmoothNoise(int x, int y); // Generates a pseudo random "smoothed" noise value
+float InterpolateCos(float a, float b, float blend); // Cosine interpolation for 2 values
+float InterpolateNoise(vec2 v);
+float GetHeight(vec2 v);
 
 void main()
 {
     mat4 viewProj = uProjection * uView;
-    vec3 worldPos = gl_in[0].gl_Position.xyz;
+
+    // Get position relative to origin
+    vec4 pointPos = vec4(gl_in[0].gl_Position.xyz, 1.0f);
+
+    // Get position in world space
+    float terrainHeight = GetHeight(pointPos.xz);
+    vec4 worldPos = pointPos + vec4(uCameraPosition.x, terrainHeight, uCameraPosition.z, 1.0f);
+
     mat4 rotationMat = RotationMatrix(vec3(0.0f, 1.0f, 0.0f), gl_in[0].gl_Position.w);
     vec4 normal = vec4(0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -49,7 +66,7 @@ void main()
     float heightFactor;
 
     // LOD
-    float dist = length(uCameraPosition - worldPos);
+    float dist = 1.0f; //length(uCameraPosition - worldPos.xyz);
     if(dist < 300.0f)
     {
         vertexCount = 12;
@@ -67,7 +84,7 @@ void main()
     }
 
     // Generate a random number per-blade to vary width and height
-	float random = sin(HALF_PI * fract(worldPos.x) + HALF_PI * fract(worldPos.z)); 
+	float random = sin(HALF_PI * fract(pointPos.x) + HALF_PI * fract(pointPos.z)); 
 
     // Grass dimensions
     const float width = uWidthHeight.x;
@@ -85,8 +102,8 @@ void main()
     {
         // Wind
         vec2 wind = vec2(sin(uTime * PI), sin(uTime * PI));
-        wind.x += (sin(uTime + worldPos.x / 25.0f) + sin((uTime + worldPos.x / 15.0f) + 50.0f)) * 0.5f;
-        wind.y += cos(uTime + worldPos.z / 80.0f);
+        wind.x += (sin(uTime + pointPos.x / 25.0f) + sin((uTime + pointPos.x / 15.0f) + 50.0f)) * 0.5f;
+        wind.y += cos(uTime + pointPos.z / 80.0f);
         wind *= mix(0.7f, 1.0f, 1.0f - random);
 
         // Wind oscillation
@@ -106,14 +123,12 @@ void main()
             currentHeight += height;
             windCoEff += height;
             stiffnessFactor++;
-            //vertexPos = vec4(worldPos.x, worldPos.y + currentHeight, worldPos.z, 1.0f);
             vertexPos = vec4(0.0f, currentHeight, 0.0f, 1.0f);
             texY += texYIncrement;
             mTextureCoordinates = vec2(0.0f, texY);
         }
         else  // Moving horizontal
         {
-            //vertexPos = vec4(worldPos.x + width, worldPos.y + currentHeight, worldPos.z, 1.0f);   
             vertexPos = vec4(width, currentHeight, 0.0f, 1.0f);   
             mTextureCoordinates = vec2(1.0f, texY);
         }    
@@ -124,16 +139,12 @@ void main()
         vec3 windTransformation = vec3(wind.x, 0.0f, wind.y) * windCoEff * stiffnessMult;
         vertexPos.xyz = (rotationMat * vertexPos).xyz; // Rotate by angle
         vertexPos.xyz += windTransformation; // Transform by wind
-        vertexPos.xyz += worldPos; // Move from origin -> position in world
-
-//        vec3 x = normalize(transformation);
-//        vec3 z = normalize(cross(x, vec3(0.0f, 1.0f, 0.0f)));
-//        vec3 y = normalize(cross(x, z));
-//        mat4 transformMat = mat4(vec4(x, 1.0f), vec4(y, 1.0f), vec4(z, 1.0f), vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        vertexPos.xyz += worldPos.xyz; // Move from origin -> position in world
 
         mNormal = normal.xyz;
-        mWorldPosition = vertexPos.xyz;//R(vertexPos.xyz, vec3(0.0f, 1.0f, 0.0f), gl_in[0].gl_Position.w);//(rotationMat * vertexPos).xyz;
+        mWorldPosition = vertexPos.xyz;
         gl_Position = viewProj * vertexPos;
+
         EmitVertex();
     }
     EndPrimitive();
@@ -152,6 +163,67 @@ mat4 RotationMatrix(vec3 axis, float angle)
                 oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
                 0.0,                                0.0,                                0.0,                                1.0);
 }
+
+float Rand(vec2 co)
+{
+    return fract(sin(dot(co, vec2(12.9898, 78.233) + uSeed)) * 43758.5453);
+}
+
+float SmoothNoise(int iX, int iY)
+{
+	float cornerContrib = (Rand(vec2(iX - 1, iY - 1)) +  Rand(vec2(iX + 1, iY - 1)) +  Rand(vec2(iX + 1, iY + 1)) +  Rand(vec2(iX - 1, iY + 1))) / 16.0f;
+	float sideContrib = (Rand(vec2(iX - 1, iY)) +  Rand(vec2(iX, iY - 1)) +  Rand(vec2(iX + 1, iY)) +  Rand(vec2(iX, iY + 1))) / 8.0f;
+	float centerContrib = Rand(vec2(iX, iY)) / 4.0f;
+
+	return cornerContrib + sideContrib + centerContrib;
+}
+
+float InterpolateCos(float a, float b, float blend)
+{
+	float theta = blend * PI;
+	float blendFactor = (1.0f - cos(theta)) * 0.5f;
+	return a * (1.0f - blendFactor) + b * blendFactor;
+}
+
+float InterpolateNoise(vec2 v)
+{
+	int iX = int(floor(v.x));
+	int iY = int(floor(v.y));
+	float fractX = fract(v.x);
+	float fractY = fract(v.y);
+
+	// Generate smoothed noise values
+	float a = SmoothNoise(iX, iY);
+	float b = SmoothNoise(iX + 1, iY);
+	float c = SmoothNoise(iX, iY + 1);
+	float d = SmoothNoise(iX + 1, iY + 1);
+
+	// Interpolate between smoothed noise
+	float i1 = InterpolateCos(a, b, fractX);
+	float i2 = InterpolateCos(c, d, fractX);
+
+	return InterpolateCos(i1, i2, fractY); // Interpolate between interpolated values
+}
+
+float GetHeight(vec2 v)
+{
+	float heightResult = 0.0f;
+	float amplitude = uTerrainParams.x;
+	float freq = uTerrainParams.w;
+	vec2 pos = uCameraPosition.xz + v;
+	for(int i = 0; i < uOctaves; i++)
+	{
+		freq *= 2.0f;
+		amplitude *= uTerrainParams.z;
+
+		vec2 p = freq * pos;
+		heightResult += InterpolateNoise(p) * amplitude;
+	}
+
+	return heightResult;
+}
+
+
 
 //type fragment
 #version 420 
@@ -218,8 +290,6 @@ void main()
 		gNormal.a = vec3(texture(uMetalnessTexture, mTextureCoordinates)).r; // Sample and assign metalness value
 		gEffects.r = 1.0f;
 	}
-//
-    //oColor = vec4(texture(uAlbedoTexture, mTextureCoordinates).rgb, 1.0f);
 }
 
 float LinearizeDepth(float depth)

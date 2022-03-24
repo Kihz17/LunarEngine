@@ -10,19 +10,12 @@
 const std::string TerrainPass::TERRAIN_SHADER_KEY = "terrainShader";
 
 TerrainPass::TerrainPass()
-    : heightMap(TextureManager::CreateTexture2D("assets/textures/heightmap.png", TextureFilterType::Linear, TextureWrapType::Repeat)),
-    vao(new VertexArrayObject()),
+    : vao(new VertexArrayObject()),
     shader(ShaderLibrary::Load(TERRAIN_SHADER_KEY, "assets/shaders/terrain.glsl")),
     patchCount(20), // Represents the number of patches we will divide the terrain into
     numPatchPrimitives(4),
     terrainTexture(TextureManager::CreateTexture2D("assets/textures/terrain.jpg", TextureFilterType::Linear, TextureWrapType::Repeat)),
-    terrainTextureScale(500.0f),
-    seed(glm::vec2(Utils::RandFloat(0.0f, 1000.0f), Utils::RandFloat(0.0f, 1000.0f))),
-    amplitude(10.0f),
-    octaves(3),
-    roughness(0.3f),
-    persitence(1.4f),
-    frequency(0.001f)
+    terrainTextureScale(500.0f)
 {
     std::vector<float> vertices;
 
@@ -80,16 +73,16 @@ TerrainPass::TerrainPass()
     shader->InitializeUniform("uTextureCoordScale");
 }
 
-void TerrainPass::DoPass(IFrameBuffer* geometryBuffer, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos)
+void TerrainPass::DoPass(IFrameBuffer* geometryBuffer, TerrainGenerationInfo& terrainInfo, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos)
 {
     ImGui::Begin("Terrain");
     if (ImGui::TreeNode("Terrain Stuff"))
     {
-        ImGui::DragFloat("Amplitude", &amplitude, 0.01f);
-        ImGui::DragFloat("Roughness", &roughness, 0.001f);
-        ImGui::DragFloat("Frequency", &frequency, 0.0001f, 0.0f, 5.0f, "%.4f");
-        ImGui::DragFloat("Persistence", &persitence, 0.001f);
-        ImGui::DragInt("Octaves", &octaves);
+        ImGui::DragFloat("Amplitude", &terrainInfo.amplitude, 0.01f);
+        ImGui::DragFloat("Roughness", &terrainInfo.roughness, 0.001f);
+        ImGui::DragFloat("Frequency", &terrainInfo.frequency, 0.0001f, 0.0f, 5.0f, "%.4f");
+        ImGui::DragFloat("Persistence", &terrainInfo.persitence, 0.001f);
+        ImGui::DragInt("Octaves", &terrainInfo.octaves);
         ImGui::DragFloat("Texture Scale", &terrainTextureScale, 0.1f);
         ImGui::TreePop();
     }
@@ -111,9 +104,9 @@ void TerrainPass::DoPass(IFrameBuffer* geometryBuffer, const glm::mat4& projecti
     shader->SetMat4("uView", view);
     shader->SetMat4("uModel", transform);
     shader->SetFloat2("uCameraPosition", shaderPos);
-    shader->SetFloat2("uSeed", seed);
-    shader->SetFloat4("uTerrainParams", glm::vec4(amplitude, roughness, persitence, frequency));
-    shader->SetInt("uOctaves", octaves);
+    shader->SetFloat2("uSeed", terrainInfo.seed);
+    shader->SetFloat4("uTerrainParams", glm::vec4(terrainInfo.amplitude, terrainInfo.roughness, terrainInfo.persitence, terrainInfo.frequency));
+    shader->SetInt("uOctaves", terrainInfo.octaves);
     shader->SetFloat("uTextureCoordScale", terrainTextureScale);
 
     terrainTexture->BindToSlot(0);

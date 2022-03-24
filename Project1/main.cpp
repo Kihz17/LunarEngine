@@ -47,7 +47,6 @@ int main()
     Texture2D* metalnessTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_metalness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* aoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_ao.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* blue = TextureManager::CreateTexture2D("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* grassTexture = TextureManager::CreateTexture2D("assets/textures/grass.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* woodTexture = TextureManager::CreateTexture2D("assets/textures/wood.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* woodNormalTexture = TextureManager::CreateTexture2D("assets/textures/woodNormal.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* blueNoiseTexture = TextureManager::CreateTexture2D("assets/textures/BlueNoise.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -77,6 +76,8 @@ int main()
 
     Renderer::SetMainLightSource(light);
 
+    Renderer::GetProceduralGrassCluster().discardTexture = TextureManager::CreateTexture2D("assets/textures/grassBladeAlpha.png", TextureFilterType::Linear, TextureWrapType::ClampToEdge);
+    Renderer::GetProceduralGrassCluster().albedoTexture = TextureManager::CreateTexture2D("assets/textures/grassColor.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     /*{
         DungeonGenerator2D::DungeonGeneratorInfo dInfo;
         dInfo.roomCount = 30;
@@ -91,7 +92,7 @@ int main()
     }*/
 
     // SHADER BALL TEST
-    ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
+    //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
  /*   {
         Entity* e = gameEngine.GetEntityManager().CreateEntity();
         e->AddComponent<PositionComponent>();

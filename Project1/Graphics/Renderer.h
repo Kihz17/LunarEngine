@@ -20,6 +20,9 @@
 #include "Frustum.h"
 #include "GrassPass.h"
 #include "TerrainPass.h"
+#include "TerrainGenerationInfo.h"
+#include "GrassCluster.h"
+#include "ProceduralGrassPass.h"
 
 #include <vector>
 #include <unordered_map>
@@ -47,6 +50,9 @@ public:
 	static void SetMainLightSource(Light* light) { mainLight = light; };
 
 	static const Frustum& GetViewFrustum() { return viewFrustum; }
+
+	static TerrainGenerationInfo& GetTerrainInfo() { return terrainInfo; }
+	static GrassCluster& GetProceduralGrassCluster() { return grassCluster; }
 
 	static const std::string LIGHTING_SHADER_KEY;
 	static const std::string FORWARD_SHADER_KEY;
@@ -83,8 +89,11 @@ private:
 	static CascadedShadowMapping* shadowMappingPass;
 	static LinePass* linePass;
 	static CloudPass* cloudPass;
-	static GrassPass* grassPass;
+	static ProceduralGrassPass* grassPass;
 	static TerrainPass* terrainPass;
+
+	static TerrainGenerationInfo terrainInfo;
+	static GrassCluster grassCluster;
 
 	static CubeMap* envMap;
 	static DynamicCubeMapRenderer* dynamicCubeMapGenerator;
