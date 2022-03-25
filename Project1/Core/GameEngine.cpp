@@ -247,23 +247,11 @@ void GameEngine::Run()
         listenerInfo.direction = camera.front;
         listenerInfo.up = camera.up;
         SoundManager::Update(deltaTime, listenerInfo);
-
-        for (ApplicationLayer* layer : this->layerManager)
-        {
-            layer->OnUpdate(deltaTime);
-        }
-
+        
         physicsWorld->Update(deltaTime);
 
         // Update camera
         camera.Update(deltaTime);
-
-        InputManager::ClearState();
-        entityManager.CleanEntities(); // Remove invalid entities
-
-        VertexArrayObject* lineVAO = nullptr;
-        VertexBuffer* lineVBO = nullptr;
-        IndexBuffer* lineEBO = nullptr;
 
         // Start ImGui frame
         if (editorMode)
@@ -274,6 +262,18 @@ void GameEngine::Run()
         }
 
         Renderer::BeginFrame(camera);
+
+        for (ApplicationLayer* layer : this->layerManager)
+        {
+            layer->OnUpdate(deltaTime);
+        }
+
+        InputManager::ClearState();
+        entityManager.CleanEntities(); // Remove invalid entities
+
+        VertexArrayObject* lineVAO = nullptr;
+        VertexBuffer* lineVBO = nullptr;
+        IndexBuffer* lineEBO = nullptr;
 
         // Submit all renderable entities
         SubmitEntitiesToRender(lineVAO, lineVBO, lineEBO);

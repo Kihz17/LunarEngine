@@ -128,7 +128,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;yaml-cpp.lib;assimp-vc142-mt.lib;opengl32.lib;PhysicsInterface.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;yaml-cpp.lib;assimp-vc142-mt.lib;opengl32.lib;PhysicsInterface.lib;fmod_vc.lib;BulletCollision.lib;BulletDynamics.lib;BulletInverseDynamics.lib;BulletSoftBody.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,7 +147,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;yaml-cpp.lib;assimp-vc142-mt.lib;opengl32.lib;PhysicsInterface.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;yaml-cpp.lib;assimp-vc142-mt.lib;opengl32.lib;PhysicsInterface.lib;fmod_vc.lib;BulletCollision.lib;BulletDynamics.lib;BulletInverseDynamics.lib;BulletSoftBody.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -225,6 +225,7 @@
     <ClCompile Include="Input\Key.cpp" />
     <ClCompile Include="Layers\AILayer.cpp" />
     <ClCompile Include="Layers\AnimationLayer.cpp" />
+    <ClCompile Include="Layers\EditorLayer.cpp" />
     <ClCompile Include="Layers\FreeCamController.cpp" />
     <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.cpp" />
     <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.cpp" />
@@ -358,6 +359,7 @@
     <ClInclude Include="Input\Key.h" />
     <ClInclude Include="Layers\AILayer.h" />
     <ClInclude Include="Layers\AnimationLayer.h" />
+    <ClInclude Include="Layers\EditorLayer.h" />
     <ClInclude Include="Layers\FreeCamController.h" />
     <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.h" />
     <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.h" />

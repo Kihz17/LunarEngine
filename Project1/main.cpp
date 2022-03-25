@@ -23,7 +23,7 @@
 #include "Utils.h"
 #include "ShaderLibrary.h"
 
-#include "WaterPass.h"
+#include "EditorLayer.h"
 
 float GetRandom(float low, float high);
 
@@ -141,6 +141,8 @@ int main()
         CubeMap* envMap = TextureManager::CreateCubeMap(paths, TextureFilterType::Linear, TextureWrapType::Repeat, true, false);
         Renderer::SetEnvironmentMap(envMap);
     }
+
+    gameEngine.AddLayer(new EditorLayer());
 
     gameEngine.Run();
 
