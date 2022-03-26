@@ -4,6 +4,9 @@
 #include "Texture2D.h"
 #include "EntitySerializer.h"
 #include "vendor/imgui/imgui.h"
+#include "MeshManager.h"
+
+#include "vendor/imguizmo/imGuIZMOquat.h"
 
 #include <fstream>
 #include <iostream>
@@ -245,7 +248,8 @@ void EditorLayer::ShowComponent(Component* comp)
 				ImGui::InputText("Mesh Path", meshPath, IM_ARRAYSIZE(meshPath));
 				if (ImGui::Button("Set Mesh"))
 				{
-
+					Mesh* m = MeshManager::GetMesh("assets/models/" + std::string(meshPath));
+					if(m) c->mesh = m;
 				}
 			}
 
@@ -441,6 +445,14 @@ void EditorLayer::ShowComponent(Component* comp)
 		if (ImGui::TreeNode("Rotation"))
 		{
 			ImGui::DragFloat4("Rotation", (float*)&c->value, 0.01f);
+			quat imguiQuat;
+			imguiQuat.w = c->value.w;
+			imguiQuat.x = c->value.x;
+			imguiQuat.y = c->value.y;
+			imguiQuat.z = c->value.z;
+			ImGui::gizmo3D("Rot", imguiQuat, 100.0f, 3);
+		
+			c->value = glm::quat(imguiQuat.w, imguiQuat.x, imguiQuat.y, imguiQuat.z);
 			ImGui::TreePop();
 		}
 	}

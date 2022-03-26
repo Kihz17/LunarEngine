@@ -42,9 +42,9 @@ int main()
     Mesh* plane = MeshManager::GetMesh("assets/models/plane.obj");
     Mesh* cube = MeshManager::GetMesh("assets/models/cube.obj");
     Mesh* cyl = MeshManager::GetMesh("assets/models/cylinder.obj");
-
-    // Load tree
     Mesh* stairs = MeshManager::GetMesh("assets/models/test.fbx");
+    Mesh* tile4m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_TileGround4m.FBX");
+    Mesh* rock1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Rock01.FBX");
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -60,6 +60,18 @@ int main()
     Texture2D* wood = TextureManager::CreateTexture2D("assets/textures/T_WoodDetails_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* woodN = TextureManager::CreateTexture2D("assets/textures/T_WoodDetails_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* woodORM = TextureManager::CreateTexture2D("assets/textures/T_WoodDetails_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+
+    Texture2D* groundStoneColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_GroundStones_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* groundStoneNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_GroundStones_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* groundStoneORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_GroundStones_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+
+    Texture2D* rockColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Rock01_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* rockNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Rock01_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* rockORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Rock01_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+
+    Texture2D* castleWallColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWall_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* castleWallNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWall_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* castleWallORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWall_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
 
     GameEngine gameEngine(windowSpecs, true);
 
@@ -150,20 +162,32 @@ int main()
         gameEngine.physicsWorld->AddRigidBody(rb, e);
     }*/
 
-    // Box
-    //{
-    //    Entity* e = gameEngine.GetEntityManager().CreateEntity();
-    //    e->AddComponent<PositionComponent>();
-    //    e->AddComponent<RotationComponent>();
-    //    e->AddComponent<ScaleComponent>(glm::vec3(1.0f, 1.0f, 1.0f));
+ /*   {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("Floor1");
+        e->AddComponent<PositionComponent>();
+        e->AddComponent<RotationComponent>();
+        e->AddComponent<ScaleComponent>(glm::vec3(0.5f));
 
-    //    RenderComponent::RenderInfo testInfo;
-    //    testInfo.mesh = stairs;
-    //    testInfo.albedoTextures.push_back({ wood , 1.0f });
-    //    testInfo.normalTexture = woodN;
-    //    testInfo.ormTexture = woodORM;
-    //    e->AddComponent<RenderComponent>(testInfo);
-    //}
+        RenderComponent::RenderInfo testInfo;
+        testInfo.mesh = tile4m;
+        testInfo.albedoTextures.push_back({ groundStoneColor , 1.0f });
+        testInfo.normalTexture = groundStoneNormal;
+        testInfo.ormTexture = groundStoneORM;
+        e->AddComponent<RenderComponent>(testInfo);
+    }*/
+    /*{
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("AlleyWall1");
+        e->AddComponent<PositionComponent>();
+        e->AddComponent<RotationComponent>();
+        e->AddComponent<ScaleComponent>(glm::vec3(0.1f));
+
+        RenderComponent::RenderInfo testInfo;
+        testInfo.mesh = tile4m;
+        testInfo.albedoTextures.push_back({ castleWallColor , 1.0f });
+        testInfo.normalTexture = castleWallNormal;
+        testInfo.ormTexture = castleWallORM;
+        e->AddComponent<RenderComponent>(testInfo);
+    }*/
 
     // Set env map
     {
@@ -180,7 +204,7 @@ int main()
 
     gameEngine.AddLayer(new EditorLayer(gameEngine.GetEntityManager(), gameEngine.physicsWorld));
 
-    std::ifstream ifs("test.yaml");
+    std::ifstream ifs("scene.yaml");
     std::stringstream ss;
     ss << ifs.rdbuf();
     YAML::Node root = YAML::Load(ss.str());

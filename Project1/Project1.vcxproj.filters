@@ -364,6 +364,7 @@
     <ClCompile Include="Graphics\Mesh\MeshManager.cpp" />
     <ClCompile Include="Serialization\TextureSerializer.cpp" />
     <ClCompile Include="Serialization\EntityComponentSerializer.cpp" />
+    <ClCompile Include="vendor\imguizmo\imGuIZMOquat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -742,6 +743,11 @@
     <ClInclude Include="Graphics\Mesh\MeshManager.h" />
     <ClInclude Include="Serialization\TextureSerializer.h" />
     <ClInclude Include="Serialization\EntityComponentSerializer.h" />
+    <ClInclude Include="vendor\imguizmo\imGuIZMOquat.h" />
+    <ClInclude Include="vendor\imguizmo\vgConfig.h" />
+    <ClInclude Include="vendor\imguizmo\vGizmo.h" />
+    <ClInclude Include="vendor\imguizmo\vGizmoMath.h" />
+    <ClInclude Include="vendor\imguizmo\vgMath.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl">

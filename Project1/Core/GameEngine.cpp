@@ -108,7 +108,7 @@ void GameEngine::SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer
         transform *= glm::toMat4(rotComponent->value);
         transform *= glm::scale(glm::mat4(1.0f), scaleComponent->value);
 
-        if (renderComponent)
+        if (renderComponent && renderComponent->mesh)
         {
             SkeletalAnimationComponent* animComp = entity->GetComponent<SkeletalAnimationComponent>();
 

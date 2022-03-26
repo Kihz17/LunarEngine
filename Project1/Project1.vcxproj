@@ -244,6 +244,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utils\Utils.cpp" />
     <ClCompile Include="Utils\UUID.cpp" />
+    <ClCompile Include="vendor\imguizmo\imGuIZMOquat.cpp" />
     <ClCompile Include="vendor\imgui\imgui.cpp" />
     <ClCompile Include="vendor\imgui\imgui_demo.cpp" />
     <ClCompile Include="vendor\imgui\imgui_draw.cpp" />
@@ -382,6 +383,11 @@
     <ClInclude Include="Utils\SimpleFastVector.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Utils\UUID.h" />
+    <ClInclude Include="vendor\imguizmo\imGuIZMOquat.h" />
+    <ClInclude Include="vendor\imguizmo\vgConfig.h" />
+    <ClInclude Include="vendor\imguizmo\vGizmo.h" />
+    <ClInclude Include="vendor\imguizmo\vGizmoMath.h" />
+    <ClInclude Include="vendor\imguizmo\vgMath.h" />
     <ClInclude Include="vendor\imgui\imconfig.h" />
     <ClInclude Include="vendor\imgui\imgui.h" />
     <ClInclude Include="vendor\imgui\imgui_impl_glfw.h" />
