@@ -1,0 +1,2687 @@
+Scene: Untitled
+Entities:
+  - Name: lightTest
+    ID: 0
+    Components:
+      - {}
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: AlleyWall1
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [-50, 0, 12]
+      - ComponentType: Rotation
+        Rotation: [1, 0, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: AlleyWall2
+    ID: 7
+    Components:
+      - ComponentType: Position
+        Position: [-59.6500015, 0, 55.2700005]
+      - ComponentType: Rotation
+        Rotation: [0.96577847, 0, -0.2593382, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: AlleyWall3
+    ID: 8
+    Components:
+      - ComponentType: Position
+        Position: [5.78999996, 0, 93.75]
+      - ComponentType: Rotation
+        Rotation: [0.963872313, 0, -0.266369343, 0]
+      - ComponentType: Scale
+        Scale: [0.0900000036, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: AlleyWall4
+    ID: 8
+    Components:
+      - ComponentType: Position
+        Position: [30, 0, 12]
+      - ComponentType: Rotation
+        Rotation: [1, 0, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: AlleyWall5
+    ID: 9
+    Components:
+      - ComponentType: Position
+        Position: [90, 0, 12]
+      - ComponentType: Rotation
+        Rotation: [1, 0, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: AlleyWall6
+    ID: 10
+    Components:
+      - ComponentType: Position
+        Position: [77.5899963, 0, 104.099998]
+      - ComponentType: Rotation
+        Rotation: [0.994386852, 0, 0.105809577, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: AlleyWall7
+    ID: 11
+    Components:
+      - ComponentType: Position
+        Position: [155.559998, 0, 87.1399994]
+      - ComponentType: Rotation
+        Rotation: [0.994161248, 0, 0.107906103, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: AlleyWall8
+    ID: 12
+    Components:
+      - ComponentType: Position
+        Position: [170, 0, 12]
+      - ComponentType: Rotation
+        Rotation: [1, 0, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: AlleyWall9
+    ID: 12
+    Components:
+      - ComponentType: Position
+        Position: [241.979996, 0, 12]
+      - ComponentType: Rotation
+        Rotation: [1, 0, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.0799999982, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: AlleyWall10
+    ID: 12
+    Components:
+      - ComponentType: Position
+        Position: [233.580002, 0, 69.7600021]
+      - ComponentType: Rotation
+        Rotation: [0.993840575, 0, 0.110825732, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Rock1
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [-117.260002, 0, 33.4000015]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0, -0.707000017, 0]
+      - ComponentType: Scale
+        Scale: [0.5, 0.5, 0.5]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_Rock01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_Rock01_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_Rock01_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_Rock01_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Floor1
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [-79.9000015, 0, 0]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Floor2
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [0, 0, 0]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Floor3
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [0, 0, 79.9000015]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Floor4
+    ID: 4
+    Components:
+      - ComponentType: Position
+        Position: [-79.9000015, 0, 79.9000015]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Floor5
+    ID: 5
+    Components:
+      - ComponentType: Position
+        Position: [79.9000015, 0, 0]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Floor6
+    ID: 6
+    Components:
+      - ComponentType: Position
+        Position: [159.800003, 6.01999998, 79.9000015]
+      - ComponentType: Rotation
+        Rotation: [0.704967022, 0.704967022, 0.053123109, 0.053123109]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Floor7
+    ID: 13
+    Components:
+      - ComponentType: Position
+        Position: [159.800003, 6.01999998, 0]
+      - ComponentType: Rotation
+        Rotation: [0.704999983, 0.704999983, 0.0529999994, 0.0529999994]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Floor8
+    ID: 14
+    Components:
+      - ComponentType: Position
+        Position: [238.899994, 17.9899998, 79.9000015]
+      - ComponentType: Rotation
+        Rotation: [0.704999983, 0.704999983, 0.0529999994, 0.0529999994]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Floor9
+    ID: 15
+    Components:
+      - ComponentType: Position
+        Position: [238.899994, 17.9899998, 0]
+      - ComponentType: Rotation
+        Rotation: [0.704999983, 0.704999983, 0.0529999994, 0.0529999994]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Floor10
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [79.9000015, 0, 79.9000015]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor1
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-85.8899994, 37.2999992, -30]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor2
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [233.990005, 37.2999992, -30]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor3
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [154.009995, 37.2999992, -30]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor4
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [74, 37.2999992, -30]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor5
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [74, 37.2999992, -109.959999]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor6
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-5.98999977, 37.2999992, -109.959999]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor7
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-85.9899979, 37.2999992, -109.959999]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor8
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [153.990005, 37.2999992, -109.959999]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor9
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [233.990005, 37.2999992, -109.959999]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor10
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-85.9899979, 37.2999992, -189.929993]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor11
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-6, 37.2999992, -189.929993]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor12
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [73.9899979, 37.2999992, -189.929993]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor13
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [153.979996, 37.2999992, -189.929993]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor14
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [233.970001, 37.2999992, -189.929993]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor15
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-165.919998, 37.2999992, -30]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor16
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-165.919998, 37.2999992, -109.959999]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor17
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-165.919998, 37.2999992, -189.929993]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor18
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-165.919998, 37.2999992, -269.899994]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor19
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-85.9300003, 37.2999992, -269.899994]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor20
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-5.92999983, 37.2999992, -269.899994]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor21
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [74.0699997, 37.2999992, -269.899994]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor22
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [154.059998, 37.2999992, -269.899994]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor23
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [234.059998, 37.2999992, -269.899994]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor24
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-17.9400005, 37.2999992, 125.93]
+      - ComponentType: Rotation
+        Rotation: [0.681787193, 0.681787193, -0.18712531, 0.18712531]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor25
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-86.7200012, 37.2999992, 85.0999985]
+      - ComponentType: Rotation
+        Rotation: [0.681999981, 0.681999981, -0.187000006, 0.187000006]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor26
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [86.0599976, 37.2999992, 143.100006]
+      - ComponentType: Rotation
+        Rotation: [0.703097582, 0.702999949, 0.074184753, -0.074184753]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor27
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [164.229996, 37.2999992, 126.440002]
+      - ComponentType: Rotation
+        Rotation: [0.702997386, 0.702997386, 0.074024938, -0.074024938]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor28
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [242.270004, 37.2999992, 109.629997]
+      - ComponentType: Rotation
+        Rotation: [0.703151703, 0.703151703, 0.075309597, -0.075309597]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor29
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [7.42000008, 37.1199989, 157.669998]
+      - ComponentType: Rotation
+        Rotation: [0.702941477, 0.702941477, 0.0756490603, -0.0756490603]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor30
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [102.669998, 37.2999992, 221.210007]
+      - ComponentType: Rotation
+        Rotation: [0.703392088, 0.703392088, 0.0730335489, -0.0730335489]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor31
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [180.820007, 37.2999992, 204.539993]
+      - ComponentType: Rotation
+        Rotation: [0.70323348, 0.70323348, 0.0745416582, -0.0745416582]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor32
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [258.959991, 37.2999992, 187.779999]
+      - ComponentType: Rotation
+        Rotation: [0.703225493, 0.703225493, 0.0746289715, -0.0746289715]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor33
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-58.7000008, 37.2999992, 194.690002]
+      - ComponentType: Rotation
+        Rotation: [0.681999981, 0.681999981, -0.187000006, 0.187000006]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor34
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-127.529999, 37.2999992, 153.919998]
+      - ComponentType: Rotation
+        Rotation: [0.681999981, 0.681999981, -0.187000006, 0.187000006]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor35
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [23.9500008, 37.2999992, 235.660004]
+      - ComponentType: Rotation
+        Rotation: [0.703331292, 0.703331292, 0.0736115798, -0.0736115798]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor36
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-86.7200012, 37.2999992, 85.0999985]
+      - ComponentType: Rotation
+        Rotation: [0.681999981, 0.681999981, -0.187000006, 0.187000006]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor37
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [40.3600006, 37.2999992, 313.769989]
+      - ComponentType: Rotation
+        Rotation: [0.548357964, 0.548357964, -0.446539819, 0.446539819]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor38
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [118.739998, 37.2999992, 299.290009]
+      - ComponentType: Rotation
+        Rotation: [0.703166664, 0.703166664, 0.0751476884, -0.0751476884]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor39
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [196.789993, 37.2999992, 282.619995]
+      - ComponentType: Rotation
+        Rotation: [0.703083873, 0.703000009, 0.0759350434, -0.0759350434]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor40
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [274.959991, 37.2999992, 266.109985]
+      - ComponentType: Rotation
+        Rotation: [0.703200936, 0.703200936, 0.0748484358, -0.0748484358]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor41
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-168.330002, 37.2999992, 222.720001]
+      - ComponentType: Rotation
+        Rotation: [0.681999981, 0.681999981, -0.187000006, 0.187000006]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor42
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-99.6299973, 37.2999992, 263.369995]
+      - ComponentType: Rotation
+        Rotation: [0.681999981, 0.681999981, -0.187000006, 0.187000006]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor43
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-41.1899986, 37.0900002, 250]
+      - ComponentType: Rotation
+        Rotation: [0.703662932, 0.703662932, 0.0703743547, -0.0703743547]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: UpperFloor44
+    ID: 16
+    Components:
+      - ComponentType: Position
+        Position: [-37.8699989, 37.2999992, 330.73999]
+      - ComponentType: Rotation
+        Rotation: [0.70349139, 0.70349139, 0.0720698163, -0.0720698163]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
