@@ -1,14 +1,14 @@
 #include "GameEngine.h"
 #include "Window.h"
-#include "Mesh.h"
+#include "MeshManager.h"
 
 #include "InputManager.h"
 #include "EntityManager.h"
 #include "TextureManager.h"
 #include "EquirectangularToCubeMapConverter.h"
+#include "PhysicsFactory.h"
 
 #include "Components.h"
-#include "PhysicsFactory.h"
 #include "PhysicsWorld.h"
 
 #include "FreeCamController.h"
@@ -16,7 +16,6 @@
 
 #include "SkeletalAnimationComponentListener.h"
 #include "SkeletalAnimationLayer.h"
-#include "AnimatedMesh.h"
 #include "Animation.h"
 #include "DungeonGenerator2D.h"
 #include "LineRenderComponent.h"
@@ -34,14 +33,14 @@ int main()
     WindowSpecs windowSpecs = GameEngine::InitializeGLFW(true);
 
     // Load models
-    Mesh* shaderBall = new Mesh("assets/models/shaderball/shaderball.obj");
-    Mesh* sphere = new Mesh("assets/models/sphere.obj");
-    Mesh* plane = new Mesh("assets/models/plane.obj");
-    Mesh* cube = new Mesh("assets/models/cube.obj");
-    Mesh* cyl = new Mesh("assets/models/cylinder.obj");
+    Mesh* shaderBall = MeshManager::GetMesh("assets/models/shaderball/shaderball.obj");
+    Mesh* sphere = MeshManager::GetMesh("assets/models/sphere.obj");
+    Mesh* plane = MeshManager::GetMesh("assets/models/plane.obj");
+    Mesh* cube = MeshManager::GetMesh("assets/models/cube.obj");
+    Mesh* cyl = MeshManager::GetMesh("assets/models/cylinder.obj");
 
     // Load tree
-    Mesh* stairs = new Mesh("assets/models/test.fbx");
+    Mesh* stairs = MeshManager::GetMesh("assets/models/test.fbx");
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -69,7 +68,7 @@ int main()
     gameEngine.AddLayer(new FreeCamController(gameEngine.camera, gameEngine.GetWindowSpecs()));
 
     gameEngine.camera.position = glm::vec3(0.0f, 10.0f, 30.0f);
-    gameEngine.debugMode = true;
+    //gameEngine.debugMode = true;
 
     // Setup some lights    
     LightInfo lightInfo;
@@ -85,26 +84,27 @@ int main()
 
     Renderer::GetProceduralGrassCluster().discardTexture = TextureManager::CreateTexture2D("assets/textures/grassBladeAlpha.png", TextureFilterType::Linear, TextureWrapType::ClampToEdge);
     Renderer::GetProceduralGrassCluster().albedoTexture = TextureManager::CreateTexture2D("assets/textures/grassColor.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    /*{
-        DungeonGenerator2D::DungeonGeneratorInfo dInfo;
-        dInfo.roomCount = 30;
-        dInfo.minRoomSize = glm::ivec3(3, 2, 3);
-        dInfo.maxRoomSize = glm::ivec3(8, 3, 8);
-        dInfo.dungeonSize = glm::ivec2(100, 100);
-        dInfo.extraPathChance = 0.02f;
-        dInfo.yLevel = 0;
-        DungeonGenerator2D dg(dInfo, gameEngine.GetEntityManager());
-        std::vector<Entity*> entities = dg.Generate();
-        for (Entity* e : entities) gameEngine.GetEntityManager().ListenToEntity(e);
-    }*/
+
+    //{
+    //    DungeonGenerator2D::DungeonGeneratorInfo dInfo;
+    //    dInfo.roomCount = 30;
+    //    dInfo.minRoomSize = glm::ivec3(3, 2, 3);
+    //    dInfo.maxRoomSize = glm::ivec3(8, 3, 8);
+    //    dInfo.dungeonSize = glm::ivec2(100, 100);
+    //    dInfo.extraPathChance = 0.02f;
+    //    dInfo.yLevel = 0;
+    //    DungeonGenerator2D dg(dInfo, gameEngine.GetEntityManager());
+    //    std::vector<Entity*> entities = dg.Generate();
+    //    for (Entity* e : entities) gameEngine.GetEntityManager().ListenToEntity(e);
+    //}
 
     // SHADER BALL TEST
     //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
- /*   {
+    {
         Entity* e = gameEngine.GetEntityManager().CreateEntity();
         e->AddComponent<PositionComponent>();
         e->AddComponent<RotationComponent>();
-        e->AddComponent<ScaleComponent>(glm::vec3(10.0f, 0.5f, 10.0f));
+        e->AddComponent<ScaleComponent>(glm::vec3(100.0f, 0.5f, 100.0f));
 
         RenderComponent::RenderInfo testInfo;
         testInfo.mesh = cube;
@@ -112,22 +112,54 @@ int main()
         testInfo.colorOverride = glm::vec3(0.6f, 0.0f, 0.0f);
         testInfo.normalTexture = normalTexture;
         e->AddComponent<RenderComponent>(testInfo);
-    }*/
 
-    // Box
+        Physics::RigidBodyInfo info;
+        info.mass = 0.0f;
+        info.initialTransform = glm::mat4(1.0f);
+        Physics::IRigidBody* rb = new RigidBody(info, PhysicsFactory::GetMeshScaledShape(testInfo.mesh, glm::vec3(100.0f, 0.5f, 100.0f)));
+        dynamic_cast<RigidBody*>(rb)->GetBulletBody()->setRestitution(0.5f);
+        e->AddComponent<RigidBodyComponent>(rb);
+
+        gameEngine.physicsWorld->AddRigidBody(rb, e);
+    }
     {
         Entity* e = gameEngine.GetEntityManager().CreateEntity();
         e->AddComponent<PositionComponent>();
         e->AddComponent<RotationComponent>();
-        e->AddComponent<ScaleComponent>(glm::vec3(1.0f, 1.0f, 1.0f));
+        e->AddComponent<ScaleComponent>();
 
         RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = stairs;
-        testInfo.albedoTextures.push_back({ wood , 1.0f });
-        testInfo.normalTexture = woodN;
-        testInfo.ormTexture = woodORM;
+        testInfo.mesh = sphere;
+        testInfo.isColorOverride = true;
+        testInfo.colorOverride = glm::vec3(0.0f, 0.0f, 0.6f);
         e->AddComponent<RenderComponent>(testInfo);
+
+        Physics::RigidBodyInfo info;
+        info.initialTransform = glm::mat4(1.0f);
+        info.initialTransform[3] = glm::vec4(0.0f, 50.0f, 0.0f, 1.0f);
+        info.mass = 1.0f;
+        info.intertia = glm::vec3(0.5f);
+        Physics::IRigidBody* rb = new RigidBody(info, new btSphereShape(1.0f));
+        dynamic_cast<RigidBody*>(rb)->GetBulletBody()->setRestitution(0.5f);
+        e->AddComponent<RigidBodyComponent>(rb);
+
+        gameEngine.physicsWorld->AddRigidBody(rb, e);
     }
+
+    // Box
+    //{
+    //    Entity* e = gameEngine.GetEntityManager().CreateEntity();
+    //    e->AddComponent<PositionComponent>();
+    //    e->AddComponent<RotationComponent>();
+    //    e->AddComponent<ScaleComponent>(glm::vec3(1.0f, 1.0f, 1.0f));
+
+    //    RenderComponent::RenderInfo testInfo;
+    //    testInfo.mesh = stairs;
+    //    testInfo.albedoTextures.push_back({ wood , 1.0f });
+    //    testInfo.normalTexture = woodN;
+    //    testInfo.ormTexture = woodORM;
+    //    e->AddComponent<RenderComponent>(testInfo);
+    //}
 
     // Set env map
     {
@@ -142,7 +174,7 @@ int main()
         Renderer::SetEnvironmentMap(envMap);
     }
 
-    gameEngine.AddLayer(new EditorLayer());
+    gameEngine.AddLayer(new EditorLayer(gameEngine.GetEntityManager(), gameEngine.physicsWorld));
 
     gameEngine.Run();
 

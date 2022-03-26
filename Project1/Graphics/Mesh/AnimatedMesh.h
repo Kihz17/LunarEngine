@@ -31,6 +31,7 @@ public:
 	virtual const std::vector<Face>& GetFaces() const override { return this->indices; }
 
 	virtual const AABB* GetBoundingBox() const override { return this->boundingBox; }
+	virtual std::string GetPath() const override { return filePath; }
 
 	const BoneInfo* GetBoneInfo(const std::string& boneName) const;
 	unsigned int GetBoneCount() const { return boneCount; }

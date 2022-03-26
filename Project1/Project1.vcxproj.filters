@@ -331,21 +331,6 @@
     <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.cpp">
       <Filter>Layers\SkeletalAnimation</Filter>
     </ClCompile>
-    <ClCompile Include="Panels\EntityPanel.cpp">
-      <Filter>Panels</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics\CollisionHandler.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics\CollisionListener.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics\CollisionTesting.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics\PhysicsFactory.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
     <ClCompile Include="Physics\PhysicsWorld.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
@@ -372,6 +357,13 @@
     <ClCompile Include="Graphics\RenderPasses\TerrainPass.cpp" />
     <ClCompile Include="Graphics\RenderPasses\ProceduralGrassPass.cpp" />
     <ClCompile Include="Layers\EditorLayer.cpp" />
+    <ClCompile Include="Physics\BulletUtils.cpp" />
+    <ClCompile Include="Physics\PhysicsFactory.cpp" />
+    <ClCompile Include="Serialization\EntitySerializer.cpp" />
+    <ClCompile Include="Serialization\ISerializer.cpp" />
+    <ClCompile Include="Graphics\Mesh\MeshManager.cpp" />
+    <ClCompile Include="Serialization\TextureSerializer.cpp" />
+    <ClCompile Include="Serialization\EntityComponentSerializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -708,24 +700,6 @@
     <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.h">
       <Filter>Layers\SkeletalAnimation</Filter>
     </ClInclude>
-    <ClInclude Include="Panels\EntityPanel.h">
-      <Filter>Panels</Filter>
-    </ClInclude>
-    <ClInclude Include="Panels\IPanel.h">
-      <Filter>Panels</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\CollisionHandler.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\CollisionListener.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\CollisionTesting.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\PhysicsFactory.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
     <ClInclude Include="Physics\PhysicsWorld.h">
       <Filter>Physics</Filter>
     </ClInclude>
@@ -761,6 +735,13 @@
     <ClInclude Include="Graphics\Utils\GrassCluster.h" />
     <ClInclude Include="Graphics\RenderPasses\ProceduralGrassPass.h" />
     <ClInclude Include="Layers\EditorLayer.h" />
+    <ClInclude Include="Physics\BulletUtils.h" />
+    <ClInclude Include="Physics\PhysicsFactory.h" />
+    <ClInclude Include="Serialization\ISerializer.h" />
+    <ClInclude Include="Serialization\EntitySerializer.h" />
+    <ClInclude Include="Graphics\Mesh\MeshManager.h" />
+    <ClInclude Include="Serialization\TextureSerializer.h" />
+    <ClInclude Include="Serialization\EntityComponentSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl">

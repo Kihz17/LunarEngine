@@ -26,11 +26,6 @@ struct KeyFramePositionComponent : Component
 		easingType(easingType)
 	{}
 
-	virtual void ImGuiUpdate() override
-	{
-
-	}
-
 	float time;
 	glm::vec3 position;
 	EasingType easingType;
@@ -44,11 +39,6 @@ struct KeyFrameScaleComponent : Component
 		scale(scale),
 		easingType(easingType)
 	{}
-
-	virtual void ImGuiUpdate() override
-	{
-
-	}
 
 	float time;
 	glm::vec3 scale;
@@ -65,10 +55,6 @@ struct KeyFrameRotationComponent : Component
 		easingType(easingType)
 	{}
 
-	virtual void ImGuiUpdate() override
-	{
-
-	}
 
 	float time;
 	glm::quat rotation;
@@ -79,19 +65,6 @@ struct KeyFrameRotationComponent : Component
 struct AnimationComponent : Component
 {
 	AnimationComponent() = default;
-
-	virtual void ImGuiUpdate() override
-	{
-		if (ImGui::TreeNode("Animation"))
-		{
-			ImGui::DragFloat("Speed", &speed, 0.01);
-
-			ImGui::NewLine();
-			ImGui::Checkbox("Playing", &playing);
-
-			ImGui::TreePop();
-		}
-	}
 
 	bool playing;
 	float duration;

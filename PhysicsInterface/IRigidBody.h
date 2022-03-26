@@ -7,32 +7,9 @@ namespace Physics
 {
 	struct RigidBodyInfo
 	{
-		RigidBodyInfo()
-			: mass(1.0f),
-			isStatic(false),
-			position(glm::vec3(0.0f)),
-			linearVelocity(glm::vec3(0.0f)),
-			restitution(0.8f),
-			friction(0.95f),
-			rotation(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)),
-			angularVelocity(glm::vec3(0.0f)),
-			linearDamping(0.001f),
-			angularDamping(0.001f)
-		{}
-
-		bool isStatic;
-
-		glm::vec3 position;
-		glm::vec3 linearVelocity;
-
-		glm::quat rotation;
-		glm::vec3 angularVelocity;
-
-		float mass;
-		float linearDamping;
-		float angularDamping;
-		float restitution;
-		float friction;
+		float mass = 1.0f;
+		glm::vec3 intertia = glm::vec3(0.0f);
+		glm::mat4 initialTransform = glm::mat4(1.0f);
 	};
 
 	class IRigidBody
@@ -62,8 +39,6 @@ namespace Physics
 		virtual void ApplyTorqueImpulse(const glm::vec3& torqueImpulse) = 0;
 
 		virtual void SetGravityAcceleration(const glm::vec3& gravity) = 0;
-		virtual void UseLocalGravity(bool value) = 0;
-		virtual bool IsUseLocalGravity() const = 0;
 
 	protected:
 		IRigidBody() = default;

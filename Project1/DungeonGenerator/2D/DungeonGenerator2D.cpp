@@ -3,6 +3,7 @@
 #include "DungeonGenUtils.h"
 #include "Components.h"
 #include "DungeonGeneratorPathfinder2D.h"
+#include "MeshManager.h"
 
 DungeonGenerator2D::DungeonGenerator2D(const DungeonGeneratorInfo& info, EntityManager& entityManager)
 	: roomCount(info.roomCount),
@@ -13,9 +14,9 @@ DungeonGenerator2D::DungeonGenerator2D(const DungeonGeneratorInfo& info, EntityM
 	extraPathChance(info.extraPathChance),
 	entityManager(entityManager),
 	yLevel(info.yLevel),
-	cubeMesh(new Mesh("assets/models/cube.obj")),
-	wallMesh(new Mesh("assets/models/wall.obj")),
-	floorMesh(new Mesh("assets/models/floor.obj"))
+	cubeMesh(MeshManager::GetMesh("assets/models/cube.obj")),
+	wallMesh(MeshManager::GetMesh("assets/models/wall.obj")),
+	floorMesh(MeshManager::GetMesh("assets/models/floor.obj"))
 {
 	for (int x = 0; x < dungeonSize.x; x++)
 	{

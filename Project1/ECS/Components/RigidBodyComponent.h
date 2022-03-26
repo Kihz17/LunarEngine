@@ -14,10 +14,5 @@ struct RigidBodyComponent : public Component
 		delete ptr;
 	}
 
-	virtual void ImGuiUpdate() override
-	{
-
-	}
-
 	Physics::IRigidBody* ptr;
 };

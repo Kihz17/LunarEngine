@@ -19,7 +19,7 @@ EvadeBehaviour::~EvadeBehaviour()
 
 glm::vec3 EvadeBehaviour::ComputeSteeringForce()
 {
-	if (!target) return glm::vec3(0.0f, 0.0f, 0.0f);
+	/*if (!target) return glm::vec3(0.0f, 0.0f, 0.0f);
 
 	RigidBodyComponent* rigidComp = target->GetComponent<RigidBodyComponent>();
 	if (!rigidComp) return glm::vec3(0.0f, 0.0f, 0.0f);
@@ -41,5 +41,6 @@ glm::vec3 EvadeBehaviour::ComputeSteeringForce()
 	steer.y = glm::clamp(steer.y, -maxForce, maxForce);
 	steer.z = glm::clamp(steer.z, -maxForce, maxForce);
 
-	return steer;
+	return steer;*/
+	return glm::vec3(0.0f);
 }

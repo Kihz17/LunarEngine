@@ -2,95 +2,99 @@
 
 #include <iostream>
 
-RigidBody::RigidBody(const Physics::RigidBodyInfo info, Physics::IShape* shape)
+RigidBody::RigidBody(const Physics::RigidBodyInfo info, btCollisionShape* shape)
 	: IRigidBody(),
-	shape(shape),
-	mass(info.mass),
-	isStatic(info.isStatic),
-	position(info.position),
-	linearVelocity(info.linearVelocity),
-	rotation(info.rotation),
-	angularVelocity(info.angularVelocity),
-	linearDamping(info.linearDamping),
-	angularDamping(info.angularDamping),
-	friction(info.friction),
-	restitution(info.restitution),
-	useLocalGravity(false)
+	rigidbody(new btRigidBody(info.mass, new btDefaultMotionState(BulletUtils::GLMMat4ToBullet(info.initialTransform)), shape, BulletUtils::GLMVec3ToBullet(info.intertia)))
 {
-	if (isStatic || mass <= 0.0f) // Static object
-	{
-		mass = 0.0f;
-		inverseMass = 0.0f;
-		isStatic = true;
-	}
-	else // Not static
-	{
-		inverseMass = 1.0f / mass;
-	}
+
 }
 
 RigidBody::~RigidBody()
 {
-	delete shape;
+	delete rigidbody;
+}
+
+void RigidBody::GetLinearVelocity(glm::vec3& vel) 
+{
+	vel = BulletUtils::BulletVec3ToGLM(rigidbody->getLinearVelocity());
+}
+
+glm::vec3 RigidBody::GetLinearVelocity() 
+{ 
+	return BulletUtils::BulletVec3ToGLM(rigidbody->getLinearVelocity()); 
+}
+
+void RigidBody::SetLinearVelocity(const glm::vec3& vel) 
+{ 
+	rigidbody->setLinearVelocity(BulletUtils::GLMVec3ToBullet(vel)); 
+}
+
+void RigidBody::GetPosition(glm::vec3& pos) 
+{ 
+	pos = BulletUtils::BulletVec3ToGLM(rigidbody->getCenterOfMassPosition()); 
+}
+
+glm::vec3 RigidBody::GetPosition() 
+{ 
+	return BulletUtils::BulletVec3ToGLM(rigidbody->getCenterOfMassPosition()); 
+}
+
+void RigidBody::SetPosition(const glm::vec3& pos)
+{
+	btTransform transform = rigidbody->getWorldTransform();
+	transform.setOrigin(BulletUtils::GLMVec3ToBullet(pos));
+	rigidbody->setWorldTransform(transform);
+	rigidbody->getMotionState()->setWorldTransform(transform);
+}
+
+glm::quat RigidBody::GetOrientation() const
+{
+	return BulletUtils::BulletQuatToGLM(rigidbody->getOrientation());
+}
+
+void RigidBody::GetOrientation(glm::quat& orien)
+{
+	orien = BulletUtils::BulletQuatToGLM(rigidbody->getOrientation());
+}
+
+void RigidBody::SetOrientation(const glm::quat& orien)
+{ 
+	btTransform transform = rigidbody->getWorldTransform();
+	transform.setRotation(BulletUtils::GLMQuatToBullet(orien));
+	rigidbody->setWorldTransform(transform);
+}
+
+void RigidBody::ApplyForce(const glm::vec3& force)
+{ 
+	rigidbody->applyForce(BulletUtils::GLMVec3ToBullet(force), btVector3(0.0f, 0.0f, 0.0f));
 }
 
 void RigidBody::ApplyForceAtPoint(const glm::vec3& force, const glm::vec3& relativePoint)
 {
-	ApplyForce(force);
-	ApplyTorque(glm::cross(relativePoint, force));
+	rigidbody->applyForce(BulletUtils::GLMVec3ToBullet(force), BulletUtils::GLMVec3ToBullet(relativePoint));
 }
 
-void RigidBody::UpdateAcceleration()
-{
-	if (isStatic) return;
-
-	linearAcceleration = force * inverseMass + gravity;
-	angularAcceleration = torque;
+void RigidBody::ApplyImpulse(const glm::vec3& impulse)
+{ 
+	rigidbody->applyImpulse(BulletUtils::GLMVec3ToBullet(impulse), btVector3(0.0f, 0.0f, 0.0f));
 }
 
-void RigidBody::ClearForces()
-{
-	force = glm::vec3(0.0f);
-	torque = glm::vec3(0.0f);
+void RigidBody::ApplyImpulseAtPoint(const glm::vec3& impulse, const glm::vec3& relativePoint)
+{ 
+	rigidbody->applyImpulse(BulletUtils::GLMVec3ToBullet(impulse), BulletUtils::GLMVec3ToBullet(relativePoint));
 }
 
-void RigidBody::ApplyDamping(float deltaTime)
-{
-	linearVelocity *= pow(1.0f - linearDamping, deltaTime);
-	angularVelocity *= pow(1.0f - angularDamping, deltaTime);
-
-	if (glm::length(linearVelocity) < 0.001f)
-	{
-		linearVelocity = glm::vec3(0.0f);
-	}
+void RigidBody::ApplyTorque(const glm::vec3& torque)
+{ 
+	rigidbody->applyTorque(BulletUtils::GLMVec3ToBullet(torque));
 }
 
-void RigidBody::VerletStep1(float deltaTime)
-{
-	if (isStatic) return;
-
-	previousPosition = position;
-	position += (linearVelocity + linearAcceleration * (deltaTime * 0.5f)) * deltaTime;
-
-	glm::vec3 axis = (angularVelocity + angularAcceleration * (deltaTime * 0.5f)) * deltaTime;
-	float angle = glm::length(axis);
-	axis = glm::normalize(axis);
-	if (angle != 0.0f)
-	{
-		glm::quat rot = glm::angleAxis(angle, axis);
-		rotation *= rot;
-	}
+void RigidBody::ApplyTorqueImpulse(const glm::vec3& torqueImpulse)
+{ 
+	rigidbody->applyTorqueImpulse(BulletUtils::GLMVec3ToBullet(torqueImpulse));
 }
 
-void RigidBody::VerletStep2(float deltaTime)
-{
-	if (isStatic) return;
-
-	linearVelocity += linearAcceleration * (deltaTime * 0.5f);
-	angularVelocity += angularAcceleration * (deltaTime * 0.5f);
-}
-
-void RigidBody::VerletStep3(float deltaTime)
-{
-	VerletStep2(deltaTime);
+void RigidBody::SetGravityAcceleration(const glm::vec3& gravity)
+{ 
+	rigidbody->setGravity(BulletUtils::GLMVec3ToBullet(gravity));
 }

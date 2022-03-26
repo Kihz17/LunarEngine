@@ -2,6 +2,8 @@
 
 #include "GLCommon.h"
 
+#include <string>
+
 enum class TextureFilterType
 {
 	None = 0,
@@ -44,4 +46,8 @@ public:
 	virtual int GetHeight() const = 0;
 
 	virtual TextureType GetType() const = 0;
+	virtual std::string GetPath() const = 0;
+
+	virtual TextureFilterType GetFilterType() const = 0;
+	virtual TextureWrapType GetWrapType() const = 0;
 };

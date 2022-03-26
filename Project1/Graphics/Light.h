@@ -73,11 +73,6 @@ public:
 
 	static const int MAX_LIGHTS = 100;
 
-private:
-	friend class LightComponent;
-	friend class Renderer; // The renderer should be the only object allowed to create lights because we need to track them
-	friend class ScenePanel; // Needs direct access to member variables 
-
 	int lightIndex;
 	std::string positionLoc;
 	std::string directionLoc;

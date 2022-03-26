@@ -3,8 +3,7 @@
 #include "DungeonGenUtils.h"
 #include "DungeonGeneratorPathfinder3D.h"
 #include "Components.h"
-#include "Mesh.h"
-
+#include "MeshManager.h"
 DungeonGenerator3D::DungeonGenerator3D(const DungeonGeneratorInfo& info, EntityManager& entityManager)
 	: roomCount(info.roomCount),
 	maxRoomSize(info.maxRoomSize),
@@ -12,9 +11,9 @@ DungeonGenerator3D::DungeonGenerator3D(const DungeonGeneratorInfo& info, EntityM
 	dungeonGrid(info.dungeonSize, glm::ivec3(0, 0, 0)),
 	extraPathChance(info.extraPathChance),
 	entityManager(entityManager),
-	cubeMesh(new Mesh("assets/models/cube.obj")),
-	wallMesh(new Mesh("assets/models/wall.obj")),
-	floorMesh(new Mesh("assets/models/floor.obj"))
+	cubeMesh(MeshManager::GetMesh("assets/models/cube.obj")),
+	wallMesh(MeshManager::GetMesh("assets/models/wall.obj")),
+	floorMesh(MeshManager::GetMesh("assets/models/floor.obj"))
 {
 	for (int x = 0; x < dungeonSize.x; x++)
 	{

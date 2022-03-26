@@ -13,9 +13,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IPhysicsFactory.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
     <ClInclude Include="IPhysicsWorld.h">
       <Filter>Interfaces</Filter>
     </ClInclude>

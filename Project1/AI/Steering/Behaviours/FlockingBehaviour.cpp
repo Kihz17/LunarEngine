@@ -34,14 +34,14 @@ glm::vec3 FlockingBehaviour::Separate()
 	int neighbourhoodCount = 0;
 	for (RigidBodyComponent* rb : group->rigidbodies)
 	{
-		float distance = glm::length(rigidBody->GetPosition() - rb->ptr->GetPosition());
+		/*float distance = glm::length(rigidBody->GetPosition() - rb->ptr->GetPosition());
 		if (distance < separationRadius && distance > 0.0f)
 		{
 			glm::vec3 fleeVec = glm::normalize(rigidBody->GetPosition() - rb->ptr->GetPosition());
 			fleeVec /= distance;
 			force += fleeVec;
 			neighbourhoodCount++;
-		}
+		}*/
 	}
 
 	glm::vec3 separationForce(0.0f);
@@ -64,12 +64,12 @@ glm::vec3 FlockingBehaviour::Align()
 	int neighbourhoodCount = 0;
 	for (RigidBodyComponent* rb : group->rigidbodies)
 	{
-		float distance = glm::length(rigidBody->GetPosition() - rb->ptr->GetPosition());
+		/*float distance = glm::length(rigidBody->GetPosition() - rb->ptr->GetPosition());
 		if (distance < alignmentRadius && distance > 0.0f)
 		{
 			force += rb->ptr->GetLinearVelocity();
 			neighbourhoodCount++;
-		}
+		}*/
 	}
 
 	glm::vec3 alignmentForce(0.0f);
@@ -92,12 +92,12 @@ glm::vec3 FlockingBehaviour::Cohesion()
 	int neighbourhoodCount = 0;
 	for (RigidBodyComponent* rb : group->rigidbodies)
 	{
-		float distance = glm::length(rigidBody->GetPosition() - rb->ptr->GetPosition());
+		/*float distance = glm::length(rigidBody->GetPosition() - rb->ptr->GetPosition());
 		if (distance < cohesionRadius && distance > 0.0f)
 		{
 			pos += rb->ptr->GetPosition();
 			neighbourhoodCount++;
-		}
+		}*/
 	}
 
 	glm::vec3 cohesionForce(0.0f);

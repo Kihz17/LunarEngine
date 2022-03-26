@@ -24,8 +24,6 @@ public:
 		for (int i = 0; i < 100; i++) boneMatrices.push_back(glm::mat4(1.0f)); // Default to identity matrix
 	}
 
-	virtual void ImGuiUpdate() override { }
-
 	void SetAnimation(Animation* animation, bool lerp = true)
 	{
 		lastAnim = anim;

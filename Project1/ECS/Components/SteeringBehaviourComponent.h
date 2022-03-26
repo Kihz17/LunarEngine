@@ -16,11 +16,6 @@ struct SteeringBehaviourComponent : public Component
 		for (ISteeringCondition* condition : behaviours) delete condition;
 	}
 
-	virtual void ImGuiUpdate() override
-	{
-
-	}
-
 	void AddBehaviour(int priority, ISteeringCondition* behaviour)
 	{
 		if (behaviour->GetBehaviour()->GetType() != SteeringBehaviourType::Normal) return;

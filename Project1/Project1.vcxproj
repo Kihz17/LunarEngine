@@ -123,7 +123,7 @@
       <LanguageStandard>Default</LanguageStandard>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalIncludeDirectories>Core/;DungeonGenerator/;DungeonGenerator/3D/;DungeonGenerator/2D/;$(SolutionDir)Project1/;ECS/;ECS/Components/;AI/;AI/Steering/;AI/Steering/Behaviours/;AI/Steering/Conditions/;Animation/;Graphics/;Graphics/BoundingVolumes/;Graphics/GLWrappers/;Graphics/Interfaces/;Graphics/Mesh/;Graphics/RenderPasses/;Graphics/Shader/;Graphics/Textures/;Graphics/Utils/;Input/;Layers/;Layers/SkeletalAnimation/;Panels/;Physics/;Sound/;Utils/;AI/Pathfinding/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Core/;DungeonGenerator/;DungeonGenerator/3D/;DungeonGenerator/2D/;$(SolutionDir)Project1/;ECS/;ECS/Components/;AI/;AI/Steering/;AI/Steering/Behaviours/;AI/Steering/Conditions/;Animation/;Graphics/;Graphics/BoundingVolumes/;Graphics/GLWrappers/;Graphics/Interfaces/;Graphics/Mesh/;Graphics/RenderPasses/;Graphics/Shader/;Graphics/Textures/;Graphics/Utils/;Input/;Layers/;Layers/SkeletalAnimation/;Panels/;Physics/;Sound/;Utils/;AI/Pathfinding/;Serialization/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,7 +140,7 @@
       <PreprocessorDefinitions>SOLUTION_DIR=R"($(SolutionDir))";NORMAL_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\vertShader_01.glsl)";NORMAL_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\fragShader_01.glsl)";OUTLINE_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineVert.glsl)";OUTLINE_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineFrag.glsl)";NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>Default</LanguageStandard>
-      <AdditionalIncludeDirectories>Core/;DungeonGenerator/;DungeonGenerator/3D/;DungeonGenerator/2D/;$(SolutionDir)Project1/;ECS/;ECS/Components/;AI/;AI/Steering/;AI/Steering/Behaviours/;AI/Steering/Conditions/;Animation/;Graphics/;Graphics/BoundingVolumes/;Graphics/GLWrappers/;Graphics/Interfaces/;Graphics/Mesh/;Graphics/RenderPasses/;Graphics/Shader/;Graphics/Textures/;Graphics/Utils/;Input/;Layers/;Layers/SkeletalAnimation/;Panels/;Physics/;Sound/;Utils/;AI/Pathfinding/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Core/;DungeonGenerator/;DungeonGenerator/3D/;DungeonGenerator/2D/;$(SolutionDir)Project1/;ECS/;ECS/Components/;AI/;AI/Steering/;AI/Steering/Behaviours/;AI/Steering/Conditions/;Animation/;Graphics/;Graphics/BoundingVolumes/;Graphics/GLWrappers/;Graphics/Interfaces/;Graphics/Mesh/;Graphics/RenderPasses/;Graphics/Shader/;Graphics/Textures/;Graphics/Utils/;Input/;Layers/;Layers/SkeletalAnimation/;Panels/;Physics/;Sound/;Utils/;AI/Pathfinding/;Serialization/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -196,6 +196,7 @@
     <ClCompile Include="Graphics\Mesh\AnimatedVertex.cpp" />
     <ClCompile Include="Graphics\Mesh\Animation.cpp" />
     <ClCompile Include="Graphics\Mesh\Mesh.cpp" />
+    <ClCompile Include="Graphics\Mesh\MeshManager.cpp" />
     <ClCompile Include="Graphics\Mesh\Vertex.cpp" />
     <ClCompile Include="Graphics\PrimitiveShape.cpp" />
     <ClCompile Include="Graphics\Renderer.cpp" />
@@ -229,13 +230,14 @@
     <ClCompile Include="Layers\FreeCamController.cpp" />
     <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.cpp" />
     <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.cpp" />
-    <ClCompile Include="Panels\EntityPanel.cpp" />
-    <ClCompile Include="Physics\CollisionHandler.cpp" />
-    <ClCompile Include="Physics\CollisionListener.cpp" />
-    <ClCompile Include="Physics\CollisionTesting.cpp" />
+    <ClCompile Include="Physics\BulletUtils.cpp" />
     <ClCompile Include="Physics\PhysicsFactory.cpp" />
     <ClCompile Include="Physics\PhysicsWorld.cpp" />
     <ClCompile Include="Physics\RigidBody.cpp" />
+    <ClCompile Include="Serialization\EntityComponentSerializer.cpp" />
+    <ClCompile Include="Serialization\EntitySerializer.cpp" />
+    <ClCompile Include="Serialization\ISerializer.cpp" />
+    <ClCompile Include="Serialization\TextureSerializer.cpp" />
     <ClCompile Include="Sound\DSP.cpp" />
     <ClCompile Include="Sound\SoundManager.cpp" />
     <ClCompile Include="stb_image.cpp" />
@@ -325,6 +327,7 @@
     <ClInclude Include="Graphics\Mesh\Bone.h" />
     <ClInclude Include="Graphics\Mesh\BoneInfo.h" />
     <ClInclude Include="Graphics\Mesh\Mesh.h" />
+    <ClInclude Include="Graphics\Mesh\MeshManager.h" />
     <ClInclude Include="Graphics\Mesh\Vertex.h" />
     <ClInclude Include="Graphics\PrimitiveShape.h" />
     <ClInclude Include="Graphics\Renderer.h" />
@@ -363,15 +366,15 @@
     <ClInclude Include="Layers\FreeCamController.h" />
     <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.h" />
     <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.h" />
-    <ClInclude Include="Panels\EntityPanel.h" />
-    <ClInclude Include="Panels\IPanel.h" />
-    <ClInclude Include="Physics\CollisionHandler.h" />
-    <ClInclude Include="Physics\CollisionListener.h" />
-    <ClInclude Include="Physics\CollisionTesting.h" />
+    <ClInclude Include="Physics\BulletUtils.h" />
     <ClInclude Include="Physics\PhysicsFactory.h" />
     <ClInclude Include="Physics\PhysicsWorld.h" />
     <ClInclude Include="Physics\RigidBody.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Serialization\EntityComponentSerializer.h" />
+    <ClInclude Include="Serialization\EntitySerializer.h" />
+    <ClInclude Include="Serialization\ISerializer.h" />
+    <ClInclude Include="Serialization\TextureSerializer.h" />
     <ClInclude Include="Sound\DSP.h" />
     <ClInclude Include="Sound\SoundManager.h" />
     <ClInclude Include="Utils\Grid2D.h" />

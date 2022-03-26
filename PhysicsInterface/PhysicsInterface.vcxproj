@@ -142,7 +142,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ICollisionListener.h" />
-    <ClInclude Include="IPhysicsFactory.h" />
     <ClInclude Include="IPhysicsWorld.h" />
     <ClInclude Include="IRigidBody.h" />
     <ClInclude Include="IShape.h" />

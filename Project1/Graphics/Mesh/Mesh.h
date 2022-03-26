@@ -15,7 +15,6 @@
 class Mesh : public IMesh
 {
 public:
-	Mesh(const std::string& filePath);
 	virtual ~Mesh();
 
 	virtual std::vector<Submesh>& GetSubmeshes() override { return submeshes; }
@@ -30,8 +29,13 @@ public:
 	virtual const std::vector<Face>& GetFaces() const override { return this->indices; }
 
 	virtual AABB* GetBoundingBox() const override { return this->boundingBox; }
+	virtual std::string GetPath() const override { return filePath; }
 
 private:
+	friend class MeshManager;
+
+	Mesh(const std::string& filePath);
+
 	void ParseMesh(unsigned int meshIndex, const aiMesh* assimpMesh);
 	void ParseMaterials(const aiScene* assimpScene);
 	void ParseNodes(aiNode* node, const glm::mat4& parentTransform = glm::mat4(1.0f));

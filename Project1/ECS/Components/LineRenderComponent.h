@@ -14,10 +14,5 @@ struct LineRenderComponent : Component
 
 	virtual ~LineRenderComponent() {}
 
-	virtual void ImGuiUpdate() override
-	{
-
-	}
-
 	glm::vec3 p1, p2;
 };

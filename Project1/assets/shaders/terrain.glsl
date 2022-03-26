@@ -145,7 +145,7 @@ void main()
 	float heightDown = GetHeight(vertexPos - vec2(0.0f, 1.0f));
 	mNormal = normalize(vec3(heightLeft - heightRight, 1.0f, heightDown - heightUp));
 
-	vec4 worldPos = v;//uModel * v;
+	vec4 worldPos = uModel * v;
 	mWorldPosition = worldPos.xyz; 
 
 	gl_Position = uProjection * uView * worldPos;
@@ -197,7 +197,7 @@ float GetHeight(vec2 v)
 	float heightResult = 0.0f;
 	float amplitude = uTerrainParams.x;
 	float freq = uTerrainParams.w;
-	vec2 pos = v;//uCameraPosition + v;
+	vec2 pos = uCameraPosition + v;
 	for(int i = 0; i < uOctaves; i++)
 	{
 		freq *= 2.0f;

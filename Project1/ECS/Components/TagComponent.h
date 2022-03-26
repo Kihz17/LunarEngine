@@ -30,11 +30,6 @@ struct TagComponent : public Component
 		}
 	}
 
-	virtual void ImGuiUpdate() override
-	{
-
-	}
-
 	void AddTag(const std::string& tag) { AddTag(tag, new TagValue<bool>(true)); }
 	template <typename T> void AddTag(const std::string& tag, TagValue<T>* value) { tags.insert({ tag, value }); }
 

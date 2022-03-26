@@ -7,8 +7,6 @@
 #include "EntityManager.h"
 #include "Window.h"
 #include "Mesh.h"
-#include "EntityPanel.h"
-#include "IPanel.h"
 #include "Camera.h"
 
 class GameEngine
@@ -22,8 +20,6 @@ public:
 
 	void Render();
 
-	void AddPanel(IPanel* panel) { panels.push_back(panel); }
-
 	void AddLayer(ApplicationLayer* layer);
 	void AddOverlay(ApplicationLayer* layer);
 	void RemoveLayer(ApplicationLayer* layer);
@@ -34,7 +30,6 @@ public:
 	const WindowSpecs& GetWindowSpecs() const { return windowSpecs; }
 
 	Camera camera;
-	Physics::IPhysicsFactory<Entity>* physicsFactory;
 	Physics::IPhysicsWorld<Entity>* physicsWorld;
 
 	static WindowSpecs InitializeGLFW(bool initImGui);
@@ -48,9 +43,6 @@ private:
 	EntityManager entityManager;
 
 	WindowSpecs windowSpecs;
-
-	EntityPanel entityPanel;
-	std::vector<IPanel*> panels;
 
 	bool editorMode;
 

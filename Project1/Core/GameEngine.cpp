@@ -1,15 +1,13 @@
 #include "GameEngine.h"
 
-#include "PhysicsFactory.h"
 #include "PhysicsWorld.h"
-#include "EntityPanel.h"
 #include "ShaderLibrary.h"
-#include "CollisionListener.h"
 #include "SoundManager.h"
 #include "InputManager.h"
 #include "TextureManager.h"
 #include "Renderer.h"
 #include "Profiler.h"
+#include "MeshManager.h"
 
 #include "PositionComponent.h"
 #include "ScaleComponent.h"
@@ -30,8 +28,7 @@ static void ErrorCallback(int error, const char* description)
 GameEngine::GameEngine(const WindowSpecs& windowSpecs, bool editorMode)
 	: editorMode(editorMode),
     windowSpecs(windowSpecs),
-    physicsFactory(new PhysicsFactory()),
-    physicsWorld(physicsFactory->CreateWorld()),
+    physicsWorld(new PhysicsWorld()),
     debugMode(false)
 {
 	// Initialize systems
@@ -40,32 +37,23 @@ GameEngine::GameEngine(const WindowSpecs& windowSpecs, bool editorMode)
 	Renderer::Initialize(camera, &this->windowSpecs);
     SoundManager::Initilaize();
 
-    physicsWorld->RegisterCollisionListener(new CollisionListener(this->entityManager));
     physicsWorld->SetGravity(glm::vec3(0.0f, -9.81f, 0.0f));
 }
 
 GameEngine::~GameEngine()
 {
-    for (IPanel* panel : panels) delete panel;
+    delete physicsWorld;
 
     ShaderLibrary::CleanUp();
     Renderer::CleanUp();
     SoundManager::CleanUp();
     Entity::CleanComponentListeners();
     TextureManager::CleanUp(); // This should be last, to give other things time if they want to remove textures
+    MeshManager::CleanUp();
 }
 
 void GameEngine::Render()
 {
-    if (editorMode)
-    {
-        for (IPanel* panel : panels)
-        {
-            panel->OnUpdate();
-        }
-        entityPanel.Update(entityManager.GetEntities());
-    }
-
     Renderer::DrawFrame();
 
     if (editorMode)
@@ -107,7 +95,7 @@ void GameEngine::SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer
 
         // Sync position component with rigidbody
         RigidBodyComponent* rigidBodyComponent = entity->GetComponent<RigidBodyComponent>();
-        if (rigidBodyComponent)
+        if (rigidBodyComponent && rigidBodyComponent->ptr)
         {
             rigidBodyComponent->ptr->GetPosition(posComponent->value); // Update position component
             rigidBodyComponent->ptr->GetOrientation(rotComponent->value); // Update rotation component
@@ -247,11 +235,11 @@ void GameEngine::Run()
         listenerInfo.direction = camera.front;
         listenerInfo.up = camera.up;
         SoundManager::Update(deltaTime, listenerInfo);
-        
-        physicsWorld->Update(deltaTime);
 
         // Update camera
         camera.Update(deltaTime);
+
+        physicsWorld->Update(deltaTime);
 
         // Start ImGui frame
         if (editorMode)
@@ -263,7 +251,7 @@ void GameEngine::Run()
 
         Renderer::BeginFrame(camera);
 
-        for (ApplicationLayer* layer : this->layerManager)
+        for (ApplicationLayer* layer : this->layerManager) 
         {
             layer->OnUpdate(deltaTime);
         }

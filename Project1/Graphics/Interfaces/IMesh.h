@@ -4,6 +4,8 @@
 #include "VertexArrayObject.h"
 #include "AABB.h"
 
+#include <string>
+
 struct Submesh
 {
 	std::string nodeName;
@@ -39,6 +41,7 @@ public:
 	virtual const std::vector<Face>& GetFaces() const = 0;
 
 	virtual const AABB* GetBoundingBox() const = 0;
+	virtual std::string GetPath() const = 0;
 };
 
 class MeshUtils
