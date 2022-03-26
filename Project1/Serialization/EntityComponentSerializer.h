@@ -10,7 +10,7 @@ public:
 	EntityComponentSerializer(Component* c, Entity* e);
 
 	virtual void Serialize(YAML::Emitter& emitter) override;
-	virtual void Deserialize(YAML::Node& node) override;
+	virtual void Deserialize(const YAML::Node& node) override;
 
 private:
 	void SavePositionComponent(YAML::Emitter& emitter, PositionComponent* posComp);

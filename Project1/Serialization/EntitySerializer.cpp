@@ -1,8 +1,9 @@
 #include "EntitySerializer.h"
 #include "EntityComponentSerializer.h"
 
-EntitySerializer::EntitySerializer(Entity* entity)
-	: entity(entity)
+EntitySerializer::EntitySerializer(Entity* entity, EntityManager& entityManager)
+	: entity(entity),
+	entityManager(entityManager)
 {
 
 }
@@ -21,10 +22,13 @@ void EntitySerializer::Serialize(YAML::Emitter& emitter)
 	emitter << YAML::EndMap;
 }
 
-void EntitySerializer::Deserialize(YAML::Node& node)
+void EntitySerializer::Deserialize(const YAML::Node& node)
 {
 	std::string name = node["Name"].as<std::string>();
 	int id = node["ID"].as<int>();
+
+	Entity* e = entityManager.CreateEntity(name);
+	e->id = id;
 
 	const YAML::Node& components = node["Components"];
 	if (components)
@@ -33,7 +37,7 @@ void EntitySerializer::Deserialize(YAML::Node& node)
 		for (it = components.begin(); it != components.end(); it++)
 		{
 			YAML::Node childNode = (*it);
-			
+			EntityComponentSerializer(nullptr, e).Deserialize(childNode);
 		}
 	}
 }

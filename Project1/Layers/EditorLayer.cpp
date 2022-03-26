@@ -83,7 +83,7 @@ void EditorLayer::OnUpdate(float deltaTime)
 			out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 			for (Entity* e : entityManager.GetEntities())
 			{
-				EntitySerializer(e).Serialize(out);
+				EntitySerializer(e, entityManager).Serialize(out);
 			}
 			out << YAML::EndSeq;
 

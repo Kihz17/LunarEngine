@@ -23,6 +23,10 @@
 #include "ShaderLibrary.h"
 
 #include "EditorLayer.h"
+#include "EntitySerializer.h"
+
+#include <fstream>
+#include <sstream>
 
 float GetRandom(float low, float high);
 
@@ -100,7 +104,7 @@ int main()
 
     // SHADER BALL TEST
     //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
-    {
+    /*{
         Entity* e = gameEngine.GetEntityManager().CreateEntity();
         e->AddComponent<PositionComponent>();
         e->AddComponent<RotationComponent>();
@@ -117,7 +121,7 @@ int main()
         info.mass = 0.0f;
         info.initialTransform = glm::mat4(1.0f);
         Physics::IRigidBody* rb = new RigidBody(info, PhysicsFactory::GetMeshScaledShape(testInfo.mesh, glm::vec3(100.0f, 0.5f, 100.0f)));
-        dynamic_cast<RigidBody*>(rb)->GetBulletBody()->setRestitution(0.5f);
+        dynamic_cast<RigidBody*>(rb)->GetBulletBody()->setRestitution(0.8f);
         e->AddComponent<RigidBodyComponent>(rb);
 
         gameEngine.physicsWorld->AddRigidBody(rb, e);
@@ -140,11 +144,11 @@ int main()
         info.mass = 1.0f;
         info.intertia = glm::vec3(0.5f);
         Physics::IRigidBody* rb = new RigidBody(info, new btSphereShape(1.0f));
-        dynamic_cast<RigidBody*>(rb)->GetBulletBody()->setRestitution(0.5f);
+        dynamic_cast<RigidBody*>(rb)->GetBulletBody()->setRestitution(0.8f);
         e->AddComponent<RigidBodyComponent>(rb);
 
         gameEngine.physicsWorld->AddRigidBody(rb, e);
-    }
+    }*/
 
     // Box
     //{
@@ -175,6 +179,30 @@ int main()
     }
 
     gameEngine.AddLayer(new EditorLayer(gameEngine.GetEntityManager(), gameEngine.physicsWorld));
+
+    std::ifstream ifs("test.yaml");
+    std::stringstream ss;
+    ss << ifs.rdbuf();
+    YAML::Node root = YAML::Load(ss.str());
+    if (root["Scene"])
+    {
+        const YAML::Node& entities = root["Entities"];
+        if (entities)
+        {
+            YAML::const_iterator it;
+            for (it = entities.begin(); it != entities.end(); it++)
+            {
+                YAML::Node childNode = (*it);
+                EntitySerializer(nullptr, gameEngine.GetEntityManager()).Deserialize(childNode);
+            }
+        }
+    }
+
+    for (Entity* e : gameEngine.GetEntityManager().GetEntities())
+    {
+        if (!e->HasComponent<RigidBodyComponent>()) continue;
+        gameEngine.physicsWorld->AddRigidBody(e->GetComponent<RigidBodyComponent>()->ptr, e);
+    }
 
     gameEngine.Run();
 

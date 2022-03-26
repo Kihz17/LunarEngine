@@ -55,7 +55,7 @@ public:
 	{
 		for (unsigned int i = 0; i < components.size(); i++)
 		{
-			return dynamic_cast<T*>(components[i]);
+			if (dynamic_cast<T*>(components[i])) return true;
 		}
 
 		return false;

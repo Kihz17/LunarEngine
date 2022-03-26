@@ -10,7 +10,7 @@ public:
 	TextureSerializer(ITexture* t);
 
 	virtual void Serialize(YAML::Emitter& emitter) override;
-	virtual void Deserialize(YAML::Node& node) override;
+	virtual void Deserialize(const YAML::Node& node) override;
 
 private:
 	void SaveTexture2D(YAML::Emitter& emitter, Texture2D* t);

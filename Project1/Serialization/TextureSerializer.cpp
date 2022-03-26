@@ -18,7 +18,7 @@ void TextureSerializer::Serialize(YAML::Emitter& emitter)
 	emitter << YAML::EndMap;
 }
 
-void TextureSerializer::Deserialize(YAML::Node& node)
+void TextureSerializer::Deserialize(const YAML::Node& node)
 {
 
 }
