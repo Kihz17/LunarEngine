@@ -4,6 +4,334 @@ Entities:
     ID: 0
     Components:
       - {}
+  - Name: StoneBase1
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [192.850006, 39.5999985, -71.4499969]
+      - ComponentType: Rotation
+        Rotation: [-0.5, 0.5, 0.5, 0.5]
+      - ComponentType: Scale
+        Scale: [0.140000001, 0.150000006, 0.109999999]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseBase01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_StoneWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: StoneBase2
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [184.529999, 39.5999985, -128.789993]
+      - ComponentType: Rotation
+        Rotation: [-0.707107544, 0.707107544, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.140000001, 0.100000001, 0.109999999]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseBase01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_StoneWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: StoneBase3
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [193.509995, 39.5999985, -21.5400009]
+      - ComponentType: Rotation
+        Rotation: [-0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.140000001, 0.100000001, 0.109999999]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseBase01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_StoneWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: StoneBase4
+    ID: 4
+    Components:
+      - ComponentType: Position
+        Position: [54.6500015, 39.5400009, 187.070007]
+      - ComponentType: Rotation
+        Rotation: [-0.703125954, 0.703125954, -0.073912479, -0.073912479]
+      - ComponentType: Scale
+        Scale: [0.140000001, 0.150000006, 0.109999999]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseBase01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_StoneWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: StoneBase5
+    ID: 5
+    Components:
+      - ComponentType: Position
+        Position: [7.21000004, 39.7599983, 202.070007]
+      - ComponentType: Rotation
+        Rotation: [-0.550285935, 0.550285935, 0.443887025, 0.443887025]
+      - ComponentType: Scale
+        Scale: [0.141000003, 0.111000001, 0.109999999]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseBase01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_StoneWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: StoneBase6
+    ID: 6
+    Components:
+      - ComponentType: Position
+        Position: [134.649994, 39.5200005, 172.410004]
+      - ComponentType: Rotation
+        Rotation: [-0.702850461, 0.702850461, -0.076491341, -0.076491341]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.159999996, 0.159999996]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseBase01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_StoneWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: StoneBase7
+    ID: 7
+    Components:
+      - ComponentType: Position
+        Position: [180.550003, 39.6899986, 173.449997]
+      - ComponentType: Rotation
+        Rotation: [-0.546464741, 0.546464741, 0.448583215, 0.448583215]
+      - ComponentType: Scale
+        Scale: [0.140000001, 0.159999996, 0.129999995]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseBase01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_StoneWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: StoneBase8
+    ID: 8
+    Components:
+      - ComponentType: Position
+        Position: [210.940002, 39.6899986, 238.229996]
+      - ComponentType: Rotation
+        Rotation: [-0.703527749, 0.703527749, -0.0699889883, -0.0699889883]
+      - ComponentType: Scale
+        Scale: [0.189999998, 0.150000006, 0.109999999]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseBase01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_StoneWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_StoneWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
   - Name: lightTest
     ID: 0
     Components:
@@ -12,14 +340,2203 @@ Entities:
     ID: 0
     Components:
       []
+  - Name: WallBorder1
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [-28.3600006, 3.32999992, 12.71]
+      - ComponentType: Rotation
+        Rotation: [1, 0, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder2
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [31.6399994, 3.32999992, 12.71]
+      - ComponentType: Rotation
+        Rotation: [1, 0, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder3
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [91.7099991, 3.32999992, 12.71]
+      - ComponentType: Rotation
+        Rotation: [1, 0, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder4
+    ID: 4
+    Components:
+      - ComponentType: Position
+        Position: [151.389999, 7.9000001, 12.71]
+      - ComponentType: Rotation
+        Rotation: [0.997058868, 0, 0, 0.0766593292]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder5
+    ID: 5
+    Components:
+      - ComponentType: Position
+        Position: [210.759995, 17.2199993, 12.71]
+      - ComponentType: Rotation
+        Rotation: [0.996999979, 0, 0, 0.0769999996]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder6
+    ID: 6
+    Components:
+      - ComponentType: Position
+        Position: [258.600006, 24.5499992, 12.71]
+      - ComponentType: Rotation
+        Rotation: [0.996999979, 0, 0, 0.0769999996]
+      - ComponentType: Scale
+        Scale: [0.119999997, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder7
+    ID: 7
+    Components:
+      - ComponentType: Position
+        Position: [-35.5600014, 4.11000013, 65.0699997]
+      - ComponentType: Rotation
+        Rotation: [0.964568675, 0, -0.263834536, 0]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder8
+    ID: 8
+    Components:
+      - ComponentType: Position
+        Position: [13.5699997, 4.11000013, 94.1399994]
+      - ComponentType: Rotation
+        Rotation: [0.964999974, 0, -0.263999999, 0]
+      - ComponentType: Scale
+        Scale: [0.180000007, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder9
+    ID: 9
+    Components:
+      - ComponentType: Position
+        Position: [77.8700027, 3.83999991, 99.7399979]
+      - ComponentType: Rotation
+        Rotation: [0.995006919, 0, 0.0998127237, 0]
+      - ComponentType: Scale
+        Scale: [0.280000001, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder10
+    ID: 10
+    Components:
+      - ComponentType: Position
+        Position: [148.470001, 7.94000006, 85.0199966]
+      - ComponentType: Rotation
+        Rotation: [0.991110384, -0.0083867861, 0.109680131, 0.0757861286]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder11
+    ID: 11
+    Components:
+      - ComponentType: Position
+        Position: [206.350006, 17.0799999, 71.9000015]
+      - ComponentType: Rotation
+        Rotation: [0.990999997, -0.00800000038, 0.109999999, 0.0759999976]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder12
+    ID: 12
+    Components:
+      - ComponentType: Position
+        Position: [255.740005, 24.9400005, 60.7000008]
+      - ComponentType: Rotation
+        Rotation: [0.990999997, -0.00800000038, 0.109999999, 0.0759999976]
+      - ComponentType: Scale
+        Scale: [0.140000001, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder13
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [-76.1900024, 41.2200012, 10.6800003]
+      - ComponentType: Rotation
+        Rotation: [0.709059656, -0.705152571, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder14
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [48.5499992, 41.2200012, 10.46]
+      - ComponentType: Rotation
+        Rotation: [0.698484778, -0.715629458, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.0989999995, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder15
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [93.3899994, 41.2200012, 10.3699999]
+      - ComponentType: Rotation
+        Rotation: [0.695885181, -0.718155324, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder16
+    ID: 4
+    Components:
+      - ComponentType: Position
+        Position: [153.410004, 41.2200012, 10.3199997]
+      - ComponentType: Rotation
+        Rotation: [0.709284365, -0.70492661, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder17
+    ID: 5
+    Components:
+      - ComponentType: Position
+        Position: [213.449997, 41.2200012, 10.2700005]
+      - ComponentType: Rotation
+        Rotation: [0.69842124, -0.71568805, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder18
+    ID: 6
+    Components:
+      - ComponentType: Position
+        Position: [258.660004, 41.2200012, 10.2799997]
+      - ComponentType: Rotation
+        Rotation: [0.712804198, -0.701366067, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder19
+    ID: 7
+    Components:
+      - ComponentType: Position
+        Position: [-54.7900009, 41.2200012, 56.8600006]
+      - ComponentType: Rotation
+        Rotation: [0.675307274, -0.689222693, -0.18011792, -0.191032901]
+      - ComponentType: Scale
+        Scale: [0.230000004, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder20
+    ID: 8
+    Components:
+      - ComponentType: Position
+        Position: [6.28000021, 40.9500008, 92.2699966]
+      - ComponentType: Rotation
+        Rotation: [0.682417631, -0.682417631, -0.184812099, -0.184812099]
+      - ComponentType: Scale
+        Scale: [0.239999995, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder21
+    ID: 9
+    Components:
+      - ComponentType: Position
+        Position: [84.1100006, 41, 101.540001]
+      - ComponentType: Rotation
+        Rotation: [0.702669144, -0.702669144, 0.0781426653, 0.0781426653]
+      - ComponentType: Scale
+        Scale: [0.319999993, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder22
+    ID: 10
+    Components:
+      - ComponentType: Position
+        Position: [160.779999, 41, 84.9400024]
+      - ComponentType: Rotation
+        Rotation: [0.703471661, -0.703471661, 0.0705491826, 0.0705491826]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.200000003, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder23
+    ID: 11
+    Components:
+      - ComponentType: Position
+        Position: [219.960007, 41, 72.4800034]
+      - ComponentType: Rotation
+        Rotation: [0.703074455, -0.703074455, 0.0744016245, 0.0744016245]
+      - ComponentType: Scale
+        Scale: [0.200000003, 0.25, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: WallBorder24
+    ID: 12
+    Components:
+      - ComponentType: Position
+        Position: [261.029999, 41, 63.2400017]
+      - ComponentType: Rotation
+        Rotation: [0.702377498, -0.702377498, 0.0807172805, 0.0807172805]
+      - ComponentType: Scale
+        Scale: [0.0799999982, 0.25, 0.200000003]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseBase6
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [55.4000015, 95, 186.820007]
+      - ComponentType: Rotation
+        Rotation: [0.702684402, -0.702684402, 0.0780002028, 0.0780002028]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House2dFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseBase7
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [6.3130002, 95, 203.139999]
+      - ComponentType: Rotation
+        Rotation: [0.442037821, -0.442037821, 0.551773429, 0.551773429]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House2dFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Roof7
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [134.440002, 95, 173.529999]
+      - ComponentType: Rotation
+        Rotation: [0.703293502, -0.703293502, 0.072301954, 0.072301954]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.159999996, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseRoof01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_RoofTiles_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Roof8
+    ID: 4
+    Components:
+      - ComponentType: Position
+        Position: [208.910004, 95, 239.160004]
+      - ComponentType: Rotation
+        Rotation: [0.702312231, -0.702312231, 0.0812807977, 0.0812807977]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseRoof01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_RoofTilesGrey_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Roof9
+    ID: 5
+    Components:
+      - ComponentType: Position
+        Position: [182.75, 93.9700012, 174.25]
+      - ComponentType: Rotation
+        Rotation: [0.44345358, -0.44345358, 0.550635695, 0.550635695]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseRoof01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_RoofTilesGrey_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Roof10
+    ID: 6
+    Components:
+      - ComponentType: Position
+        Position: [54.4500008, 140, 183.509995]
+      - ComponentType: Rotation
+        Rotation: [0.703463674, -0.703463674, 0.0706258863, 0.0706258863]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseRoof01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_RoofTilesGrey_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Roof11
+    ID: 7
+    Components:
+      - ComponentType: Position
+        Position: [3.91000009, 140, 203.610001]
+      - ComponentType: Rotation
+        Rotation: [0.447371483, -0.447371483, 0.547457337, 0.547457337]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseRoof01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_RoofTilesGrey_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseBase1
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [182.970001, 95, 173.440002]
+      - ComponentType: Rotation
+        Rotation: [0.443207413, 0.443207413, 0.550836205, -0.550836205]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House1stFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseBase2
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [134.639999, 50, 174.300003]
+      - ComponentType: Rotation
+        Rotation: [0.702858806, -0.702858806, 0.0764126852, 0.0764126852]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House2dFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseBase3
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [210.330002, 50, 237.830002]
+      - ComponentType: Rotation
+        Rotation: [0.0729364604, -0.0729364604, -0.703231573, -0.703231573]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House2dFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseBase4
+    ID: 4
+    Components:
+      - ComponentType: Position
+        Position: [55.7200012, 50, 188.929993]
+      - ComponentType: Rotation
+        Rotation: [0.702981651, -0.702981651, 0.0752739161, 0.0752739161]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House1stFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseBase5
+    ID: 5
+    Components:
+      - ComponentType: Position
+        Position: [17.8500004, 50, 199.270004]
+      - ComponentType: Rotation
+        Rotation: [0.553316712, -0.553316712, -0.440104246, -0.440104246]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House1stFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Roof6
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [46.2099991, 84.2399979, -216.509995]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.239999995, 0.280000001, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseRoof01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_RoofTilesGrey_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
   - Name: lightTest
     ID: 0
     Components:
       []
+  - Name: Roof3
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [189.369995, 140.190002, -70.8000031]
+      - ComponentType: Rotation
+        Rotation: [0.500042856, -0.499777943, 0.500337362, 0.500072122]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.159999996, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseRoof01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_RoofTilesGrey_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseSecondFloor3
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [193.399994, 140.020004, -24.5300007]
+      - ComponentType: Rotation
+        Rotation: [0.000307991984, -0.000307991984, 0.707002461, 0.707002461]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House2dFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Roof4
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [183.899994, 140.220001, -119.389999]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseRoof01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_RoofTiles_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Roof5
+    ID: 4
+    Components:
+      - ComponentType: Position
+        Position: [194.130005, 185.130005, -23.6800003]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseRoof02.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_RoofTiles_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
   - Name: lightTest
     ID: 0
     Components:
       []
+  - Name: HouseFirstFloor8
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [193.669998, 140, -35]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House1stFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseSecondFloor1
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [191.309998, 95.4100037, -71]
+      - ComponentType: Rotation
+        Rotation: [-0.499513477, 0.499513477, -0.500336289, -0.500336289]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House2dFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseSecondFloor2
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [184.350006, 95.2200012, -116.080002]
+      - ComponentType: Rotation
+        Rotation: [-0.707108557, 0.707108557, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House2dFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: HouseFirstFloor5
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [191.169998, 50, -71.2200012]
+      - ComponentType: Rotation
+        Rotation: [0.501134157, -0.501134157, -0.498742878, -0.498742878]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House1stFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseFirstFloor6
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [193.669998, 95, -35]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House1stFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseFirstFloor7
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [184.729996, 50, -112.419998]
+      - ComponentType: Rotation
+        Rotation: [0, 0, -0.706981182, -0.706981182]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House1stFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: HouseFirstFloor3
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [47.0499992, 40, -169.210007]
+      - ComponentType: Rotation
+        Rotation: [0.00796026736, -0.00796026736, 0.706957042, 0.706957042]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House1stFloor02.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseFirstFloor4
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [48.6199989, 40, -257.380005]
+      - ComponentType: Rotation
+        Rotation: [-0.497487247, 0.497487247, 0.502420962, 0.502420962]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House1stFloor02.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: Roof2
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [-150, 82.9000015, -133.690002]
+      - ComponentType: Rotation
+        Rotation: [0.00577361649, -0.00577361649, -0.707090735, -0.707090735]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseRoof02.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_RoofTilesGrey_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: HouseFirstFloor2
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [-150, 40, -135.520004]
+      - ComponentType: Rotation
+        Rotation: [0.707092464, -0.707092464, -0.00495707942, -0.00495707942]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House1stFloor01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: Roof1
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [-120.300003, 83.8899994, -76]
+      - ComponentType: Rotation
+        Rotation: [0.5, -0.5, -0.5, -0.5]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_HouseRoof03.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_RoofTiles_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: HouseFirstFloor1
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [-119.760002, 40, -76]
+      - ComponentType: Rotation
+        Rotation: [0.500337839, -0.500337839, -0.499516755, -0.499516755]
+      - ComponentType: Scale
+        Scale: [0.150000006, 0.150000006, 0.150000006]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_House1stFloor02.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_HouseWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_HouseWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
   - Name: AlleyWall1
     ID: 1
     Components:

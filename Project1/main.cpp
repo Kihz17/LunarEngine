@@ -45,6 +45,17 @@ int main()
     Mesh* stairs = MeshManager::GetMesh("assets/models/test.fbx");
     Mesh* tile4m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_TileGround4m.FBX");
     Mesh* rock1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Rock01.FBX");
+    Mesh* houseFirstFloor1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor01.FBX");
+    Mesh* houseFirstFloor2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor02.FBX");
+    Mesh* houseFirstFloor3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor03.FBX");
+    Mesh* houseFirstFloor4 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor04.FBX");
+    Mesh* houseFirstFloor5 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor05.FBX");
+    Mesh* houseSecondFloor1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House2dFloor01.FBX");
+    Mesh* roof1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_HouseRoof01.FBX");
+    Mesh* roof2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_HouseRoof02.FBX");
+    Mesh* roof3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_HouseRoof03.FBX");
+    Mesh* wallBorder6m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX");
+    Mesh* houseBase1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_HouseBase01.FBX");
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -72,6 +83,23 @@ int main()
     Texture2D* castleWallColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWall_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* castleWallNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWall_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* castleWallORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWall_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+
+    Texture2D* castleWallDetailColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* castleWallDetailNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* castleWallDetailORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+
+    Texture2D* houseWallColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_HouseWall_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* houseWallNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_HouseWall_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* houseWallORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_HouseWall_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+
+    Texture2D* roofTilesColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_RoofTiles_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* roofTilesGrayColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_RoofTilesGrey_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* roofTilesNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_RoofTiles_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* roofTilesORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+
+    Texture2D* stoneWallColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* stoneWallNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* stoneWalllORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
 
     GameEngine gameEngine(windowSpecs, true);
 
@@ -137,55 +165,19 @@ int main()
         e->AddComponent<RigidBodyComponent>(rb);
 
         gameEngine.physicsWorld->AddRigidBody(rb, e);
-    }
-    {
-        Entity* e = gameEngine.GetEntityManager().CreateEntity();
-        e->AddComponent<PositionComponent>();
-        e->AddComponent<RotationComponent>();
-        e->AddComponent<ScaleComponent>();
-
-        RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = sphere;
-        testInfo.isColorOverride = true;
-        testInfo.colorOverride = glm::vec3(0.0f, 0.0f, 0.6f);
-        e->AddComponent<RenderComponent>(testInfo);
-
-        Physics::RigidBodyInfo info;
-        info.initialTransform = glm::mat4(1.0f);
-        info.initialTransform[3] = glm::vec4(0.0f, 50.0f, 0.0f, 1.0f);
-        info.mass = 1.0f;
-        info.intertia = glm::vec3(0.5f);
-        Physics::IRigidBody* rb = new RigidBody(info, new btSphereShape(1.0f));
-        dynamic_cast<RigidBody*>(rb)->GetBulletBody()->setRestitution(0.8f);
-        e->AddComponent<RigidBodyComponent>(rb);
-
-        gameEngine.physicsWorld->AddRigidBody(rb, e);
     }*/
 
- /*   {
-        Entity* e = gameEngine.GetEntityManager().CreateEntity("Floor1");
-        e->AddComponent<PositionComponent>();
-        e->AddComponent<RotationComponent>();
-        e->AddComponent<ScaleComponent>(glm::vec3(0.5f));
-
-        RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = tile4m;
-        testInfo.albedoTextures.push_back({ groundStoneColor , 1.0f });
-        testInfo.normalTexture = groundStoneNormal;
-        testInfo.ormTexture = groundStoneORM;
-        e->AddComponent<RenderComponent>(testInfo);
-    }*/
-    /*{
-        Entity* e = gameEngine.GetEntityManager().CreateEntity("AlleyWall1");
+   /* {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("StoneBase1");
         e->AddComponent<PositionComponent>();
         e->AddComponent<RotationComponent>();
         e->AddComponent<ScaleComponent>(glm::vec3(0.1f));
 
         RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = tile4m;
-        testInfo.albedoTextures.push_back({ castleWallColor , 1.0f });
-        testInfo.normalTexture = castleWallNormal;
-        testInfo.ormTexture = castleWallORM;
+        testInfo.mesh = houseBase1;
+        testInfo.albedoTextures.push_back({ stoneWallColor , 1.0f });
+        testInfo.normalTexture = stoneWallNormal;
+        testInfo.ormTexture = stoneWalllORM;
         e->AddComponent<RenderComponent>(testInfo);
     }*/
 
