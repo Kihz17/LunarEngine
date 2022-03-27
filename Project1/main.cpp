@@ -45,6 +45,7 @@ int main()
     Mesh* stairs = MeshManager::GetMesh("assets/models/test.fbx");
     Mesh* tile4m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_TileGround4m.FBX");
     Mesh* rock1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Rock01.FBX");
+    Mesh* rock2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Rock02.FBX");
     Mesh* houseFirstFloor1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor01.FBX");
     Mesh* houseFirstFloor2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor02.FBX");
     Mesh* houseFirstFloor3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor03.FBX");
@@ -56,6 +57,12 @@ int main()
     Mesh* roof3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_HouseRoof03.FBX");
     Mesh* wallBorder6m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX");
     Mesh* houseBase1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_HouseBase01.FBX");
+    Mesh* castleStairs3m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleStairs3m.FBX");
+    Mesh* castleStairs3mSmall = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleStairs3m01.FBX");
+    Mesh* castleBridge6m2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleBridge6m2.FBX");
+    Mesh* castleWallCorner6m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWallCorner6m01.FBX");
+    Mesh* castleWallCorner6m3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX");
+    Mesh* castleWall6m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWall6m.FBX");
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -129,18 +136,18 @@ int main()
     Renderer::GetProceduralGrassCluster().discardTexture = TextureManager::CreateTexture2D("assets/textures/grassBladeAlpha.png", TextureFilterType::Linear, TextureWrapType::ClampToEdge);
     Renderer::GetProceduralGrassCluster().albedoTexture = TextureManager::CreateTexture2D("assets/textures/grassColor.png", TextureFilterType::Linear, TextureWrapType::Repeat);
 
-    //{
-    //    DungeonGenerator2D::DungeonGeneratorInfo dInfo;
-    //    dInfo.roomCount = 30;
-    //    dInfo.minRoomSize = glm::ivec3(3, 2, 3);
-    //    dInfo.maxRoomSize = glm::ivec3(8, 3, 8);
-    //    dInfo.dungeonSize = glm::ivec2(100, 100);
-    //    dInfo.extraPathChance = 0.02f;
-    //    dInfo.yLevel = 0;
-    //    DungeonGenerator2D dg(dInfo, gameEngine.GetEntityManager());
-    //    std::vector<Entity*> entities = dg.Generate();
-    //    for (Entity* e : entities) gameEngine.GetEntityManager().ListenToEntity(e);
-    //}
+  /*  {
+        DungeonGenerator2D::DungeonGeneratorInfo dInfo;
+        dInfo.roomCount = 30;
+        dInfo.minRoomSize = glm::ivec3(3, 2, 3);
+        dInfo.maxRoomSize = glm::ivec3(8, 3, 8);
+        dInfo.dungeonSize = glm::ivec2(100, 100);
+        dInfo.extraPathChance = 0.02f;
+        dInfo.yLevel = 0;
+        DungeonGenerator2D dg(dInfo, gameEngine.GetEntityManager());
+        std::vector<Entity*> entities = dg.Generate();
+        for (Entity* e : entities) gameEngine.GetEntityManager().ListenToEntity(e);
+    }*/
 
     // SHADER BALL TEST
     //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
@@ -167,17 +174,17 @@ int main()
         gameEngine.physicsWorld->AddRigidBody(rb, e);
     }*/
 
-   /* {
-        Entity* e = gameEngine.GetEntityManager().CreateEntity("StoneBase1");
+    /*{
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("Rock15");
         e->AddComponent<PositionComponent>();
         e->AddComponent<RotationComponent>();
         e->AddComponent<ScaleComponent>(glm::vec3(0.1f));
 
         RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = houseBase1;
-        testInfo.albedoTextures.push_back({ stoneWallColor , 1.0f });
-        testInfo.normalTexture = stoneWallNormal;
-        testInfo.ormTexture = stoneWalllORM;
+        testInfo.mesh = rock1;
+        testInfo.albedoTextures.push_back({ rockColor , 1.0f });
+        testInfo.normalTexture = rockNormal;
+        testInfo.ormTexture = rockORM;
         e->AddComponent<RenderComponent>(testInfo);
     }*/
 
