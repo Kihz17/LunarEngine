@@ -5,14 +5,17 @@
 #include <IShape.h>
 #include <IRigidBody.h>
 
+#include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
 #include <Bullet/btBulletDynamicsCommon.h>
+#include <Bullet/btBulletCollisionCommon.h>
 
 class RigidBody : public Physics::IRigidBody
 {
 public:
 	RigidBody(const Physics::RigidBodyInfo info, btCollisionShape* shape);
+	RigidBody(const glm::vec3& pos, const glm::quat& rot, btCollisionShape* shape);
 	virtual ~RigidBody();
 
 	// Inherited from IRigidBody
@@ -32,8 +35,8 @@ public:
 	virtual void ApplyTorque(const glm::vec3& torque) override;
 	virtual void ApplyTorqueImpulse(const glm::vec3& torqueImpulse) override;
 	virtual void SetGravityAcceleration(const glm::vec3& gravity) override;
+	virtual bool IsStatic() const override { return rigidbody->isStaticObject(); }
 
-	bool IsStatic() const { return rigidbody->isStaticObject(); }
 	btCollisionShape* GetShape() { return rigidbody->getCollisionShape(); }
 	btRigidBody* GetBulletBody() { return rigidbody; }
 

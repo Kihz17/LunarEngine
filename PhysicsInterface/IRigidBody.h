@@ -39,6 +39,7 @@ namespace Physics
 		virtual void ApplyTorqueImpulse(const glm::vec3& torqueImpulse) = 0;
 
 		virtual void SetGravityAcceleration(const glm::vec3& gravity) = 0;
+		virtual bool IsStatic() const = 0;
 
 	protected:
 		IRigidBody() = default;

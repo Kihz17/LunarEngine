@@ -80,13 +80,15 @@ const float NEAR_PLANE = 0.1f;
 const float FAR_PLANE = 1000.0f;
 
 float LinearizeDepth(float depth);
-vec3 ComputeTextureNormal();
+vec3 ComputeTextureNormal(vec2 uv);
 
 void main()
 {
+	vec2 texCoords = mTextureCoordinates * uUVOffset;
+
 	if(uHasNormalTexture)
 	{
-		gNormal.rgb = ComputeTextureNormal(); // Assign normal
+		gNormal.rgb = ComputeTextureNormal(texCoords); // Assign normal
 	}
 	else
 	{
@@ -97,8 +99,6 @@ void main()
 	vec2 prevFragPos = (mPrevFragPosition.xy / mPrevFragPosition.w) * 0.5f + 0.5f;
 	
 	gPosition = vec4(mWorldPosition, LinearizeDepth(gl_FragCoord.z)); // Set position with adjusted depth
-	
-	vec2 texCoords = mTextureCoordinates * uUVOffset;
 
 	vec3 diffuseColor = vec3(0.0f);
 	if(uColorOverride.w == 1.0f) // Override color
@@ -165,15 +165,15 @@ float LinearizeDepth(float depth)
     return (2.0f * NEAR_PLANE * FAR_PLANE) / (FAR_PLANE + NEAR_PLANE - z * (FAR_PLANE - NEAR_PLANE));
 }
 
-vec3 ComputeTextureNormal()
+vec3 ComputeTextureNormal(vec2 uv)
 {
-	vec3 textureNormal = normalize(texture(uNormalTexture, mTextureCoordinates).rgb * 2.0f - 1.0f); // Sample normal texture and convert values in range from -1.0 to 1.0
+	vec3 textureNormal = normalize(texture(uNormalTexture, uv).rgb * 2.0f - 1.0f); // Sample normal texture and convert values in range from -1.0 to 1.0
 		
 	// Get edge vectors of the pixel triangle
     vec3 dPosX = dFdx(mWorldPosition);
     vec3 dPosY = dFdy(mWorldPosition);
-    vec2 dTexX = dFdx(mTextureCoordinates);
-    vec2 dTexY = dFdy(mTextureCoordinates);
+    vec2 dTexX = dFdx(uv);
+    vec2 dTexY = dFdy(uv);
 
 	// Convert normal from tangent space to world space
     vec3 normal = normalize(mNormal);

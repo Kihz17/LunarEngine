@@ -19,7 +19,7 @@ namespace BulletUtils
 
 	btQuaternion GLMQuatToBullet(const glm::quat& q)
 	{
-		return btQuaternion(q.w, q.x, q.y, q.z);
+		return btQuaternion(q.x, q.y, q.z, q.w);
 	}
 
 	btMatrix3x3 GLMMat3ToBullet(const glm::mat3& m)

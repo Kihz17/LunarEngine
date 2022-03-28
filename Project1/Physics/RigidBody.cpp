@@ -9,6 +9,16 @@ RigidBody::RigidBody(const Physics::RigidBodyInfo info, btCollisionShape* shape)
 
 }
 
+RigidBody::RigidBody(const glm::vec3& pos, const glm::quat& rot, btCollisionShape* shape)
+	: IRigidBody(),
+	rigidbody(nullptr)
+{
+	btTransform t;
+	t.setRotation(BulletUtils::GLMQuatToBullet(rot));
+	t.setOrigin(BulletUtils::GLMVec3ToBullet(pos));
+	rigidbody = new btRigidBody(0.0f, new btDefaultMotionState(t), shape, BulletUtils::GLMVec3ToBullet(glm::vec3(0.0f, 0.0f, 0.0f)));
+}
+
 RigidBody::~RigidBody()
 {
 	delete rigidbody;

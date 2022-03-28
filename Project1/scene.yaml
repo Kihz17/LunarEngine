@@ -4,6 +4,846 @@ Entities:
     ID: 0
     Components:
       - {}
+  - Name: CastleChimney1
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [481.470001, 167.990005, 1.87]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_ChimneyLarge03.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleChimney2
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [481.470001, 167.990005, 64.5199966]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_ChimneyLarge03.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleChimney3
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [544.48999, 167.990005, 64.5199966]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_ChimneyLarge03.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleChimney4
+    ID: 4
+    Components:
+      - ComponentType: Position
+        Position: [544.48999, 167.990005, 3.53999996]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_ChimneyLarge03.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopCorner1
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [482.519989, 199, 4]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopCorner2
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [482.519989, 228.639999, 4]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopCorner3
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [482.51001, 168.770004, 63.9399986]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopCorner4
+    ID: 4
+    Components:
+      - ComponentType: Position
+        Position: [482.51001, 198.639999, 63.9399986]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopCorner5
+    ID: 5
+    Components:
+      - ComponentType: Position
+        Position: [542.419983, 168.910004, 63.9199982]
+      - ComponentType: Rotation
+        Rotation: [0.5, -0.5, 0.5, 0.5]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopCorner6
+    ID: 6
+    Components:
+      - ComponentType: Position
+        Position: [542.419983, 198.259995, 63.9199982]
+      - ComponentType: Rotation
+        Rotation: [0.5, -0.5, 0.5, 0.5]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopCorner7
+    ID: 6
+    Components:
+      - ComponentType: Position
+        Position: [542.47998, 199.330002, 4.01000023]
+      - ComponentType: Rotation
+        Rotation: [0.5, 0.5, -0.5, 0.5]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopCorner8
+    ID: 6
+    Components:
+      - ComponentType: Position
+        Position: [542.419983, 228.699997, 4.01000023]
+      - ComponentType: Rotation
+        Rotation: [0.5, 0.5, -0.5, 0.5]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopFlat1
+    ID: 7
+    Components:
+      - ComponentType: Position
+        Position: [482.51001, 198.610001, 33.9799995]
+      - ComponentType: Rotation
+        Rotation: [0.5, 0.5, 0.5, -0.5]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWall6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopFlat2
+    ID: 8
+    Components:
+      - ComponentType: Position
+        Position: [482.51001, 228.639999, 33.9799995]
+      - ComponentType: Rotation
+        Rotation: [0.5, 0.5, 0.5, -0.5]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWall6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopFlat3
+    ID: 9
+    Components:
+      - ComponentType: Position
+        Position: [512.530029, 198.699997, 58.9300003]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWall6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopFlat4
+    ID: 10
+    Components:
+      - ComponentType: Position
+        Position: [512.530029, 228.270004, 58.9300003]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWall6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopFlat5
+    ID: 11
+    Components:
+      - ComponentType: Position
+        Position: [512.530029, 199.449997, 4.01000023]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWall6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleTopFlat6
+    ID: 12
+    Components:
+      - ComponentType: Position
+        Position: [512.530029, 228.660004, 4.01000023]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWall6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: CastleRoof1
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [517.039978, 167, 29.4799995]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.140000001, 0.119999997, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleRoof2
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [532.140015, 167, 90.0999985]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, 0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.0320000015, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_TileGround4m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_GroundStones_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [0.829999983, 0.280000001]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
   - Name: lightTest
     ID: 0
     Components:
@@ -57,7 +897,7 @@ Entities:
       - ComponentType: Rotation
         Rotation: [0.396985948, -0.234211311, 0.599211574, 0.654606819]
       - ComponentType: Scale
-        Scale: [1, 1.29999995, 1]
+        Scale: [1, 1.28999996, 1]
       - ComponentType: Render
         Mesh: assets/models/FantasyVillage/SM_Rock02.FBX
         Animated: false
@@ -98,7 +938,7 @@ Entities:
       - ComponentType: Rotation
         Rotation: [0.982495904, 0, -0.186288193, 0]
       - ComponentType: Scale
-        Scale: [1.32000005, 1.45000005, 1]
+        Scale: [1.38999999, 1.78999996, 1.57000005]
       - ComponentType: Render
         Mesh: assets/models/FantasyVillage/SM_Rock01.FBX
         Animated: false
@@ -180,11 +1020,11 @@ Entities:
     ID: 2
     Components:
       - ComponentType: Position
-        Position: [555.580017, 108.300003, 163.089996]
+        Position: [579.969971, 144.259995, 162.309998]
       - ComponentType: Rotation
-        Rotation: [0.972704232, 0.0265106279, -0.000745921629, -0.230565757]
+        Rotation: [0.678940356, 0.183505356, -0.69656229, -0.142089307]
       - ComponentType: Scale
-        Scale: [1, 1, 1]
+        Scale: [1, 1.03999996, 0.930000007]
       - ComponentType: Render
         Mesh: assets/models/FantasyVillage/SM_Rock02.FBX
         Animated: false
@@ -217,10 +1057,6 @@ Entities:
         ReflectRefractStrength: 0
         RefractRatio: 0
         ReflectRefractPriorityType: 0
-  - Name: lightTest
-    ID: 0
-    Components:
-      []
   - Name: CastleWallFlat1
     ID: 1
     Components:
@@ -413,6 +1249,47 @@ Entities:
           FilterType: 1
           WrapType: 3
         UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleWallFlat10
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [577.390015, 175.580002, 32.9900017]
+      - ComponentType: Rotation
+        Rotation: [0.499991357, 0.499991357, -0.499859869, 0.499859869]
+      - ComponentType: Scale
+        Scale: [0.610000014, 0.100000001, 0.569999993]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWall6m.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [6.23000002, 7.07000017]
         Roughness: 0.00999999978
         Metalness: 0.0199999996
         Wireframe: false
@@ -877,14 +1754,6 @@ Entities:
         ReflectRefractStrength: 0
         RefractRatio: 0
         ReflectRefractPriorityType: 0
-  - Name: lightTest
-    ID: 0
-    Components:
-      []
-  - Name: lightTest
-    ID: 0
-    Components:
-      []
   - Name: CastleWall1
     ID: 1
     Components:
@@ -1504,7 +2373,171 @@ Entities:
     ID: 9
     Components:
       - ComponentType: Position
-        Position: [457.480011, -63.7200012, 77.9000015]
+        Position: [457.480011, -63.4399986, 77.9000015]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner6m01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleWall17
+    ID: 1
+    Components:
+      - ComponentType: Position
+        Position: [487.25, 56.0699997, 107.860001]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner6m01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleWall18
+    ID: 2
+    Components:
+      - ComponentType: Position
+        Position: [487.25, 85.9400024, 107.860001]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner6m01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleWall19
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [487.25, 115.82, 107.860001]
+      - ComponentType: Rotation
+        Rotation: [0.707000017, -0.707000017, 0, 0]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_CastleWallCorner6m01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/FantasyVillage/T_CastleWall_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/FantasyVillage/T_CastleWall_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+  - Name: CastleWall20
+    ID: 4
+    Components:
+      - ComponentType: Position
+        Position: [487.25, 145.710007, 107.860001]
       - ComponentType: Rotation
         Rotation: [0.707000017, -0.707000017, 0, 0]
       - ComponentType: Scale
@@ -7631,11 +8664,15 @@ Entities:
             FilterType: 1
             WrapType: 3
             Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
         ORMTexture:
           Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
           FilterType: 1
           WrapType: 3
-        UVOffset: [0.689999998, 0.400000006]
+        UVOffset: [0.689999998, 0.349999994]
         Roughness: 0.00999999978
         Metalness: 0.0199999996
         Wireframe: false
@@ -7668,6 +8705,10 @@ Entities:
             FilterType: 1
             WrapType: 3
             Strength: 1
+        NormalTexture:
+          Path: assets/textures/FantasyVillage/T_GroundStones_N.TGA
+          FilterType: 1
+          WrapType: 3
         ORMTexture:
           Path: assets/textures/FantasyVillage/T_GroundStones_ORM.TGA
           FilterType: 1

@@ -365,6 +365,7 @@
     <ClCompile Include="Serialization\TextureSerializer.cpp" />
     <ClCompile Include="Serialization\EntityComponentSerializer.cpp" />
     <ClCompile Include="vendor\imguizmo\imGuIZMOquat.cpp" />
+    <ClCompile Include="Layers\PlayerController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -748,6 +749,7 @@
     <ClInclude Include="vendor\imguizmo\vGizmo.h" />
     <ClInclude Include="vendor\imguizmo\vGizmoMath.h" />
     <ClInclude Include="vendor\imguizmo\vgMath.h" />
+    <ClInclude Include="Layers\PlayerController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl">

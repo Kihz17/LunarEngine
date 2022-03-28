@@ -166,13 +166,18 @@ void EntityComponentSerializer::Deserialize(const YAML::Node& node)
 		}
 
 		Physics::RigidBodyInfo info;
-		info.mass= node["Mass"].as<float>();
+		info.mass = node["Mass"].as<float>();
 		info.intertia = node["Inertia"].as<glm::vec3>();
 		glm::mat4 transform = glm::toMat4(node["InitialRotation"].as<glm::quat>());
 		transform[3] = glm::vec4(node["InitialPosition"].as<glm::vec3>(), 1.0f);
 		info.initialTransform = transform;
 		RigidBody* rb = new RigidBody(info, shape);
 		rb->GetBulletBody()->setRestitution(node["Restitution"].as<float>());
+		if (node["IsStatic"].as<bool>())
+		{
+			rb->GetBulletBody()->setCollisionFlags(btCollisionObject::CollisionFlags::CF_STATIC_OBJECT);
+		}
+
 		entity->AddComponent<RigidBodyComponent>(rb);
 	}
 }
@@ -295,6 +300,7 @@ void EntityComponentSerializer::SaveRigidComponent(YAML::Emitter& emitter, Rigid
 		emitter << YAML::Key << "MeshPath" << YAML::Value << entity->GetComponent<RenderComponent>()->mesh->GetPath();
 	}
 
+	emitter << YAML::Key << "IsStatic" << YAML::Value << rb->IsStatic();
 	emitter << YAML::Key << "Mass" << YAML::Value << rb->GetBulletBody()->getMass();
 	emitter << YAML::Key << "Inertia" << YAML::Value << BulletUtils::BulletVec3ToGLM(rb->GetBulletBody()->getLocalInertia());
 	emitter << YAML::Key << "Restitution" << YAML::Value << rb->GetBulletBody()->getRestitution();

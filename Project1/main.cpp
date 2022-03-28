@@ -24,6 +24,7 @@
 
 #include "EditorLayer.h"
 #include "EntitySerializer.h"
+#include "PlayerController.h"
 
 #include <fstream>
 #include <sstream>
@@ -63,6 +64,7 @@ int main()
     Mesh* castleWallCorner6m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWallCorner6m01.FBX");
     Mesh* castleWallCorner6m3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX");
     Mesh* castleWall6m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWall6m.FBX");
+    Mesh* chimney3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_ChimneyLarge03.FBX");
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -174,19 +176,6 @@ int main()
         gameEngine.physicsWorld->AddRigidBody(rb, e);
     }*/
 
-    /*{
-        Entity* e = gameEngine.GetEntityManager().CreateEntity("Rock15");
-        e->AddComponent<PositionComponent>();
-        e->AddComponent<RotationComponent>();
-        e->AddComponent<ScaleComponent>(glm::vec3(0.1f));
-
-        RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = rock1;
-        testInfo.albedoTextures.push_back({ rockColor , 1.0f });
-        testInfo.normalTexture = rockNormal;
-        testInfo.ormTexture = rockORM;
-        e->AddComponent<RenderComponent>(testInfo);
-    }*/
 
     // Set env map
     {
@@ -223,9 +212,23 @@ int main()
 
     for (Entity* e : gameEngine.GetEntityManager().GetEntities())
     {
-        if (!e->HasComponent<RigidBodyComponent>()) continue;
-        gameEngine.physicsWorld->AddRigidBody(e->GetComponent<RigidBodyComponent>()->ptr, e);
+      /*  if (!e->HasComponent<RigidBodyComponent>()) continue;
+        gameEngine.physicsWorld->AddRigidBody(e->GetComponent<RigidBodyComponent>()->ptr, e);*/
+        if (e->HasComponent<RenderComponent>())
+        {
+            Physics::RigidBodyInfo info;
+            info.mass = 0.0f;
+            glm::mat4 transform = glm::toMat4(e->GetComponent<RotationComponent>()->value);
+            transform[3] = glm::vec4(e->GetComponent<PositionComponent>()->value, 1.0f);
+            info.initialTransform = transform;
+            RigidBody* rb = new RigidBody(info, PhysicsFactory::GetMeshScaledShape(e->GetComponent<RenderComponent>()->mesh, e->GetComponent<ScaleComponent>()->value));
+            rb->GetBulletBody()->setCollisionFlags(btCollisionObject::CollisionFlags::CF_STATIC_OBJECT);
+            e->AddComponent<RigidBodyComponent>(rb);
+            gameEngine.physicsWorld->AddRigidBody(rb, e);
+        }
     }
+
+    gameEngine.AddLayer(new PlayerController(gameEngine.camera, gameEngine.GetEntityManager(), static_cast<PhysicsWorld*>(gameEngine.physicsWorld)));
 
     gameEngine.Run();
 

@@ -66,7 +66,7 @@ btCollisionShape* PhysicsFactory::GetMeshScaledShape(IMesh* mesh, const glm::vec
 		std::unordered_map<MeshColliderType, btCollisionShape*>::iterator typeIt = map.find(MeshColliderType::BvhTriangle);
 		if (typeIt != map.end())
 		{
-			baseShape = dynamic_cast<btBvhTriangleMeshShape*>(typeIt->second);
+			baseShape = static_cast<btBvhTriangleMeshShape*>(typeIt->second);
 		}
 	}
 

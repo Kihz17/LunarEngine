@@ -228,6 +228,7 @@
     <ClCompile Include="Layers\AnimationLayer.cpp" />
     <ClCompile Include="Layers\EditorLayer.cpp" />
     <ClCompile Include="Layers\FreeCamController.cpp" />
+    <ClCompile Include="Layers\PlayerController.cpp" />
     <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.cpp" />
     <ClCompile Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.cpp" />
     <ClCompile Include="Physics\BulletUtils.cpp" />
@@ -365,6 +366,7 @@
     <ClInclude Include="Layers\AnimationLayer.h" />
     <ClInclude Include="Layers\EditorLayer.h" />
     <ClInclude Include="Layers\FreeCamController.h" />
+    <ClInclude Include="Layers\PlayerController.h" />
     <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationComponentListener.h" />
     <ClInclude Include="Layers\SkeletalAnimation\SkeletalAnimationLayer.h" />
     <ClInclude Include="Physics\BulletUtils.h" />

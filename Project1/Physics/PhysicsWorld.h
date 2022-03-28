@@ -29,6 +29,8 @@ public:
 	virtual Entity* GetRigidBodyOwner(Physics::IRigidBody* body) override;
 	virtual void Update(float deltaTime) override;
 
+	btSoftRigidDynamicsWorld* GetBulletWorld() { return world; }
+
 private:
 	btCollisionConfiguration* configuration;
 	btDispatcher* dispatcher;
