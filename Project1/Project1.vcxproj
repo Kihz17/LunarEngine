@@ -165,6 +165,7 @@
     <ClCompile Include="AI\Steering\Coordinator.cpp" />
     <ClCompile Include="AI\Steering\SteeringBehaviour.cpp" />
     <ClCompile Include="AI\Steering\SteeringEntityRemoveListener.cpp" />
+    <ClCompile Include="Animation\ASM.cpp" />
     <ClCompile Include="Animation\KeyFrameListener.cpp" />
     <ClCompile Include="Core\ApplicationLayerManager.cpp" />
     <ClCompile Include="Core\GameEngine.cpp" />
@@ -273,6 +274,7 @@
     <ClInclude Include="AI\Steering\Steering.h" />
     <ClInclude Include="AI\Steering\SteeringBehaviour.h" />
     <ClInclude Include="AI\Steering\SteeringEntityRemoveListener.h" />
+    <ClInclude Include="Animation\ASM.h" />
     <ClInclude Include="Animation\IKeyFrameListener.h" />
     <ClInclude Include="Animation\KeyFrameListener.h" />
     <ClInclude Include="Core\ApplicationLayer.h" />

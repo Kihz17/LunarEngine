@@ -2,6 +2,7 @@
 
 std::unordered_map<std::string, Mesh*> MeshManager::meshes;
 std::unordered_map<std::string, AnimatedMesh*> MeshManager::animatedMeshes;
+std::unordered_map<std::string, Animation*> MeshManager::animations;
 
 void MeshManager::CleanUp()
 {
@@ -40,4 +41,14 @@ AnimatedMesh* MeshManager::GetAnimatedMesh(const std::string& path)
 	AnimatedMesh* m = new AnimatedMesh(path);
 	animatedMeshes.insert({ path, m });
 	return m;
+}
+
+Animation* MeshManager::GetAnimation(const std::string& path)
+{
+	std::unordered_map<std::string, Animation*>::iterator it = animations.find(path);
+	if (it != animations.end()) return it->second;
+
+	Animation* anim = new Animation(path);
+	animations.insert({ path, anim });
+	return anim;
 }

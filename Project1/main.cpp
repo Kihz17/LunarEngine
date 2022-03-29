@@ -235,11 +235,11 @@ int main()
     return 0;
 }
 
-// Procedural terrain with the ability to have "holes" in them for entrances to dungeon ]
+// TODO:
+// Make shadows overall dimmer
+// Day/night cycles
 // Fix godrays
 // Maybe Water??
-
-// If we have time, globabl illumination using light probes
 
 float GetRandom(float low, float high)
 {

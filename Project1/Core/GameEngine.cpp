@@ -155,6 +155,8 @@ void GameEngine::SubmitEntitiesToRender(VertexArrayObject* lineVAO, VertexBuffer
 
                 if (animComp)
                 {
+                    submission.boneMatrices = animComp->boneMatrices.data();
+                    submission.boneMatricesLength = animComp->boneMatrices.size();
                     Renderer::culledAnimatedShadowSubmissions.push_back(submission);
                 }
                 else

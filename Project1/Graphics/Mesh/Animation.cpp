@@ -9,7 +9,7 @@
 
 const unsigned int Animation::MAX_BONES = 100;
 
-Animation::Animation(const std::string& path, AnimatedMesh* mesh)
+Animation::Animation(const std::string& path)
 	: filePath(path),
 	duration(0),
 	ticksPerSecond(0)
@@ -27,7 +27,6 @@ Animation::Animation(const std::string& path, AnimatedMesh* mesh)
 	ticksPerSecond = assimpAnim->mTicksPerSecond;
 	duration = assimpAnim->mDuration;
 
-	//ParseKeyFrames(assimpScene->mRootNode, assimpAnim, mesh);
 	for (unsigned int j = 0; j < assimpAnim->mNumChannels; j++)
 	{
 		aiNodeAnim* assimpNode = assimpAnim->mChannels[j];

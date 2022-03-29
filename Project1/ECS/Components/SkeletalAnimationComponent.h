@@ -26,6 +26,8 @@ public:
 
 	void SetAnimation(Animation* animation, bool lerp = true)
 	{
+		if (animation == anim) return;
+
 		lastAnim = anim;
 		anim = animation;
 

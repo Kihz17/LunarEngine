@@ -41,7 +41,7 @@ class AnimatedMesh;
 class Animation
 {
 public:
-	Animation(const std::string& path, AnimatedMesh* mesh);
+	Animation(const std::string& path);
 
 	const float& GetDuration() const { return duration; }
 	const int& GetTicksPerSecond() const { return ticksPerSecond; }
