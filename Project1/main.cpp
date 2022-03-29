@@ -25,6 +25,7 @@
 #include "EditorLayer.h"
 #include "EntitySerializer.h"
 #include "PlayerController.h"
+#include "GrassSerializer.h"
 
 #include <fstream>
 #include <sstream>
@@ -98,9 +99,7 @@ int main()
     Texture2D* metalnessTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_metalness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* aoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_ao.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* blue = TextureManager::CreateTexture2D("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* woodTexture = TextureManager::CreateTexture2D("assets/textures/wood.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* woodNormalTexture = TextureManager::CreateTexture2D("assets/textures/woodNormal.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* blueNoiseTexture = TextureManager::CreateTexture2D("assets/textures/BlueNoise.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* terrain = TextureManager::CreateTexture2D("assets/textures/terrain.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
 
     Texture2D* wood = TextureManager::CreateTexture2D("assets/textures/T_WoodDetails_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* woodN = TextureManager::CreateTexture2D("assets/textures/T_WoodDetails_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -168,8 +167,29 @@ int main()
 
     Renderer::SetMainLightSource(light);
 
-    Renderer::GetProceduralGrassCluster().discardTexture = TextureManager::CreateTexture2D("assets/textures/grassBladeAlpha.png", TextureFilterType::Linear, TextureWrapType::ClampToEdge);
-    Renderer::GetProceduralGrassCluster().albedoTexture = TextureManager::CreateTexture2D("assets/textures/grassColor.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+   /* unsigned int numGrassBlades = 50000;
+
+    GrassCluster cluster;
+    cluster.grassData.resize(numGrassBlades);
+    for (int i = 0; i < numGrassBlades; i++)
+    {
+        cluster.grassData[i] = glm::vec4(Utils::RandFloat(300.0f, 470.0f), -40.0f, Utils::RandFloat(-150.0f, 200.0f), glm::radians(Utils::RandFloat(0.0f, 360.0f)));
+    }
+
+    BufferLayout bufferLayout = {
+        { ShaderDataType::Float4, "vWorldPosition" }
+    };
+
+    cluster.VAO = new VertexArrayObject();
+    cluster.VBO = new VertexBuffer(numGrassBlades * sizeof(glm::vec4));
+    cluster.VBO->SetData(cluster.grassData.data(), numGrassBlades * sizeof(glm::vec4));
+    cluster.VBO->SetLayout(bufferLayout);
+    cluster.VAO->AddVertexBuffer(cluster.VBO);
+
+    cluster.dimensions = glm::vec2(0.4f, 1.2f);
+    cluster.discardTexture = TextureManager::CreateTexture2D("assets/textures/grassBladeAlpha.png", TextureFilterType::Linear, TextureWrapType::ClampToEdge);
+    cluster.albedoTexture = TextureManager::CreateTexture2D("assets/textures/grassColor.png", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Renderer::GetGrassClusters().push_back(cluster);*/
 
   /*  {
         DungeonGenerator2D::DungeonGeneratorInfo dInfo;
@@ -209,17 +229,15 @@ int main()
         gameEngine.physicsWorld->AddRigidBody(rb, e);
     }*/
 
-   /* {
-        Entity* e = gameEngine.GetEntityManager().CreateEntity("Door1");
+  /*  {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("GrassGround");
         e->AddComponent<PositionComponent>();
         e->AddComponent<RotationComponent>();
         e->AddComponent<ScaleComponent>(glm::vec3(0.1f));
 
         RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = door1;
-        testInfo.albedoTextures.push_back({ doorColor, 1.0f });
-        testInfo.normalTexture = doorNormal;
-        testInfo.ormTexture = doorORM;
+        testInfo.mesh = cube;
+        testInfo.albedoTextures.push_back({ terrain, 1.0f });
         e->AddComponent<RenderComponent>(testInfo);
     }*/
 
@@ -254,6 +272,19 @@ int main()
                 EntitySerializer(nullptr, gameEngine.GetEntityManager()).Deserialize(childNode);
             }
         }
+
+        const YAML::Node& grass = root["Grass"];
+        if (grass)
+        {
+            YAML::const_iterator it;
+            for (it = grass.begin(); it != grass.end(); it++)
+            {
+                YAML::Node childNode = (*it);
+                GrassCluster g;
+                GrassSerializer(g).Deserialize(childNode);
+                Renderer::GetGrassClusters().push_back(g);
+            }
+        }
     }
 
     for (Entity* e : gameEngine.GetEntityManager().GetEntities())
@@ -261,7 +292,7 @@ int main()
       /*  if (!e->HasComponent<RigidBodyComponent>()) continue;
         gameEngine.physicsWorld->AddRigidBody(e->GetComponent<RigidBodyComponent>()->ptr, e);*/
 
-        if (e->HasComponent<RenderComponent>())
+       /* if (e->HasComponent<RenderComponent>())
         {
             Physics::RigidBodyInfo info;
             info.mass = 0.0f;
@@ -272,10 +303,10 @@ int main()
             rb->GetBulletBody()->setCollisionFlags(btCollisionObject::CollisionFlags::CF_STATIC_OBJECT);
             e->AddComponent<RigidBodyComponent>(rb);
             gameEngine.physicsWorld->AddRigidBody(rb, e);
-        }
+        }*/
     }
 
-    gameEngine.AddLayer(new PlayerController(gameEngine.camera, gameEngine.GetEntityManager(), static_cast<PhysicsWorld*>(gameEngine.physicsWorld)));
+    //gameEngine.AddLayer(new PlayerController(gameEngine.camera, gameEngine.GetEntityManager(), static_cast<PhysicsWorld*>(gameEngine.physicsWorld)));
 
     gameEngine.Run();
 
@@ -283,11 +314,12 @@ int main()
 }
 
 // TODO:
-// Map details
+// Grass
 // Make shadows overall dimmer
 // Day/night cycles
 // Attack animations
 // Fix godrays
+// Map details
 // Maybe Water??
 
 float GetRandom(float low, float high)

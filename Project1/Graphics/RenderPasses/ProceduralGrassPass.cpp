@@ -80,20 +80,8 @@ void ProceduralGrassPass::DoPass(IFrameBuffer* geometryBuffer, GrassCluster& clu
 	// TODO: Normal texture 
 	shader->SetInt("uHasNormalTexture", false);
 
-	if (cluster.roughness && cluster.metalTexture)
-	{
-		shader->SetFloat4("uMaterialOverrides", glm::vec4(0.0f));
-
-		cluster.roughnessTexture->BindToSlot(2);
-		shader->SetInt("uRoughnessTexture", 2);
-
-		cluster.metalTexture->BindToSlot(3);
-		shader->SetInt("uMetalnessTexture", 3);
-	}
-	else
-	{
-		shader->SetFloat4("uMaterialOverrides", glm::vec4(cluster.roughness, cluster.metalness, cluster.ao, 1.0f));
-	}
+	shader->SetFloat4("uMaterialOverrides", glm::vec4(cluster.roughness, cluster.metalness, cluster.ao, 1.0f));
+	
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 

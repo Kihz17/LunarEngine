@@ -14,9 +14,6 @@ struct GrassCluster
 	Texture2D* albedoTexture = nullptr;
 	Texture2D* normalTexture = nullptr;
 
-	Texture2D* roughnessTexture = nullptr;
-	Texture2D* metalTexture = nullptr;
-
 	float roughness = 0.5f;
 	float metalness = 0.01f;
 	float ao = 1.0f;

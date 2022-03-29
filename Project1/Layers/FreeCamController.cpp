@@ -77,6 +77,7 @@ void FreeCamController::OnUpdate(float deltaTime)
     if (InputManager::GetKey(GLFW_KEY_P)->IsJustPressed())
     {
         glm::vec3 dir = camera.front;
+        std::cout << "Pos: " << camera.position.x << " " << camera.position.y << " " << camera.position.z << "\n\n";
         if (glm::abs(dir.x) > glm::abs(dir.y) && glm::abs(dir.x) > glm::abs(dir.z)) // X axis
         {
             std::string s = dir.x < 0 ? "-X" : "X";

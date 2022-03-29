@@ -52,7 +52,7 @@ public:
 	static const Frustum& GetViewFrustum() { return viewFrustum; }
 
 	static TerrainGenerationInfo& GetTerrainInfo() { return terrainInfo; }
-	static GrassCluster& GetProceduralGrassCluster() { return grassCluster; }
+	static std::vector<GrassCluster>& GetGrassClusters() { return grassClusters; }
 
 	static const std::string LIGHTING_SHADER_KEY;
 	static const std::string FORWARD_SHADER_KEY;
@@ -89,11 +89,11 @@ private:
 	static CascadedShadowMapping* shadowMappingPass;
 	static LinePass* linePass;
 	static CloudPass* cloudPass;
-	static ProceduralGrassPass* grassPass;
+	static GrassPass* grassPass;
 	static TerrainPass* terrainPass;
 
 	static TerrainGenerationInfo terrainInfo;
-	static GrassCluster grassCluster;
+	static std::vector<GrassCluster> grassClusters;
 
 	static CubeMap* envMap;
 	static DynamicCubeMapRenderer* dynamicCubeMapGenerator;

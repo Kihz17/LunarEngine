@@ -238,6 +238,7 @@
     <ClCompile Include="Physics\RigidBody.cpp" />
     <ClCompile Include="Serialization\EntityComponentSerializer.cpp" />
     <ClCompile Include="Serialization\EntitySerializer.cpp" />
+    <ClCompile Include="Serialization\GrassSerializer.cpp" />
     <ClCompile Include="Serialization\ISerializer.cpp" />
     <ClCompile Include="Serialization\TextureSerializer.cpp" />
     <ClCompile Include="Sound\DSP.cpp" />
@@ -378,6 +379,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Serialization\EntityComponentSerializer.h" />
     <ClInclude Include="Serialization\EntitySerializer.h" />
+    <ClInclude Include="Serialization\GrassSerializer.h" />
     <ClInclude Include="Serialization\ISerializer.h" />
     <ClInclude Include="Serialization\TextureSerializer.h" />
     <ClInclude Include="Sound\DSP.h" />

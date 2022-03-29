@@ -9,28 +9,13 @@
 class GrassPass
 {
 public:
-	GrassPass(int maxGrassBlades);
+	GrassPass();
 	~GrassPass();
 
-	void DoPass(IFrameBuffer* geometryBuffer, GrassCluster& grassCluster, const glm::vec3& cameraPos, const glm::mat4& proj, const glm::mat4& view);
-
-	void AddGrass(const std::vector<glm::vec4>& v);
+	void DoPass(IFrameBuffer* geometryBuffer, std::vector<GrassCluster>& grassClusters, const glm::vec3& cameraPos, const glm::mat4& proj, const glm::mat4& view);
 
 	static const std::string GRASS_SHADER_KEY;
 
 private:
 	Shader* shader;
-	VertexArrayObject* grassVAO;
-	VertexBuffer* grassVBO;
-
-	int maxGrassBlades;
-	std::vector<glm::vec4> grassPositions;
-
-	float oscillationStrength;
-	float windForceMult;
-	float stiffness;
-	glm::vec2 windDirection;
-
-	Texture2D* grassDiscard;
-	Texture2D* grassColor;
 };

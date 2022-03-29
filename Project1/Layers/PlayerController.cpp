@@ -56,7 +56,7 @@ void PlayerController::OnAttach()
     AnimatedMesh* playerMesh = MeshManager::GetAnimatedMesh("assets/models/Character.FBX");
 
     playerEntity = entityManager.CreateEntity("Player");
-    playerEntity->AddComponent<PositionComponent>(glm::vec3(10.0f, 100.0f, 0.0f));
+    playerEntity->AddComponent<PositionComponent>(glm::vec3(10.0f, 50.0f, 0.0f));
     playerEntity->AddComponent<RotationComponent>(glm::quat(-0.7071, 0.7071f, 0.0f, 0.0f));
     playerEntity->AddComponent<ScaleComponent>(glm::vec3(0.1f));
 
@@ -65,11 +65,12 @@ void PlayerController::OnAttach()
     testInfo.isColorOverride = true;
     testInfo.colorOverride = glm::vec3(0.0f, 0.0f, 0.6f);
     testInfo.faceCullType = FaceCullType::None;
+    testInfo.roughness = 0.9f;
     playerEntity->AddComponent<RenderComponent>(testInfo);
 
     playerEntity->AddComponent<SkeletalAnimationComponent>();
     animComp = playerEntity->GetComponent<SkeletalAnimationComponent>();
-    animComp->lerpSpeed = 8.0f;
+    animComp->lerpSpeed = 5.0f;
     animationStateMachine.animComp = animComp;
     animationStateMachine.SetState(unequipIdle, animIdleSpeed);
     
@@ -77,7 +78,7 @@ void PlayerController::OnAttach()
     t.setOrigin(btVector3(0.0f, 100.0f, 0.0f));
 
     // Setup player controller ghost object
-    btCapsuleShape* capsuleShape = new btCapsuleShape(2.0f, 3.0f);
+    btCapsuleShape* capsuleShape = new btCapsuleShape(1.0f, 3.0f);
     ghostObj = new btPairCachingGhostObject();
     ghostObj->setCollisionShape(capsuleShape);
     ghostObj->setCollisionFlags(btCollisionObject::CollisionFlags::CF_CHARACTER_OBJECT);
@@ -231,4 +232,5 @@ void PlayerController::OnUpdate(float deltaTime)
     glm::vec3 pos = BulletUtils::BulletVec3ToGLM(ghostObj->getWorldTransform().getOrigin());
     camera.position = pos - (camera.front * 40.0f) + glm::vec3(0.0f, 10.0f, 0.0f);
     playerEntity->GetComponent<PositionComponent>()->value = pos;
+    playerEntity->GetComponent<PositionComponent>()->value.y -= 1.0f;
 }

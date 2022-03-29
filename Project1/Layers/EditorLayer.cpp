@@ -5,6 +5,8 @@
 #include "EntitySerializer.h"
 #include "vendor/imgui/imgui.h"
 #include "MeshManager.h"
+#include "Renderer.h"
+#include "GrassSerializer.h"
 
 #include "vendor/imguizmo/imGuIZMOquat.h"
 
@@ -87,6 +89,13 @@ void EditorLayer::OnUpdate(float deltaTime)
 			for (Entity* e : entityManager.GetEntities())
 			{
 				EntitySerializer(e, entityManager).Serialize(out);
+			}
+			out << YAML::EndSeq;
+
+			out << YAML::Key << "Grass" << YAML::Value << YAML::BeginSeq;
+			for (GrassCluster& grass : Renderer::GetGrassClusters())
+			{
+				GrassSerializer(grass).Serialize(out);
 			}
 			out << YAML::EndSeq;
 

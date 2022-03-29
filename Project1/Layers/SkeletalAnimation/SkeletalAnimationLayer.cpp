@@ -40,10 +40,6 @@ void SkeletalAnimationLayer::OnUpdate(float deltaTime)
 			if (animComp->lerpTime >= 1.0f) animComp->lerping = false;
 		}
 	}
-
-	// TODO: Blend between 2 animations changing. The first straight forward (and probably naive approach)
-	// Would be to take the current time in the animation being swapped, and slowly lerp between that point and the beginning of the new animation
-	// NOTE: Ease in and East out would be useful here
 }
 
 void SkeletalAnimationLayer::ComputeBoneTransforms(SkeletalAnimationComponent* anim, const Bone& bone, const glm::mat4& inverseTransform, glm::mat4 parentTransform)

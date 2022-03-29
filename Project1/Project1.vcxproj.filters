@@ -367,6 +367,7 @@
     <ClCompile Include="vendor\imguizmo\imGuIZMOquat.cpp" />
     <ClCompile Include="Layers\PlayerController.cpp" />
     <ClCompile Include="Animation\ASM.cpp" />
+    <ClCompile Include="Serialization\GrassSerializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -752,6 +753,7 @@
     <ClInclude Include="vendor\imguizmo\vgMath.h" />
     <ClInclude Include="Layers\PlayerController.h" />
     <ClInclude Include="Animation\ASM.h" />
+    <ClInclude Include="Serialization\GrassSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl">
