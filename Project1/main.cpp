@@ -65,6 +65,31 @@ int main()
     Mesh* castleWallCorner6m3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX");
     Mesh* castleWall6m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWall6m.FBX");
     Mesh* chimney3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_ChimneyLarge03.FBX");
+    Mesh* barrel1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Barrel01.FBX");
+    Mesh* barrel2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Barrel02.FBX");
+    Mesh* barrel3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Barrel03.FBX");
+    Mesh* barrel4 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Barrel04.FBX");
+    Mesh* woodChunks1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodChunks01.FBX");
+    Mesh* woodChunks2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodChunks02.FBX");
+    Mesh* woodChunks3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodChunks03.FBX");
+    Mesh* woodChunks4 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodChunks04.FBX");
+    Mesh* woodChunks5 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodChunks05.FBX");
+    Mesh* fence1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodFence01.FBX");
+    Mesh* wagon1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Wagon01.FBX");
+    Mesh* wagon2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Wagon02.FBX");
+    Mesh* wagon3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Wagon03.FBX");
+    Mesh* canopy1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Canopy01.FBX");
+    Mesh* canopy2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Canopy02.FBX");
+    Mesh* canopy3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Canopy03.FBX");
+    Mesh* canopy4 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Canopy04.FBX");
+    Mesh* canopy5 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Canopy05.FBX");
+    Mesh* fabric1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Fabric01.FBX");
+    Mesh* fabric2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Fabric02.FBX");
+    Mesh* castleBanner = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Flag01.FBX");
+    Mesh* planks = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Planks.FBX");
+    Mesh* castleWall3m4 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWall3m04.FBX");
+    Mesh* stoneWallSingle = MeshManager::GetMesh("assets/models/FantasyVillage/SM_StoneWallSingle03.FBX");
+    Mesh* door1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Door01.FBX");
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -109,6 +134,14 @@ int main()
     Texture2D* stoneWallColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* stoneWallNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* stoneWalllORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+
+    Texture2D* fabricColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Fabric01_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* fabricNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Fabric01_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* fabricORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Fabric01_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+
+    Texture2D* doorColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* doorNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* doorORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
 
     GameEngine gameEngine(windowSpecs, true);
 
@@ -176,6 +209,19 @@ int main()
         gameEngine.physicsWorld->AddRigidBody(rb, e);
     }*/
 
+   /* {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("Door1");
+        e->AddComponent<PositionComponent>();
+        e->AddComponent<RotationComponent>();
+        e->AddComponent<ScaleComponent>(glm::vec3(0.1f));
+
+        RenderComponent::RenderInfo testInfo;
+        testInfo.mesh = door1;
+        testInfo.albedoTextures.push_back({ doorColor, 1.0f });
+        testInfo.normalTexture = doorNormal;
+        testInfo.ormTexture = doorORM;
+        e->AddComponent<RenderComponent>(testInfo);
+    }*/
 
     // Set env map
     {
@@ -214,6 +260,7 @@ int main()
     {
       /*  if (!e->HasComponent<RigidBodyComponent>()) continue;
         gameEngine.physicsWorld->AddRigidBody(e->GetComponent<RigidBodyComponent>()->ptr, e);*/
+
         if (e->HasComponent<RenderComponent>())
         {
             Physics::RigidBodyInfo info;
@@ -236,8 +283,10 @@ int main()
 }
 
 // TODO:
+// Map details
 // Make shadows overall dimmer
 // Day/night cycles
+// Attack animations
 // Fix godrays
 // Maybe Water??
 

@@ -17,7 +17,8 @@ public:
 		lastTime(0.0f),
 		speed(1.0f),
 		repeat(true),
-		switched(false)
+		lerping(false),
+		lerpSpeed(5.0f)
 	{
 		boneMatrices.reserve(Animation::MAX_BONES); // It's likely that the amount of bones is generally high, might as well avoid some re-allocations
 
@@ -31,10 +32,11 @@ public:
 		lastAnim = anim;
 		anim = animation;
 
-		if (lerp) // We want to interpolate between the 2 animations
+		if (lerp && lastAnim) // We want to interpolate between the 2 animations
 		{
-			lastTime = 0.0f;
-			switched = true;
+			lastTime = currentTime;
+			lerping = true;
+			lerpTime = 0.0f;
 		}
 
 		currentTime = 0.0f;
@@ -42,6 +44,7 @@ public:
 
 	float speed;
 	bool repeat;
+	float lerpSpeed;
 
 private:
 	friend class SkeletalAnimationLayer;
@@ -52,5 +55,7 @@ private:
 	float currentTime;
 	float lastTime;
 	std::vector<glm::mat4> boneMatrices;
-	bool switched;
+
+	float lerpTime;
+	bool lerping;
 };

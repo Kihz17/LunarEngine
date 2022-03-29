@@ -99,8 +99,6 @@ void GeometryPass::DoPass(std::vector<RenderSubmission>& submissions, std::vecto
 {
 	glDisable(GL_BLEND); // No blend for deffered rendering
 	glEnable(GL_DEPTH_TEST); // Enable depth testing for scene render
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
 	glEnable(GL_MULTISAMPLE); // AA
 
 	geometryBuffer->Bind();
@@ -117,6 +115,16 @@ void GeometryPass::DoPass(std::vector<RenderSubmission>& submissions, std::vecto
 	{
 		RenderComponent* renderComponent = submission.renderComponent;
 
+		if (renderComponent->faceCullType == FaceCullType::None)
+		{
+			glDisable(GL_CULL_FACE);
+		}
+		else
+		{
+			glEnable(GL_CULL_FACE);
+			glCullFace(renderComponent->faceCullType == FaceCullType::Front ? GL_FRONT : GL_BACK);
+		}
+		
 		PassSharedData(shader, submission, projection, view);
 
 		renderComponent->Draw(shader, submission.transform);
@@ -132,6 +140,16 @@ void GeometryPass::DoPass(std::vector<RenderSubmission>& submissions, std::vecto
 	for (RenderSubmission& submission : animatedSubmissions)
 	{
 		RenderComponent* renderComponent = submission.renderComponent;
+
+		if (renderComponent->faceCullType == FaceCullType::None)
+		{
+			glDisable(GL_CULL_FACE);
+		}
+		else
+		{
+			glEnable(GL_CULL_FACE);
+			glCullFace(renderComponent->faceCullType == FaceCullType::Front ? GL_FRONT : GL_BACK);
+		}
 
 		PassSharedData(animatedShader, submission, projection, view);
 

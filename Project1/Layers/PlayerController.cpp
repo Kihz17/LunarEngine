@@ -6,8 +6,8 @@
 #include <glm/gtx/vector_angle.hpp>
 #include <iostream>
 
-constexpr float walkSpeed = 0.1f;
-constexpr float runSpeed = 0.35f;
+constexpr float walkSpeed = 0.15f;
+constexpr float runSpeed = 0.4f;
 
 constexpr float animIdleSpeed = 15.0f;
 constexpr float animWalkSpeed = 15.0f;
@@ -15,6 +15,7 @@ constexpr float animSprintSpeed = 17.0f;
 constexpr float animEquipSpeed = 19.0f;
 constexpr float animJumpSpeed = 20.0f;
 
+constexpr float turnSpeed = 10.0f;
 constexpr float equipTime = 3.0f;
 
 PlayerController::PlayerController(Camera& camera, EntityManager& entityManager, PhysicsWorld* physicsWorld)
@@ -63,10 +64,12 @@ void PlayerController::OnAttach()
     testInfo.mesh = playerMesh;
     testInfo.isColorOverride = true;
     testInfo.colorOverride = glm::vec3(0.0f, 0.0f, 0.6f);
+    testInfo.faceCullType = FaceCullType::None;
     playerEntity->AddComponent<RenderComponent>(testInfo);
 
     playerEntity->AddComponent<SkeletalAnimationComponent>();
     animComp = playerEntity->GetComponent<SkeletalAnimationComponent>();
+    animComp->lerpSpeed = 8.0f;
     animationStateMachine.animComp = animComp;
     animationStateMachine.SetState(unequipIdle, animIdleSpeed);
     
@@ -139,7 +142,7 @@ void PlayerController::OnUpdate(float deltaTime)
     {
         glm::quat rot = glm::quatLookAt(-cameraDir, glm::vec3(0.0f, 1.0f, 0.0f));
         rot = glm::rotate(rot, -glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        playerEntity->GetComponent<RotationComponent>()->value = rot;
+        playerEntity->GetComponent<RotationComponent>()->value = glm::slerp(playerEntity->GetComponent<RotationComponent>()->value, rot, 10.0f * deltaTime);
 
         if (!animLocked)
         {
@@ -190,8 +193,6 @@ void PlayerController::OnUpdate(float deltaTime)
                         animationStateMachine.SetState(sprinting ? equipRunBL : equipWalkBL, speed);
                     }
                 }
-
-                std::cout << "Dot: " << dot << "\n";
             }
             else // Play idle
             {
@@ -206,7 +207,7 @@ void PlayerController::OnUpdate(float deltaTime)
         {
             glm::quat rot = glm::quatLookAt(-glm::normalize(vel), glm::vec3(0.0f, 1.0f, 0.0f));
             rot = glm::rotate(rot, -glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-            playerEntity->GetComponent<RotationComponent>()->value = rot;
+            playerEntity->GetComponent<RotationComponent>()->value = glm::slerp(playerEntity->GetComponent<RotationComponent>()->value, rot, 10.0f * deltaTime);
 
             if (sprinting)
             {

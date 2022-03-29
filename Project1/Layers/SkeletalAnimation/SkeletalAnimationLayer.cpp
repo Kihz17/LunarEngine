@@ -2,6 +2,8 @@
 #include "Animation.h"
 #include "AnimatedMesh.h"
 
+#include <glm/gtx/matrix_interpolation.hpp>
+
 #include <iostream>
 
 SkeletalAnimationLayer::SkeletalAnimationLayer()
@@ -31,6 +33,12 @@ void SkeletalAnimationLayer::OnUpdate(float deltaTime)
 		animComp->currentTime = fmod(animComp->currentTime, animation->GetDuration());
 
 		ComputeBoneTransforms(animComp, mesh->GetRootBone(), mesh->GetInverseTransform(), glm::mat4(1.0f));
+
+		if (animComp->lerping)
+		{
+			animComp->lerpTime += animComp->lerpSpeed * deltaTime;
+			if (animComp->lerpTime >= 1.0f) animComp->lerping = false;
+		}
 	}
 
 	// TODO: Blend between 2 animations changing. The first straight forward (and probably naive approach)
@@ -48,6 +56,20 @@ void SkeletalAnimationLayer::ComputeBoneTransforms(SkeletalAnimationComponent* a
  	animation->GetFrameData(bone.name, anim->currentTime, position, rotation, scale);
 
 	glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), scale);
+
+	if (anim->lerping)
+	{
+		glm::vec3 lastPosition;
+		glm::quat lastRotation;
+		glm::vec3 lastScale;
+		anim->lastAnim->GetFrameData(bone.name, anim->lastTime, lastPosition, lastRotation, lastScale);
+
+		glm::quat rot = glm::slerp(lastRotation, rotation, anim->lerpTime);
+		glm::vec3 pos = glm::mix(lastPosition, position, anim->lerpTime);
+		glm::vec3 sc = glm::mix(lastScale, scale, anim->lerpTime);
+
+		transform = glm::translate(glm::mat4(1.0f), pos) * glm::toMat4(rot) * glm::scale(glm::mat4(1.0f), sc);
+	}
 
 	glm::mat4 globalTransform = parentTransform * transform;
 

@@ -134,6 +134,15 @@ void EntityComponentSerializer::Deserialize(const YAML::Node& node)
 		renderInfo.reflectRefractData = rrData;
 		renderInfo.reflectRefractMapPriority = (ReflectRefractMapPriorityType) node["ReflectRefractPriorityType"].as<int>();
 
+		if (node["FaceCullType"])
+		{
+			renderInfo.faceCullType = (FaceCullType)node["FaceCullType"].as<int>();
+		}
+		else
+		{
+			renderInfo.faceCullType = FaceCullType::Back;
+		}
+
 		entity->AddComponent<RenderComponent>(renderInfo);
 	}
 	else if (componentType == "Rigid")
@@ -252,6 +261,7 @@ void EntityComponentSerializer::SaveRenderComponent(YAML::Emitter& emitter, Rend
 	emitter << YAML::Key << "ReflectRefractStrength" << YAML::Value << renderComp->reflectRefractData.strength;
 	emitter << YAML::Key << "RefractRatio" << YAML::Value << renderComp->reflectRefractData.refractRatio;
 	emitter << YAML::Key << "ReflectRefractPriorityType" << YAML::Value << (int)renderComp->reflectRefractMapPriority;
+	emitter << YAML::Key << "FaceCullType" << YAML::Value << (int)renderComp->faceCullType;
 }
 
 void EntityComponentSerializer::SaveRigidComponent(YAML::Emitter& emitter, RigidBodyComponent* rigidComp)

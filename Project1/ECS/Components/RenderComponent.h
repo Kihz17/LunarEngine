@@ -8,6 +8,13 @@
 
 #include <glm/glm.hpp>
 
+enum class FaceCullType
+{
+	None,
+	Back, 
+	Front
+};
+
 struct RenderComponent : public Component
 {
 	struct RenderInfo
@@ -43,6 +50,8 @@ struct RenderComponent : public Component
 		float reflectRefractStrength = 0.0f;
 		float refractRatio = 0.0f;
 		ReflectRefractMapPriorityType reflectRefractMapPriority = ReflectRefractMapPriorityType::High;
+
+		FaceCullType faceCullType = FaceCullType::Back;
 	};
 
 	RenderComponent()
@@ -64,7 +73,8 @@ struct RenderComponent : public Component
 		castShadowsOn(true),
 		surfaceShadowSoftness(1.0f),
 		castingShadownSoftness(0.75f),
-		reflectRefractMapPriority(ReflectRefractMapPriorityType::High)
+		reflectRefractMapPriority(ReflectRefractMapPriorityType::High),
+		faceCullType(FaceCullType::Back)
 	{}
 
 	RenderComponent(const RenderInfo& renderInfo)
@@ -88,7 +98,8 @@ struct RenderComponent : public Component
 		surfaceShadowSoftness(renderInfo.surfaceShadowSoftness),
 		castingShadownSoftness(renderInfo.castingShadownSoftness),
 		reflectRefractData(renderInfo.reflectRefractType, renderInfo.reflectRefractMapType, renderInfo.reflectRefractCustomMap, renderInfo.reflectRefractStrength, renderInfo.refractRatio),
-		reflectRefractMapPriority(renderInfo.reflectRefractMapPriority)
+		reflectRefractMapPriority(renderInfo.reflectRefractMapPriority),
+		faceCullType(renderInfo.faceCullType)
 	{}
 
 	bool HasMaterialTextures() const
@@ -150,4 +161,6 @@ struct RenderComponent : public Component
 
 	ReflectRefractData reflectRefractData;
 	ReflectRefractMapPriorityType reflectRefractMapPriority;
+
+	FaceCullType faceCullType;
 };
