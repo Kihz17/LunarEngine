@@ -47,6 +47,11 @@ LightingPass::LightingPass(const WindowSpecs* windowSpecs, ITexture* shadowMaps,
 			ss << "uLightArray[" << i << "].param1";
 			shader->InitializeUniform(ss.str());
 		}
+		{
+			std::stringstream ss;
+			ss << "uLightArray[" << i << "].castShadows";
+			shader->InitializeUniform(ss.str());
+		}
 	}
 
 	shader->InitializeUniform("uEnvMap");

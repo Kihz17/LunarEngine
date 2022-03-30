@@ -6,8 +6,9 @@
 #include <glm/gtx/vector_angle.hpp>
 #include <iostream>
 
-constexpr float walkSpeed = 0.15f;
+constexpr float walkSpeed = 0.1f;
 constexpr float runSpeed = 0.4f;
+constexpr float equipRunSpeed = 0.3f;
 
 constexpr float animIdleSpeed = 15.0f;
 constexpr float animWalkSpeed = 15.0f;
@@ -105,30 +106,57 @@ void PlayerController::OnUpdate(float deltaTime)
         equipped = !equipped;
     }
 
+    bool movingFront = false;
+    bool movingBack = false;
+    bool movingSideways = false;
     if (animationStateMachine.CanMove())
     {
         if (InputManager::GetKey(GLFW_KEY_W)->IsPressed())
         {
             vel += cameraDir;
+            movingFront = true;
         }
         else if (InputManager::GetKey(GLFW_KEY_S)->IsPressed())
         {
             vel += -cameraDir;
+            movingBack = true;
         }
 
         if (InputManager::GetKey(GLFW_KEY_A)->IsPressed())
         {
             vel -= glm::normalize(glm::cross(cameraDir, glm::vec3(0.0f, 1.0f, 0.0f)));
+            movingSideways = true;
         }
         else if (InputManager::GetKey(GLFW_KEY_D)->IsPressed())
         {
             vel += glm::normalize(glm::cross(cameraDir, glm::vec3(0.0f, 1.0f, 0.0f)));
+            movingSideways = true;
         }
     }
     
     bool moving = vel != glm::vec3(0.0f);
     bool sprinting = moving && InputManager::GetKey(GLFW_KEY_LEFT_SHIFT)->IsPressed();
-    float speedMult = sprinting ? runSpeed : walkSpeed;
+
+    float speedMult = 1.0f;
+    if (sprinting)
+    {
+        if (equipped)
+        {
+            speedMult = equipRunSpeed;
+            if (movingBack || (movingSideways && !movingFront))
+            {
+                speedMult *= 0.5f;
+            }
+        }
+        else
+        {
+            speedMult = runSpeed;
+        }
+    }
+    else
+    {
+        speedMult = walkSpeed;
+    }
 
     if(moving) vel = glm::normalize(vel) * speedMult;
 

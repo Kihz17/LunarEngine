@@ -46,6 +46,7 @@ struct LightInfo
 	vec3 direction;
 	vec4 color; // a = intensity
 	vec4 param1; // x = light type, y = radius, z = on/off, w = attenuationMode (0 = quadratic, 1 = UE4 style)
+	bool castShadows;
 };
 
 // LIGHT TYPES
@@ -167,7 +168,7 @@ void main()
 				kD *= 1.0f - metalness;
 				
 				float shadowContrib = 0.0f;
-				if(canCastShadowOn)
+				if(light.castShadows && canCastShadowOn)
 				{
 					shadowContrib = ComputeShadow(worldPos, light.direction, normal) * shadowSoftness;
 				}

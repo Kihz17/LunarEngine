@@ -34,7 +34,7 @@ CloudPass::CloudPass(float earthRadius, float innerRadius, float outerRadius, fl
 	postDepthAttachment(TextureManager::CreateTexture2D(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_FLOAT, windowSpecs->width, windowSpecs->height, TextureFilterType::Linear, TextureWrapType::None, false)),
 	postColorAttachment(TextureManager::CreateTexture2D(GL_RGBA32F, GL_RGBA, GL_FLOAT, windowSpecs->width, windowSpecs->height, TextureFilterType::Linear, TextureWrapType::None)),
 	coverage(0.45f),
-	cloudSpeed(earthRadius / 2000.0f),
+	cloudSpeed(earthRadius / 1000.0f),
 	crispiness(40.0f),
 	detail(0.1f),
 	density(0.02f),

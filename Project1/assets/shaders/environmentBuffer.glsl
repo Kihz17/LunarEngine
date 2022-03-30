@@ -27,7 +27,10 @@ layout (location = 0) out vec4 oColor;
 
 in vec3 mWorldPosition;
 
-uniform samplerCube uEnvMap;
+uniform samplerCube uEnvMap1;
+uniform samplerCube uEnvMap2;
+
+uniform vec4 uMixFactors;
 
 uniform mat4 uInvProj;
 uniform mat4 uInvView;
@@ -40,8 +43,11 @@ vec3 ComputeClipSpaceCoord(ivec2 fragCoord);
 void main()
 {
 	ivec2 fragCoord = ivec2(gl_FragCoord.xy);
-	vec3 envColor = textureLod(uEnvMap, mWorldPosition, 0.0).rgb;
-	
+	vec3 envColor1 = textureLod(uEnvMap1, mWorldPosition, 0.0f).rgb;
+	vec3 envColor2 = textureLod(uEnvMap2, mWorldPosition, 0.0f).rgb;
+
+	vec3 envColor = mix(envColor1, envColor2, uMixFactors.x);
+
 	if(uLightDirection.w == 1.0f) // Create sun
 	{
 		// Create ray

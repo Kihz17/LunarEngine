@@ -16,7 +16,7 @@ public:
 	EnvironmentMapPass(const WindowSpecs* windowSpecs);
 	virtual ~EnvironmentMapPass();
 
-	void DoPass(CubeMap* cubeMap, const glm::mat4& projection, const glm::mat4& view, bool sun, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& uLightColor, PrimitiveShape* cube);
+	void DoPass(CubeMap* cubeMap1, CubeMap* cubeMap2, const glm::vec4& mixFactors, const glm::mat4& projection, const glm::mat4& view, bool sun, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& uLightColor, PrimitiveShape* cube);
 
 	IFrameBuffer* GetEnvironmentBuffer() { return environmentBuffer; }
 	ITexture* GetEnvironmentTexture() { return envMapTexture; }

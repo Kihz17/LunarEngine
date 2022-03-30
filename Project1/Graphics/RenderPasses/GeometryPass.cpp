@@ -248,7 +248,7 @@ void GeometryPass::PassSharedData(Shader* shader, RenderSubmission& submission, 
 	{
 		if (rrData.mapType == ReflectRefractMapType::Environment)
 		{
-			Renderer::GetEnvironmentMap()->BindToSlot(8);
+			Renderer::envMap1->BindToSlot(8);
 		}
 		else
 		{

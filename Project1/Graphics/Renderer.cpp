@@ -47,7 +47,9 @@ TerrainPass* Renderer::terrainPass = nullptr;
 TerrainGenerationInfo Renderer::terrainInfo;
 std::vector<GrassCluster> Renderer::grassClusters;
 
-CubeMap* Renderer::envMap = nullptr;
+CubeMap* Renderer::envMap1 = nullptr;
+CubeMap* Renderer::envMap2 = nullptr;
+glm::vec4 Renderer::environmentMixFactors = glm::vec4(0.0f);
 DynamicCubeMapRenderer* Renderer::dynamicCubeMapGenerator = nullptr;
 
 const std::string Renderer::LIGHTING_SHADER_KEY = "lShader";
@@ -88,25 +90,6 @@ void Renderer::Initialize(const Camera& camera, WindowSpecs* window)
 	dynamicCubeMapGenerator = new DynamicCubeMapRenderer(windowDetails);
 
 	EquirectangularToCubeMapConverter::Initialize();
-
-	// Create grass blades
-	/*unsigned int numGrassBlades = 3000000;
-	grassCluster.grassData.resize(numGrassBlades);
-	for (int i = 0; i < numGrassBlades; i++)
-	{
-		grassCluster.grassData[i] = glm::vec4(Utils::RandFloat(-300.0f, 300.0f), 0.0f, Utils::RandFloat(-300.0f, 300.0f), glm::radians(Utils::RandFloat(0.0f, 360.0f)));
-	}
-
-
-	BufferLayout bufferLayout = {
-		{ ShaderDataType::Float4, "vWorldPosition" }
-	};
-
-	grassCluster.VAO = new VertexArrayObject();
-	grassCluster.VBO = new VertexBuffer(numGrassBlades * sizeof(glm::vec4));
-	grassCluster.VBO->SetData(grassCluster.grassData.data(), numGrassBlades * sizeof(glm::vec4));
-	grassCluster.VBO->SetLayout(bufferLayout);
-	grassCluster.VAO->AddVertexBuffer(grassCluster.VBO);*/
 }
 
 void Renderer::CleanUp()
@@ -188,13 +171,13 @@ void Renderer::DrawFrame()
 	grassPass->DoPass(geometryPass->GetGBuffer(), grassClusters, cameraPos, projection, view);
 	Profiler::EndProfile("GrassPass");
 
-	if (envMap) // Only do env map pass if we have one
+	if (envMap1) // Only do env map pass if we have one
 	{
 		glm::vec3 lightDir = mainLight ? mainLight->direction : glm::vec3(0.0f, 0.0f, 0.0f);
 		glm::vec3 lightColor = mainLight ? mainLight->color : glm::vec3(0.0f, 0.0f, 0.0f);
 
 		Profiler::BeginProfile("EnvMapPass");
-		envMapPass->DoPass(envMap, projection, view, mainLight, cameraPos, glm::normalize(lightDir), lightColor, cube);
+		envMapPass->DoPass(envMap1, envMap2, environmentMixFactors, projection, view, mainLight, cameraPos, glm::normalize(lightDir), lightColor, cube);
 		Profiler::EndProfile("EnvMapPass");
 	}
 

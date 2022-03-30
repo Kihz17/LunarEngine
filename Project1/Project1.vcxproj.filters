@@ -368,6 +368,7 @@
     <ClCompile Include="Layers\PlayerController.cpp" />
     <ClCompile Include="Animation\ASM.cpp" />
     <ClCompile Include="Serialization\GrassSerializer.cpp" />
+    <ClCompile Include="Layers\DayNightCycle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -754,6 +755,7 @@
     <ClInclude Include="Layers\PlayerController.h" />
     <ClInclude Include="Animation\ASM.h" />
     <ClInclude Include="Serialization\GrassSerializer.h" />
+    <ClInclude Include="Layers\DayNightCycle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl">

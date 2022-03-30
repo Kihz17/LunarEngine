@@ -38,23 +38,6 @@ public:
 
 	bool enableGodRays;
 
-private:
-	void GenerateTextures(const glm::ivec3& perlinWorleyDimensions, const glm::ivec3& worleyDimensions, const glm::ivec2& weatherDimensions);
-
-	ComputeShader* cloudShader;
-	ComputeShader* weatherShader;
-	ComputeShader* perlinWorleyShader;
-	ComputeShader* worleyShader;
-
-	// Written to by compute shader
-	Texture2D* colorTexture;
-	Texture2D* bloomTexture;
-
-	Shader* postShader;
-	IFrameBuffer* postFramebuffer;
-	Texture2D* postDepthAttachment;
-	Texture2D* postColorAttachment;
-
 	float coverage;
 	float cloudSpeed;
 	float crispiness;
@@ -77,4 +60,21 @@ private:
 
 	glm::vec3 cloudColorTop;
 	glm::vec3 cloudColorBottom;
+
+private:
+	void GenerateTextures(const glm::ivec3& perlinWorleyDimensions, const glm::ivec3& worleyDimensions, const glm::ivec2& weatherDimensions);
+
+	ComputeShader* cloudShader;
+	ComputeShader* weatherShader;
+	ComputeShader* perlinWorleyShader;
+	ComputeShader* worleyShader;
+
+	// Written to by compute shader
+	Texture2D* colorTexture;
+	Texture2D* bloomTexture;
+
+	Shader* postShader;
+	IFrameBuffer* postFramebuffer;
+	Texture2D* postDepthAttachment;
+	Texture2D* postColorAttachment;
 };

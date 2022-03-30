@@ -32,9 +32,9 @@ ForwardRenderPass::ForwardRenderPass(IFrameBuffer* geometryBuffer)
 	shader->SetInt("uAlbedoTexture3", 2);
 	shader->SetInt("uAlbedoTexture4", 3);
 	shader->SetInt("uNormalTexture", 4);
-	shader->SetInt("uRoughnessTexture", 5);
-	shader->SetInt("uMetalnessTexture", 6);
-	shader->SetInt("uAmbientOcculsionTexture", 7);
+	//shader->SetInt("uRoughnessTexture", 5);
+	//shader->SetInt("uMetalnessTexture", 6);
+	//shader->SetInt("uAmbientOcculsionTexture", 7);
 	shader->InitializeUniform("uLightAmount");
 
 	for (int i = 0; i < Light::MAX_LIGHTS; i++)

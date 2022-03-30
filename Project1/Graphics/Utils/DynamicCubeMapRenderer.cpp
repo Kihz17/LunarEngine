@@ -157,7 +157,7 @@ CubeMap* DynamicCubeMapRenderer::GenerateDynamicCubeMap(const glm::vec3& center,
 		cubeMapFrameBuffer->AddColorAttachmentCubeMapFace("cubeFace", cubeMap, 0, (CubeMapFace)cubeMapIndex);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		Renderer::GetEnvironmentMap()->BindToSlot(0);
+		Renderer::envMap1->BindToSlot(0);
 		conversionShader->SetInt("uEnvMap", 0);
 
 		frameBuffer->GetColorAttachment("environment")->BindToSlot(1);

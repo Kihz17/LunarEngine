@@ -44,9 +44,7 @@ public:
 
 	static CubeMap* GenerateDynamicCubeMap(const glm::vec3& center, ReflectRefractMapPriorityType meshPriority, RenderComponent* ignore, int viewportWidth = windowDetails->width, int viewportHeight = windowDetails->height);
 
-	static void SetEnvironmentMap(CubeMap* cm) { envMap = cm; }
-	static CubeMap* GetEnvironmentMap() { return envMap; }
-
+	static Light* GetMainLightSource() { return mainLight; }
 	static void SetMainLightSource(Light* light) { mainLight = light; };
 
 	static const Frustum& GetViewFrustum() { return viewFrustum; }
@@ -54,11 +52,17 @@ public:
 	static TerrainGenerationInfo& GetTerrainInfo() { return terrainInfo; }
 	static std::vector<GrassCluster>& GetGrassClusters() { return grassClusters; }
 
+	static CloudPass* GetCloudPass() { return cloudPass; }
+
 	static const std::string LIGHTING_SHADER_KEY;
 	static const std::string FORWARD_SHADER_KEY;
 
 	static PrimitiveShape* quad;
 	static PrimitiveShape* cube;
+
+	static CubeMap* envMap1;
+	static CubeMap* envMap2;
+	static glm::vec4 environmentMixFactors;
 
 private:
 	friend class GameEngine;
@@ -95,7 +99,6 @@ private:
 	static TerrainGenerationInfo terrainInfo;
 	static std::vector<GrassCluster> grassClusters;
 
-	static CubeMap* envMap;
 	static DynamicCubeMapRenderer* dynamicCubeMapGenerator;
 
 	static Light* mainLight;

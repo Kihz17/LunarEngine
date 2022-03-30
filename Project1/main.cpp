@@ -26,6 +26,7 @@
 #include "EntitySerializer.h"
 #include "PlayerController.h"
 #include "GrassSerializer.h"
+#include "DayNightCycle.h"
 
 #include <fstream>
 #include <sstream>
@@ -159,6 +160,7 @@ int main()
     LightInfo lightInfo;
     lightInfo.postion = glm::vec3(0.0f, 45.0f, 0.0f);
     lightInfo.intensity = 10.0f;
+    lightInfo.castShadows = true;
     Light* light = new Light(lightInfo);
     light->UpdateLightType(LightType::Directional);
     light->UpdateDirection(glm::vec3(0.0f, -0.6f, -0.4f));
@@ -251,7 +253,7 @@ int main()
         paths.push_back("assets/textures/simpleSky.png");
         paths.push_back("assets/textures/simpleSky.png");
         CubeMap* envMap = TextureManager::CreateCubeMap(paths, TextureFilterType::Linear, TextureWrapType::Repeat, true, false);
-        Renderer::SetEnvironmentMap(envMap);
+        Renderer::envMap1 = envMap;
     }
 
     gameEngine.AddLayer(new EditorLayer(gameEngine.GetEntityManager(), gameEngine.physicsWorld));
@@ -292,7 +294,7 @@ int main()
       /*  if (!e->HasComponent<RigidBodyComponent>()) continue;
         gameEngine.physicsWorld->AddRigidBody(e->GetComponent<RigidBodyComponent>()->ptr, e);*/
 
-       /* if (e->HasComponent<RenderComponent>())
+        if (e->HasComponent<RenderComponent>())
         {
             Physics::RigidBodyInfo info;
             info.mass = 0.0f;
@@ -303,21 +305,21 @@ int main()
             rb->GetBulletBody()->setCollisionFlags(btCollisionObject::CollisionFlags::CF_STATIC_OBJECT);
             e->AddComponent<RigidBodyComponent>(rb);
             gameEngine.physicsWorld->AddRigidBody(rb, e);
-        }*/
+        }
     }
 
-    //gameEngine.AddLayer(new PlayerController(gameEngine.camera, gameEngine.GetEntityManager(), static_cast<PhysicsWorld*>(gameEngine.physicsWorld)));
-
+    gameEngine.AddLayer(new PlayerController(gameEngine.camera, gameEngine.GetEntityManager(), static_cast<PhysicsWorld*>(gameEngine.physicsWorld)));
+    gameEngine.AddLayer(new DayNightCycle());
     gameEngine.Run();
 
     return 0;
 }
 
 // TODO:
-// Grass
 // Make shadows overall dimmer
 // Day/night cycles
 // Attack animations
+// Place point light laterns around (only active during night)
 // Fix godrays
 // Map details
 // Maybe Water??

@@ -8,6 +8,10 @@ Entities:
     ID: 0
     Components:
       []
+  - Name: lightTest
+    ID: 0
+    Components:
+      []
   - Name: GrassGround
     ID: 1
     Components:
@@ -35,7 +39,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -81,7 +85,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -123,7 +127,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -169,7 +173,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -211,7 +215,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -253,7 +257,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -295,7 +299,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -341,7 +345,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -383,7 +387,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -425,7 +429,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -467,7 +471,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -509,7 +513,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -551,7 +555,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -597,7 +601,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -639,7 +643,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -681,7 +685,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -723,7 +727,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -765,7 +769,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -807,7 +811,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -853,7 +857,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -895,7 +899,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -937,7 +941,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -983,7 +987,7 @@ Entities:
         CastShadows: false
         CastShadowsOn: false
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -1025,7 +1029,7 @@ Entities:
         CastShadows: false
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -1067,7 +1071,7 @@ Entities:
         CastShadows: false
         CastShadowsOn: false
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -1109,7 +1113,7 @@ Entities:
         CastShadows: false
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -1151,7 +1155,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -1193,7 +1197,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -1235,7 +1239,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -1277,7 +1281,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0
@@ -1319,7 +1323,7 @@ Entities:
         CastShadows: true
         CastShadowsOn: true
         SurfaceShadowSoftness: 1
-        CastingShadowSoftness: 0.899999976
+        CastingShadowSoftness: 0.699999988
         ReflectRefractType: 0
         ReflectRefractMapType: 0
         ReflectRefractStrength: 0

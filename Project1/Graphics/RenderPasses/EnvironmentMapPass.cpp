@@ -20,16 +20,20 @@ EnvironmentMapPass::EnvironmentMapPass(const WindowSpecs* windowSpecs)
 	environmentBuffer->Unbind();
 
 	// Setup shader uniforms
-	shader->Bind();
 	shader->InitializeUniform("uProjection");
 	shader->InitializeUniform("uView");
-	shader->InitializeUniform("uEnvMap");
+	shader->InitializeUniform("uEnvMap1");
+	shader->InitializeUniform("uEnvMap2");
 	shader->InitializeUniform("uResolution");
 	shader->InitializeUniform("uLightDirection");
 	shader->InitializeUniform("uLightColor");
 	shader->InitializeUniform("uInvProj");
 	shader->InitializeUniform("uInvView");
-	shader->SetInt("uEnvMap", 0);
+	shader->InitializeUniform("uMixFactors");
+
+	shader->Bind();
+	shader->SetInt("uEnvMap1", 0);
+	shader->SetInt("uEnvMap2", 1);
 	shader->Unbind();
 }
 
@@ -38,7 +42,7 @@ EnvironmentMapPass::~EnvironmentMapPass()
 	delete environmentBuffer;
 }
 
-void EnvironmentMapPass::DoPass(CubeMap* cubeMap, const glm::mat4& projection, const glm::mat4& view, bool sun, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& lightColor, PrimitiveShape* cube)
+void EnvironmentMapPass::DoPass(CubeMap* cubeMap1, CubeMap* cubeMap2, const glm::vec4& mixFactors, const glm::mat4& projection, const glm::mat4& view, bool sun, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& lightColor, PrimitiveShape* cube)
 {
 	glDisable(GL_CULL_FACE); // Make sure none of our cubes faces get culled
 
@@ -65,8 +69,17 @@ void EnvironmentMapPass::DoPass(CubeMap* cubeMap, const glm::mat4& projection, c
 		shader->SetFloat4("uLightDirection", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 	}
 	
-	cubeMap->BindToSlot(0);
-	shader->SetInt("uEnvMap", 0);
+	shader->SetFloat4("uMixFactors", mixFactors);
+
+	cubeMap1->BindToSlot(0);
+	shader->SetInt("uEnvMap1", 0);
+
+	if (cubeMap2)
+	{
+		cubeMap2->BindToSlot(1);
+	}
+
+	shader->SetInt("uEnvMap2", 1);
 
 	cube->Draw();
 

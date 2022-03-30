@@ -30,7 +30,8 @@ struct LightInfo
 		radius(100.0f),
 		attenMode(AttenuationMode::Linear),
 		on(true),
-		intensity(20.0f)
+		intensity(20.0f),
+		castShadows(false)
 	{}
 
 	glm::vec3 postion;
@@ -41,6 +42,7 @@ struct LightInfo
 	float radius;
 	AttenuationMode attenMode;
 	bool on;
+	bool castShadows;
 };
 
 class Light
@@ -57,6 +59,7 @@ public:
 	void UpdateOn(bool on);
 	void UpdateAttenuationMode(AttenuationMode attenMode);
 	void UpdateLightType(LightType lightType);
+	void UpdateCastShadows(bool castShadows);
 	void SendToShader() const;
 
 	const glm::vec3& GetPosition() const { return position; }
@@ -78,6 +81,7 @@ public:
 	std::string directionLoc;
 	std::string colorLoc;
 	std::string param1Loc;
+	std::string castShadowsLoc;
 
 	glm::vec3 position;
 	glm::vec3 direction;
@@ -87,6 +91,7 @@ public:
 	bool on;
 	AttenuationMode attenuationMode;
 	LightType lightType;
+	bool castShadows;
 
 	static int currentLightIndex;
 	static std::vector<int> removedLights;
