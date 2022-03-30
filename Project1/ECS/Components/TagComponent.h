@@ -5,17 +5,29 @@
 #include <string>
 #include <unordered_map>
 
+enum class TagValueType
+{
+	Int,
+	Float,
+	Bool
+};
+
 struct ITagValue
 {
 	virtual ~ITagValue() = default;
+
+	virtual TagValueType GetType() const = 0;
 };
 
 template<typename T>
 struct TagValue : public ITagValue
 {
-	TagValue(T value) : value(value) {}
+	TagValue(T value, TagValueType type) : value(value), type(type) {}
+
+	virtual TagValueType GetType() const override { return type; }
 
 	T value;
+	TagValueType type;
 };
 
 struct TagComponent : public Component
@@ -30,8 +42,10 @@ struct TagComponent : public Component
 		}
 	}
 
-	void AddTag(const std::string& tag) { AddTag(tag, new TagValue<bool>(true)); }
-	template <typename T> void AddTag(const std::string& tag, TagValue<T>* value) { tags.insert({ tag, value }); }
+	void AddTag(const std::string& tag) { tags.insert({ tag, new TagValue<bool>(true, TagValueType::Bool) }); }
+	void AddTagFloat(const std::string& tag, float value) { tags.insert({ tag, new TagValue<float>(value, TagValueType::Float) }); }
+	void AddTagInt(const std::string& tag, int value) { tags.insert({ tag, new TagValue<int>(value, TagValueType::Int) }); }
+	void AddTagBool(const std::string& tag, bool value) { tags.insert({ tag, new TagValue<bool>(value, TagValueType::Bool) }); }
 
 	template <typename T> TagValue<T>* GetValue(const std::string& tag)
 	{ 

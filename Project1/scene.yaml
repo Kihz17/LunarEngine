@@ -1,17 +1,588 @@
 Scene: Untitled
 Entities:
-  - Name: lightTest
+  - Name: sun
     ID: 0
     Components:
-      - {}
-  - Name: lightTest
-    ID: 0
+      - ComponentType: Light
+        Position: [0, 45, 0]
+        Direction: [0, -20.5599995, 3.72000003]
+        Color: [1, 1, 1]
+        Radius: 100
+        Intensity: 10
+        On: true
+        AttenuationMode: 0
+        LightType: 0
+        CastShadows: true
+  - Name: StreetLight1
+    ID: 1
     Components:
-      []
-  - Name: lightTest
-    ID: 0
+      - ComponentType: Position
+        Position: [12.25, 39.1899986, -96.7300034]
+      - ComponentType: Rotation
+        Rotation: [-0.502459943, 0.502459943, 0.497378081, 0.497378081]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StreetLight01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/T_WoodDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/T_WoodDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/T_WoodDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+        FaceCullType: 1
+      - ComponentType: Light
+        Position: [12.25, 62.4799995, -82.6699982]
+        Direction: [0.00999999978, -0.99000001, 0]
+        Color: [0.920000017, 0.5, 0.170000002]
+        Radius: 500
+        Intensity: 150
+        On: true
+        AttenuationMode: 0
+        LightType: 1
+        CastShadows: false
+      - ComponentType: Tag
+        Values:
+          - ValueType: 2
+            Key: laternEntity
+            Value: true
+  - Name: StreetLight2
+    ID: 2
     Components:
-      []
+      - ComponentType: Position
+        Position: [39.7099991, 39.3400002, -96.7300034]
+      - ComponentType: Rotation
+        Rotation: [-0.501999974, 0.501999974, 0.497000009, 0.497000009]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StreetLight01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/T_WoodDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/T_WoodDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/T_WoodDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+        FaceCullType: 1
+      - ComponentType: Light
+        Position: [39.7099991, 62.4799995, -80.8499985]
+        Direction: [0.00999999978, -0.99000001, 0]
+        Color: [0.920000017, 0.5, 0.170000002]
+        Radius: 500
+        Intensity: 150
+        On: true
+        AttenuationMode: 0
+        LightType: 1
+        CastShadows: false
+      - ComponentType: Tag
+        Values:
+          - ValueType: 2
+            Key: laternEntity
+            Value: true
+  - Name: StreetLight3
+    ID: 3
+    Components:
+      - ComponentType: Position
+        Position: [84.2399979, 4.8499999, 11.9300003]
+      - ComponentType: Rotation
+        Rotation: [-0.488915801, 0.488915801, 0.51069814, 0.51069814]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StreetLight01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/T_WoodDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/T_WoodDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/T_WoodDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+        FaceCullType: 1
+      - ComponentType: Light
+        Position: [84.2399979, 27.5900002, 30.2900009]
+        Direction: [0.00999999978, -0.99000001, 0]
+        Color: [0.920000017, 0.5, 0.170000002]
+        Radius: 500
+        Intensity: 150
+        On: true
+        AttenuationMode: 0
+        LightType: 1
+        CastShadows: false
+      - ComponentType: Tag
+        Values:
+          - ValueType: 2
+            Key: laternEntity
+            Value: true
+  - Name: StreetLight4
+    ID: 4
+    Components:
+      - ComponentType: Position
+        Position: [152.039993, 7.1500001, 85.7099991]
+      - ComponentType: Rotation
+        Rotation: [-0.406873137, 0.463115752, -0.53344804, -0.578892052]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StreetLight01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/T_WoodDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/T_WoodDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/T_WoodDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+        FaceCullType: 1
+      - ComponentType: Light
+        Position: [144.860001, 28.4699993, 68.5199966]
+        Direction: [0.00999999978, -0.99000001, 0]
+        Color: [0.920000017, 0.5, 0.170000002]
+        Radius: 500
+        Intensity: 150
+        On: true
+        AttenuationMode: 0
+        LightType: 1
+        CastShadows: false
+      - ComponentType: Tag
+        Values:
+          - ValueType: 2
+            Key: laternEntity
+            Value: true
+  - Name: StreetLight5
+    ID: 5
+    Components:
+      - ComponentType: Position
+        Position: [274.920013, 25.0100002, 11.96]
+      - ComponentType: Rotation
+        Rotation: [-0.502302885, 0.502302885, 0.497537047, 0.497537047]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StreetLight01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/T_WoodDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/T_WoodDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/T_WoodDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+        FaceCullType: 1
+      - ComponentType: Light
+        Position: [276.140015, 48.3100014, 26.1399994]
+        Direction: [0.00999999978, -0.99000001, 0]
+        Color: [0.920000017, 0.5, 0.170000002]
+        Radius: 500
+        Intensity: 150
+        On: true
+        AttenuationMode: 0
+        LightType: 1
+        CastShadows: false
+      - ComponentType: Tag
+        Values:
+          - ValueType: 2
+            Key: laternEntity
+            Value: true
+  - Name: StreetLight6
+    ID: 6
+    Components:
+      - ComponentType: Position
+        Position: [274.920013, 25.0100002, 54.6599998]
+      - ComponentType: Rotation
+        Rotation: [-0.5022856, 0.5022856, -0.497713149, -0.497713149]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StreetLight01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/T_WoodDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/T_WoodDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/T_WoodDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+        FaceCullType: 1
+      - ComponentType: Light
+        Position: [273.480011, 48.1800003, 40.4700012]
+        Direction: [0.00999999978, -0.99000001, 0]
+        Color: [0.920000017, 0.5, 0.170000002]
+        Radius: 500
+        Intensity: 150
+        On: true
+        AttenuationMode: 0
+        LightType: 1
+        CastShadows: false
+      - ComponentType: Tag
+        Values:
+          - ValueType: 2
+            Key: laternEntity
+            Value: true
+  - Name: StreetLight7
+    ID: 7
+    Components:
+      - ComponentType: Position
+        Position: [-12.3500004, 41.2700005, 10.3199997]
+      - ComponentType: Rotation
+        Rotation: [-0.26287064, 0.26287064, -0.656315804, -0.656315804]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StreetLight01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/T_WoodDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/T_WoodDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/T_WoodDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+        FaceCullType: 1
+      - ComponentType: Light
+        Position: [-21.6299992, 65.1900024, 1.66999996]
+        Direction: [0.00999999978, -0.99000001, 0]
+        Color: [0.920000017, 0.5, 0.170000002]
+        Radius: 500
+        Intensity: 150
+        On: true
+        AttenuationMode: 0
+        LightType: 1
+        CastShadows: false
+      - ComponentType: Tag
+        Values:
+          - ValueType: 2
+            Key: laternEntity
+            Value: true
+  - Name: StreetLight8
+    ID: 8
+    Components:
+      - ComponentType: Position
+        Position: [170.679993, 36.3699989, -29.3400002]
+      - ComponentType: Rotation
+        Rotation: [0.00152998767, -0.00152998767, -0.707000077, -0.707000077]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StreetLight01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/T_WoodDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/T_WoodDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/T_WoodDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+        FaceCullType: 1
+      - ComponentType: Light
+        Position: [156.570007, 59.7200012, -28.25]
+        Direction: [0.00999999978, -0.99000001, 0]
+        Color: [0.920000017, 0.5, 0.170000002]
+        Radius: 500
+        Intensity: 150
+        On: true
+        AttenuationMode: 0
+        LightType: 1
+        CastShadows: false
+      - ComponentType: Tag
+        Values:
+          - ValueType: 2
+            Key: laternEntity
+            Value: true
+  - Name: StreetLight9
+    ID: 9
+    Components:
+      - ComponentType: Position
+        Position: [45.4399986, 39.2799988, 142.479996]
+      - ComponentType: Rotation
+        Rotation: [-0.43407011, 0.43407011, -0.558062851, -0.558062851]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StreetLight01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/T_WoodDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/T_WoodDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/T_WoodDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+        FaceCullType: 1
+      - ComponentType: Light
+        Position: [38.9399986, 61.9799995, 127.849998]
+        Direction: [0.00999999978, -0.99000001, 0]
+        Color: [0.920000017, 0.5, 0.170000002]
+        Radius: 500
+        Intensity: 150
+        On: true
+        AttenuationMode: 0
+        LightType: 1
+        CastShadows: false
+      - ComponentType: Tag
+        Values:
+          - ValueType: 2
+            Key: laternEntity
+            Value: true
+  - Name: StreetLight10
+    ID: 10
+    Components:
+      - ComponentType: Position
+        Position: [228.259995, 38.1899986, 163.889999]
+      - ComponentType: Rotation
+        Rotation: [-0.702410042, 0.702410042, -0.080432415, -0.080432415]
+      - ComponentType: Scale
+        Scale: [0.100000001, 0.100000001, 0.100000001]
+      - ComponentType: Render
+        Mesh: assets/models/FantasyVillage/SM_StreetLight01.FBX
+        Animated: false
+        IsColorOverride: false
+        ColorOverride: [0, 0, 0]
+        AlbedoTextures:
+          - Path: assets/textures/T_WoodDetails_BC.TGA
+            FilterType: 1
+            WrapType: 3
+            Strength: 1
+        NormalTexture:
+          Path: assets/textures/T_WoodDetails_N.TGA
+          FilterType: 1
+          WrapType: 3
+        ORMTexture:
+          Path: assets/textures/T_WoodDetails_ORM.TGA
+          FilterType: 1
+          WrapType: 3
+        UVOffset: [1, 1]
+        Roughness: 0.00999999978
+        Metalness: 0.0199999996
+        Wireframe: false
+        IgnoreLighting: false
+        CastShadows: true
+        CastShadowsOn: true
+        SurfaceShadowSoftness: 1
+        CastingShadowSoftness: 0.899999976
+        ReflectRefractType: 0
+        ReflectRefractMapType: 0
+        ReflectRefractStrength: 0
+        RefractRatio: 0
+        ReflectRefractPriorityType: 0
+        FaceCullType: 1
+      - ComponentType: Light
+        Position: [247.660004, 62.2799988, 160.940002]
+        Direction: [0.00999999978, -0.99000001, 0]
+        Color: [0.920000017, 0.5, 0.170000002]
+        Radius: 500
+        Intensity: 150
+        On: true
+        AttenuationMode: 0
+        LightType: 1
+        CastShadows: false
+      - ComponentType: Tag
+        Values:
+          - ValueType: 2
+            Key: laternEntity
+            Value: true
   - Name: GrassGround
     ID: 1
     Components:
@@ -46,10 +617,6 @@ Entities:
         RefractRatio: 0
         ReflectRefractPriorityType: 0
         FaceCullType: 1
-  - Name: lightTest
-    ID: 0
-    Components:
-      []
   - Name: Door1
     ID: 1
     Components:
@@ -134,10 +701,6 @@ Entities:
         RefractRatio: 0
         ReflectRefractPriorityType: 0
         FaceCullType: 1
-  - Name: lightTest
-    ID: 0
-    Components:
-      []
   - Name: CastleDetail1
     ID: 1
     Components:
@@ -306,10 +869,6 @@ Entities:
         RefractRatio: 0
         ReflectRefractPriorityType: 0
         FaceCullType: 1
-  - Name: lightTest
-    ID: 0
-    Components:
-      []
   - Name: CastleCorner1
     ID: 1
     Components:
@@ -562,10 +1121,6 @@ Entities:
         RefractRatio: 0
         ReflectRefractPriorityType: 0
         FaceCullType: 1
-  - Name: lightTest
-    ID: 0
-    Components:
-      []
   - Name: WoodBridgePlanks1
     ID: 1
     Components:
@@ -818,10 +1373,6 @@ Entities:
         RefractRatio: 0
         ReflectRefractPriorityType: 0
         FaceCullType: 1
-  - Name: lightTest
-    ID: 0
-    Components:
-      []
   - Name: WoodBridgeBase1
     ID: 1
     Components:
@@ -948,10 +1499,6 @@ Entities:
         RefractRatio: 0
         ReflectRefractPriorityType: 0
         FaceCullType: 1
-  - Name: lightTest
-    ID: 0
-    Components:
-      []
   - Name: CastleBanner1
     ID: 1
     Components:

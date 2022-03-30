@@ -18,6 +18,8 @@ private:
 	void SaveScaleComponent(YAML::Emitter& emitter, ScaleComponent* scaleComp);
 	void SaveRenderComponent(YAML::Emitter& emitter, RenderComponent* renderComp);
 	void SaveRigidComponent(YAML::Emitter& emitter, RigidBodyComponent* rigidComp);
+	void SaveTagComponent(YAML::Emitter& emitter, TagComponent* tagComp);
+	void SaveLightComponent(YAML::Emitter& emitter, LightComponent* lightComp);
 
 	Component* component;
 	Entity* entity;

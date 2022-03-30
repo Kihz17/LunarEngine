@@ -7,6 +7,7 @@
 #include "Texture2D.h"
 #include "BulletUtils.h"
 #include "PhysicsFactory.h"
+#include "Renderer.h"
 
 EntityComponentSerializer::EntityComponentSerializer(Component* c, Entity* entity)
 	: component(c),
@@ -37,6 +38,14 @@ void EntityComponentSerializer::Serialize(YAML::Emitter& emitter)
 	else if (dynamic_cast<RigidBodyComponent*>(component))
 	{
 		SaveRigidComponent(emitter, dynamic_cast<RigidBodyComponent*>(component));
+	}
+	else if (dynamic_cast<TagComponent*>(component))
+	{
+		SaveTagComponent(emitter, dynamic_cast<TagComponent*>(component));
+	}
+	else if (dynamic_cast<LightComponent*>(component))
+	{
+		SaveLightComponent(emitter, dynamic_cast<LightComponent*>(component));
 	}
 
 	emitter << YAML::EndMap;
@@ -189,6 +198,54 @@ void EntityComponentSerializer::Deserialize(const YAML::Node& node)
 
 		entity->AddComponent<RigidBodyComponent>(rb);
 	}
+	else if (componentType == "Tag")
+	{
+		TagComponent* tagComp = entity->AddComponent<TagComponent>();
+
+		const YAML::Node& values = node["Values"];
+		if (values)
+		{
+			YAML::const_iterator it;
+			for (it = values.begin(); it != values.end(); it++)
+			{
+				YAML::Node childNode = (*it);
+
+				TagValueType valueType = (TagValueType)childNode["ValueType"].as<int>();
+				std::string key = childNode["Key"].as<std::string>();
+
+				if (valueType == TagValueType::Bool)
+				{
+					tagComp->AddTagBool(key, childNode["Value"].as<bool>());
+				}
+				else if (valueType == TagValueType::Int)
+				{
+					tagComp->AddTagInt(key, childNode["Value"].as<int>());
+				}
+				else if (valueType == TagValueType::Float)
+				{
+					tagComp->AddTagFloat(key, childNode["Value"].as<float>());
+				}
+			}
+		}
+	}
+	else if (componentType == "Light")
+	{
+		LightInfo lightInfo;
+		lightInfo.postion = node["Position"].as<glm::vec3>();
+		lightInfo.direction = node["Direction"].as<glm::vec3>();
+		lightInfo.color = node["Color"].as<glm::vec3>();
+		lightInfo.radius = node["Radius"].as<float>();
+		lightInfo.intensity = node["Intensity"].as<float>();
+		lightInfo.on = node["On"].as<bool>();
+		lightInfo.attenMode = (AttenuationMode) node["AttenuationMode"].as<int>();
+		lightInfo.lightType = (LightType) node["LightType"].as<int>();
+		lightInfo.castShadows = node["CastShadows"].as<bool>();
+
+		Light* light = new Light(lightInfo);
+		entity->AddComponent<LightComponent>(light);
+
+		if(lightInfo.lightType == LightType::Directional && lightInfo.castShadows) Renderer::SetMainLightSource(light);
+	}
 }
 
 void EntityComponentSerializer::SavePositionComponent(YAML::Emitter& emitter, PositionComponent* posComp)
@@ -319,4 +376,59 @@ void EntityComponentSerializer::SaveRigidComponent(YAML::Emitter& emitter, Rigid
 	
 	emitter << YAML::Key << "InitialRotation" << YAML::Value << BulletUtils::BulletQuatToGLM(transform.getRotation());
 	emitter << YAML::Key << "InitialPosition" << YAML::Value << BulletUtils::BulletVec3ToGLM(transform.getOrigin());
+}
+
+void EntityComponentSerializer::SaveTagComponent(YAML::Emitter& emitter, TagComponent* tagComp)
+{
+	emitter << YAML::Key << "ComponentType" << YAML::Value << "Tag";
+
+	emitter << YAML::Key << "Values" << YAML::Value << YAML::BeginSeq;
+
+	std::unordered_map<std::string, ITagValue*>::iterator it = tagComp->tags.begin();
+	while (it != tagComp->tags.end())
+	{
+		emitter << YAML::BeginMap;
+		
+		emitter << YAML::Key << "ValueType" << YAML::Value << (int) it->second->GetType();
+		emitter << YAML::Key << "Key" << YAML::Value << it->first;
+		emitter << YAML::Key << "Value" << YAML::Value;
+
+		TagValueType type = it->second->GetType();
+		if (type == TagValueType::Bool)
+		{
+			emitter << tagComp->GetValue<bool>(it->first)->value;
+		}
+		else if (type == TagValueType::Int)
+		{
+			emitter << tagComp->GetValue<int>(it->first)->value;
+		}
+		else if (type == TagValueType::Float)
+		{
+			emitter << tagComp->GetValue<float>(it->first)->value;
+		}
+
+		emitter << YAML::EndMap;
+
+		it++;
+	}
+
+	emitter << YAML::EndSeq;
+}
+
+void EntityComponentSerializer::SaveLightComponent(YAML::Emitter& emitter, LightComponent* lightComp)
+{
+	Light* light = lightComp->ptr;
+	if (!light) return;
+
+	emitter << YAML::Key << "ComponentType" << YAML::Value << "Light";
+
+	emitter << YAML::Key << "Position" << YAML::Value << light->position;
+	emitter << YAML::Key << "Direction" << YAML::Value << light->direction;
+	emitter << YAML::Key << "Color" << YAML::Value << light->color;
+	emitter << YAML::Key << "Radius" << YAML::Value << light->radius;
+	emitter << YAML::Key << "Intensity" << YAML::Value << light->intensity;
+	emitter << YAML::Key << "On" << YAML::Value << light->on;
+	emitter << YAML::Key << "AttenuationMode" << YAML::Value << (int) light->attenuationMode;
+	emitter << YAML::Key << "LightType" << YAML::Value << (int) light->lightType;
+	emitter << YAML::Key << "CastShadows" << YAML::Value << light->castShadows;
 }

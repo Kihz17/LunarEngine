@@ -36,7 +36,7 @@ struct LightInfo
 
 	glm::vec3 postion;
 	glm::vec3 direction;
-	glm::vec4 color;
+	glm::vec3 color;
 	float intensity;
 	LightType lightType;
 	float radius;

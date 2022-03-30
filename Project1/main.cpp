@@ -92,6 +92,8 @@ int main()
     Mesh* castleWall3m4 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWall3m04.FBX");
     Mesh* stoneWallSingle = MeshManager::GetMesh("assets/models/FantasyVillage/SM_StoneWallSingle03.FBX");
     Mesh* door1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Door01.FBX");
+    Mesh* streetLight = MeshManager::GetMesh("assets/models/FantasyVillage/SM_StreetLight02.FBX");
+    Mesh* lantern = MeshManager::GetMesh("assets/models/FantasyVillage/SM_StreetLight03.FBX");
 
     // Load textures
     Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -157,7 +159,7 @@ int main()
     //gameEngine.debugMode = true;
 
     // Setup some lights    
-    LightInfo lightInfo;
+  /*  LightInfo lightInfo;
     lightInfo.postion = glm::vec3(0.0f, 45.0f, 0.0f);
     lightInfo.intensity = 10.0f;
     lightInfo.castShadows = true;
@@ -167,7 +169,7 @@ int main()
     Entity* lightEntity = gameEngine.GetEntityManager().CreateEntity("lightTest");
     lightEntity->AddComponent<LightComponent>(light);
 
-    Renderer::SetMainLightSource(light);
+    Renderer::SetMainLightSource(light);*/
 
    /* unsigned int numGrassBlades = 50000;
 
@@ -231,15 +233,17 @@ int main()
         gameEngine.physicsWorld->AddRigidBody(rb, e);
     }*/
 
-  /*  {
-        Entity* e = gameEngine.GetEntityManager().CreateEntity("GrassGround");
+    /*{
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("Lantern1");
         e->AddComponent<PositionComponent>();
         e->AddComponent<RotationComponent>();
         e->AddComponent<ScaleComponent>(glm::vec3(0.1f));
 
         RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = cube;
-        testInfo.albedoTextures.push_back({ terrain, 1.0f });
+        testInfo.mesh = streetLight;
+        testInfo.albedoTextures.push_back({ wood, 1.0f });
+        testInfo.normalTexture = woodN;
+        testInfo.ormTexture = woodORM;
         e->AddComponent<RenderComponent>(testInfo);
     }*/
 
@@ -309,16 +313,16 @@ int main()
     }
 
     gameEngine.AddLayer(new PlayerController(gameEngine.camera, gameEngine.GetEntityManager(), static_cast<PhysicsWorld*>(gameEngine.physicsWorld)));
-    gameEngine.AddLayer(new DayNightCycle());
+    gameEngine.AddLayer(new DayNightCycle(gameEngine.GetEntityManager()));
     gameEngine.Run();
 
     return 0;
 }
 
 // TODO:
+// Place point light laterns around (only active during night)
 // Make shadows overall dimmer
 // Attack animations
-// Place point light laterns around (only active during night)
 // Fix godrays
 // Map details
 // Maybe Water??
