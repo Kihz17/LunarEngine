@@ -317,7 +317,6 @@ int main()
 
 // TODO:
 // Make shadows overall dimmer
-// Day/night cycles
 // Attack animations
 // Place point light laterns around (only active during night)
 // Fix godrays

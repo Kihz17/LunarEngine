@@ -261,4 +261,29 @@ void PlayerController::OnUpdate(float deltaTime)
     camera.position = pos - (camera.front * 40.0f) + glm::vec3(0.0f, 10.0f, 0.0f);
     playerEntity->GetComponent<PositionComponent>()->value = pos;
     playerEntity->GetComponent<PositionComponent>()->value.y -= 1.0f;
+
+    // Camera collision with objects
+    btVector3 rayFrom = BulletUtils::GLMVec3ToBullet(camera.position);
+    btVector3 rayTo = BulletUtils::GLMVec3ToBullet(camera.position + (camera.front * glm::distance(camera.position, pos)));
+    btCollisionWorld::AllHitsRayResultCallback rayResult(rayFrom, rayTo);
+    physicsWorld->GetBulletWorld()->rayTest(rayFrom, rayTo, rayResult);
+
+    if (rayResult.hasHit())
+    {
+        float closest = std::numeric_limits<float>::max();
+        glm::vec3 closestPoint;
+        for (int i = 0; i < rayResult.m_hitPointWorld.size(); i++)
+        {
+            glm::vec3 point = BulletUtils::BulletVec3ToGLM(rayResult.m_hitPointWorld[i]);
+            float distance = glm::distance2(point, pos);
+            if (distance < closest)
+            {
+                closest = distance;
+                closestPoint = point;
+            }
+        }
+
+        camera.position = closestPoint + camera.front;
+    }
+  
 }
