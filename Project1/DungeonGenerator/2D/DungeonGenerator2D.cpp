@@ -14,9 +14,15 @@ DungeonGenerator2D::DungeonGenerator2D(const DungeonGeneratorInfo& info, EntityM
 	extraPathChance(info.extraPathChance),
 	entityManager(entityManager),
 	yLevel(info.yLevel),
-	cubeMesh(MeshManager::GetMesh("assets/models/cube.obj")),
-	wallMesh(MeshManager::GetMesh("assets/models/wall.obj")),
-	floorMesh(MeshManager::GetMesh("assets/models/floor.obj"))
+	positionOffset(info.dungeonOffset),
+	posScale(info.posScale),
+	wallOffset(info.wallOffset),
+	wallYOffset(info.wallYOffset),
+	floorRot(info.floorRot),
+	meshScale(info.meshScale),
+	wallInfo(info.wallInfo),
+	floorInfo(info.floorInfo),
+	ceilingInfo(info.ceilingInfo)
 {
 	for (int x = 0; x < dungeonSize.x; x++)
 	{
@@ -27,26 +33,57 @@ DungeonGenerator2D::DungeonGenerator2D(const DungeonGeneratorInfo& info, EntityM
 	}
 }
 
-std::vector<Entity*> DungeonGenerator2D::Generate()
+void DungeonGenerator2D::Generate()
+{
+	GenerateRooms();
+	Triangulate();
+	CreateHallways();
+	PathfindHallways();
+}
+
+std::vector<Entity*> DungeonGenerator2D::PlaceEntities(const glm::vec2& startPos, const glm::ivec2& direction)
 {
 	std::vector<Entity*> entities;
 
-	GenerateRooms(entities);
-	Triangulate(entities);
-	CreateHallways(entities);
-	PathfindHallways(entities);
-	 
-	float posScale = 10.0f;
-	const float wallOffset = 0.525f * posScale;
-	const glm::vec3 meshScale = glm::vec3(0.002f) * posScale;
-	const glm::vec3 stairScale = glm::vec3(0.4f) * posScale;
+	// Convert start position to grid
+	int gridX = (int)((startPos.x - positionOffset.x) / posScale);
+	int gridZ = (int)((startPos.y - positionOffset.y) / posScale);
+	glm::ivec2 gridPos(gridX, gridZ);
+
+	glm::ivec2 entrance(-1, -1);
+	while (true)
+	{
+		if (dungeonGrid.InBounds(gridPos) && dungeonGrid.Get(gridPos) != CellType::None)
+		{
+			entrance = gridPos;
+			break;
+		}
+
+		// Add Entities
+		float xPos = gridPos.x * posScale + positionOffset.x;
+		float zPos = gridPos.y * posScale + positionOffset.y;
+		entities.push_back(PrepareFloor(glm::vec3(xPos, yLevel, zPos), meshScale));
+
+		if (direction.x != 0 && direction.y == 0)
+		{
+			entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
+			entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
+		}
+		else if (direction.x == 0 && direction.y != 0)
+		{
+			entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
+			entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
+		}
+
+		gridPos += direction;
+	}
 
 	for (int x = 0; x < dungeonSize.x; x++)
 	{
-		float xPos = x * posScale;
+		float xPos = x * posScale + positionOffset.x;
 		for (int z = 0; z < dungeonSize.y; z++)
 		{
-			float zPos = z * posScale;
+			float zPos = z * posScale + positionOffset.y;
 
 			CellType type = dungeonGrid.Get(glm::ivec2(x, z));
 
@@ -55,450 +92,32 @@ std::vector<Entity*> DungeonGenerator2D::Generate()
 			CellType backCell = !dungeonGrid.InBounds(glm::ivec2(x, z - 1)) ? CellType::None : dungeonGrid.Get(glm::ivec2(x, z + 1));
 			CellType frontCell = !dungeonGrid.InBounds(glm::ivec2(x, z + 1)) ? CellType::None : dungeonGrid.Get(glm::ivec2(x, z - 1));
 
-			if (type == CellType::Hallway) // We are a hallway, we now need to get the cells next to us on the x and z axis
+			if (type == CellType::Hallway || type == CellType::Room)
 			{
 				entities.push_back(PrepareFloor(glm::vec3(xPos, yLevel, zPos), meshScale, glm::vec3(0.4f, 0.0f, 0.0f)));
-				/////////////////////////////////
-				// BEGIN FLAT HALLWAY CHECKS
-				/////////////////////////////////
-				if (leftCell == CellType::Hallway && rightCell == CellType::Hallway && backCell == CellType::Hallway && frontCell == CellType::Hallway) // Cross road
+
+				bool isLeftCellEntrance = (x == entrance.x && z == entrance.y) && direction == glm::ivec2(1, 0);
+				if (leftCell == CellType::None && !isLeftCellEntrance)
 				{
-					// TODO: Place "cross road" prest
+					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
 				}
 
-				// Straight hallways by rooms https://gyazo.com/7f8a76c849236390a152c44f1f470c5a
-				else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::Hallway && backCell == CellType::Hallway)
+				bool isRightCellEntrance = (x == entrance.x && z == entrance.y) && direction == glm::ivec2(-1, 0);
+				if (rightCell == CellType::None && !isRightCellEntrance)
 				{
 					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::Hallway && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::Hallway && frontCell == CellType::Room && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::Hallway && frontCell == CellType::None && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
 				}
 
-				// Single hallway between 2 rooms https://gyazo.com/4505b05de71bb019253e2b85994417fe
-				else if (leftCell == CellType::None && rightCell == CellType::None && frontCell == CellType::Room && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::Room && frontCell == CellType::None && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				}
-
-				// Straight hallways by rooms endings https://gyazo.com/56851ec8c824b306bd7ecfbffe0d67b2
-				else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::None && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::Hallway && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::None && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::Hallway && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::None && frontCell == CellType::None && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Hallway && frontCell == CellType::None && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::None && frontCell == CellType::Room && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Hallway && frontCell == CellType::Room && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-				}
-
-				// L-Shaped hallways by room endings https://gyazo.com/69b1c33fcec0444c3f1e109800b9587d
-				else if (leftCell == CellType::Room && rightCell == CellType::Hallway && frontCell == CellType::Hallway && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::Hallway && frontCell == CellType::None && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Hallway && frontCell == CellType::Hallway && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Hallway && frontCell == CellType::Room && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::None && frontCell == CellType::Room && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::Room && frontCell == CellType::None && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::None && frontCell == CellType::Hallway && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::Room && frontCell == CellType::Hallway && backCell == CellType::None)
+				bool isBackCellEntrance = (x == entrance.x && z == entrance.y) && direction == glm::ivec2(0, -1);
+				if (backCell == CellType::None && !isBackCellEntrance)
 				{
 					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
 				}
 
-				// Between 2 rooms endings https://gyazo.com/2bb184ca91d15f222146cf66d3b2ed21
-				else if (leftCell == CellType::None && rightCell == CellType::Hallway && frontCell == CellType::Room && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::None && frontCell == CellType::Room && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::Room && frontCell == CellType::None && backCell == CellType::Hallway)
+				bool isFrontCellEntrance = (x == entrance.x && z == entrance.y) && direction == glm::ivec2(0, 1);
+				if (frontCell == CellType::None && !isFrontCellEntrance)
 				{
 					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::Room && frontCell == CellType::Hallway && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-				}
-
-				// L-shaped hallways
-				else if (leftCell == CellType::Hallway && rightCell == CellType::None && frontCell == CellType::Hallway && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-					// https://gyazo.com/f7537b1bab7d4c830f3ca7d6bb256428
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Hallway && frontCell == CellType::Hallway && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-					// https://gyazo.com/deb9a057610f8dafab681936910cbfbd
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::None && frontCell == CellType::None && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-					// https://gyazo.com/31c8d2a173358005c9f9d0cce71a5df6
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Hallway && frontCell == CellType::None && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-					// https://gyazo.com/01a13d63c6f3abd756e4b021ad2c9747
-				}
-
-				// T-Shaped Hallways
-				else if (leftCell == CellType::Hallway && rightCell == CellType::Hallway && frontCell == CellType::None && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::Hallway && frontCell == CellType::Hallway && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-				}
-				else if(leftCell == CellType::None && rightCell == CellType::Hallway && frontCell == CellType::Hallway && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::None && frontCell == CellType::Hallway && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-				}
-
-				// Straight hallways	
-				else if ((leftCell == CellType::Hallway || rightCell == CellType::Hallway) && backCell == CellType::None && frontCell == CellType::None) // Straight hallway going down X
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-					// https://gyazo.com/710ec568a95561bb22e51a6412a7fb8f
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::None && (backCell == CellType::Hallway || frontCell == CellType::Hallway)) // Straight hallway going down 
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					// https://gyazo.com/034c62a3becc8e642b2424b1d5985482
-				}
-
-				// T-Shaped hallways
-				//else if (leftCell == CellType::Hallway && rightCell == CellType::None && frontCell == CellType::Hallway && backCell == CellType::Hallway)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-				//	// https://gyazo.com/44c213c0dc267decf0332c7c82fa951b
-				//}
-				//else if (leftCell == CellType::None && rightCell == CellType::Hallway && frontCell == CellType::Hallway && backCell == CellType::Hallway)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				//	// https://gyazo.com/f4ca9244c4cbfccbc7deb845045aa1d2
-				//}
-				//else if (leftCell == CellType::Hallway && rightCell == CellType::Hallway && frontCell == CellType::None && backCell == CellType::Hallway)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-				//	// https://gyazo.com/ee6ec031b1b8642848a8afaa110bbb52
-				//}
-				//else if (leftCell == CellType::Hallway && rightCell == CellType::Hallway && frontCell == CellType::Hallway && backCell == CellType::None)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				//	// https://gyazo.com/01a13d63c6f3abd756e4b021ad2c9747
-				//}
-
-				//https://gyazo.com/f41d71a6a308d82e97ee9a40103a8770
-				//else if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::Hallway && backCell == CellType::None)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
-				//
-				//}
-				//else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::None && backCell == CellType::Hallway)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				//}
-
-				//// https://gyazo.com/e772d0ba7a6c032b5e781a669ee96ec5
-				//else if (leftCell == CellType::Hallway && rightCell == CellType::Room && frontCell == CellType::Hallway && backCell == CellType::None)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
-				//}
-				//else if (leftCell == CellType::Hallway && rightCell == CellType::Room && frontCell == CellType::None && backCell == CellType::Hallway)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				//}
-				//else if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::None && backCell == CellType::Hallway)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				//}
-				//else if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::Hallway && backCell == CellType::None)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
-				//}
-				//else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::None && backCell == CellType::Hallway)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				//}
-				//else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::Hallway && backCell == CellType::None)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
-				//}
-
-				//else if (leftCell == CellType::Hallway && rightCell == CellType::None && (frontCell == CellType::Hallway || frontCell == CellType::Room) && backCell == CellType::None)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				//}
-				//else if (leftCell == CellType::Hallway && rightCell == CellType::None && frontCell == CellType::None && (backCell == CellType::Hallway || backCell == CellType::Room))
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
-				//}
-				//else if ((leftCell == CellType::Hallway || leftCell == CellType::Room) && rightCell == CellType::None && frontCell == CellType::Hallway)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
-				//}
-
-				//else if (leftCell == CellType::None && rightCell == CellType::Hallway && ((frontCell == CellType::Hallway || frontCell == CellType::Room) || (backCell == CellType::Hallway || backCell == CellType::Room)))
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				//}
-				//else if (leftCell == CellType::Hallway && rightCell == CellType::None && ((frontCell == CellType::Hallway || frontCell == CellType::Room) || (backCell == CellType::Hallway || backCell == CellType::Room)))
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-				//}
-				//else if (((leftCell == CellType::Hallway || leftCell == CellType::Room) || (rightCell == CellType::Hallway || rightCell == CellType::Room)) && frontCell == CellType::None && backCell == CellType::Hallway)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				//}
-				//else if (((leftCell == CellType::Hallway || leftCell == CellType::Room) || (rightCell == CellType::Hallway || rightCell == CellType::Room)) && frontCell == CellType::Hallway && backCell == CellType::None)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
-				//}
-
-				//// Next to rooms
-				//else if (leftCell == CellType::Hallway && rightCell == CellType::Hallway && frontCell == CellType::None && backCell == CellType:: Room)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				//	// https://gyazo.com/129f6d97bc196e1d4b3c8365e21f41e1
-				//}
-				//else if (leftCell == CellType::Hallway && rightCell == CellType::Hallway && frontCell == CellType::Room && backCell == CellType::None)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-				//}
-				//else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::Hallway && backCell == CellType::Hallway)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-				//}
-				//else if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::Hallway && backCell == CellType::Hallway)
-				//{
-				//	entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-				//}
-
-				/////////////////////////////////
-				// END FLAT HALLWAY CHECKS
-				/////////////////////////////////
-			}
-			else if (type == CellType::Room)
-			{
-				entities.push_back(PrepareFloor(glm::vec3(xPos, yLevel, zPos), meshScale));
-
-				// Room corners
-				if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::Room && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-					// https://gyazo.com/e9c68401c1dda0c26491785129b4d876
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::Room && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-					// https://gyazo.com/657260ee9c18ce6e6f8828bb80c3cb1d
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::None && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-					// https://gyazo.com/bfcd278f908f1722733307ec9159e935
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::None && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-					// https://gyazo.com/557e224d05ba153d24816c4c5ffd4ac5
-				}
-
-				// Double-Sided Room corners
-				if (leftCell == CellType::Hallway && rightCell == CellType::Room && frontCell == CellType::Room && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::Room && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::Room && frontCell == CellType::Room && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-				}
-
-				else if (leftCell == CellType::Room && rightCell == CellType::Hallway && frontCell == CellType::Room && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::Room && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::Hallway && frontCell == CellType::Room && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-				}
-
-				else if (leftCell == CellType::Hallway && rightCell == CellType::Room && frontCell == CellType::None && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::Hallway && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::Room && frontCell == CellType::Hallway && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-				}
-				
-				else if (leftCell == CellType::Room && rightCell == CellType::Hallway && frontCell == CellType::None && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::Hallway && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::Hallway && frontCell == CellType::Hallway && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-				}
-
-				// Room edges
-				else if (leftCell == CellType::Room && rightCell == CellType::None && frontCell == CellType::Room && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f)));
-					// https://gyazo.com/e549c42921f7da74f9619b85890abf86
-				}
-				else if (leftCell == CellType::None && rightCell == CellType::Room && frontCell == CellType::Room && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f)));
-					// https://gyazo.com/7b26a5d33905789e7a7938099f45f6c8
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::Room && frontCell == CellType::None && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f)));
-					// https://gyazo.com/598c8075f235a83685e78eff169329b2
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::Room && frontCell == CellType::Room && backCell == CellType::None)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale));
-					// https://gyazo.com/503ff8144d134cd99bc9c746addffa3d
-				}
-
-				// Double-Sided Room edges
-				else if (leftCell == CellType::Room && rightCell == CellType::Hallway && frontCell == CellType::Room && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos + wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, 0.7071f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-				}
-				else if (leftCell == CellType::Hallway && rightCell == CellType::Room && frontCell == CellType::Room && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos - wallOffset, yLevel, zPos), meshScale, glm::quat(0.7071f, 0.0f, -0.7071f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::Room && frontCell == CellType::Hallway && backCell == CellType::Room)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos - wallOffset), meshScale, glm::quat(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
-				}
-				else if (leftCell == CellType::Room && rightCell == CellType::Room && frontCell == CellType::Room && backCell == CellType::Hallway)
-				{
-					entities.push_back(PrepareWall(glm::vec3(xPos, yLevel, zPos + wallOffset), meshScale, glm::quat(1.0f, 0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.4f)));
 				}
 			}
 		}
@@ -507,7 +126,7 @@ std::vector<Entity*> DungeonGenerator2D::Generate()
 	return entities;
 }
 
-void DungeonGenerator2D::GenerateRooms(std::vector<Entity*>& entities)
+void DungeonGenerator2D::GenerateRooms()
 {
 	for (int i = 0; i < roomCount; i++)
 	{
@@ -552,12 +171,10 @@ void DungeonGenerator2D::GenerateRooms(std::vector<Entity*>& entities)
 		}
 
 		dungeonRooms.insert({ roomPos, newRoom });
-
-		entities.push_back(PrepareRoom(glm::vec3(newRoom.pos.x, yLevel, newRoom.pos.y), glm::vec3(newRoom.size.x, 1, newRoom.size.y)));
 	}
 }
 
-void DungeonGenerator2D::Triangulate(std::vector<Entity*>& entities)
+void DungeonGenerator2D::Triangulate()
 {
 	std::vector<glm::vec2> vertices;
 	vertices.resize(dungeonRooms.size());
@@ -574,7 +191,7 @@ void DungeonGenerator2D::Triangulate(std::vector<Entity*>& entities)
 	delaunay.Triangulate();
 }
 
-void DungeonGenerator2D::CreateHallways(std::vector<Entity*>& entities)
+void DungeonGenerator2D::CreateHallways()
 {
 	std::vector<Edge2D> edges;
 	edges.resize(delaunay.edges.size());
@@ -642,7 +259,7 @@ void DungeonGenerator2D::CreateHallways(std::vector<Entity*>& entities)
 		}
 	}
 
-	for (Edge2D& edge : mst)
+	/*for (Edge2D& edge : mst)
 	{
 		Entity* e = entityManager.PrepareEntity();
 		e->AddComponent<PositionComponent>();
@@ -650,10 +267,10 @@ void DungeonGenerator2D::CreateHallways(std::vector<Entity*>& entities)
 		e->AddComponent<RotationComponent>();
 		e->AddComponent<LineRenderComponent>(glm::vec3(edge.a.x, yLevel, edge.a.y), glm::vec3(edge.b.x, yLevel, edge.b.y));
 		entities.push_back(e);
-	}
+	}*/
 }
 
-void DungeonGenerator2D::PathfindHallways(std::vector<Entity*>& entities)
+void DungeonGenerator2D::PathfindHallways()
 {
 	DungeonGeneratorPathfinder2D pathFinder(dungeonSize);
 
@@ -678,33 +295,14 @@ void DungeonGenerator2D::PathfindHallways(std::vector<Entity*>& entities)
 	}
 }
 
-Entity* DungeonGenerator2D::PrepareRoom(const glm::ivec3& pos, const glm::ivec3& size)
-{
-	Entity* e = entityManager.PrepareEntity();
-	e->AddComponent<PositionComponent>(glm::vec3(pos));
-	e->AddComponent<ScaleComponent>(glm::vec3(size));
-	e->AddComponent<RotationComponent>();
-
-	RenderComponent::RenderInfo renderInfo;
-	renderInfo.mesh = cubeMesh;
-	renderInfo.isColorOverride = true;
-	renderInfo.colorOverride = glm::vec3(0.4f, 0.0f, 0.0f);
-	e->AddComponent<RenderComponent>(renderInfo);
-	return e;
-}
-
 Entity* DungeonGenerator2D::PrepareWall(const glm::vec3& pos, const glm::vec3& scale, const glm::quat& rot, const glm::vec3& color)
 {
 	Entity* e = entityManager.PrepareEntity();
-	e->AddComponent<PositionComponent>(pos);
+	e->AddComponent<PositionComponent>(pos + glm::vec3(0.0f, wallYOffset, 0.0f));
 	e->AddComponent<ScaleComponent>(scale);
 	e->AddComponent<RotationComponent>(rot);
 
-	RenderComponent::RenderInfo renderInfo;
-	renderInfo.mesh = wallMesh;
-	renderInfo.isColorOverride = true;
-	renderInfo.colorOverride = color;
-	e->AddComponent<RenderComponent>(renderInfo);
+	e->AddComponent<RenderComponent>(wallInfo);
 	return e;
 }
 
@@ -713,12 +311,8 @@ Entity* DungeonGenerator2D::PrepareFloor(const glm::vec3& pos, const glm::vec3& 
 	Entity* e = entityManager.PrepareEntity();
 	e->AddComponent<PositionComponent>(pos);
 	e->AddComponent<ScaleComponent>(scale);
-	e->AddComponent<RotationComponent>();
+	e->AddComponent<RotationComponent>(floorRot);
 
-	RenderComponent::RenderInfo renderInfo;
-	renderInfo.mesh = floorMesh;
-	renderInfo.isColorOverride = true;
-	renderInfo.colorOverride = color;
-	e->AddComponent<RenderComponent>(renderInfo);
+	e->AddComponent<RenderComponent>(floorInfo);
 	return e;
 }

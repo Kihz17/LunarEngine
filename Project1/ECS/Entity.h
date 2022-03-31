@@ -76,6 +76,7 @@ public:
 	std::string name;
 	std::vector<Component*> components;
 	std::vector<Entity*> children;
+	bool shouldSave;
 
 private:
 	friend class EntityManager;

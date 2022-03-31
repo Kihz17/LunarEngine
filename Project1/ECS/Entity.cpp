@@ -7,7 +7,8 @@ std::vector<IComponentListener*> Entity::componentListeners;
 Entity::Entity(unsigned int id, const std::string& name)
 	: id(id),
 	name(name),
-	valid(true)
+	valid(true),
+	shouldSave(true)
 {
 
 }

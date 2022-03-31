@@ -7,8 +7,8 @@
 #include <iostream>
 
 constexpr float walkSpeed = 0.1f;
-constexpr float runSpeed = 0.4f;
-constexpr float equipRunSpeed = 0.3f;
+constexpr float runSpeed = 0.3f;
+constexpr float equipRunSpeed = 0.2f;
 
 constexpr float animIdleSpeed = 15.0f;
 constexpr float animWalkSpeed = 15.0f;
@@ -66,6 +66,7 @@ void PlayerController::OnAttach()
     AnimatedMesh* playerMesh = MeshManager::GetAnimatedMesh("assets/models/Character.FBX");
 
     playerEntity = entityManager.CreateEntity("Player");
+    playerEntity->shouldSave = false;
     playerEntity->AddComponent<PositionComponent>(glm::vec3(10.0f, 50.0f, 0.0f));
     playerEntity->AddComponent<RotationComponent>(glm::quat(-0.7071, 0.7071f, 0.0f, 0.0f));
     playerEntity->AddComponent<ScaleComponent>(glm::vec3(0.1f));

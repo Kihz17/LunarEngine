@@ -45,7 +45,6 @@ int main()
     Mesh* plane = MeshManager::GetMesh("assets/models/plane.obj");
     Mesh* cube = MeshManager::GetMesh("assets/models/cube.obj");
     Mesh* cyl = MeshManager::GetMesh("assets/models/cylinder.obj");
-    Mesh* stairs = MeshManager::GetMesh("assets/models/test.fbx");
     Mesh* tile4m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_TileGround4m.FBX");
     Mesh* rock1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Rock01.FBX");
     Mesh* rock2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Rock02.FBX");
@@ -145,6 +144,10 @@ int main()
     Texture2D* doorNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* doorORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
 
+    Texture2D* stoneColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* stoneNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    Texture2D* stoneORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+
     GameEngine gameEngine(windowSpecs, true);
 
     // Animation system setup
@@ -195,18 +198,56 @@ int main()
     cluster.albedoTexture = TextureManager::CreateTexture2D("assets/textures/grassColor.png", TextureFilterType::Linear, TextureWrapType::Repeat);
     Renderer::GetGrassClusters().push_back(cluster);*/
 
-  /*  {
+    {
+        RenderComponent::RenderInfo wallInfo;
+        wallInfo.mesh = tile4m;
+        wallInfo.albedoTextures.push_back({ stoneColor, 1.0f });
+        wallInfo.normalTexture = stoneNormal;
+        wallInfo.ormTexture = stoneORM;
+
+        RenderComponent::RenderInfo floorInfo;
+        floorInfo.mesh = tile4m;
+        floorInfo.albedoTextures.push_back({ groundStoneColor, 1.0f });
+        floorInfo.normalTexture = groundStoneNormal;
+        floorInfo.ormTexture = groundStoneORM;
+
+        RenderComponent::RenderInfo ceilingInfo;
+        ceilingInfo.mesh = tile4m;
+        ceilingInfo.albedoTextures.push_back({ stoneColor, 1.0f });
+        ceilingInfo.normalTexture = stoneNormal;
+        ceilingInfo.ormTexture = stoneORM;
+
         DungeonGenerator2D::DungeonGeneratorInfo dInfo;
         dInfo.roomCount = 30;
         dInfo.minRoomSize = glm::ivec3(3, 2, 3);
         dInfo.maxRoomSize = glm::ivec3(8, 3, 8);
         dInfo.dungeonSize = glm::ivec2(100, 100);
         dInfo.extraPathChance = 0.02f;
-        dInfo.yLevel = 0;
+        dInfo.yLevel = -50;
+        dInfo.dungeonOffset = glm::ivec2(600, -1401);
+        dInfo.posScale = 31.2f;
+        dInfo.wallOffset = 16.5f;
+        dInfo.wallYOffset = 10.0f;
+        dInfo.meshScale = glm::vec3(0.039f);
+        dInfo.floorRot = glm::quat(-0.7071f, 0.7071f, 0.0f, 0.0f);
+        dInfo.wallInfo = wallInfo;
+        dInfo.floorInfo = floorInfo;
+        dInfo.ceilingInfo = ceilingInfo;
+
         DungeonGenerator2D dg(dInfo, gameEngine.GetEntityManager());
-        std::vector<Entity*> entities = dg.Generate();
-        for (Entity* e : entities) gameEngine.GetEntityManager().ListenToEntity(e);
-    }*/
+        dg.Generate();
+
+        glm::vec2 startPos = glm::vec2(600.0f, 40.0f);
+        std::vector<Entity*> entities = dg.PlaceEntities(startPos, glm::ivec2(1, 0));
+
+        // Add entities to be rendered
+        for (Entity* e : entities)
+        {
+            e->shouldSave = false;
+            e->GetComponent<RenderComponent>()->castShadows = false;
+            gameEngine.GetEntityManager().ListenToEntity(e);
+        } 
+    }
 
     // SHADER BALL TEST
     //ShaderBallTest(shaderBall, normalTexture, blue, gameEngine);
@@ -233,17 +274,17 @@ int main()
         gameEngine.physicsWorld->AddRigidBody(rb, e);
     }*/
 
-    /*{
-        Entity* e = gameEngine.GetEntityManager().CreateEntity("Lantern1");
+   /* {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("DungeonStairs1");
         e->AddComponent<PositionComponent>();
         e->AddComponent<RotationComponent>();
         e->AddComponent<ScaleComponent>(glm::vec3(0.1f));
 
         RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = streetLight;
-        testInfo.albedoTextures.push_back({ wood, 1.0f });
-        testInfo.normalTexture = woodN;
-        testInfo.ormTexture = woodORM;
+        testInfo.mesh = castleStairs3m;
+        testInfo.albedoTextures.push_back({ castleWallDetailColor, 1.0f });
+        testInfo.normalTexture = castleWallDetailNormal;
+        testInfo.ormTexture = castleWallDetailORM;
         e->AddComponent<RenderComponent>(testInfo);
     }*/
 
@@ -298,7 +339,7 @@ int main()
       /*  if (!e->HasComponent<RigidBodyComponent>()) continue;
         gameEngine.physicsWorld->AddRigidBody(e->GetComponent<RigidBodyComponent>()->ptr, e);*/
 
-        if (e->HasComponent<RenderComponent>())
+        if (e->HasComponent<RenderComponent>() && !e->HasComponent<RigidBodyComponent>())
         {
             Physics::RigidBodyInfo info;
             info.mass = 0.0f;
