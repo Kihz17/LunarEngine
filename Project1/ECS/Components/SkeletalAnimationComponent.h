@@ -18,7 +18,8 @@ public:
 		speed(1.0f),
 		repeat(true),
 		lerping(false),
-		lerpSpeed(5.0f)
+		lerpSpeed(5.0f),
+		allowRootMotion(false)
 	{
 		boneMatrices.reserve(Animation::MAX_BONES); // It's likely that the amount of bones is generally high, might as well avoid some re-allocations
 
@@ -45,6 +46,7 @@ public:
 	float speed;
 	bool repeat;
 	float lerpSpeed;
+	bool allowRootMotion;
 
 private:
 	friend class SkeletalAnimationLayer;

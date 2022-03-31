@@ -32,7 +32,7 @@ void SkeletalAnimationLayer::OnUpdate(float deltaTime)
 		animComp->currentTime += animation->GetTicksPerSecond() * animComp->speed * deltaTime;
 		animComp->currentTime = fmod(animComp->currentTime, animation->GetDuration());
 
-		ComputeBoneTransforms(animComp, mesh->GetRootBone(), mesh->GetInverseTransform(), glm::mat4(1.0f));
+		ComputeBoneTransforms(animComp, mesh->GetRootBone(), mesh->GetInverseTransform(), glm::mat4(1.0f), true);
 
 		if (animComp->lerping)
 		{
@@ -42,7 +42,7 @@ void SkeletalAnimationLayer::OnUpdate(float deltaTime)
 	}
 }
 
-void SkeletalAnimationLayer::ComputeBoneTransforms(SkeletalAnimationComponent* anim, const Bone& bone, const glm::mat4& inverseTransform, glm::mat4 parentTransform)
+void SkeletalAnimationLayer::ComputeBoneTransforms(SkeletalAnimationComponent* anim, const Bone& bone, const glm::mat4& inverseTransform, glm::mat4 parentTransform, bool root)
 {
 	Animation* animation = anim->anim;
 
@@ -50,6 +50,8 @@ void SkeletalAnimationLayer::ComputeBoneTransforms(SkeletalAnimationComponent* a
 	glm::quat rotation;
 	glm::vec3 scale;
  	animation->GetFrameData(bone.name, anim->currentTime, position, rotation, scale);
+
+	if (root && !anim->allowRootMotion) position = glm::vec3(0.0f, 0.0f, 0.0f); 
 
 	glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), scale);
 
@@ -59,6 +61,8 @@ void SkeletalAnimationLayer::ComputeBoneTransforms(SkeletalAnimationComponent* a
 		glm::quat lastRotation;
 		glm::vec3 lastScale;
 		anim->lastAnim->GetFrameData(bone.name, anim->lastTime, lastPosition, lastRotation, lastScale);
+
+		if (root && !anim->allowRootMotion) lastPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
 		glm::quat rot = glm::slerp(lastRotation, rotation, anim->lerpTime);
 		glm::vec3 pos = glm::mix(lastPosition, position, anim->lerpTime);
@@ -75,6 +79,6 @@ void SkeletalAnimationLayer::ComputeBoneTransforms(SkeletalAnimationComponent* a
 
 	for (const Bone& bone : bone.children) // Go through the bone's children and do the same thing
 	{
-		ComputeBoneTransforms(anim, bone, inverseTransform, globalTransform);
+		ComputeBoneTransforms(anim, bone, inverseTransform, globalTransform, false);
 	}
 }

@@ -10,6 +10,19 @@
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
+struct AttackStage
+{
+	AnimationState& animationState;
+	float chainingWindow = 0.2f; // Represents the time in seconds that will be considered for animation chaining
+	float impulse = 0.0f; // TODO: Implement "forces" on ability use
+};
+
+struct Attack
+{
+	int currentStage = 0;
+	std::vector<AttackStage> attackStages;
+};
+
 class SkeletalAnimationComponent;
 class Animation;
 class PlayerController : public ApplicationLayer
@@ -60,4 +73,12 @@ private:
 	AnimationState equipWalkB;
 	AnimationState equipWalkBR;
 	AnimationState equipWalkBL;
+
+	AnimationState attack1;
+	AnimationState attack2;
+	AnimationState attack3;
+	AnimationState attack4;
+
+	Attack basicAttack;
+	float lastLeftClickTime;
 };

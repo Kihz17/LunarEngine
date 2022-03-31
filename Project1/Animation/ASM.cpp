@@ -8,29 +8,38 @@ ASM::ASM(SkeletalAnimationComponent* comp)
 
 }
 
-bool ASM::SetState(const AnimationState& state, float speed)
+bool ASM::SetState(const AnimationState& state)
 {
-	float currentTime = glfwGetTime();
-	if (currentState && !currentState->cancellable && currentTime - beginTime < currentState->duration) return false; // Can't change state, we're locked in to this animation
+	if (!CanPlayAnimation(state)) return false; // Can't change state, we're locked in to this animation
 
-	beginTime = currentTime;
+	beginTime = glfwGetTime();
 	currentState = &state;
-	animComp->speed = speed;
+	animComp->speed = state.speed;
 	animComp->SetAnimation(state.anim);
 	return true;
 }
 
-void ASM::Update(float deltaTime)
+bool ASM::CanPlayAnimation(const AnimationState& state) const
 {
-
+	float currentTime = glfwGetTime();
+	return !currentState || (state.priority > currentState->priority) 
+		|| (state.priority == currentState->priority && currentState->cancellable)
+		|| currentTime - beginTime >= currentState->duration;
 }
 
-bool ASM::IsAnimationLocked() const
+bool ASM::CanPlayPriority(int priority) const
 {
-	return currentState && !currentState->cancellable && glfwGetTime() - beginTime < currentState->duration;
+	return !currentState || (priority > currentState->priority) | (priority == currentState->priority && currentState->cancellable);
 }
 
-bool ASM::CanMove() const
+Animation* ASM::GetAnimation()
 {
-	return !currentState || currentState->canMove || !currentState->cancellable && glfwGetTime() - beginTime >= currentState->duration;
+	if (!currentState) return nullptr;
+	return currentState->anim;
+}
+
+float ASM::GetTimePlayed() const
+{
+	if (!currentState) return 0.0f;
+	return currentState->duration == 0.0f ? 0.0f : glfwGetTime() - beginTime;
 }

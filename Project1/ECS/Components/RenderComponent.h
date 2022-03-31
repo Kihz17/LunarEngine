@@ -42,7 +42,7 @@ struct RenderComponent : public Component
 		bool castShadows = true;
 		bool castShadowsOn = true;
 		float surfaceShadowSoftness = 1.0f;
-		float castingShadownSoftness = 0.9f;
+		float castingShadownSoftness = 0.7f;
 
 		ReflectRefractType reflectRefractType = ReflectRefractType::None;
 		ReflectRefractMapType reflectRefractMapType = ReflectRefractMapType::Environment;

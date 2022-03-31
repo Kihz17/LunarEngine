@@ -320,9 +320,7 @@ int main()
 }
 
 // TODO:
-// Place point light laterns around (only active during night)
-// Make shadows overall dimmer
-// Attack animations
+// Attack animations & dodge roll w/ strategic anim cancelleing 
 // Fix godrays
 // Map details
 // Maybe Water??

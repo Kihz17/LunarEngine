@@ -23,5 +23,5 @@ public:
 	std::vector<AnimationData> animations;
 
 private:
-	void ComputeBoneTransforms(SkeletalAnimationComponent* anim, const Bone& bone, const glm::mat4& inverseTransform, glm::mat4 parentTransform);
+	void ComputeBoneTransforms(SkeletalAnimationComponent* anim, const Bone& bone, const glm::mat4& inverseTransform, glm::mat4 parentTransform, bool root);
 };

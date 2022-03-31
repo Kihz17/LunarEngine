@@ -14,42 +14,51 @@ constexpr float animIdleSpeed = 15.0f;
 constexpr float animWalkSpeed = 15.0f;
 constexpr float animSprintSpeed = 17.0f;
 constexpr float animEquipSpeed = 19.0f;
-constexpr float animJumpSpeed = 20.0f;
+constexpr float animJumpSpeed = 2.0f;
 
 constexpr float turnSpeed = 10.0f;
 constexpr float equipTime = 3.0f;
 
+constexpr float animAttackSpeed = 17.0f;
+
 PlayerController::PlayerController(Camera& camera, EntityManager& entityManager, PhysicsWorld* physicsWorld)
-	: entityManager(entityManager),
-	physicsWorld(physicsWorld),
-	camera(camera),
+    : entityManager(entityManager),
+    physicsWorld(physicsWorld),
+    camera(camera),
     equipped(false),
     animationStateMachine(nullptr),
-    unequipIdle({ MeshManager::GetAnimation("assets/models/Unequip_Idle.fbx"), 0.0f, true }),
-    unequipWalk({ MeshManager::GetAnimation("assets/models/Unequip_Walk.fbx"), 0.0f, true }),
-    unequipRun({ MeshManager::GetAnimation("assets/models/Unequip_Run.fbx"), 0.0f, true }),
-    jump({ MeshManager::GetAnimation("assets/models/Jump.fbx"), 0.8f, false }),
-    equip({ MeshManager::GetAnimation("assets/models/Equip.fbx"), 1.0f, false, false }),
-    unequip({ MeshManager::GetAnimation("assets/models/Unequip.fbx"), 1.0f, false, false }),
-    equipIdle({ MeshManager::GetAnimation("assets/models/Equip_Idle.fbx"), 0.0f, true }),
-    equipRunF({ MeshManager::GetAnimation("assets/models/8Way_Run_F.fbx"), 0.0f, true }),
-    equipRunFR({ MeshManager::GetAnimation("assets/models/8Way_Run_FR.fbx"), 0.0f, true }),
-    equipRunFL({ MeshManager::GetAnimation("assets/models/8Way_Run_FL.fbx"), 0.0f, true }),
-    equipRunL({ MeshManager::GetAnimation("assets/models/8Way_Run_L.fbx"), 0.0f, true }),
-    equipRunR({ MeshManager::GetAnimation("assets/models/8Way_Run_R.fbx"), 0.0f, true }),
-    equipRunB({ MeshManager::GetAnimation("assets/models/8Way_Run_B.fbx"), 0.0f, true }),
-    equipRunBR({ MeshManager::GetAnimation("assets/models/8Way_Run_BR.fbx"), 0.0f, true }),
-    equipRunBL({ MeshManager::GetAnimation("assets/models/8Way_Run_BL.fbx"), 0.0f, true }),
-    equipWalkF({ MeshManager::GetAnimation("assets/models/8Way_Walk_F.fbx"), 0.0f, true }),
-    equipWalkFR({ MeshManager::GetAnimation("assets/models/8Way_Walk_FR.fbx"), 0.0f, true }),
-    equipWalkFL({ MeshManager::GetAnimation("assets/models/8Way_Walk_FL.fbx"), 0.0f, true }),
-    equipWalkL({ MeshManager::GetAnimation("assets/models/8Way_Walk_L.fbx"), 0.0f, true }),
-    equipWalkR({ MeshManager::GetAnimation("assets/models/8Way_Walk_R.fbx"), 0.0f, true }),
-    equipWalkB({ MeshManager::GetAnimation("assets/models/8Way_Walk_B.fbx"), 0.0f, true }),
-    equipWalkBR({ MeshManager::GetAnimation("assets/models/8Way_Walk_BR.fbx"), 0.0f, true }),
-    equipWalkBL({ MeshManager::GetAnimation("assets/models/8Way_Walk_BL.fbx"), 0.0f, true })
+    unequipIdle({ MeshManager::GetAnimation("assets/models/Unequip_Idle.fbx"), 0.0f, true, 15.0f }),
+    unequipWalk({ MeshManager::GetAnimation("assets/models/Unequip_Walk.fbx"), 0.0f, true, 15.0f }),
+    unequipRun({ MeshManager::GetAnimation("assets/models/Unequip_Run.fbx"), 0.0f, true, 17.0f }),
+    jump({ MeshManager::GetAnimation("assets/models/Jump.fbx"), 0.8f, false, 20.0f }),
+    equip({ MeshManager::GetAnimation("assets/models/Equip.fbx"), 1.0f, false, 19.0f, 3 }),
+    unequip({ MeshManager::GetAnimation("assets/models/Unequip.fbx"), 1.0f, false, 19.0f, 3 }),
+    equipIdle({ MeshManager::GetAnimation("assets/models/Equip_Idle.fbx"), 0.0f, true, 15.0f }),
+    equipRunF({ MeshManager::GetAnimation("assets/models/8Way_Run_F.fbx"), 0.0f, true, 15.0f }),
+    equipRunFR({ MeshManager::GetAnimation("assets/models/8Way_Run_FR.fbx"), 0.0f, true, 15.0f }),
+    equipRunFL({ MeshManager::GetAnimation("assets/models/8Way_Run_FL.fbx"), 0.0f, true, 15.0f }),
+    equipRunL({ MeshManager::GetAnimation("assets/models/8Way_Run_L.fbx"), 0.0f, true, 15.0f }),
+    equipRunR({ MeshManager::GetAnimation("assets/models/8Way_Run_R.fbx"), 0.0f, true, 15.0f }),
+    equipRunB({ MeshManager::GetAnimation("assets/models/8Way_Run_B.fbx"), 0.0f, true, 15.0f }),
+    equipRunBR({ MeshManager::GetAnimation("assets/models/8Way_Run_BR.fbx"), 0.0f, true, 15.0f }),
+    equipRunBL({ MeshManager::GetAnimation("assets/models/8Way_Run_BL.fbx"), 0.0f, true, 15.0f }),
+    equipWalkF({ MeshManager::GetAnimation("assets/models/8Way_Walk_F.fbx"), 0.0f, true, 15.0f }),
+    equipWalkFR({ MeshManager::GetAnimation("assets/models/8Way_Walk_FR.fbx"), 0.0f, true, 15.0f }),
+    equipWalkFL({ MeshManager::GetAnimation("assets/models/8Way_Walk_FL.fbx"), 0.0f, true, 15.0f }),
+    equipWalkL({ MeshManager::GetAnimation("assets/models/8Way_Walk_L.fbx"), 0.0f, true, 15.0f }),
+    equipWalkR({ MeshManager::GetAnimation("assets/models/8Way_Walk_R.fbx"), 0.0f, true, 15.0f }),
+    equipWalkB({ MeshManager::GetAnimation("assets/models/8Way_Walk_B.fbx"), 0.0f, true, 15.0f }),
+    equipWalkBR({ MeshManager::GetAnimation("assets/models/8Way_Walk_BR.fbx"), 0.0f, true, 15.0f }),
+    equipWalkBL({ MeshManager::GetAnimation("assets/models/8Way_Walk_BL.fbx"), 0.0f, true, 15.0f }),
+    attack1({ MeshManager::GetAnimation("assets/models/Combo01_1.fbx"), 0.7f, true, 20.0f, 1 }),
+    attack2({ MeshManager::GetAnimation("assets/models/Combo01_2.fbx"), 0.7f, true, 23.0f, 1 }),
+    attack3({ MeshManager::GetAnimation("assets/models/Combo01_3.fbx"), 0.8f, true, 23.0f, 1 }),
+    attack4({ MeshManager::GetAnimation("assets/models/Combo01_4.fbx"), 0.9f, true, 19.0f, 1 })
 {
-
+    basicAttack.attackStages.push_back({ attack1, 0.2f, 10.0f });
+    basicAttack.attackStages.push_back({ attack2, 0.25f, 10.0f });
+    basicAttack.attackStages.push_back({ attack3, 0.25f, 10.0f });
+    basicAttack.attackStages.push_back({ attack4, 0.1, 10.0f });
 }
 
 void PlayerController::OnAttach()
@@ -73,7 +82,7 @@ void PlayerController::OnAttach()
     animComp = playerEntity->GetComponent<SkeletalAnimationComponent>();
     animComp->lerpSpeed = 5.0f;
     animationStateMachine.animComp = animComp;
-    animationStateMachine.SetState(unequipIdle, animIdleSpeed);
+    animationStateMachine.SetState(unequipIdle);
     
     btTransform t;
     t.setOrigin(btVector3(0.0f, 100.0f, 0.0f));
@@ -98,18 +107,16 @@ void PlayerController::OnUpdate(float deltaTime)
     glm::vec3 vel(0.0f);
     glm::vec3 cameraDir = glm::normalize(glm::vec3(camera.front.x, 0.0f, camera.front.z));
 
-    bool animLocked = animationStateMachine.IsAnimationLocked();
-
-    if (InputManager::GetKey(GLFW_KEY_R)->IsJustPressed() && !animLocked)
+    if (InputManager::GetKey(GLFW_KEY_R)->IsJustPressed() && animationStateMachine.CanPlayAnimation(equip))
     {
-        animationStateMachine.SetState(equipped ? unequip : equip, animEquipSpeed);
+        animationStateMachine.SetState(equipped ? unequip : equip);
         equipped = !equipped;
     }
 
     bool movingFront = false;
     bool movingBack = false;
     bool movingSideways = false;
-    if (animationStateMachine.CanMove())
+    if (animationStateMachine.CanPlayAnimation(unequipWalk) || animationStateMachine.GetAnimation() == jump.anim)
     {
         if (InputManager::GetKey(GLFW_KEY_W)->IsPressed())
         {
@@ -160,75 +167,99 @@ void PlayerController::OnUpdate(float deltaTime)
 
     if(moving) vel = glm::normalize(vel) * speedMult;
 
-    if (InputManager::GetKey(GLFW_KEY_SPACE)->IsJustPressed() && btController->onGround() && !animLocked)
+    if (InputManager::GetKey(GLFW_KEY_SPACE)->IsJustPressed() && btController->onGround())
     {
         btController->jump(btVector3(0.0f, 60.0f, 0.0f));
 
-        if(equipped) animationStateMachine.SetState(jump, animJumpSpeed);
+        if(animationStateMachine.CanPlayAnimation(jump) && equipped) animationStateMachine.SetState(jump);
+    }    
+
+    // Attack
+    if (InputManager::GetKey(GLFW_MOUSE_BUTTON_1)->IsJustPressed() && equipped && animationStateMachine.CanPlayAnimation(attack1))
+    {
+        lastLeftClickTime = glfwGetTime();
+
+        AttackStage& attackStage = basicAttack.attackStages[basicAttack.currentStage];
+        if (attackStage.animationState.anim == animationStateMachine.GetAnimation()) // An attack animation is currently playing
+        {
+            float timePlayed = animationStateMachine.GetTimePlayed();   
+            float animDuration = attackStage.animationState.duration;
+
+            float minWindowTime = animDuration - attackStage.chainingWindow;
+            if (timePlayed >= minWindowTime && timePlayed < animDuration) // We chanined the attack, move to the next stage
+            {
+                basicAttack.currentStage++;
+                if (basicAttack.currentStage >= basicAttack.attackStages.size()) basicAttack.currentStage = 0; // Reset to beginning
+
+                AttackStage& newAttackStage = basicAttack.attackStages[basicAttack.currentStage];
+                animationStateMachine.SetState(newAttackStage.animationState); // Play the animation
+            }
+        }
+        else // No attack animation is playing, we can safely assume that this is the first "Stage" of the attack
+        {
+            basicAttack.currentStage = 0;
+            AttackStage& resetAttackStage = basicAttack.attackStages[basicAttack.currentStage];
+
+            animationStateMachine.SetState(resetAttackStage.animationState);
+        }
     }
- 
+
     if (equipped)
     {
         glm::quat rot = glm::quatLookAt(-cameraDir, glm::vec3(0.0f, 1.0f, 0.0f));
         rot = glm::rotate(rot, -glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         playerEntity->GetComponent<RotationComponent>()->value = glm::slerp(playerEntity->GetComponent<RotationComponent>()->value, rot, 10.0f * deltaTime);
-
-        if (!animLocked)
+      
+        if (moving)
         {
-            if (moving)
+            glm::vec3 velN = glm::normalize(vel);
+            float dot = glm::dot(velN, cameraDir);
+            glm::vec3 right = glm::cross(cameraDir, glm::vec3(0.0f, 1.0f, 0.0f));
+            float rightDot = glm::dot(velN, right);
+
+            if (glm::abs(dot - 1.0f) < 0.0001f) // Walking forward
             {
-                glm::vec3 velN = glm::normalize(vel);
-                float dot = glm::dot(velN, cameraDir);
-                glm::vec3 right = glm::cross(cameraDir, glm::vec3(0.0f, 1.0f, 0.0f));
-                float rightDot = glm::dot(velN, right);
-
-                float speed = sprinting ? animSprintSpeed : animWalkSpeed;
-
-                if (glm::abs(dot - 1.0f) < 0.0001f) // Walking forward
+                animationStateMachine.SetState(sprinting ? equipRunF : equipWalkF);
+            }
+            else if (glm::abs(dot - -1.0f) < 0.0001f) // Walking back
+            {
+                animationStateMachine.SetState(sprinting ? equipRunB : equipWalkB);
+            }
+            else if (rightDot > 0.0f) // Walking right
+            {
+                if (glm::abs(rightDot - 1.0f) < 0.0001f)
                 {
-                    animationStateMachine.SetState(sprinting ? equipRunF : equipWalkF , speed);
+                    animationStateMachine.SetState(sprinting ? equipRunR : equipWalkR);
                 }
-                else if (glm::abs(dot - -1.0f) < 0.0001f) // Walking back
+                else if(dot > 0.0f)
                 {
-                    animationStateMachine.SetState(sprinting ? equipRunB : equipWalkB, speed);
+                    animationStateMachine.SetState(sprinting ? equipRunFR : equipWalkFR);
                 }
-                else if (rightDot > 0.0f) // Walking right
+                else if (dot < 0.0f)
                 {
-                    if (glm::abs(rightDot - 1.0f) < 0.0001f)
-                    {
-                        animationStateMachine.SetState(sprinting ? equipRunR : equipWalkR, speed);
-                    }
-                    else if(dot > 0.0f)
-                    {
-                        animationStateMachine.SetState(sprinting ? equipRunFR : equipWalkFR, speed);
-                    }
-                    else if (dot < 0.0f)
-                    {
-                        animationStateMachine.SetState(sprinting ? equipRunBR : equipWalkBR, speed);
-                    }
-                }
-                else if (rightDot < 0.0f) // Walking Left
-                {
-                    if (glm::abs(rightDot - -1.0f) < 0.0001f)
-                    {
-                        animationStateMachine.SetState(sprinting ? equipRunL : equipWalkL, speed);
-                    }
-                    else if (dot > 0.0f)
-                    {
-                        animationStateMachine.SetState(sprinting ? equipRunFL : equipWalkFL, speed);
-                    }
-                    else if (dot < 0.0f)
-                    {
-                        animationStateMachine.SetState(sprinting ? equipRunBL : equipWalkBL, speed);
-                    }
+                    animationStateMachine.SetState(sprinting ? equipRunBR : equipWalkBR);
                 }
             }
-            else // Play idle
+            else if (rightDot < 0.0f) // Walking Left
             {
-                animationStateMachine.SetState(equipIdle, animIdleSpeed);
+                if (glm::abs(rightDot - -1.0f) < 0.0001f)
+                {
+                    animationStateMachine.SetState(sprinting ? equipRunL : equipWalkL);
+                }
+                else if (dot > 0.0f)
+                {
+                    animationStateMachine.SetState(sprinting ? equipRunFL : equipWalkFL);
+                }
+                else if (dot < 0.0f)
+                {
+                    animationStateMachine.SetState(sprinting ? equipRunBL : equipWalkBL);
+                }
             }
         }
-        
+        else if (animationStateMachine.CanPlayAnimation(equipIdle)) // Play idle
+        {
+            animationStateMachine.SetState(equipIdle);
+        }
     }
     else
     {
@@ -240,16 +271,16 @@ void PlayerController::OnUpdate(float deltaTime)
 
             if (sprinting)
             {
-                animationStateMachine.SetState(unequipRun, animSprintSpeed);
+                animationStateMachine.SetState(unequipRun);
             }
             else
             {
-                animationStateMachine.SetState(unequipWalk, animWalkSpeed);
+                animationStateMachine.SetState(unequipWalk);
             }
         }
-        else if(!animLocked)// Play idle
+        else if(animationStateMachine.CanPlayAnimation(unequipIdle)) // Play idle
         {
-            animationStateMachine.SetState(unequipIdle, animIdleSpeed);
+            animationStateMachine.SetState(unequipIdle);
         }
     }
 
