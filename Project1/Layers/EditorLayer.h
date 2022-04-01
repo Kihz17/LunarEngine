@@ -9,7 +9,7 @@
 class EditorLayer : public ApplicationLayer
 {
 public:
-	EditorLayer(EntityManager& entityManager, Physics::IPhysicsWorld<Entity>* physWorld);
+	EditorLayer(EntityManager& entityManager, Physics::IPhysicsWorld* physWorld);
 
 	virtual void OnUpdate(float deltaTime) override;
 
@@ -18,7 +18,7 @@ private:
 	void ShowComponent(Component* c);
 
 	EntityManager& entityManager;
-	Physics::IPhysicsWorld<Entity>* physWorld;
+	Physics::IPhysicsWorld* physWorld;
 
 	int currentComponent;
 	int currentTextureFilter;

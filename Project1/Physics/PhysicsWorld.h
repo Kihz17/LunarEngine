@@ -14,34 +14,35 @@
 #include <vector>
 #include <unordered_map>
 
-template <class T> class ICollisionListener;
-class Entity;
-class PhysicsWorld : public Physics::IPhysicsWorld<Entity>
+class PhysicsWorld : public Physics::IPhysicsWorld
 {
 public:
-	PhysicsWorld();
 	virtual ~PhysicsWorld();
 
 	virtual void SetGravity(const glm::vec3& gravity) override;
-	virtual void RegisterCollisionListener(Physics::ICollisionListener<Entity>* listener) override { collisionListeners.push_back(listener); }
-	virtual void AddRigidBody(Physics::IRigidBody* body, Entity* entity) override;
-	virtual void RemoveRigidBody(Physics::IRigidBody* body) override;
-	virtual Entity* GetRigidBodyOwner(Physics::IRigidBody* body) override;
+	virtual void RegisterCollisionListener(Physics::ICollisionListener* listener) override;
+
+	virtual void AddBody(Physics::ICollisionBody* body) override;
+	virtual void RemoveBody(Physics::ICollisionBody* body) override;
+
 	virtual void Update(float deltaTime) override;
 
-	btSoftRigidDynamicsWorld* GetBulletWorld() { return world; }
+	btDiscreteDynamicsWorld* GetBulletWorld() { return world; }
 
 private:
+	friend class PhysicsFactory;
+
+	PhysicsWorld();
+
 	btCollisionConfiguration* configuration;
 	btDispatcher* dispatcher;
 	btBroadphaseInterface* broadfaceInterface;
 	btConstraintSolver* constraintSolver;
 	btSoftBodySolver* softBodySolver;
 
-	btSoftRigidDynamicsWorld* world;
+	btDiscreteDynamicsWorld* world;
 
-	std::unordered_map<RigidBody*, Entity*> rigidBodiesToOwner;
-	std::vector<Physics::ICollisionListener<Entity>*> collisionListeners;
+	std::vector<Physics::ICollisionBody*> bodies;
 
 	PhysicsWorld(const PhysicsWorld& other) {}
 	PhysicsWorld& operator=(const PhysicsWorld& other) { return *this; }

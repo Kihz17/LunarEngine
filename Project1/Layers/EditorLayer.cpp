@@ -41,7 +41,7 @@ static const char* textureWraps[4] =
 
 static const char* divider = "===========================================";
 
-EditorLayer::EditorLayer(EntityManager& entityManager, Physics::IPhysicsWorld<Entity>* physworld)
+EditorLayer::EditorLayer(EntityManager& entityManager, Physics::IPhysicsWorld* physworld)
 	: entityManager(entityManager),
 	physWorld(physworld),
 	currentComponent(0),
@@ -432,12 +432,16 @@ void EditorLayer::ShowComponent(Component* comp)
 					c->ptr = nullptr;
 				}*/
 
-				glm::vec3 position = c->ptr->GetPosition();
+				glm::vec3 position;
+				c->ptr->GetPosition(position);
+
 				glm::vec3 initialPos = position;
 				ImGui::DragFloat3("Position",(float*) &position, 0.01f);
 				if(position != initialPos) c->ptr->SetPosition(position);
 
-				glm::quat rot = c->ptr->GetOrientation();
+				glm::quat rot;
+				c->ptr->GetOrientation(rot);
+
 				glm::quat initialRot = rot;
 				ImGui::DragFloat4("Rotation", (float*)&rot, 0.01f);
 				if(rot != initialRot) c->ptr->SetOrientation(rot);

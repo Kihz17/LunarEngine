@@ -16,9 +16,6 @@
     <ClInclude Include="IPhysicsWorld.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="IRigidBody.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
     <ClInclude Include="ICollisionListener.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
@@ -29,10 +26,14 @@
       <Filter>Impl</Filter>
     </ClInclude>
     <ClInclude Include="Physics.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Shapes.cpp">
-      <Filter>Impl</Filter>
-    </ClCompile>
+    <ClInclude Include="ICollisionBody.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IRigidBody.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IPhysicsFactory.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -30,7 +30,9 @@ public:
 	const WindowSpecs& GetWindowSpecs() const { return windowSpecs; }
 
 	Camera camera;
-	Physics::IPhysicsWorld<Entity>* physicsWorld;
+
+	Physics::IPhysicsFactory* physicsFactory;
+	Physics::IPhysicsWorld* physicsWorld;
 
 	static WindowSpecs InitializeGLFW(bool initImGui);
 

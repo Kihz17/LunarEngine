@@ -4,11 +4,13 @@ namespace Physics
 {
 	enum class ShapeType
 	{
-		Plane,
+		Box,
 		Sphere,
-		AABB,
-		OBB,
-		Capsule
+		Plane,
+		Cylinder,
+		Capsule,
+		Mesh,
+		ScaledMesh
 	};
 
 	class IShape

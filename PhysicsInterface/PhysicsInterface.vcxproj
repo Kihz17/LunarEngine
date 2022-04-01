@@ -141,15 +141,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ICollisionBody.h" />
     <ClInclude Include="ICollisionListener.h" />
+    <ClInclude Include="IPhysicsFactory.h" />
     <ClInclude Include="IPhysicsWorld.h" />
     <ClInclude Include="IRigidBody.h" />
     <ClInclude Include="IShape.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Shapes.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Shapes.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

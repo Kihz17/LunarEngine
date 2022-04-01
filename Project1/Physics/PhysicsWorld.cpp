@@ -9,14 +9,19 @@ PhysicsWorld::PhysicsWorld()
 	broadfaceInterface(new btDbvtBroadphase()),
 	constraintSolver(new btSequentialImpulseConstraintSolver()),
 	softBodySolver(new btDefaultSoftBodySolver()),
-	world(new btSoftRigidDynamicsWorld(dispatcher, broadfaceInterface, constraintSolver, configuration, softBodySolver))
+	world(nullptr)
 {
-
+	world = new btDiscreteDynamicsWorld(dispatcher, broadfaceInterface, constraintSolver, configuration);
 }
 
 PhysicsWorld::~PhysicsWorld()
 {
 	delete world;
+	delete configuration;
+	delete dispatcher;
+	delete broadfaceInterface;
+	delete constraintSolver;
+	delete softBodySolver;
 }
 
 void PhysicsWorld::SetGravity(const glm::vec3& gravity)
@@ -24,32 +29,31 @@ void PhysicsWorld::SetGravity(const glm::vec3& gravity)
 	world->setGravity(BulletUtils::GLMVec3ToBullet(gravity));
 }
 
-void PhysicsWorld::AddRigidBody(Physics::IRigidBody* body, Entity* owner)
+void PhysicsWorld::RegisterCollisionListener(Physics::ICollisionListener* listener)
+{
+
+}
+
+void PhysicsWorld::AddBody(Physics::ICollisionBody* body)
 {
 	if (!body) return;
 
-	RigidBody* rb = dynamic_cast<RigidBody*>(body);
-	if (!rb) return;
+	if (body->GetBodyType() == Physics::CollisionBodyType::Soft)
+	{
 
-	rigidBodiesToOwner.insert({ rb , owner });
-	world->addRigidBody(rb->GetBulletBody());
+	}
+
+	bodies.push_back(body);
+	world->addRigidBody(dynamic_cast<RigidBody*>(body)->GetBulletBody());
 }
 
-void PhysicsWorld::RemoveRigidBody(Physics::IRigidBody* body)
+void PhysicsWorld::RemoveBody(Physics::ICollisionBody* body)
 {
-	RigidBody* rigidBody = dynamic_cast<RigidBody*>(body);
-	rigidBodiesToOwner.erase(rigidBody);
-	world->removeRigidBody(rigidBody->GetBulletBody());
-}
-
-Entity* PhysicsWorld::GetRigidBodyOwner(Physics::IRigidBody* body)
-{
-	std::unordered_map<RigidBody*, Entity*>::iterator it = rigidBodiesToOwner.find(dynamic_cast<RigidBody*>(body));
-	if (it == rigidBodiesToOwner.end()) return nullptr;
-	return it->second;
+	world->removeRigidBody(dynamic_cast<RigidBody*>(body)->GetBulletBody());
+	bodies.erase(std::remove(bodies.begin(), bodies.end(), body));
 }
 
 void PhysicsWorld::Update(float deltaTime)
 {
-	world->stepSimulation(deltaTime);
+	world->stepSimulation(deltaTime, 10);
 }

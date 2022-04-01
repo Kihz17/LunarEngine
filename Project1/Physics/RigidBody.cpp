@@ -2,21 +2,21 @@
 
 #include <iostream>
 
-RigidBody::RigidBody(const Physics::RigidBodyInfo info, btCollisionShape* shape)
-	: IRigidBody(),
-	rigidbody(new btRigidBody(info.mass, new btDefaultMotionState(BulletUtils::GLMMat4ToBullet(info.initialTransform)), shape, BulletUtils::GLMVec3ToBullet(info.intertia)))
+RigidBody::RigidBody(const Physics::RigidBodyInfo info, Physics::IShape* shape)
+	: IRigidBody()
 {
+	btQuaternion orientation = BulletUtils::GLMQuatToBullet(info.rotation);
+	btVector3 position = BulletUtils::GLMVec3ToBullet(info.position);
 
-}
+	btDefaultMotionState* motionState = new btDefaultMotionState(btTransform(orientation, position));
+	btCollisionShape* bulletShape = BulletUtils::ToBulletShape(shape);
 
-RigidBody::RigidBody(const glm::vec3& pos, const glm::quat& rot, btCollisionShape* shape)
-	: IRigidBody(),
-	rigidbody(nullptr)
-{
-	btTransform t;
-	t.setRotation(BulletUtils::GLMQuatToBullet(rot));
-	t.setOrigin(BulletUtils::GLMVec3ToBullet(pos));
-	rigidbody = new btRigidBody(0.0f, new btDefaultMotionState(t), shape, BulletUtils::GLMVec3ToBullet(glm::vec3(0.0f, 0.0f, 0.0f)));
+	btVector3 inertia(0.0f, 0.0f, 0.0f);
+	if (info.mass != 0.0f) bulletShape->calculateLocalInertia(info.mass, inertia);
+
+	btRigidBody::btRigidBodyConstructionInfo ci(info.mass, motionState, bulletShape, inertia);
+	bulletBody = new btRigidBody(ci);
+	bulletBody->setActivationState(DISABLE_DEACTIVATION);
 }
 
 RigidBody::~RigidBody()
@@ -24,87 +24,74 @@ RigidBody::~RigidBody()
 	delete rigidbody;
 }
 
-void RigidBody::GetLinearVelocity(glm::vec3& vel) 
+bool RigidBody::IsStatic() const
 {
-	vel = BulletUtils::BulletVec3ToGLM(rigidbody->getLinearVelocity());
+	return bulletBody->isStaticObject();
 }
 
-glm::vec3 RigidBody::GetLinearVelocity() 
-{ 
-	return BulletUtils::BulletVec3ToGLM(rigidbody->getLinearVelocity()); 
-}
-
-void RigidBody::SetLinearVelocity(const glm::vec3& vel) 
-{ 
-	rigidbody->setLinearVelocity(BulletUtils::GLMVec3ToBullet(vel)); 
-}
-
-void RigidBody::GetPosition(glm::vec3& pos) 
-{ 
-	pos = BulletUtils::BulletVec3ToGLM(rigidbody->getCenterOfMassPosition()); 
-}
-
-glm::vec3 RigidBody::GetPosition() 
-{ 
-	return BulletUtils::BulletVec3ToGLM(rigidbody->getCenterOfMassPosition()); 
-}
-
-void RigidBody::SetPosition(const glm::vec3& pos)
+void RigidBody::GetPosition(glm::vec3& positionOut)
 {
-	btTransform transform = rigidbody->getWorldTransform();
-	transform.setOrigin(BulletUtils::GLMVec3ToBullet(pos));
-	rigidbody->setWorldTransform(transform);
-	rigidbody->getMotionState()->setWorldTransform(transform);
+	positionOut = BulletUtils::BulletVec3ToGLM(bulletBody->getCenterOfMassPosition());
 }
 
-glm::quat RigidBody::GetOrientation() const
+void RigidBody::SetPosition(const glm::vec3& positionIn)
 {
-	return BulletUtils::BulletQuatToGLM(rigidbody->getOrientation());
+	// Can't do this.
+	assert(0);
 }
 
-void RigidBody::GetOrientation(glm::quat& orien)
+void RigidBody::GetOrientation(glm::quat& orientationOut)
 {
-	orien = BulletUtils::BulletQuatToGLM(rigidbody->getOrientation());
+	orientationOut = BulletUtils::BulletQuatToGLM(bulletBody->getOrientation());
 }
 
-void RigidBody::SetOrientation(const glm::quat& orien)
-{ 
-	btTransform transform = rigidbody->getWorldTransform();
-	transform.setRotation(BulletUtils::GLMQuatToBullet(orien));
-	rigidbody->setWorldTransform(transform);
+void RigidBody::SetOrientation(const glm::quat& orientationIn)
+{
+	// Can't do this.
+	assert(0);
 }
 
 void RigidBody::ApplyForce(const glm::vec3& force)
-{ 
-	rigidbody->applyForce(BulletUtils::GLMVec3ToBullet(force), btVector3(0.0f, 0.0f, 0.0f));
+{
+	btVector3 btForce = BulletUtils::GLMVec3ToBullet(force);
+	bulletBody->applyCentralForce(btForce);
 }
 
 void RigidBody::ApplyForceAtPoint(const glm::vec3& force, const glm::vec3& relativePoint)
 {
-	rigidbody->applyForce(BulletUtils::GLMVec3ToBullet(force), BulletUtils::GLMVec3ToBullet(relativePoint));
+	btVector3 btForce = BulletUtils::GLMVec3ToBullet(force);
+	btVector3 btForceAtPoint = BulletUtils::GLMVec3ToBullet(relativePoint);
+
+	bulletBody->applyForce(btForce, btForceAtPoint);
 }
 
 void RigidBody::ApplyImpulse(const glm::vec3& impulse)
-{ 
-	rigidbody->applyImpulse(BulletUtils::GLMVec3ToBullet(impulse), btVector3(0.0f, 0.0f, 0.0f));
+{
+	btVector3 btImpulse = BulletUtils::GLMVec3ToBullet(impulse);
+	bulletBody->applyCentralImpulse(btImpulse);
 }
 
 void RigidBody::ApplyImpulseAtPoint(const glm::vec3& impulse, const glm::vec3& relativePoint)
-{ 
-	rigidbody->applyImpulse(BulletUtils::GLMVec3ToBullet(impulse), BulletUtils::GLMVec3ToBullet(relativePoint));
+{
+	btVector3 btImpulse = BulletUtils::GLMVec3ToBullet(impulse);
+	btVector3 btImpulseAtPoint = BulletUtils::GLMVec3ToBullet(relativePoint);
+
+	bulletBody->applyImpulse(btImpulse, btImpulseAtPoint);
 }
 
 void RigidBody::ApplyTorque(const glm::vec3& torque)
-{ 
-	rigidbody->applyTorque(BulletUtils::GLMVec3ToBullet(torque));
+{
+	btVector3 btTorque = BulletUtils::GLMVec3ToBullet(torque);
+	bulletBody->applyTorque(btTorque);
 }
 
 void RigidBody::ApplyTorqueImpulse(const glm::vec3& torqueImpulse)
-{ 
-	rigidbody->applyTorqueImpulse(BulletUtils::GLMVec3ToBullet(torqueImpulse));
+{
+	btVector3 btTorqueImpulse = BulletUtils::GLMVec3ToBullet(torqueImpulse);
+	bulletBody->applyTorque(btTorqueImpulse);
 }
 
-void RigidBody::SetGravityAcceleration(const glm::vec3& gravity)
-{ 
-	rigidbody->setGravity(BulletUtils::GLMVec3ToBullet(gravity));
+Physics::IShape* RigidBody::GetShape()
+{
+	return nullptr;
 }

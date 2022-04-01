@@ -157,38 +157,38 @@ void EntityComponentSerializer::Deserialize(const YAML::Node& node)
 	else if (componentType == "Rigid")
 	{
 		std::string colliderType = node["CollisionType"].as<std::string>();
-		btCollisionShape* shape = nullptr;
+		Physics::IShape* shape = nullptr;
 		if (colliderType == "Box")
 		{
-			shape = new btBoxShape(BulletUtils::GLMVec3ToBullet(node["Extents"].as<glm::vec3>()));
+			shape = new Physics::BoxShape(node["Extents"].as<glm::vec3>());
 		}
 		else if (colliderType == "Sphere")
 		{
-			shape = new btSphereShape(node["Radius"].as<float>());
+			shape = new Physics::SphereShape(node["Radius"].as<float>());
 		}
 		else if (colliderType == "Capsule")
 		{
-			shape = new btCapsuleShape(node["Radius"].as<float>(), node["Height"].as<float>());
+			shape = new Physics::CapsuleShape(node["Radius"].as<float>(), node["Height"].as<float>());
 		}
 		else if (colliderType == "Cylinder")
 		{
-			shape = new btCylinderShape(BulletUtils::GLMVec3ToBullet(node["Extents"].as<glm::vec3>()));
+			shape = new Physics::CylinderShape(node["Extents"].as<glm::vec3>());
 		}
 		else if (colliderType == "ScaledTriangleMesh")
 		{
-			shape = PhysicsFactory::GetMeshScaledShape(MeshManager::GetMesh(node["MeshPath"].as<std::string>()), node["Scale"].as<glm::vec3>());
+			Physics::MeshShape* meshShape = PhysicsFactory::GetMeshShape(MeshManager::GetMesh(node["MeshPath"].as<std::string>()));
+			shape = new Physics::ScaledMeshShape(meshShape, node["Scale"].as<glm::vec3>());
+			
 		}
 		else if (colliderType == "TriangleMesh")
 		{
-			shape = PhysicsFactory::GetMeshShape(MeshManager::GetMesh(node["MeshPath"].as<std::string>()), MeshColliderType::BvhTriangle);
+			shape = PhysicsFactory::GetMeshShape(MeshManager::GetMesh(node["MeshPath"].as<std::string>()));
 		}
 
 		Physics::RigidBodyInfo info;
 		info.mass = node["Mass"].as<float>();
-		info.intertia = node["Inertia"].as<glm::vec3>();
-		glm::mat4 transform = glm::toMat4(node["InitialRotation"].as<glm::quat>());
-		transform[3] = glm::vec4(node["InitialPosition"].as<glm::vec3>(), 1.0f);
-		info.initialTransform = transform;
+		info.rotation = node["InitialRotation"].as<glm::quat>();
+		info.position = node["InitialPosition"].as<glm::vec3>();
 		RigidBody* rb = new RigidBody(info, shape);
 		rb->GetBulletBody()->setRestitution(node["Restitution"].as<float>());
 		if (node["IsStatic"].as<bool>())
@@ -327,41 +327,41 @@ void EntityComponentSerializer::SaveRigidComponent(YAML::Emitter& emitter, Rigid
 	if (!rb) return;
 
 	emitter << YAML::Key << "ComponentType" << YAML::Value << "Rigid";
-	btCollisionShape* shape = rb->GetShape();
-	int shapeType = shape->getShapeType();
-	if (shapeType == BOX_SHAPE_PROXYTYPE)
+	Physics::IShape* shape = rb->GetShape();
+	Physics::ShapeType shapeType = shape->GetShapeType();
+	if (shapeType == Physics::ShapeType::Box)
 	{
-		btBoxShape* box = static_cast<btBoxShape*>(shape);
+		Physics::BoxShape* box = Physics::BoxShape::Cast(shape);
 		emitter << YAML::Key << "CollisionType" << YAML::Value << "Box";
-		emitter << YAML::Key << "Extents" << YAML::Value << BulletUtils::BulletVec3ToGLM(box->getHalfExtentsWithoutMargin());
+		emitter << YAML::Key << "Extents" << YAML::Value << box->GetExtents();
 	}
-	else if (shapeType == SPHERE_SHAPE_PROXYTYPE)
+	else if (shapeType == Physics::ShapeType::Sphere)
 	{
-		btSphereShape* sphere = static_cast<btSphereShape*>(shape);
+		Physics::SphereShape* sphere = Physics::SphereShape::Cast(shape);
 		emitter << YAML::Key << "CollisionType" << YAML::Value << "Sphere";
-		emitter << YAML::Key << "Radius" << YAML::Value << sphere->getRadius();
+		emitter << YAML::Key << "Radius" << YAML::Value << sphere->GetRadius();
 	}
-	else if (shapeType == CAPSULE_SHAPE_PROXYTYPE)
+	else if (shapeType == Physics::ShapeType::Capsule)
 	{
-		btCapsuleShape* capsule = static_cast<btCapsuleShape*>(shape);
+		Physics::CapsuleShape* capsule = Physics::CapsuleShape::Cast(shape);
 		emitter << YAML::Key << "CollisionType" << YAML::Value << "Capsule";
-		emitter << YAML::Key << "Radius" << YAML::Value << capsule->getRadius();
-		emitter << YAML::Key << "Height" << YAML::Value << capsule->getHalfHeight();
+		emitter << YAML::Key << "Radius" << YAML::Value << capsule->GetRadius();
+		emitter << YAML::Key << "Height" << YAML::Value << capsule->GetHeight();
 	}
-	else if (shapeType == CYLINDER_SHAPE_PROXYTYPE)
+	else if (shapeType == Physics::ShapeType::Cylinder)
 	{
-		btCylinderShape* cyl = static_cast<btCylinderShape*>(shape);
+		Physics::CylinderShape* cyl = Physics::CylinderShape::Cast(shape);
 		emitter << YAML::Key << "CollisionType" << YAML::Value << "Cylinder";
-		emitter << YAML::Key << "Extents" << YAML::Value << cyl->getHalfExtentsWithoutMargin();
+		emitter << YAML::Key << "Extents" << YAML::Value << cyl->GetExtents();
 	}
-	else if (shapeType == SCALED_TRIANGLE_MESH_SHAPE_PROXYTYPE)
+	else if (shapeType == Physics::ShapeType::ScaledMesh)
 	{
-		btScaledBvhTriangleMeshShape* tShape = static_cast<btScaledBvhTriangleMeshShape*>(shape);
+		Physics::ScaledMeshShape* tShape = Physics::ScaledMeshShape::Cast(shape);
 		emitter << YAML::Key << "CollisionType" << YAML::Value << "ScaledTriangleMesh";
 		emitter << YAML::Key << "MeshPath" << YAML::Value << entity->GetComponent<RenderComponent>()->mesh->GetPath();
-		emitter << YAML::Key << "Scale" << YAML::Value << BulletUtils::BulletVec3ToGLM(tShape->getLocalScaling());
+		emitter << YAML::Key << "Scale" << YAML::Value << tShape->GetScale();
 	}
-	else if (shapeType == TRIANGLE_MESH_SHAPE_PROXYTYPE)
+	else if (shapeType == Physics::ShapeType::Mesh)
 	{
 		emitter << YAML::Key << "CollisionType" << YAML::Value << "TriangleMesh";
 		emitter << YAML::Key << "MeshPath" << YAML::Value << entity->GetComponent<RenderComponent>()->mesh->GetPath();

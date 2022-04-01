@@ -8,6 +8,7 @@
 #include "Renderer.h"
 #include "Profiler.h"
 #include "MeshManager.h"
+#include "PhysicsFactory.h"
 
 #include "PositionComponent.h"
 #include "ScaleComponent.h"
@@ -28,7 +29,8 @@ static void ErrorCallback(int error, const char* description)
 GameEngine::GameEngine(const WindowSpecs& windowSpecs, bool editorMode)
 	: editorMode(editorMode),
     windowSpecs(windowSpecs),
-    physicsWorld(new PhysicsWorld()),
+    physicsFactory(new PhysicsFactory()),
+    physicsWorld(physicsFactory->CreateWorld()),
     debugMode(false)
 {
 	// Initialize systems
@@ -42,6 +44,7 @@ GameEngine::GameEngine(const WindowSpecs& windowSpecs, bool editorMode)
 
 GameEngine::~GameEngine()
 {
+    delete physicsFactory;
     delete physicsWorld;
 
     ShaderLibrary::CleanUp();
@@ -322,7 +325,7 @@ WindowSpecs GameEngine::InitializeGLFW(bool initImGui)
     int HEIGHT = 1080;// glfwMode->height;
 
     // Create window
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Lunar Engine", glfwMonitor, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Lunar Engine", nullptr, nullptr);
     glfwMakeContextCurrent(window);
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {

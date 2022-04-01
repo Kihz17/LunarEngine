@@ -204,6 +204,7 @@ int main()
         wallInfo.albedoTextures.push_back({ stoneColor, 1.0f });
         wallInfo.normalTexture = stoneNormal;
         wallInfo.ormTexture = stoneORM;
+        wallInfo.uvOffset = glm::vec2(0.5f, 0.5f);
 
         RenderComponent::RenderInfo floorInfo;
         floorInfo.mesh = tile4m;
@@ -274,19 +275,35 @@ int main()
         gameEngine.physicsWorld->AddRigidBody(rb, e);
     }*/
 
-   /* {
-        Entity* e = gameEngine.GetEntityManager().CreateEntity("DungeonStairs1");
-        e->AddComponent<PositionComponent>();
+    {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("CTest");
+        e->AddComponent<PositionComponent>(glm::vec3(0.0f, 50.0f, 0.0f));
         e->AddComponent<RotationComponent>();
-        e->AddComponent<ScaleComponent>(glm::vec3(0.1f));
+        e->AddComponent<ScaleComponent>(glm::vec3(2.0f));
 
         RenderComponent::RenderInfo testInfo;
-        testInfo.mesh = castleStairs3m;
-        testInfo.albedoTextures.push_back({ castleWallDetailColor, 1.0f });
+        testInfo.mesh = sphere;
+        testInfo.isColorOverride = true;
+        testInfo.colorOverride = glm::vec3(0.0f, 0.0f, 1.0f);
+  /*      testInfo.albedoTextures.push_back({ castleWallDetailColor, 1.0f });
         testInfo.normalTexture = castleWallDetailNormal;
-        testInfo.ormTexture = castleWallDetailORM;
+        testInfo.ormTexture = castleWallDetailORM;*/
         e->AddComponent<RenderComponent>(testInfo);
-    }*/
+
+        Physics::RigidBodyInfo info;
+        info.mass = 1.0f;
+        info.position = glm::vec3(0.0f, 30.0f, 20.0f);
+        RigidBody* rb = new RigidBody(info, new Physics::SphereShape(2.0f));
+        //rb->GetBulletBody()->setRestitution(0.8f);
+        e->AddComponent<RigidBodyComponent>(rb);
+
+        gameEngine.physicsWorld->AddBody(rb);
+
+        rb->ApplyImpulse(glm::vec3(0.0f, 0.0f, 1000.0f));
+
+        btTypedConstraint* constraint = new btPoint2PointConstraint(*rb->GetBulletBody(), btVector3(0.0f, -10.0f, 0.0f));
+        static_cast<PhysicsWorld*>(gameEngine.physicsWorld)->GetBulletWorld()->addConstraint(constraint);
+    }
 
     // Set env map
     {
@@ -343,13 +360,15 @@ int main()
         {
             Physics::RigidBodyInfo info;
             info.mass = 0.0f;
-            glm::mat4 transform = glm::toMat4(e->GetComponent<RotationComponent>()->value);
-            transform[3] = glm::vec4(e->GetComponent<PositionComponent>()->value, 1.0f);
-            info.initialTransform = transform;
-            RigidBody* rb = new RigidBody(info, PhysicsFactory::GetMeshScaledShape(e->GetComponent<RenderComponent>()->mesh, e->GetComponent<ScaleComponent>()->value));
+            info.position = e->GetComponent<PositionComponent>()->value;
+            info.rotation = e->GetComponent<RotationComponent>()->value;
+
+            Physics::ScaledMeshShape* scaledMeshShape = new Physics::ScaledMeshShape(PhysicsFactory::GetMeshShape(e->GetComponent<RenderComponent>()->mesh), e->GetComponent<ScaleComponent>()->value);
+            RigidBody* rb = new RigidBody(info, scaledMeshShape);
+
             rb->GetBulletBody()->setCollisionFlags(btCollisionObject::CollisionFlags::CF_STATIC_OBJECT);
             e->AddComponent<RigidBodyComponent>(rb);
-            gameEngine.physicsWorld->AddRigidBody(rb, e);
+            gameEngine.physicsWorld->AddBody(rb);
         }
     }
 

@@ -6,6 +6,8 @@
 #include <glm/gtx/vector_angle.hpp>
 #include <iostream>
 
+constexpr float velSpeed = 10.0f;
+
 constexpr float walkSpeed = 0.1f;
 constexpr float runSpeed = 0.3f;
 constexpr float equipRunSpeed = 0.2f;
@@ -67,7 +69,7 @@ void PlayerController::OnAttach()
 
     playerEntity = entityManager.CreateEntity("Player");
     playerEntity->shouldSave = false;
-    playerEntity->AddComponent<PositionComponent>(glm::vec3(10.0f, 50.0f, 0.0f));
+    playerEntity->AddComponent<PositionComponent>(glm::vec3(10.0f, 5.0f, 0.0f));
     playerEntity->AddComponent<RotationComponent>(glm::quat(-0.7071, 0.7071f, 0.0f, 0.0f));
     playerEntity->AddComponent<ScaleComponent>(glm::vec3(0.1f));
 
@@ -121,23 +123,23 @@ void PlayerController::OnUpdate(float deltaTime)
     {
         if (InputManager::GetKey(GLFW_KEY_W)->IsPressed())
         {
-            vel += cameraDir;
+            vel += cameraDir * velSpeed * deltaTime;
             movingFront = true;
         }
         else if (InputManager::GetKey(GLFW_KEY_S)->IsPressed())
         {
-            vel += -cameraDir;
+            vel += -cameraDir * velSpeed * deltaTime;
             movingBack = true;
         }
 
         if (InputManager::GetKey(GLFW_KEY_A)->IsPressed())
         {
-            vel -= glm::normalize(glm::cross(cameraDir, glm::vec3(0.0f, 1.0f, 0.0f)));
+            vel -= glm::normalize(glm::cross(cameraDir, glm::vec3(0.0f, 1.0f, 0.0f))) * velSpeed * deltaTime;
             movingSideways = true;
         }
         else if (InputManager::GetKey(GLFW_KEY_D)->IsPressed())
         {
-            vel += glm::normalize(glm::cross(cameraDir, glm::vec3(0.0f, 1.0f, 0.0f)));
+            vel += glm::normalize(glm::cross(cameraDir, glm::vec3(0.0f, 1.0f, 0.0f))) * velSpeed * deltaTime;
             movingSideways = true;
         }
     }
@@ -174,6 +176,11 @@ void PlayerController::OnUpdate(float deltaTime)
 
         if(animationStateMachine.CanPlayAnimation(jump) && equipped) animationStateMachine.SetState(jump);
     }    
+
+    if (InputManager::GetKey(GLFW_KEY_L)->IsJustPressed())
+    {
+
+    }
 
     // Attack
     if (InputManager::GetKey(GLFW_MOUSE_BUTTON_1)->IsJustPressed() && equipped && animationStateMachine.CanPlayAnimation(attack1))
@@ -290,6 +297,7 @@ void PlayerController::OnUpdate(float deltaTime)
     btController->updateAction(physicsWorld->GetBulletWorld(), deltaTime);
 
     glm::vec3 pos = BulletUtils::BulletVec3ToGLM(ghostObj->getWorldTransform().getOrigin());
+
     camera.position = pos - (camera.front * 40.0f) + glm::vec3(0.0f, 10.0f, 0.0f);
     playerEntity->GetComponent<PositionComponent>()->value = pos;
     playerEntity->GetComponent<PositionComponent>()->value.y -= 1.0f;

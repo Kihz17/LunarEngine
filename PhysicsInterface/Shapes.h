@@ -3,18 +3,37 @@
 #include "IShape.h"
 
 #include <glm/glm.hpp>
+#include <vector>
 
 namespace Physics
 {
+
+	class BoxShape : public IShape
+	{
+	public:
+		BoxShape(const glm::vec3& extents) : IShape(ShapeType::Box), extents(extents) {}
+		virtual ~BoxShape() {}
+
+		const glm::vec3& GetExtents() const { return extents; }
+
+		static BoxShape* Cast(IShape* shape) { return dynamic_cast<BoxShape*>(shape); }
+
+	private:
+		BoxShape(const BoxShape& other) : IShape(ShapeType::Box) {}
+		BoxShape& operator=(const BoxShape& other) { return *this; }
+
+		glm::vec3 extents;
+	};
+
 	class SphereShape : public IShape
 	{
 	public:
-		SphereShape(float radius);
-		virtual ~SphereShape();
+		SphereShape(float radius) : IShape(ShapeType::Sphere), radius(radius) {}
+		virtual ~SphereShape() {}
 
 		float GetRadius() const { return radius; }
 
-		static SphereShape* Cast(IShape* shape);
+		static SphereShape* Cast(IShape* shape) { return dynamic_cast<SphereShape*>(shape); }
 
 	protected:
 		SphereShape(ShapeType shapeType): IShape(shapeType) {}
@@ -29,13 +48,13 @@ namespace Physics
 	class PlaneShape : public IShape
 	{
 	public:
-		PlaneShape(float dotProduct, const glm::vec3& normal);
-		virtual ~PlaneShape();
+		PlaneShape(float dotProduct, const glm::vec3& normal) : IShape(ShapeType::Plane), dotProduct(dotProduct), normal(normal) {}
+		virtual ~PlaneShape() {}
 
 		float GetDotProduct() const { return dotProduct; }
 		const glm::vec3& GetNormal() { return normal; }
 
-		static PlaneShape* Cast(IShape* shape);
+		static PlaneShape* Cast(IShape* shape) { return dynamic_cast<PlaneShape*>(shape); }
 
 	private:
 		PlaneShape(const PlaneShape& other) : IShape(ShapeType::Plane) {}
@@ -45,48 +64,85 @@ namespace Physics
 		glm::vec3 normal;
 	};
 
-	class AABBShape : public IShape
+	class CylinderShape : public IShape
 	{
 	public:
-		AABBShape(const glm::vec3& size);
-		virtual ~AABBShape();
+		CylinderShape(const glm::vec3& halfExtents) : IShape(ShapeType::Sphere), extents(halfExtents) {}
+		virtual ~CylinderShape() {}
 
-		const glm::vec3& GetExtents() const { return size; }
+		const glm::vec3& GetExtents() const { return extents; }
 
-		static AABBShape* Cast(IShape* shape);
+		static CylinderShape* Cast(IShape* shape) { return dynamic_cast<CylinderShape*>(shape); }
 
 	private:
-		AABBShape(const AABBShape& other) : IShape(ShapeType::AABB) {}
-		AABBShape& operator=(const AABBShape& other) { return *this; }
+		glm::vec3 extents;
 
-		glm::vec3 size;
+		CylinderShape(const CylinderShape&) : IShape(ShapeType::Cylinder) { }
+		CylinderShape& operator=(const CylinderShape&) { return *this; }
 	};
 
-	class OBBShape : public IShape
+	class CapsuleShape : public IShape
 	{
 	public:
-		OBBShape(const glm::vec3& size);
-		virtual ~OBBShape();
+		CapsuleShape(float radius, float height) : IShape(ShapeType::Capsule), radius(radius), height(height) {}
+		virtual ~CapsuleShape() {}
 
-		static OBBShape* Cast(IShape* shape);
+		float GetRadius() const { return radius; }
+		float GetHeight() const { return height; }
+
+		static CapsuleShape* Cast(IShape* shape) { return dynamic_cast<CapsuleShape*>(shape); }
 
 	private:
-		OBBShape(const OBBShape& other) : IShape(ShapeType::OBB) {}
-		OBBShape& operator=(const OBBShape& other) { return *this; }
+		float radius;
+		float height;
 
-		glm::vec3 size;
+		CapsuleShape(const CapsuleShape& other) : IShape(ShapeType::Capsule) {}
+		CapsuleShape& operator=(const CapsuleShape& other) { return *this; }
 	};
 
-	//class CapsuleShape : public IShape
-	//{
-	//public:
-	//	CapsuleShape();
-	//	virtual ~CapsuleShape();
+	class MeshShape : public IShape
+	{
+	public:
+		MeshShape(const std::vector<int>& faces, int faceStride, const std::vector<float>& vertices, int vertexStride)
+			: IShape(ShapeType::Mesh), faces(faces), faceStride(faceStride), vertices(vertices), vertexStride(vertexStride) {}
 
-	//	static CapsuleShape* Cast(IShape* shape);
+		virtual ~MeshShape() {}
 
-	//private:
-	//	CapsuleShape(const CapsuleShape& other) : IShape(ShapeType::Capsule) {}
-	//	CapsuleShape& operator=(const CapsuleShape& other) { return *this; }
-	//};
+		const std::vector<int>& GetFaces() const { return faces; }
+		const std::vector<float>& GetVertices() const { return vertices; }
+
+		int GetFaceStride() const { return faceStride; }
+		int GetVertexStride() const { return vertexStride; }
+
+		static MeshShape* Cast(IShape* shape) { return dynamic_cast<MeshShape*>(shape); }
+
+	private:
+		std::vector<int> faces;
+		int faceStride;
+
+		std::vector<float> vertices;
+		int vertexStride;
+
+		MeshShape(const MeshShape& other) : IShape(ShapeType::Mesh) {}
+		MeshShape& operator=(const MeshShape& other) { return *this; }
+	};
+
+	class ScaledMeshShape : public IShape
+	{
+	public:
+		ScaledMeshShape(MeshShape* meshShape, const glm::vec3& scale) : IShape(ShapeType::ScaledMesh), baseShape(meshShape), scale(scale) {}
+		virtual ~ScaledMeshShape() {}
+
+		MeshShape* GetMeshShape() { return baseShape; }
+		glm::vec3 GetScale() const { return scale; }
+
+		static ScaledMeshShape* Cast(IShape* shape) { return dynamic_cast<ScaledMeshShape*>(shape); }
+
+	private:
+		MeshShape* baseShape;
+		glm::vec3 scale;
+
+		ScaledMeshShape(const ScaledMeshShape& other) : IShape(ShapeType::ScaledMesh) {}
+		ScaledMeshShape& operator=(const ScaledMeshShape& other) { return *this; }
+	};
 }
