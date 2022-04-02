@@ -2,6 +2,9 @@
 #include "Components.h"
 #include "InputManager.h"
 #include "MeshManager.h"
+#include "Utils.h"
+#include "TextureManager.h"
+#include "Texture2D.h"
 
 #include <glm/gtx/vector_angle.hpp>
 #include <iostream>
@@ -88,7 +91,7 @@ void PlayerController::OnAttach()
     animationStateMachine.SetState(unequipIdle);
     
     btTransform t;
-    t.setOrigin(btVector3(0.0f, 100.0f, 0.0f));
+    t.setOrigin(btVector3(0.0f, 10.0f, 0.0f));
 
     // Setup player controller ghost object
     btCapsuleShape* capsuleShape = new btCapsuleShape(1.0f, 3.0f);
@@ -103,6 +106,54 @@ void PlayerController::OnAttach()
     btController = new btKinematicCharacterController(ghostObj, capsuleShape, 5.0f, btVector3(0.0f, 1.0f, 0.0f));
     btController->setGravity(btVector3(0.0f, -100.0f, 0.0f));
     physicsWorld->GetBulletWorld()->addAction(btController); // Add controller to world
+
+    // Setup lantern hinge
+    Physics::RigidBodyInfo lanternRigidInfo;
+    lanternRigidInfo.mass = 0.0f;
+    lanternRigidInfo.position = glm::vec3(0.0f, 5.0f, 0.0f);
+    lanternHinge = new RigidBody(lanternRigidInfo, new Physics::SphereShape(0.1f));
+
+    btRigidBody* btLanternAnchor = lanternHinge->GetBulletBody();
+    btLanternAnchor->setCollisionFlags(btLanternAnchor->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+    btLanternAnchor->setActivationState(DISABLE_DEACTIVATION);
+    physicsWorld->AddBody(lanternHinge);
+
+    {
+        Entity* lanternE = entityManager.CreateEntity();
+        lanternE->shouldSave = false;
+
+        lanternE->AddComponent<PositionComponent>();
+        lanternE->AddComponent<RotationComponent>();
+        lanternE->AddComponent<ScaleComponent>(glm::vec3(0.04f));
+
+        RenderComponent::RenderInfo lanternInfo;
+        lanternInfo.mesh = MeshManager::GetMesh("assets/models/Lantern.fbx");
+        lanternInfo.albedoTextures.push_back({ TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat), 1.0f });
+        lanternInfo.normalTexture = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+        lanternInfo.ormTexture = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+        lanternInfo.colorOverride = glm::vec3(0.0f, 1.0f, 0.0f);
+        lanternE->AddComponent<RenderComponent>(lanternInfo);
+
+        Physics::RigidBodyInfo lanternRigidInfo;
+        lanternRigidInfo.mass = 1.0f;
+        lanternRigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
+        lanternRigidBody = new RigidBody(lanternRigidInfo, new Physics::BoxShape(glm::vec3(0.2f, 0.4f, 0.2f)));
+        lanternRigidBody->GetBulletBody()->setDamping(0.8f, 0.9f);
+        lanternE->AddComponent<RigidBodyComponent>(lanternRigidBody);
+
+        physicsWorld->AddBody(lanternRigidBody);
+
+        btTypedConstraint* constraint = new btPoint2PointConstraint(*lanternRigidBody->GetBulletBody(), *btLanternAnchor, btVector3(0.0f, -0.5f, 0.6f), btVector3(0.0f, 0.0f, 0.0f));
+        physicsWorld->GetBulletWorld()->addConstraint(constraint);
+    }
+
+    LightInfo lightInfo;
+    lightInfo.color = glm::vec3(0.83f, 0.7f, 0.1f);
+    lightInfo.lightType = LightType::Point;
+    lightInfo.on = false;
+    lightInfo.intensity = 100.0f;
+    lightInfo.radius = 300.0f;
+    lanternLight = new Light(lightInfo);
 }
 
 void PlayerController::OnUpdate(float deltaTime)
@@ -179,7 +230,7 @@ void PlayerController::OnUpdate(float deltaTime)
 
     if (InputManager::GetKey(GLFW_KEY_L)->IsJustPressed())
     {
-
+        lanternLight->UpdateOn(!lanternLight->on);
     }
 
     // Attack
@@ -298,6 +349,28 @@ void PlayerController::OnUpdate(float deltaTime)
 
     glm::vec3 pos = BulletUtils::BulletVec3ToGLM(ghostObj->getWorldTransform().getOrigin());
 
+    // Move lantern anchor to right side of character
+    btTransform t;
+    t.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1.0f));
+    glm::quat lanternRot = playerEntity->GetComponent<RotationComponent>()->value;
+    lanternRot.x = 0.0f;
+    lanternRot.z = 0.0f;
+    lanternRot = glm::normalize(lanternRot);
+    glm::vec3 playerDir = glm::normalize(lanternRot * Utils::FrontVec());
+
+    glm::vec3 lanternAnchorPos = pos + glm::vec3(0.0f, 10.0f, 0.0f);
+    lanternAnchorPos += playerDir * 0.5f;
+    lanternAnchorPos -= glm::cross(playerDir, glm::vec3(0.0f, 1.0f, 0.0f)) * 1.5f;
+
+    t.setOrigin(BulletUtils::GLMVec3ToBullet(lanternAnchorPos));
+    lanternHinge->GetBulletBody()->setWorldTransform(t);
+
+    // Update lantern light pos
+    glm::vec3 lanternPos;
+    lanternRigidBody->GetPosition(lanternPos);
+    lanternLight->UpdatePosition(lanternPos);
+
+    // Align camera with player
     camera.position = pos - (camera.front * 40.0f) + glm::vec3(0.0f, 10.0f, 0.0f);
     playerEntity->GetComponent<PositionComponent>()->value = pos;
     playerEntity->GetComponent<PositionComponent>()->value.y -= 1.0f;

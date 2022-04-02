@@ -299,9 +299,9 @@ int main()
 
         gameEngine.physicsWorld->AddBody(rb);
 
-        rb->ApplyImpulse(glm::vec3(0.0f, 0.0f, 1000.0f));
+        rb->ApplyImpulse(glm::vec3(1000.0f, 0.0f, 1000.0f));
 
-        btTypedConstraint* constraint = new btPoint2PointConstraint(*rb->GetBulletBody(), btVector3(0.0f, -10.0f, 0.0f));
+        btTypedConstraint* constraint = new btPoint2PointConstraint(*rb->GetBulletBody(), btVector3(0.0f, -5.0f, 0.0f));
         static_cast<PhysicsWorld*>(gameEngine.physicsWorld)->GetBulletWorld()->addConstraint(constraint);
     }
 

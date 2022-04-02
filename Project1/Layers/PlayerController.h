@@ -6,6 +6,7 @@
 #include "RigidBody.h"
 #include "PhysicsWorld.h"
 #include "ASM.h"
+#include "Light.h"
 
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
@@ -41,6 +42,10 @@ private:
 	Entity* playerEntity;
 	btKinematicCharacterController* btController;
 	btPairCachingGhostObject* ghostObj;
+
+	RigidBody* lanternHinge;
+	RigidBody* lanternRigidBody;
+	Light* lanternLight;
 
 	bool equipped;
 
