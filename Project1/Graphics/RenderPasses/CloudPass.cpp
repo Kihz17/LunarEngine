@@ -192,6 +192,7 @@ void CloudPass::DoPass(ITexture* skyTexture, ITexture* positionBuffer, const glm
 
 	// Cloud post processing (helps make clouds less pixelated by using gaussian blur and godrays)
 	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 
 	postFramebuffer->Bind();
 	postShader->Bind();

@@ -185,13 +185,13 @@ void Renderer::DrawFrame()
 	{
 		glm::vec3 lightDir = glm::normalize(mainLight->direction);
 
-		Profiler::BeginProfile("CloudPass");
-		cloudPass->DoPass(envMapPass->GetEnvironmentTexture(), geometryPass->GetPositionBuffer(), projection, view, cameraPos, lightDir, mainLight->color, cameraDir, windowDetails, quad);
-		Profiler::EndProfile("CloudPass");
-
 		Profiler::BeginProfile("ShadowPass");
 		shadowMappingPass->DoPass(culledShadowSubmissions, culledAnimatedShadowSubmissions, lightDir, projection, view, *quad);
 		Profiler::EndProfile("ShadowPass");
+
+		Profiler::BeginProfile("CloudPass");
+		cloudPass->DoPass(envMapPass->GetEnvironmentTexture(), geometryPass->GetPositionBuffer(), projection, view, cameraPos, lightDir, mainLight->color, cameraDir, windowDetails, quad);
+		Profiler::EndProfile("CloudPass");
 	}
 	
 	Profiler::BeginProfile("LightingPass");

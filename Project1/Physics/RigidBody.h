@@ -18,9 +18,11 @@ public:
 	virtual ~RigidBody();
 
 	virtual void GetPosition(glm::vec3& positionOut) override;
+	virtual glm::vec3 GetPosition() const override;
 	virtual void SetPosition(const glm::vec3& positionIn) override;
 
 	virtual void GetOrientation(glm::quat& orientationOut) override;
+	virtual glm::quat GetOrientation() const override;
 	virtual void SetOrientation(const glm::quat& orientationIn) override;
 
 	virtual void ApplyForce(const glm::vec3& force) override;
@@ -31,6 +33,8 @@ public:
 
 	virtual void ApplyTorque(const glm::vec3& torque) override;
 	virtual void ApplyTorqueImpulse(const glm::vec3& torqueImpulse) override;
+
+	virtual glm::vec3 GetLinearVelocity() const override;
 
 	Physics::IShape* GetShape();
 	bool IsStatic() const;

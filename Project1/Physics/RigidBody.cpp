@@ -34,6 +34,11 @@ void RigidBody::GetPosition(glm::vec3& positionOut)
 	positionOut = BulletUtils::BulletVec3ToGLM(bulletBody->getCenterOfMassPosition());
 }
 
+glm::vec3 RigidBody::GetPosition() const
+{
+	return BulletUtils::BulletVec3ToGLM(bulletBody->getCenterOfMassPosition());
+}
+
 void RigidBody::SetPosition(const glm::vec3& positionIn)
 {
 	// Can't do this.
@@ -43,6 +48,11 @@ void RigidBody::SetPosition(const glm::vec3& positionIn)
 void RigidBody::GetOrientation(glm::quat& orientationOut)
 {
 	orientationOut = BulletUtils::BulletQuatToGLM(bulletBody->getOrientation());
+}
+
+glm::quat RigidBody::GetOrientation() const
+{
+	return BulletUtils::BulletQuatToGLM(bulletBody->getOrientation());
 }
 
 void RigidBody::SetOrientation(const glm::quat& orientationIn)
@@ -89,6 +99,11 @@ void RigidBody::ApplyTorqueImpulse(const glm::vec3& torqueImpulse)
 {
 	btVector3 btTorqueImpulse = BulletUtils::GLMVec3ToBullet(torqueImpulse);
 	bulletBody->applyTorque(btTorqueImpulse);
+}
+
+glm::vec3 RigidBody::GetLinearVelocity() const
+{
+	return BulletUtils::BulletVec3ToGLM(bulletBody->getLinearVelocity());
 }
 
 Physics::IShape* RigidBody::GetShape()
