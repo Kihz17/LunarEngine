@@ -256,7 +256,7 @@ Entities:
     ID: 4048
     Components:
       - ComponentType: Position
-        Position: [588.289978, -50.3199997, 33.4199982]
+        Position: [588.289978, -49.3600006, 33.4199982]
       - ComponentType: Rotation
         Rotation: [0.707000017, 0, -0.707000017, 0]
       - ComponentType: Scale
@@ -3817,7 +3817,7 @@ Entities:
       - ComponentType: Rotation
         Rotation: [0.715412676, -0.686276376, -0.0900433287, 0.0938661993]
       - ComponentType: Scale
-        Scale: [0.08, 0.08, 0.08]
+        Scale: [0.0799999982, 0.0799999982, 0.0799999982]
       - ComponentType: Render
         Mesh: assets/models/FantasyVillage/SM_Barrel01.FBX
         Animated: false
@@ -3859,7 +3859,7 @@ Entities:
       - ComponentType: Rotation
         Rotation: [-0.36632812, 0.36632812, 0.604693532, 0.604693532]
       - ComponentType: Scale
-        Scale: [0.08, 0.08, 0.08]
+        Scale: [0.0799999982, 0.0799999982, 0.0799999982]
       - ComponentType: Render
         Mesh: assets/models/FantasyVillage/SM_Barrel01.FBX
         Animated: false
@@ -3901,7 +3901,7 @@ Entities:
       - ComponentType: Rotation
         Rotation: [0.688038945, -0.688038945, 0.162643731, 0.162643731]
       - ComponentType: Scale
-        Scale: [0.08, 0.08, 0.08]
+        Scale: [0.0799999982, 0.0799999982, 0.0799999982]
       - ComponentType: Render
         Mesh: assets/models/FantasyVillage/SM_Barrel04.FBX
         Animated: false
@@ -3943,7 +3943,7 @@ Entities:
       - ComponentType: Rotation
         Rotation: [0.707000017, -0.707000017, 0, 0]
       - ComponentType: Scale
-        Scale: [0.08, 0.08, 0.08]
+        Scale: [0.0799999982, 0.0799999982, 0.0799999982]
       - ComponentType: Render
         Mesh: assets/models/FantasyVillage/SM_Barrel01.FBX
         Animated: false
@@ -3985,7 +3985,7 @@ Entities:
       - ComponentType: Rotation
         Rotation: [0.534192085, -0.534192085, -0.463130862, -0.463130862]
       - ComponentType: Scale
-        Scale: [0.08, 0.08, 0.08]
+        Scale: [0.0799999982, 0.0799999982, 0.0799999982]
       - ComponentType: Render
         Mesh: assets/models/FantasyVillage/SM_Barrel04.FBX
         Animated: false
@@ -4027,7 +4027,7 @@ Entities:
       - ComponentType: Rotation
         Rotation: [0.704577923, -0.705237627, -0.0543841198, 0.0543332547]
       - ComponentType: Scale
-        Scale: [0.08, 0.08, 0.08]
+        Scale: [0.0799999982, 0.0799999982, 0.0799999982]
       - ComponentType: Render
         Mesh: assets/models/FantasyVillage/SM_Barrel03.FBX
         Animated: false
@@ -4069,7 +4069,7 @@ Entities:
       - ComponentType: Rotation
         Rotation: [0.707000017, -0.707000017, 0, 0]
       - ComponentType: Scale
-        Scale: [0.08, 0.08, 0.08]
+        Scale: [0.0799999982, 0.0799999982, 0.0799999982]
       - ComponentType: Render
         Mesh: assets/models/FantasyVillage/SM_Barrel01.FBX
         Animated: false
@@ -4111,7 +4111,7 @@ Entities:
       - ComponentType: Rotation
         Rotation: [0.707000017, -0.707000017, 0, 0]
       - ComponentType: Scale
-        Scale: [0.08, 0.08, 0.08]
+        Scale: [0.0799999982, 0.0799999982, 0.0799999982]
       - ComponentType: Render
         Mesh: assets/models/FantasyVillage/SM_Barrel01.FBX
         Animated: false

@@ -10,7 +10,8 @@ namespace Physics
 		Cylinder,
 		Capsule,
 		Mesh,
-		ScaledMesh
+		ScaledMesh,
+		Cone
 	};
 
 	class IShape

@@ -67,7 +67,7 @@ namespace Physics
 	class CylinderShape : public IShape
 	{
 	public:
-		CylinderShape(const glm::vec3& halfExtents) : IShape(ShapeType::Sphere), extents(halfExtents) {}
+		CylinderShape(const glm::vec3& halfExtents) : IShape(ShapeType::Cylinder), extents(halfExtents) {}
 		virtual ~CylinderShape() {}
 
 		const glm::vec3& GetExtents() const { return extents; }
@@ -79,6 +79,25 @@ namespace Physics
 
 		CylinderShape(const CylinderShape&) : IShape(ShapeType::Cylinder) { }
 		CylinderShape& operator=(const CylinderShape&) { return *this; }
+	};
+
+	class ConeShape : public IShape
+	{
+	public:
+		ConeShape(float radius, float height) : IShape(ShapeType::Cone), radius(radius), height(height) {}
+		virtual ~ConeShape() {}
+
+		float GetRadius() const { return radius; }
+		float GetHeight() const { return height; }
+
+		static ConeShape* Cast(IShape* shape) { return dynamic_cast<ConeShape*>(shape); }
+
+	private:
+		float radius;
+		float height;
+
+		ConeShape(const ConeShape&) : IShape(ShapeType::Cone) { }
+		ConeShape& operator=(const ConeShape&) { return *this; }
 	};
 
 	class CapsuleShape : public IShape

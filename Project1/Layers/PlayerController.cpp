@@ -12,8 +12,8 @@
 constexpr float velSpeed = 10.0f;
 
 constexpr float walkSpeed = 0.1f;
-constexpr float runSpeed = 0.3f;
-constexpr float equipRunSpeed = 0.2f;
+constexpr float runSpeed = 0.4f;
+constexpr float equipRunSpeed = 0.3f;
 
 constexpr float animIdleSpeed = 15.0f;
 constexpr float animWalkSpeed = 15.0f;
@@ -34,19 +34,19 @@ PlayerController::PlayerController(Camera& camera, EntityManager& entityManager,
     animationStateMachine(nullptr),
     unequipIdle({ MeshManager::GetAnimation("assets/models/Unequip_Idle.fbx"), 0.0f, true, 15.0f }),
     unequipWalk({ MeshManager::GetAnimation("assets/models/Unequip_Walk.fbx"), 0.0f, true, 15.0f }),
-    unequipRun({ MeshManager::GetAnimation("assets/models/Unequip_Run.fbx"), 0.0f, true, 17.0f }),
+    unequipRun({ MeshManager::GetAnimation("assets/models/Unequip_Run.fbx"), 0.0f, true, 20.0f }),
     jump({ MeshManager::GetAnimation("assets/models/Jump.fbx"), 0.8f, false, 20.0f }),
     equip({ MeshManager::GetAnimation("assets/models/Equip.fbx"), 1.0f, false, 19.0f, 3 }),
     unequip({ MeshManager::GetAnimation("assets/models/Unequip.fbx"), 1.0f, false, 19.0f, 3 }),
     equipIdle({ MeshManager::GetAnimation("assets/models/Equip_Idle.fbx"), 0.0f, true, 15.0f }),
-    equipRunF({ MeshManager::GetAnimation("assets/models/8Way_Run_F.fbx"), 0.0f, true, 15.0f }),
-    equipRunFR({ MeshManager::GetAnimation("assets/models/8Way_Run_FR.fbx"), 0.0f, true, 15.0f }),
-    equipRunFL({ MeshManager::GetAnimation("assets/models/8Way_Run_FL.fbx"), 0.0f, true, 15.0f }),
-    equipRunL({ MeshManager::GetAnimation("assets/models/8Way_Run_L.fbx"), 0.0f, true, 15.0f }),
-    equipRunR({ MeshManager::GetAnimation("assets/models/8Way_Run_R.fbx"), 0.0f, true, 15.0f }),
-    equipRunB({ MeshManager::GetAnimation("assets/models/8Way_Run_B.fbx"), 0.0f, true, 15.0f }),
-    equipRunBR({ MeshManager::GetAnimation("assets/models/8Way_Run_BR.fbx"), 0.0f, true, 15.0f }),
-    equipRunBL({ MeshManager::GetAnimation("assets/models/8Way_Run_BL.fbx"), 0.0f, true, 15.0f }),
+    equipRunF({ MeshManager::GetAnimation("assets/models/8Way_Run_F.fbx"), 0.0f, true, 17.0f }),
+    equipRunFR({ MeshManager::GetAnimation("assets/models/8Way_Run_FR.fbx"), 0.0f, true, 17.0f }),
+    equipRunFL({ MeshManager::GetAnimation("assets/models/8Way_Run_FL.fbx"), 0.0f, true, 17.0f }),
+    equipRunL({ MeshManager::GetAnimation("assets/models/8Way_Run_L.fbx"), 0.0f, true, 17.0f }),
+    equipRunR({ MeshManager::GetAnimation("assets/models/8Way_Run_R.fbx"), 0.0f, true, 17.0f }),
+    equipRunB({ MeshManager::GetAnimation("assets/models/8Way_Run_B.fbx"), 0.0f, true, 17.0f }),
+    equipRunBR({ MeshManager::GetAnimation("assets/models/8Way_Run_BR.fbx"), 0.0f, true, 17.0f }),
+    equipRunBL({ MeshManager::GetAnimation("assets/models/8Way_Run_BL.fbx"), 0.0f, true, 17.0f }),
     equipWalkF({ MeshManager::GetAnimation("assets/models/8Way_Walk_F.fbx"), 0.0f, true, 15.0f }),
     equipWalkFR({ MeshManager::GetAnimation("assets/models/8Way_Walk_FR.fbx"), 0.0f, true, 15.0f }),
     equipWalkFL({ MeshManager::GetAnimation("assets/models/8Way_Walk_FL.fbx"), 0.0f, true, 15.0f }),
@@ -107,7 +107,7 @@ void PlayerController::OnAttach()
     btController->setGravity(btVector3(0.0f, -100.0f, 0.0f));
     physicsWorld->GetBulletWorld()->addAction(btController); // Add controller to world
 
-    // Setup lantern hinge
+    // Setup lantern anchor
     Physics::RigidBodyInfo lanternRigidInfo;
     lanternRigidInfo.mass = 0.0f;
     lanternRigidInfo.position = glm::vec3(0.0f, 5.0f, 0.0f);
@@ -371,7 +371,7 @@ void PlayerController::OnUpdate(float deltaTime)
     lanternLight->UpdatePosition(lanternPos);
 
     // Align camera with player
-    camera.position = pos - (camera.front * 40.0f) + glm::vec3(0.0f, 10.0f, 0.0f);
+    camera.position = pos - (camera.front * 60.0f) + glm::vec3(0.0f, 10.0f, 0.0f);
     playerEntity->GetComponent<PositionComponent>()->value = pos;
     playerEntity->GetComponent<PositionComponent>()->value.y -= 1.0f;
 
@@ -398,5 +398,5 @@ void PlayerController::OnUpdate(float deltaTime)
 
         camera.position = closestPoint + camera.front;
     }
-  
+
 }

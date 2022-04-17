@@ -45,6 +45,7 @@ int main()
     Mesh* plane = MeshManager::GetMesh("assets/models/plane.obj");
     Mesh* cube = MeshManager::GetMesh("assets/models/cube.obj");
     Mesh* cyl = MeshManager::GetMesh("assets/models/cylinder.obj");
+    Mesh* cone = MeshManager::GetMesh("assets/models/cone.obj");
     Mesh* tile4m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_TileGround4m.FBX");
     Mesh* rock1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Rock01.FBX");
     Mesh* rock2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Rock02.FBX");
@@ -276,33 +277,92 @@ int main()
     }*/
 
     {
-        Entity* e = gameEngine.GetEntityManager().CreateEntity("CTest");
-        e->AddComponent<PositionComponent>(glm::vec3(0.0f, 50.0f, 0.0f));
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("PhysicsSphere");
+        e->AddComponent<PositionComponent>(glm::vec3(0.0f, 0.0f, 0.0f));
         e->AddComponent<RotationComponent>();
         e->AddComponent<ScaleComponent>(glm::vec3(2.0f));
 
         RenderComponent::RenderInfo testInfo;
         testInfo.mesh = sphere;
-        testInfo.isColorOverride = true;
-        testInfo.colorOverride = glm::vec3(0.0f, 0.0f, 1.0f);
-  /*      testInfo.albedoTextures.push_back({ castleWallDetailColor, 1.0f });
-        testInfo.normalTexture = castleWallDetailNormal;
-        testInfo.ormTexture = castleWallDetailORM;*/
+        testInfo.albedoTextures.push_back({ wood, 1.0f });
+        testInfo.normalTexture = woodN;
+        testInfo.ormTexture = woodORM;
         e->AddComponent<RenderComponent>(testInfo);
 
         Physics::RigidBodyInfo info;
         info.mass = 1.0f;
         info.position = glm::vec3(0.0f, 30.0f, 20.0f);
         RigidBody* rb = new RigidBody(info, new Physics::SphereShape(2.0f));
-        //rb->GetBulletBody()->setRestitution(0.8f);
+        rb->GetBulletBody()->setRestitution(0.8f);
         e->AddComponent<RigidBodyComponent>(rb);
 
         gameEngine.physicsWorld->AddBody(rb);
+    }
+    {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("PhysicsCube");
+        e->AddComponent<PositionComponent>(glm::vec3(0.0f, 0.0f, 0.0f));
+        e->AddComponent<RotationComponent>();
+        e->AddComponent<ScaleComponent>(glm::vec3(2.0f));
 
-        rb->ApplyImpulse(glm::vec3(1000.0f, 0.0f, 1000.0f));
+        RenderComponent::RenderInfo testInfo;
+        testInfo.mesh = cube;
+        testInfo.albedoTextures.push_back({ wood, 1.0f });
+        testInfo.normalTexture = woodN;
+        testInfo.ormTexture = woodORM;
+        e->AddComponent<RenderComponent>(testInfo);
 
-        btTypedConstraint* constraint = new btPoint2PointConstraint(*rb->GetBulletBody(), btVector3(0.0f, -5.0f, 0.0f));
-        static_cast<PhysicsWorld*>(gameEngine.physicsWorld)->GetBulletWorld()->addConstraint(constraint);
+        Physics::RigidBodyInfo info;
+        info.mass = 1.0f;
+        info.position = glm::vec3(0.0f, 30.0f, 20.0f);
+        RigidBody* rb = new RigidBody(info, new Physics::BoxShape(glm::vec3(2.0f, 2.0f, 2.0f)));
+        rb->GetBulletBody()->setRestitution(0.8f);
+        e->AddComponent<RigidBodyComponent>(rb);
+
+        gameEngine.physicsWorld->AddBody(rb);
+    }
+    {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("PhysicsCone");
+        e->AddComponent<PositionComponent>(glm::vec3(0.0f, 0.0f, 0.0f));
+        e->AddComponent<RotationComponent>();
+        e->AddComponent<ScaleComponent>(glm::vec3(2.0f));
+
+        RenderComponent::RenderInfo testInfo;
+        testInfo.mesh = cone;
+        testInfo.albedoTextures.push_back({ wood, 1.0f });
+        testInfo.normalTexture = woodN;
+        testInfo.ormTexture = woodORM;
+        e->AddComponent<RenderComponent>(testInfo);
+
+        Physics::RigidBodyInfo info;
+        info.mass = 1.0f;
+        info.position = glm::vec3(0.0f, 30.0f, 20.0f);
+        RigidBody* rb = new RigidBody(info, new Physics::ConeShape(2.0f, 4.0f));
+        rb->GetBulletBody()->setRestitution(0.8f);
+        e->AddComponent<RigidBodyComponent>(rb);
+
+        gameEngine.physicsWorld->AddBody(rb);
+    }
+    {
+        Entity* e = gameEngine.GetEntityManager().CreateEntity("PhysicsCylinder");
+        e->AddComponent<PositionComponent>(glm::vec3(0.0f, 0.0f, 0.0f));
+        e->AddComponent<RotationComponent>();
+        e->AddComponent<ScaleComponent>(glm::vec3(2.0f));
+
+        RenderComponent::RenderInfo testInfo;
+        testInfo.mesh = cyl;
+        testInfo.albedoTextures.push_back({ wood, 1.0f });
+        testInfo.normalTexture = woodN;
+        testInfo.ormTexture = woodORM;
+        e->AddComponent<RenderComponent>(testInfo);
+
+        Physics::RigidBodyInfo info;
+        info.mass = 1.0f;
+        info.position = glm::vec3(0.0f, 30.0f, 20.0f);
+        RigidBody* rb = new RigidBody(info, new Physics::CylinderShape(glm::vec3(2.0f, 2.0f, 2.0f)));
+        rb->GetBulletBody()->setRestitution(0.8f);
+        e->AddComponent<RigidBodyComponent>(rb);
+
+        gameEngine.physicsWorld->AddBody(rb);
     }
 
     // Set env map

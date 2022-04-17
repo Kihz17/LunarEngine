@@ -68,8 +68,15 @@ btCollisionShape* BulletUtils::ToBulletShape(Physics::IShape* shape)
 	{
 		Physics::CylinderShape* cylinder = Physics::CylinderShape::Cast(shape);
 		return new btCylinderShape(GLMVec3ToBullet(cylinder->GetExtents()));
-	}
 		break;
+	}
+
+	case Physics::ShapeType::Cone:
+	{
+		Physics::ConeShape* cone = Physics::ConeShape::Cast(shape);
+		return new btConeShape(cone->GetRadius(), cone->GetHeight());
+		break;
+	}
 
 	case Physics::ShapeType::Capsule:
 	{
