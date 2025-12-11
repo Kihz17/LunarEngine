@@ -2,6 +2,9 @@
 
 #include <iostream>
 #include <memory>
+#include <cassert>
+
+#define _NDEBUG
 
 #ifdef _NDEBUG
 	#define ENABLE_ASSERTS
@@ -10,8 +13,8 @@
 #define EXPAND_VARGS(x) x
 
 #ifdef ENABLE_ASSERTS
-#define ASSERT_NO_MESSAGE(condition) { if(!(condition)) { HZ_ERROR("Assertion Failed"); __debugbreak(); } }
-#define ASSERT_MESSAGE(condition, ...) { if(!(condition)) { HZ_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#define ASSERT_NO_MESSAGE(condition) { assert(condition); }
+#define ASSERT_MESSAGE(condition, ...) { assert(condition); } }
 
 #define ASSERT_RESOLVE(arg1, arg2, macro, ...) macro
 #define GET_ASSERT_MACRO(...) EXPAND_VARGS(ASSERT_RESOLVE(__VA_ARGS__, ASSERT_MESSAGE, ASSERT_NO_MESSAGE))

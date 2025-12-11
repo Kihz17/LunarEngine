@@ -94,7 +94,7 @@ void TerrainPass::DoPass(IFrameBuffer* geometryBuffer, TerrainGenerationInfo& te
 
     glPatchParameteri(GL_PATCH_VERTICES, numPatchPrimitives); // Consider every n vertices to be a "patch primitive"
 
-    geometryBuffer->Bind();
+   // geometryBuffer->Bind();
 
     shader->Bind();
 
@@ -113,11 +113,11 @@ void TerrainPass::DoPass(IFrameBuffer* geometryBuffer, TerrainGenerationInfo& te
     terrainTexture->BindToSlot(0);
     shader->SetInt("uTerrainTexture", 0);
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     vao->Bind();
     glDrawArrays(GL_PATCHES, 0, numPatchPrimitives * patchCount * patchCount);
     vao->Unbind();
 
-    geometryBuffer->Unbind();
+    //geometryBuffer->Unbind();
 }

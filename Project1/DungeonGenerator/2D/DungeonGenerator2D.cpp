@@ -259,15 +259,15 @@ void DungeonGenerator2D::CreateHallways()
 		}
 	}
 
-	/*for (Edge2D& edge : mst)
-	{
-		Entity* e = entityManager.PrepareEntity();
-		e->AddComponent<PositionComponent>();
-		e->AddComponent<ScaleComponent>();
-		e->AddComponent<RotationComponent>();
-		e->AddComponent<LineRenderComponent>(glm::vec3(edge.a.x, yLevel, edge.a.y), glm::vec3(edge.b.x, yLevel, edge.b.y));
-		entities.push_back(e);
-	}*/
+	//for (Edge2D& edge : mst)
+	//{
+	//	Entity* e = entityManager.PrepareEntity();
+	//	e->AddComponent<PositionComponent>();
+	//	e->AddComponent<ScaleComponent>();
+	//	e->AddComponent<RotationComponent>();
+	//	e->AddComponent<LineRenderComponent>(glm::vec3(edge.a.x, yLevel, edge.a.y), glm::vec3(edge.b.x, yLevel, edge.b.y));
+	//	entities.push_back(e);
+	//}
 }
 
 void DungeonGenerator2D::PathfindHallways()

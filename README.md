@@ -5,7 +5,9 @@ BUILDING:
 CONTROLS:
 - WASD to move
 - Space to jump
-- Left click to attack (spam click to chain attacks)
+- Left click to attack. Spam click to chain attacks (weapon must be equipped)
 - Shift to sprint
 - R to equip weapon
 - L to activate portable light
+
+Demo Video: https://www.youtube.com/watch?v=DNcwPGTKXc0&ab_channel=MitchDawdy

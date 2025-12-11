@@ -115,28 +115,28 @@ CloudPass::~CloudPass()
 void CloudPass::DoPass(ITexture* skyTexture, ITexture* positionBuffer, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPos, const glm::vec3& lightDir, const glm::vec3& lightColor, const glm::vec3& cameraDir,
 	const WindowSpecs* windowSpecs, PrimitiveShape* quad)
 {
-	ImGui::Begin("Clouds");
-	if (ImGui::TreeNode("Cloud Stuff"))
-	{
-		ImGui::DragFloat("Coverage", &coverage, 0.01f);
-		ImGui::DragFloat("Cloud Speed", &cloudSpeed, 0.01f);
-		ImGui::DragFloat("Crispiness", &crispiness, 0.01f);
-		ImGui::DragFloat("Detail", &detail, 0.01f);
-		ImGui::DragFloat("Density", &density, 0.00001f, 0.0f, 1.0f, "%.4f");
-		ImGui::DragFloat("Absorp", &absorptionToLight, 0.01f);
-		ImGui::DragFloat("Darkness", &cloudDarkness, 0.001f);
-		ImGui::DragFloat("Cloud Cutoff", &cloudCutoffFactor, 0.00001f, 0.0f, 1.0f, "%.5f");
-		ImGui::DragFloat("Earth R", &earthRadius, 0.01f);
-		ImGui::DragFloat("Inner R", &sphereInnerRadius, 0.01f);
-		ImGui::DragFloat("Outer R", &sphereOuterRadius, 0.01f);
-		ImGui::Checkbox("Enable Godrays", &enableGodRays);
-		ImGui::DragFloat("God Ray Decay", &godRayDecay, 0.01f);
-		ImGui::DragFloat("God Ray Density", &godRayDensity, 0.01f);
-		ImGui::DragFloat("God Ray Weight", &godRayWeight, 0.01f);
-		ImGui::DragFloat("God Ray Exposure", &godRayExposure, 0.01f);
-		ImGui::TreePop();
-	}
-	ImGui::End();
+	//ImGui::Begin("Clouds");
+	//if (ImGui::TreeNode("Cloud Stuff"))
+	//{
+	//	ImGui::DragFloat("Coverage", &coverage, 0.01f);
+	//	ImGui::DragFloat("Cloud Speed", &cloudSpeed, 0.01f);
+	//	ImGui::DragFloat("Crispiness", &crispiness, 0.01f);
+	//	ImGui::DragFloat("Detail", &detail, 0.01f);
+	//	ImGui::DragFloat("Density", &density, 0.00001f, 0.0f, 1.0f, "%.4f");
+	//	ImGui::DragFloat("Absorp", &absorptionToLight, 0.01f);
+	//	ImGui::DragFloat("Darkness", &cloudDarkness, 0.001f);
+	//	ImGui::DragFloat("Cloud Cutoff", &cloudCutoffFactor, 0.00001f, 0.0f, 1.0f, "%.5f");
+	//	ImGui::DragFloat("Earth R", &earthRadius, 0.01f);
+	//	ImGui::DragFloat("Inner R", &sphereInnerRadius, 0.01f);
+	//	ImGui::DragFloat("Outer R", &sphereOuterRadius, 0.01f);
+	//	ImGui::Checkbox("Enable Godrays", &enableGodRays);
+	//	ImGui::DragFloat("God Ray Decay", &godRayDecay, 0.01f);
+	//	ImGui::DragFloat("God Ray Density", &godRayDensity, 0.01f);
+	//	ImGui::DragFloat("God Ray Weight", &godRayWeight, 0.01f);
+	//	ImGui::DragFloat("God Ray Exposure", &godRayExposure, 0.01f);
+	//	ImGui::TreePop();
+	//}
+	//ImGui::End();
 
 	cloudShader->Bind();
 

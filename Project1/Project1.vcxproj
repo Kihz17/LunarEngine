@@ -42,13 +42,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -139,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SOLUTION_DIR=R"($(SolutionDir))";NORMAL_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\vertShader_01.glsl)";NORMAL_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\fragShader_01.glsl)";OUTLINE_VERT_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineVert.glsl)";OUTLINE_FRAG_SHADER_DIR=R"($(SolutionDir)Extern\assets\shaders\outlineFrag.glsl)";NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>Core/;DungeonGenerator/;DungeonGenerator/3D/;DungeonGenerator/2D/;$(SolutionDir)Project1/;ECS/;ECS/Components/;AI/;AI/Steering/;AI/Steering/Behaviours/;AI/Steering/Conditions/;Animation/;Graphics/;Graphics/BoundingVolumes/;Graphics/GLWrappers/;Graphics/Interfaces/;Graphics/Mesh/;Graphics/RenderPasses/;Graphics/Shader/;Graphics/Textures/;Graphics/Utils/;Input/;Layers/;Layers/SkeletalAnimation/;Panels/;Physics/;Sound/;Utils/;AI/Pathfinding/;Serialization/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -170,6 +170,8 @@
     <ClCompile Include="Core\ApplicationLayerManager.cpp" />
     <ClCompile Include="Core\GameEngine.cpp" />
     <ClCompile Include="Core\Profiler.cpp" />
+    <ClCompile Include="Core\Threads\JobManagerImpl.cpp" />
+    <ClCompile Include="Core\Threads\JobManager.cpp" />
     <ClCompile Include="DungeonGenerator\2D\Delaunay2D.cpp" />
     <ClCompile Include="DungeonGenerator\2D\DungeonConstructor.cpp" />
     <ClCompile Include="DungeonGenerator\2D\DungeonGenerator2D.cpp" />
@@ -237,6 +239,7 @@
     <ClCompile Include="Physics\PhysicsFactory.cpp" />
     <ClCompile Include="Physics\PhysicsWorld.cpp" />
     <ClCompile Include="Physics\RigidBody.cpp" />
+    <ClCompile Include="Resource\ResourceManager.cpp" />
     <ClCompile Include="Serialization\EntityComponentSerializer.cpp" />
     <ClCompile Include="Serialization\EntitySerializer.cpp" />
     <ClCompile Include="Serialization\GrassSerializer.cpp" />
@@ -282,7 +285,10 @@
     <ClInclude Include="Core\ApplicationLayer.h" />
     <ClInclude Include="Core\ApplicationLayerManager.h" />
     <ClInclude Include="Core\GameEngine.h" />
+    <ClInclude Include="Core\Threads\JobManagerImpl.h" />
     <ClInclude Include="Core\Profiler.h" />
+    <ClInclude Include="Core\Threads\JobTypes.h" />
+    <ClInclude Include="Core\Threads\JobManager.h" />
     <ClInclude Include="DungeonGenerator\2D\Delaunay2D.h" />
     <ClInclude Include="DungeonGenerator\2D\DungeonConstructor.h" />
     <ClInclude Include="DungeonGenerator\2D\DungeonGenerator2D.h" />
@@ -379,6 +385,9 @@
     <ClInclude Include="Physics\PhysicsWorld.h" />
     <ClInclude Include="Physics\RigidBody.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Resource\Factory\ResourceFactory.h" />
+    <ClInclude Include="Resource\ResourceHandle.h" />
+    <ClInclude Include="Resource\ResourceManager.h" />
     <ClInclude Include="Serialization\EntityComponentSerializer.h" />
     <ClInclude Include="Serialization\EntitySerializer.h" />
     <ClInclude Include="Serialization\GrassSerializer.h" />
@@ -405,6 +414,7 @@
     <ClInclude Include="vendor\imgui\imstb_rectpack.h" />
     <ClInclude Include="vendor\imgui\imstb_textedit.h" />
     <ClInclude Include="vendor\imgui\imstb_truetype.h" />
+    <ClInclude Include="vendor\rigtorp\MPMCQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl" />

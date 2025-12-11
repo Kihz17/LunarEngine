@@ -108,44 +108,44 @@ void PlayerController::OnAttach()
     physicsWorld->GetBulletWorld()->addAction(btController); // Add controller to world
 
     // Setup lantern anchor
-    Physics::RigidBodyInfo lanternRigidInfo;
-    lanternRigidInfo.mass = 0.0f;
-    lanternRigidInfo.position = glm::vec3(0.0f, 5.0f, 0.0f);
-    lanternHinge = new RigidBody(lanternRigidInfo, new Physics::SphereShape(0.1f));
+    //Physics::RigidBodyInfo lanternRigidInfo;
+    //lanternRigidInfo.mass = 0.0f;
+    //lanternRigidInfo.position = glm::vec3(0.0f, 5.0f, 0.0f);
+    //lanternHinge = new RigidBody(lanternRigidInfo, new Physics::SphereShape(0.1f));
 
-    btRigidBody* btLanternAnchor = lanternHinge->GetBulletBody();
-    btLanternAnchor->setCollisionFlags(btLanternAnchor->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
-    btLanternAnchor->setActivationState(DISABLE_DEACTIVATION);
-    physicsWorld->AddBody(lanternHinge);
+    //btRigidBody* btLanternAnchor = lanternHinge->GetBulletBody();
+    //btLanternAnchor->setCollisionFlags(btLanternAnchor->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+    //btLanternAnchor->setActivationState(DISABLE_DEACTIVATION);
+    //physicsWorld->AddBody(lanternHinge);
 
-    {
-        Entity* lanternE = entityManager.CreateEntity();
-        lanternE->shouldSave = false;
+    //{
+    //    Entity* lanternE = entityManager.CreateEntity();
+    //    lanternE->shouldSave = false;
 
-        lanternE->AddComponent<PositionComponent>();
-        lanternE->AddComponent<RotationComponent>();
-        lanternE->AddComponent<ScaleComponent>(glm::vec3(0.04f));
+    //    lanternE->AddComponent<PositionComponent>();
+    //    lanternE->AddComponent<RotationComponent>();
+    //    lanternE->AddComponent<ScaleComponent>(glm::vec3(0.04f));
 
-        RenderComponent::RenderInfo lanternInfo;
-        lanternInfo.mesh = MeshManager::GetMesh("assets/models/Lantern.fbx");
-        lanternInfo.albedoTextures.push_back({ TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat), 1.0f });
-        lanternInfo.normalTexture = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-        lanternInfo.ormTexture = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-        lanternInfo.colorOverride = glm::vec3(0.0f, 1.0f, 0.0f);
-        lanternE->AddComponent<RenderComponent>(lanternInfo);
+    //    RenderComponent::RenderInfo lanternInfo;
+    //    lanternInfo.mesh = MeshManager::GetMesh("assets/models/Lantern.fbx");
+    //    lanternInfo.albedoTextures.push_back({ TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat), 1.0f });
+    //    lanternInfo.normalTexture = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    //    lanternInfo.ormTexture = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
+    //    lanternInfo.colorOverride = glm::vec3(0.0f, 1.0f, 0.0f);
+    //    lanternE->AddComponent<RenderComponent>(lanternInfo);
 
-        Physics::RigidBodyInfo lanternRigidInfo;
-        lanternRigidInfo.mass = 1.0f;
-        lanternRigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
-        lanternRigidBody = new RigidBody(lanternRigidInfo, new Physics::BoxShape(glm::vec3(0.2f, 0.4f, 0.2f)));
-        lanternRigidBody->GetBulletBody()->setDamping(0.8f, 0.9f);
-        lanternE->AddComponent<RigidBodyComponent>(lanternRigidBody);
+    //    Physics::RigidBodyInfo lanternRigidInfo;
+    //    lanternRigidInfo.mass = 1.0f;
+    //    lanternRigidInfo.position = glm::vec3(0.0f, 0.0f, 0.0f);
+    //    lanternRigidBody = new RigidBody(lanternRigidInfo, new Physics::BoxShape(glm::vec3(0.2f, 0.4f, 0.2f)));
+    //    lanternRigidBody->GetBulletBody()->setDamping(0.8f, 0.9f);
+    //    lanternE->AddComponent<RigidBodyComponent>(lanternRigidBody);
 
-        physicsWorld->AddBody(lanternRigidBody);
+    //    physicsWorld->AddBody(lanternRigidBody);
 
-        btTypedConstraint* constraint = new btPoint2PointConstraint(*lanternRigidBody->GetBulletBody(), *btLanternAnchor, btVector3(0.0f, -0.5f, 0.6f), btVector3(0.0f, 0.0f, 0.0f));
-        physicsWorld->GetBulletWorld()->addConstraint(constraint);
-    }
+    //    btTypedConstraint* constraint = new btPoint2PointConstraint(*lanternRigidBody->GetBulletBody(), *btLanternAnchor, btVector3(0.0f, -0.5f, 0.6f), btVector3(0.0f, 0.0f, 0.0f));
+    //    physicsWorld->GetBulletWorld()->addConstraint(constraint);
+    //}
 
     LightInfo lightInfo;
     lightInfo.color = glm::vec3(0.83f, 0.7f, 0.1f);
@@ -350,25 +350,25 @@ void PlayerController::OnUpdate(float deltaTime)
     glm::vec3 pos = BulletUtils::BulletVec3ToGLM(ghostObj->getWorldTransform().getOrigin());
 
     // Move lantern anchor to right side of character
-    btTransform t;
-    t.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1.0f));
-    glm::quat lanternRot = playerEntity->GetComponent<RotationComponent>()->value;
-    lanternRot.x = 0.0f;
-    lanternRot.z = 0.0f;
-    lanternRot = glm::normalize(lanternRot);
-    glm::vec3 playerDir = glm::normalize(lanternRot * Utils::FrontVec());
+    //btTransform t;
+    //t.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1.0f));
+    //glm::quat lanternRot = playerEntity->GetComponent<RotationComponent>()->value;
+    //lanternRot.x = 0.0f;
+    //lanternRot.z = 0.0f;
+    //lanternRot = glm::normalize(lanternRot);
+    //glm::vec3 playerDir = glm::normalize(lanternRot * Utils::FrontVec());
 
-    glm::vec3 lanternAnchorPos = pos + glm::vec3(0.0f, 10.0f, 0.0f);
-    lanternAnchorPos += playerDir * 0.5f;
-    lanternAnchorPos -= glm::cross(playerDir, glm::vec3(0.0f, 1.0f, 0.0f)) * 1.5f;
+    //glm::vec3 lanternAnchorPos = pos + glm::vec3(0.0f, 10.0f, 0.0f);
+    //lanternAnchorPos += playerDir * 0.5f;
+    //lanternAnchorPos -= glm::cross(playerDir, glm::vec3(0.0f, 1.0f, 0.0f)) * 1.5f;
 
-    t.setOrigin(BulletUtils::GLMVec3ToBullet(lanternAnchorPos));
-    lanternHinge->GetBulletBody()->setWorldTransform(t);
+    //t.setOrigin(BulletUtils::GLMVec3ToBullet(lanternAnchorPos));
+    //lanternHinge->GetBulletBody()->setWorldTransform(t);
 
-    // Update lantern light pos
-    glm::vec3 lanternPos;
-    lanternRigidBody->GetPosition(lanternPos);
-    lanternLight->UpdatePosition(lanternPos);
+    //// Update lantern light pos
+    //glm::vec3 lanternPos;
+    //lanternRigidBody->GetPosition(lanternPos);
+    lanternLight->UpdatePosition(pos);
 
     // Align camera with player
     camera.position = pos - (camera.front * 60.0f) + glm::vec3(0.0f, 10.0f, 0.0f);

@@ -47,63 +47,8 @@ int main()
     Mesh* cyl = MeshManager::GetMesh("assets/models/cylinder.obj");
     Mesh* cone = MeshManager::GetMesh("assets/models/cone.obj");
     Mesh* tile4m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_TileGround4m.FBX");
-    Mesh* rock1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Rock01.FBX");
-    Mesh* rock2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Rock02.FBX");
-    Mesh* houseFirstFloor1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor01.FBX");
-    Mesh* houseFirstFloor2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor02.FBX");
-    Mesh* houseFirstFloor3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor03.FBX");
-    Mesh* houseFirstFloor4 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor04.FBX");
-    Mesh* houseFirstFloor5 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House1stFloor05.FBX");
-    Mesh* houseSecondFloor1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_House2dFloor01.FBX");
-    Mesh* roof1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_HouseRoof01.FBX");
-    Mesh* roof2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_HouseRoof02.FBX");
-    Mesh* roof3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_HouseRoof03.FBX");
-    Mesh* wallBorder6m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_StoneWallBorder6m.FBX");
-    Mesh* houseBase1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_HouseBase01.FBX");
-    Mesh* castleStairs3m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleStairs3m.FBX");
-    Mesh* castleStairs3mSmall = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleStairs3m01.FBX");
-    Mesh* castleBridge6m2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleBridge6m2.FBX");
-    Mesh* castleWallCorner6m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWallCorner6m01.FBX");
-    Mesh* castleWallCorner6m3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWallCorner3m.FBX");
-    Mesh* castleWall6m = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWall6m.FBX");
-    Mesh* chimney3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_ChimneyLarge03.FBX");
-    Mesh* barrel1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Barrel01.FBX");
-    Mesh* barrel2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Barrel02.FBX");
-    Mesh* barrel3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Barrel03.FBX");
-    Mesh* barrel4 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Barrel04.FBX");
-    Mesh* woodChunks1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodChunks01.FBX");
-    Mesh* woodChunks2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodChunks02.FBX");
-    Mesh* woodChunks3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodChunks03.FBX");
-    Mesh* woodChunks4 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodChunks04.FBX");
-    Mesh* woodChunks5 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodChunks05.FBX");
-    Mesh* fence1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_WoodFence01.FBX");
-    Mesh* wagon1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Wagon01.FBX");
-    Mesh* wagon2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Wagon02.FBX");
-    Mesh* wagon3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Wagon03.FBX");
-    Mesh* canopy1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Canopy01.FBX");
-    Mesh* canopy2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Canopy02.FBX");
-    Mesh* canopy3 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Canopy03.FBX");
-    Mesh* canopy4 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Canopy04.FBX");
-    Mesh* canopy5 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Canopy05.FBX");
-    Mesh* fabric1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Fabric01.FBX");
-    Mesh* fabric2 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Fabric02.FBX");
-    Mesh* castleBanner = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Flag01.FBX");
-    Mesh* planks = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Planks.FBX");
-    Mesh* castleWall3m4 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_CastleWall3m04.FBX");
-    Mesh* stoneWallSingle = MeshManager::GetMesh("assets/models/FantasyVillage/SM_StoneWallSingle03.FBX");
-    Mesh* door1 = MeshManager::GetMesh("assets/models/FantasyVillage/SM_Door01.FBX");
-    Mesh* streetLight = MeshManager::GetMesh("assets/models/FantasyVillage/SM_StreetLight02.FBX");
-    Mesh* lantern = MeshManager::GetMesh("assets/models/FantasyVillage/SM_StreetLight03.FBX");
 
     // Load textures
-    Texture2D* albedoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_albedo.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* normalTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_normal.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* roughnessTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_roughness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* metalnessTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_metalness.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* aoTexture = TextureManager::CreateTexture2D("assets/textures/pbr/rustediron/rustediron_ao.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* blue = TextureManager::CreateTexture2D("assets/textures/blue.png", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* terrain = TextureManager::CreateTexture2D("assets/textures/terrain.jpg", TextureFilterType::Linear, TextureWrapType::Repeat);
-
     Texture2D* wood = TextureManager::CreateTexture2D("assets/textures/T_WoodDetails_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* woodN = TextureManager::CreateTexture2D("assets/textures/T_WoodDetails_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* woodORM = TextureManager::CreateTexture2D("assets/textures/T_WoodDetails_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
@@ -112,44 +57,11 @@ int main()
     Texture2D* groundStoneNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_GroundStones_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* groundStoneORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_GroundStones_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
 
-    Texture2D* rockColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Rock01_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* rockNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Rock01_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* rockORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Rock01_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-
-    Texture2D* castleWallColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWall_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* castleWallNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWall_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* castleWallORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWall_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-
-    Texture2D* castleWallDetailColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWallDetails_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* castleWallDetailNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWallDetails_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* castleWallDetailORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_CastleWallDetails_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-
-    Texture2D* houseWallColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_HouseWall_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* houseWallNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_HouseWall_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* houseWallORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_HouseWall_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-
-    Texture2D* roofTilesColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_RoofTiles_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* roofTilesGrayColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_RoofTilesGrey_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* roofTilesNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_RoofTiles_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* roofTilesORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_RoofTiles_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-
-    Texture2D* stoneWallColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* stoneWallNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* stoneWalllORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-
-    Texture2D* fabricColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Fabric01_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* fabricNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Fabric01_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* fabricORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Fabric01_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-
-    Texture2D* doorColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* doorNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-    Texture2D* doorORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_Doors_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
-
     Texture2D* stoneColor = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_BC.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* stoneNormal = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_N.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
     Texture2D* stoneORM = TextureManager::CreateTexture2D("assets/textures/FantasyVillage/T_StoneWall_ORM.TGA", TextureFilterType::Linear, TextureWrapType::Repeat);
 
-    GameEngine gameEngine(windowSpecs, true);
+    GameEngine gameEngine(windowSpecs, false);
 
     // Animation system setup
     SkeletalAnimationLayer* sal = new SkeletalAnimationLayer();
@@ -160,22 +72,23 @@ int main()
     gameEngine.AddLayer(new FreeCamController(gameEngine.camera, gameEngine.GetWindowSpecs()));
 
     gameEngine.camera.position = glm::vec3(0.0f, 10.0f, 30.0f);
+
     //gameEngine.debugMode = true;
 
     // Setup some lights    
-  /*  LightInfo lightInfo;
-    lightInfo.postion = glm::vec3(0.0f, 45.0f, 0.0f);
-    lightInfo.intensity = 10.0f;
-    lightInfo.castShadows = true;
-    Light* light = new Light(lightInfo);
-    light->UpdateLightType(LightType::Directional);
-    light->UpdateDirection(glm::vec3(0.0f, -0.6f, -0.4f));
-    Entity* lightEntity = gameEngine.GetEntityManager().CreateEntity("lightTest");
-    lightEntity->AddComponent<LightComponent>(light);
+   //LightInfo lightInfo;
+   // lightInfo.postion = glm::vec3(0.0f, 45.0f, 0.0f);
+   // lightInfo.intensity = 10.0f;
+   // lightInfo.castShadows = true;
+   // Light* light = new Light(lightInfo);
+   // light->UpdateLightType(LightType::Directional);
+   // light->UpdateDirection(glm::vec3(0.0f, -0.6f, -0.4f));
+   // Entity* lightEntity = gameEngine.GetEntityManager().CreateEntity("lightTest");
+   // lightEntity->AddComponent<LightComponent>(light);
 
-    Renderer::SetMainLightSource(light);*/
+   // Renderer::SetMainLightSource(light);
 
-   /* unsigned int numGrassBlades = 50000;
+    /*unsigned int numGrassBlades = 50000;
 
     GrassCluster cluster;
     cluster.grassData.resize(numGrassBlades);
@@ -276,6 +189,7 @@ int main()
         gameEngine.physicsWorld->AddRigidBody(rb, e);
     }*/
 
+    // Physics Objects
     {
         Entity* e = gameEngine.GetEntityManager().CreateEntity("PhysicsSphere");
         e->AddComponent<PositionComponent>(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -378,7 +292,7 @@ int main()
         Renderer::envMap1 = envMap;
     }
 
-    gameEngine.AddLayer(new EditorLayer(gameEngine.GetEntityManager(), gameEngine.physicsWorld));
+    //gameEngine.AddLayer(new EditorLayer(gameEngine.GetEntityManager(), gameEngine.physicsWorld));
 
     std::ifstream ifs("scene.yaml");
     std::stringstream ss;
@@ -413,9 +327,6 @@ int main()
 
     for (Entity* e : gameEngine.GetEntityManager().GetEntities())
     {
-      /*  if (!e->HasComponent<RigidBodyComponent>()) continue;
-        gameEngine.physicsWorld->AddRigidBody(e->GetComponent<RigidBodyComponent>()->ptr, e);*/
-
         if (e->HasComponent<RenderComponent>() && !e->HasComponent<RigidBodyComponent>())
         {
             Physics::RigidBodyInfo info;
