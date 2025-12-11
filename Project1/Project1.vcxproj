@@ -170,8 +170,6 @@
     <ClCompile Include="Core\ApplicationLayerManager.cpp" />
     <ClCompile Include="Core\GameEngine.cpp" />
     <ClCompile Include="Core\Profiler.cpp" />
-    <ClCompile Include="Core\Threads\JobManagerImpl.cpp" />
-    <ClCompile Include="Core\Threads\JobManager.cpp" />
     <ClCompile Include="DungeonGenerator\2D\Delaunay2D.cpp" />
     <ClCompile Include="DungeonGenerator\2D\DungeonConstructor.cpp" />
     <ClCompile Include="DungeonGenerator\2D\DungeonGenerator2D.cpp" />
@@ -285,10 +283,7 @@
     <ClInclude Include="Core\ApplicationLayer.h" />
     <ClInclude Include="Core\ApplicationLayerManager.h" />
     <ClInclude Include="Core\GameEngine.h" />
-    <ClInclude Include="Core\Threads\JobManagerImpl.h" />
     <ClInclude Include="Core\Profiler.h" />
-    <ClInclude Include="Core\Threads\JobTypes.h" />
-    <ClInclude Include="Core\Threads\JobManager.h" />
     <ClInclude Include="DungeonGenerator\2D\Delaunay2D.h" />
     <ClInclude Include="DungeonGenerator\2D\DungeonConstructor.h" />
     <ClInclude Include="DungeonGenerator\2D\DungeonGenerator2D.h" />

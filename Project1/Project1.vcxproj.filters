@@ -370,8 +370,6 @@
     <ClCompile Include="Serialization\GrassSerializer.cpp" />
     <ClCompile Include="Layers\DayNightCycle.cpp" />
     <ClCompile Include="Resource\ResourceManager.cpp" />
-    <ClCompile Include="Core\Threads\JobManager.cpp" />
-    <ClCompile Include="Core\Threads\JobManagerImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -763,9 +761,6 @@
     <ClInclude Include="Resource\ResourceHandle.h" />
     <ClInclude Include="Resource\Factory\ResourceFactory.h" />
     <ClInclude Include="vendor\rigtorp\MPMCQueue.h" />
-    <ClInclude Include="Core\Threads\JobManager.h" />
-    <ClInclude Include="Core\Threads\JobManagerImpl.h" />
-    <ClInclude Include="Core\Threads\JobTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\animatedGeometryBuffer.glsl">

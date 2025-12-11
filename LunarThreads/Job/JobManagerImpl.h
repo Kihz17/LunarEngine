@@ -1,6 +1,7 @@
 #pragma once
 
 #include "JobTypes.h"
+#include "JobQueue.h"
 
 #include <functional>
 #include <memory>
@@ -9,14 +10,15 @@
 #include <deque>
 #include <thread>
 #include <unordered_map>
+#include <vector>
+#include <cstddef>
 
 // Platform specifics for Windows affinity
 #if defined(_WIN32)
 #include <windows.h>
 #endif
 
-namespace lunar
-{
+namespace lunar {
 	// Forward declarations for internal types
     struct JobNodeBase;
 
@@ -25,6 +27,7 @@ namespace lunar
 	{
         static constexpr size_t DefaultSize = 64; // default; overridden by config if needed
         alignas(std::max_align_t) unsigned char data[DefaultSize];
+
     };
 
     // Per-thread mArena interface (simple skeleton)
@@ -41,34 +44,13 @@ namespace lunar
         void Reset();
 
     private:
-        // TODO: implement bump allocator + free lists
+        void* AllocateFromBuffer(size_t sz, size_t align);
+        size_t mCapacity = 0;
         std::vector<unsigned char> mBuffer;
         size_t mOffset = 0;
-        std::mutex mMtx; // for remote frees
-    };
-
-    // LocalQueue skeleton for deterministic dispatch lists + non-deterministic path
-    class LocalQueue 
-	{
-    public:
-        LocalQueue();
-        ~LocalQueue();
-
-        // Deterministic mode: indexer will call this to overwrite the dispatch list for the frame
-        void EnqueueBatch(const std::vector<JobNodeBase*>& batch);
-
-        // Non-deterministic push (external submissions)
-        void Push(JobNodeBase* node);
-
-        // Pop next job for owner thread (fast path)
-        JobNodeBase* PopFront();
-
-        size_t Size() const;
-
-    private:
-        // TODO: implement ring buffer with SPSC fast path and MPSC push fallback
-        std::deque<JobNodeBase*> mDeque;
-        mutable std::mutex mMtx; // protects mDeque for now
+        // simple size-class free lists (keyed by size)
+        std::unordered_map<size_t, std::vector<void*>> mFreeLists;
+        std::mutex mMtx; // protects free lists and remote frees
     };
 
     // Job node base for mType-erased management
@@ -100,6 +82,7 @@ namespace lunar
 
         // SSO inline storage for mTask/mResult when small
         std::optional<TaskFn> mTask; // stored here; large closures may be allocated in mArena
+
         // Result storage: for void use special handling
         std::optional<R> mResult; // placement storage or pointer-managed depending on SSO/pool strategy
 
@@ -112,7 +95,9 @@ namespace lunar
 
     // Platform affinity shim for Windows (other platforms no-op for now)
     namespace platform {
+
         inline bool set_current_thread_affinity(int coreIndex) {
+
 #if defined(_WIN32)
             DWORD_PTR mask = (static_cast<DWORD_PTR>(1) << coreIndex);
             HANDLE th = GetCurrentThread();
@@ -132,7 +117,7 @@ namespace lunar
             ThreadType mType;
             int mIndex;
             std::unique_ptr<PerThreadArena> mArena;
-            std::unique_ptr<LocalQueue> mLocalQueue;
+            std::unique_ptr<JobQueue<JobNodeBase*, 256>> mLocalQueue;
             std::atomic<bool> mIsActive{ true };
             std::atomic<bool> mIsWorking{ false };
             uint64_t mCurrentJobID = 0;
@@ -144,7 +129,6 @@ namespace lunar
         };
 
         JobManagerImpl(const JobManagerConfig& c);
-
         ~JobManagerImpl();
 
         JobManagerImpl(const JobManagerImpl&) = delete;
@@ -166,11 +150,10 @@ namespace lunar
         // Indexer: build deterministic schedule and load per-thread queues
         void RunIndexerAndDispatch();
 
-        // Simplified submit (mType erasure path) — real impl is templated and constructs JobNode<R>
+        // Simplified submit (mType erasure path) - real impl is templated and constructs JobNode<R>
         JobNodeBase* CreateNodeErased(JobPriority pri, ThreadType tt);
 
         // --- Variables ---
-
         JobManagerConfig mCfg;
 
         // Threads
@@ -200,4 +183,5 @@ namespace lunar
         std::atomic<size_t> mTotalJobsSubmitted{ 0 };
         std::atomic<size_t> mFailedJobs{ 0 };
     };
+
 }
